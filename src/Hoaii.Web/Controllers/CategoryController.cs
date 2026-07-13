@@ -9,18 +9,28 @@ public class CategoryController(HoaiiDbContext db) : Controller
 {
     private const int PageSize = 9; // 3 columns x 3 rows desktop grid
 
+    /// <summary>Nav and footer both link here, but it is a cross-category view of the
+    /// featured products rather than a category row of its own.</summary>
+    private const string FeaturedSlug = "san-pham-chon-loc";
+
     public async Task<IActionResult> Index(string slug, int page = 1)
     {
-        var category = await db.Categories
-            .FirstOrDefaultAsync(c => c.Slug == slug);
+        var isFeaturedView = slug == FeaturedSlug;
 
-        if (category is null)
+        var category = isFeaturedView
+            ? null
+            : await db.Categories.FirstOrDefaultAsync(c => c.Slug == slug);
+
+        if (!isFeaturedView && category is null)
         {
             return NotFound();
         }
 
-        var query = db.Products
-            .Where(p => p.CategoryId == category.Id)
+        var categoryName = category?.Name ?? "Sản phẩm chọn lọc";
+
+        var query = (isFeaturedView
+                ? db.Products.Where(p => p.IsFeatured)
+                : db.Products.Where(p => p.CategoryId == category!.Id))
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .OrderBy(p => p.Id);
@@ -34,9 +44,10 @@ public class CategoryController(HoaiiDbContext db) : Controller
             .Take(PageSize)
             .ToListAsync();
 
-        // The hero carousel shows the category's own products, not a separate asset set.
-        var heroSlides = await db.Products
-            .Where(p => p.CategoryId == category.Id && p.Images.Any())
+        // The hero carousel shows this view's own products, not a separate asset set.
+        var heroSlides = await (isFeaturedView
+                ? db.Products.Where(p => p.IsFeatured && p.Images.Any())
+                : db.Products.Where(p => p.CategoryId == category!.Id && p.Images.Any()))
             .Include(p => p.Images)
             .OrderBy(p => p.Id)
             .Take(6)
@@ -50,13 +61,13 @@ public class CategoryController(HoaiiDbContext db) : Controller
 
         var model = new CategoryPageViewModel
         {
-            Title = category.Name,
-            BreadcrumbLabel = $"Trang chủ/{category.Name}",
-            Description = $"Mỗi sản phẩm quà tặng đều mang một câu chuyện riêng",
+            Title = categoryName,
+            BreadcrumbLabel = $"Trang chủ/{categoryName}",
+            Description = "Mỗi sản phẩm quà tặng đều mang một câu chuyện riêng",
             Products = products.Select(p => ProductCardMapper.Map(p)).ToList(),
             CurrentPage = page,
             TotalPages = totalPages,
-            HeroEyebrow = $"{category.Name} đặc sắc",
+            HeroEyebrow = $"{categoryName} đặc sắc",
             HeroSlides = heroSlides,
             Promo = new PromoBannerViewModel
             {
