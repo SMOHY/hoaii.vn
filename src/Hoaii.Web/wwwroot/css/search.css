@@ -9,13 +9,15 @@
 .search-header__count { text-align: center; font: 500 16px/20px var(--font-body); color: #1C1C1C; margin: 24px 0 0; }
 .search-header__title { text-align: center; font: 400 48px/56px var(--font-display); margin: 8px 0 0; }
 
-.search-group { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 240px; }
+/* 1920 wide with a 240px gutter: capping at 1440 counted the padding too and squeezed the
+   three cards down to 305px each instead of 464. */
+.search-group { width: 100%; max-width: 1920px; margin: 0 auto; padding: 0 240px; }
 .search-group--fallback { margin-top: 64px; }
-.search-group__header { display: flex; align-items: flex-end; justify-content: space-between; margin: 80px 0 80px; }
+.search-group__header { display: flex; align-items: flex-end; justify-content: space-between; margin: 80px 0 40px; }
 .search-group__title { font: 500 32px/40px var(--font-body); color: #000; margin: 0; }
 .search-group__count { font: 500 16px/20px var(--font-body); color: #000; }
 .search-group__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 24px; }
-.search-group__more { display: flex; justify-content: center; margin-top: 40px; padding-bottom: 40px; }
+.search-group__more { display: flex; justify-content: center; margin-top: 40px; padding-bottom: 80px; }
 .search-group__more a { font: 500 20px/23px var(--font-body); color: var(--color-grey-500); text-decoration: underline; }
 
 .empty-state { padding: 40px 0 80px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
