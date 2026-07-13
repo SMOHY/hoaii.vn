@@ -16,7 +16,15 @@
             <span class="dot"></span>
             <span class="dot"></span>
         </div>
-        <h1 class="home-hero__title">TINH HOA VIỆT NAM</h1>
-        <p class="home-hero__subtitle">Bộ sưu tập Quà tặng Trung Thu 2026</p>
+        @* Figma ships different hero copy per breakpoint:
+           desktop node 1214:38726, mobile node 1062:12563. *@
+        <h1 class="home-hero__title">
+            <span class="u-desktop-only">TINH HOA VIỆT NAM</span>
+            <span class="u-mobile-only">VIỆT NAM HOA THỊ</span>
+        </h1>
+        <p class="home-hero__subtitle">
+            <span class="u-desktop-only">Bộ sưu tập Quà tặng Trung Thu 2026</span>
+            <span class="u-mobile-only">Concept tết mới nhất 2026</span>
+        </p>
     </div>
 </section>

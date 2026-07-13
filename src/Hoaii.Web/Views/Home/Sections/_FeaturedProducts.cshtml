@@ -39,7 +39,8 @@
             }
             else
             {
-                <a class="featured-tile" style="background-image:url('@tile.ImageUrl')" href="#" aria-label="Sản phẩm"></a>
+                <a class="featured-tile @(tile.HideOnMobile ? "featured-tile--desktop-only" : "")"
+                   style="background-image:url('@tile.ImageUrl')" href="#" aria-label="Sản phẩm"></a>
             }
         }
     </div>

@@ -22,15 +22,15 @@ public class HomeController : Controller
                 // Row 1 — card sits left (Figma node 1417:39224)
                 new() { IsCard = true, AccentColor = "gold", TitleLine1 = "THIÊN ĐIỂU", TitleLine2 = "LẠC HỒNG", EditionLabel = "(Phiên bản thường)", LinkUrl = "/danh-muc/qua-tet" },
                 new() { ImageUrl = "/images/placeholders/featured-2.jpg" },
-                new() { ImageUrl = "/images/placeholders/featured-3.jpg" },
+                new() { ImageUrl = "/images/placeholders/featured-3.jpg", HideOnMobile = true },
                 // Row 2 — card sits right (node 1214:38752)
                 new() { ImageUrl = "/images/placeholders/featured-4.jpg" },
-                new() { ImageUrl = "/images/placeholders/featured-5.jpg" },
+                new() { ImageUrl = "/images/placeholders/featured-5.jpg", HideOnMobile = true },
                 new() { IsCard = true, AccentColor = "teal", TitleLine1 = "THIÊN ĐIỂU", TitleLine2 = "LẠC HỒNG", EditionLabel = "(Phiên bản cao cấp)", LinkUrl = "/danh-muc/qua-tet" },
                 // Row 3 — card sits left (node 1214:38738)
                 new() { IsCard = true, AccentColor = "red", TitleLine1 = "TINH HOA", TitleLine2 = "BẮC BỘ", LinkUrl = "/danh-muc/qua-tet" },
                 new() { ImageUrl = "/images/placeholders/featured-6.jpg" },
-                new() { ImageUrl = "/images/placeholders/featured-7.jpg" },
+                new() { ImageUrl = "/images/placeholders/featured-7.jpg", HideOnMobile = true },
             ],
             CustomServiceTabs =
             [

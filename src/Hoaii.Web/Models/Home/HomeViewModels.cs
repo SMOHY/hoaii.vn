@@ -30,6 +30,10 @@ public class FeaturedTileViewModel
     /// <summary>Edition line under the title, e.g. "(Phiên bản thường)". Desktop only; Figma omits it on mobile.</summary>
     public string? EditionLabel { get; init; }
 
+    /// <summary>Figma's mobile grid is 2 columns of 3 rows (6 tiles) against the desktop 3×3 (9 tiles),
+    /// so three of the photo tiles drop out below 768px.</summary>
+    public bool HideOnMobile { get; init; }
+
     public string? ImageUrl { get; init; }
     public string LinkUrl { get; init; } = "#";
 }

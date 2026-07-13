@@ -113,7 +113,7 @@ body.hero-overlay .nav-menu .item.is-open {
 
 @media (max-width: 767.98px) {
   .home-hero {
-    min-height: 700px;
+    min-height: 800px; /* node 1062:12563 */
     background: #000 url('/images/home/hero.jpg') center / cover no-repeat;
   }
   .home-hero__stage {
@@ -310,10 +310,12 @@ body.hero-overlay .nav-menu .item.is-open {
   .featured-title { font-size: 20px; line-height: 32px; }
   .featured-subtitle { display: none; }
   .featured-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; gap: 4px; padding: 0; }
-  .featured-tile { aspect-ratio: 1 / 1.28; }
-  .featured-card { aspect-ratio: 1 / 1.28; padding: 16px; }
+  .featured-tile { aspect-ratio: 197 / 240; }
+  .featured-tile--desktop-only { display: none; }  /* mobile grid is 2×3, not 3×3 */
+  .featured-card { aspect-ratio: 197 / 240; padding: 16px; }
   .featured-card__top { gap: 16px; }
   .featured-card__title { font-size: 28px; line-height: 34px; }
+  .featured-card__cta-label { font-size: 16px; }
 }
 
 /* ---------- Dịch vụ theo yêu cầu (custom-services) ---------- */
@@ -431,13 +433,17 @@ body.hero-overlay .nav-menu .item.is-open {
 .about-card__label--from-gold { background: linear-gradient(to bottom, #FBEECD 0%, #fff 100%); }
 
 @media (max-width: 767.98px) {
-  .about-section { padding: 40px 16px; gap: 16px; }
+  .about-section { padding: 40px 0; gap: 16px; }
+  .about-heading { padding: 0 16px; }
   .about-heading h2 { font-size: 20px; line-height: 30px; }
   .about-subtitle { font-size: 13px; line-height: 16px; font-weight: 400; }
-  .about-cards { flex-direction: column; padding-inline: 16px; max-width: 430px; height: 378px; gap: 16px; }
-  .about-card { height: 100%; }
-  .about-card__label { height: auto; padding-block: 8px; }
-  .about-card__label span { font-family: var(--font-body); font-size: 16px; line-height: 20px; font-weight: 500; }
+
+  /* Two-by-two on mobile (node 1068:20273), not a single column. */
+  .about-cards { display: grid; grid-template-columns: repeat(2, 1fr); padding-inline: 16px; gap: 8px; }
+  .about-card { height: auto; }
+  .about-card__img { height: 190px; }
+  .about-card__label { height: 96px; padding-block: 8px; }
+  .about-card__label span { font-size: 24px; line-height: 30px; }
 }
 
 /* ---------- Khách hàng (Customers) ---------- */
@@ -458,13 +464,16 @@ body.hero-overlay .nav-menu .item.is-open {
 }
 
 @media (max-width: 767.98px) {
-  .customers-section { padding: 40px 16px; }
-  .customers-heading { font-size: 20px; line-height: 30px; margin-bottom: 24px; }
-  .customers-marquee { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 8px; overflow: visible; mask-image: none; }
-  .customers-row { display: contents; }
-  .customers-track { display: contents; animation: none; }
-  .logo-card { width: auto; height: 70px; }
-  .logo-card img { max-width: 100px; max-height: 44px; }
+  .customers-section { padding: 40px 0; }
+  .customers-heading { font-size: 20px; line-height: 30px; margin: 0 0 24px; padding: 0 16px; }
+
+  /* Figma keeps the horizontal marquee on mobile (node 1062:12756 — a 1324px-wide
+     track bleeding past the 430px frame), just at a smaller scale. Laying the cards
+     out as a grid instead stacked all 108 of them into a 3200px column. */
+  .customers-marquee { gap: 8px; }
+  .customers-track { gap: 8px; animation-duration: 28s; }
+  .logo-card { width: 120px; height: 64px; }
+  .logo-card img { max-width: 92px; max-height: 40px; }
 }
 
 /* ---------- Blog (HOÀI MÁCH BẠN) ---------- */

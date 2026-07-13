@@ -5,7 +5,11 @@
     var rest = Model.Where(p => p != featured).ToList();
 }
 <section class="blog-section">
-    <h2 class="blog-heading">HOÀI KỂ BẠN NGHE</h2>
+    @* Desktop node 1214:38914 vs mobile node 1062:12758 — different headings. *@
+    <h2 class="blog-heading">
+        <span class="u-desktop-only">HOÀI KỂ BẠN NGHE</span>
+        <span class="u-mobile-only">HOÀI MÁCH BẠN</span>
+    </h2>
 
     <div class="blog-cards blog-cards--desktop">
         <div class="blog-featured">
