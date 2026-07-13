@@ -7,13 +7,15 @@
         {
             <div class="customers-row">
                 <div class="customers-track">
-                    @* Render the logo list twice back-to-back for a seamless marquee loop. *@
+                    @* Render the logo list twice back-to-back for a seamless marquee loop.
+                       No lazy-loading: the track scrolls sideways, so off-screen logos would
+                       otherwise only start fetching as they slide into view and pop in. *@
                     @for (var pass = 0; pass < 2; pass++)
                     {
                         @foreach (var logo in Model)
                         {
                             <div class="logo-card">
-                                <img src="/images/customers/@(logo).png" alt="@logo" loading="lazy" />
+                                <img src="/images/customers/@(logo).png" alt="@logo" decoding="async" />
                             </div>
                         }
                     }

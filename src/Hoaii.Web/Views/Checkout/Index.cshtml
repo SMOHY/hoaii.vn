@@ -123,7 +123,8 @@
                             }
                             <div class="checkout-line__row2">
                                 <span class="checkout-line__price">@item.UnitPrice.ToString("N0")</span>
-                                <span class="checkout-line__qty">x@item.Quantity</span>
+                                @* Parenthesised — Razor reads a bare "x@item" as an email address and emits it literally. *@
+                                <span class="checkout-line__qty">x@(item.Quantity)</span>
                             </div>
                         </div>
                     </div>
