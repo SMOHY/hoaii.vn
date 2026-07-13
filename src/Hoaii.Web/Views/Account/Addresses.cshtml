@@ -2,6 +2,7 @@
 @using System.Text.Json
 @{
     ViewData["Title"] = "Sổ địa chỉ";
+    Layout = "_AccountLayout";
     var wardsJson = JsonSerializer.Serialize(Model.AllWards, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 

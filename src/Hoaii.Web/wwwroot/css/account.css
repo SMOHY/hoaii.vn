@@ -1,6 +1,19 @@
 /* Account section (Orders / Profile / Addresses) —
    see design-specs/account/order-history.md, profile-and-modals.md, saved-addresses.md */
 
+/* Minimal chrome — logo + avatar, no nav/footer (node 848:20065). */
+.account-nav { border-bottom: 1px solid var(--color-grey-300); background: #fff; }
+.account-nav__inner {
+  max-width: 1440px; margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.account-nav__logo img { display: block; width: 48px; height: 48px; }
+.account-nav__avatar {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--color-grey-100);
+  display: flex; align-items: center; justify-content: center;
+  font: 500 16px/20px var(--font-body); color: #1C1C1C;
+}
+
 .account-layout { display: flex; background: var(--color-grey-50); min-height: 70vh; gap: 0; }
 
 .account-sidebar {
@@ -32,7 +45,8 @@
 }
 
 /* ---------- Profile ---------- */
-.profile-card { background: #fff; border-radius: 8px; padding-left: 24px; width: 100%; }
+/* Figma caps the card at ~503px rather than letting it run the full width (node 848:20065). */
+.profile-card { background: #fff; border-radius: 8px; padding-left: 24px; width: 100%; max-width: 503px; }
 .profile-row {
   height: 56px; display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid var(--color-grey-300);
@@ -42,7 +56,9 @@
 .profile-row__value-group { display: flex; align-items: center; gap: 8px; padding: 0 24px; }
 .profile-row__value { font: 500 16px/20px var(--font-body); color: #0F0F0F; white-space: nowrap; }
 .profile-row__edit-btn { background: none; border: none; color: #0F0F0F; cursor: pointer; padding: 0; display: flex; }
-.profile-row__chevron { transform: rotate(-90deg); }
+/* The icon is already a right-facing chevron, as Figma draws it (node 848:20065);
+   the -90deg rotation was turning it into an up-arrow. */
+.profile-row__chevron { color: var(--color-grey-600); }
 
 @media (max-width: 767.98px) {
   .profile-row__label { width: auto; }

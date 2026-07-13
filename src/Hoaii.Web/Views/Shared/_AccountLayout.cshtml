@@ -1,0 +1,39 @@
+@* Account pages run on the same stripped-back chrome as checkout — logo plus an avatar,
+   no nav and no footer (Figma node 848:20065). *@
+@{
+    var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+                ?? User.Identity?.Name
+                ?? "";
+    var initial = string.IsNullOrEmpty(email) ? "?" : email[..1].ToUpperInvariant();
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hoài</title>
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/nav.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modals.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="account-body">
+    <header class="account-nav">
+        <div class="account-nav__inner">
+            <a class="account-nav__logo" href="/" aria-label="Hoài">
+                <img src="~/images/logo.svg" alt="Hoài" width="48" height="48" />
+            </a>
+            <span class="account-nav__avatar" title="@email">@initial</span>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
