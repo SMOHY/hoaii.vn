@@ -36,14 +36,11 @@ public class ProductController(HoaiiDbContext db) : Controller
             .Take(4)
             .ToListAsync();
 
+        // Only real shots — padding the strip out to five left grey squares on the page.
         var galleryImages = product.Images
             .OrderBy(i => i.SortOrder)
             .Select(i => (string?)i.Url)
             .ToList();
-        while (galleryImages.Count < 5)
-        {
-            galleryImages.Add(null); // render as placeholder thumbnail
-        }
 
         CollectionSectionViewModel? collection = null;
         if (product.IsFeatured)
@@ -82,8 +79,10 @@ public class ProductController(HoaiiDbContext db) : Controller
                 ?? "Thông tin thành phần sẽ được cập nhật chi tiết theo từng sản phẩm.",
             StoryTitle = "Câu chuyện sản phẩm",
             StoryBody = $"{product.Name} được HOÀI chế tác tỉ mỉ, gói ghém tinh thần văn hóa Việt trong từng chi tiết — từ nguyên liệu chọn lọc đến bao bì thủ công, mang đến một món quà trọn vẹn ý nghĩa.",
+            StoryImageUrl = "/images/pdp/story.jpg",
             FeatureTitle = "Đặc điểm",
-            FeatureBody = "Thiết kế tinh giản, chất liệu bền vững và quy trình đóng gói an toàn giúp sản phẩm luôn giữ được trọn vẹn hương vị và giá trị khi đến tay người nhận.",
+            FeatureBody = "KÍCH THƯỚC:\nHộp cứng: 48x15.7x6cm\nHộp con: 9.5x9.5x5cm\nQuai xách: 38x15.7x6.2cm\nTúi đựng: 49x17x7cm",
+            FeatureImageUrl = "/images/pdp/feature.jpg",
             Collection = collection,
             RelatedProducts = related.Select(p => ProductCardMapper.Map(p, "related")).ToList(),
         };

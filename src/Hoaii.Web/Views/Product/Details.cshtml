@@ -12,20 +12,24 @@
 
 <section class="pdp-main">
     <div class="pdp-gallery">
-        <div class="pdp-gallery__main" id="pdp-main-image" style="@(Model.GalleryImages[0] is not null ? $"background-image:url('{Model.GalleryImages[0]}')" : "")"></div>
-        <div class="pdp-gallery__thumbs">
-            @for (var i = 0; i < Model.GalleryImages.Count; i++)
-            {
-                <button type="button" class="pdp-gallery__thumb @(i == 0 ? "active" : "")" data-image="@Model.GalleryImages[i]"
-                        style="@(Model.GalleryImages[i] is not null ? $"background-image:url('{Model.GalleryImages[i]}')" : "")" aria-label="Ảnh @(i + 1)"></button>
-            }
-        </div>
-        <div class="pdp-dots">
-            @for (var i = 0; i < Model.GalleryImages.Count; i++)
-            {
-                <span class="pdp-dot @(i == 0 ? "active" : "")" data-dot-index="@i"></span>
-            }
-        </div>
+        <div class="pdp-gallery__main" id="pdp-main-image" style="@(Model.GalleryImages.Count > 0 ? $"background-image:url('{Model.GalleryImages[0]}')" : "")"></div>
+        @* Only show the thumb strip / dots when there is more than one shot. *@
+        @if (Model.GalleryImages.Count > 1)
+        {
+            <div class="pdp-gallery__thumbs">
+                @for (var i = 0; i < Model.GalleryImages.Count; i++)
+                {
+                    <button type="button" class="pdp-gallery__thumb @(i == 0 ? "active" : "")" data-image="@Model.GalleryImages[i]"
+                            style="background-image:url('@Model.GalleryImages[i]')" aria-label="Ảnh @(i + 1)"></button>
+                }
+            </div>
+            <div class="pdp-dots">
+                @for (var i = 0; i < Model.GalleryImages.Count; i++)
+                {
+                    <span class="pdp-dot @(i == 0 ? "active" : "")" data-dot-index="@i"></span>
+                }
+            </div>
+        }
     </div>
 
     <div class="pdp-info">
@@ -99,12 +103,8 @@
             <div class="pdp-story__text">
                 <h2>@Model.StoryTitle</h2>
                 <p>@Model.StoryBody</p>
-                <div class="pdp-story__badges">
-                    @for (var i = 0; i < 6; i++)
-                    {
-                        <div class="pdp-story__badge"></div>
-                    }
-                </div>
+                @* Folk-art motif strip under the story copy (node 1028:15089). *@
+                <img class="pdp-story__motif" src="~/images/pdp/pattern.png" alt="" loading="lazy" />
             </div>
         </div>
         <div class="pdp-story__row2">

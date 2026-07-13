@@ -70,15 +70,17 @@
   text-align: center;
 }
 
+/* Mobile hero: node 1068:20577 — 800px tall, 302px slides, no scroll hint. */
 @media (max-width: 767.98px) {
-  .cat-hero { min-height: 0; padding: 92px 0 24px; gap: 16px; }
-  .cat-hero__eyebrow { font-size: 20px; line-height: 28px; }
-  .cat-hero__track { height: 300px; gap: 8px; padding: 0 calc(50% - 105px); }
-  .cat-hero__slide { flex-basis: 210px; height: 240px; }
-  .cat-hero__slide.is-active { height: 300px; }
-  .cat-hero__title { font-size: 28px; line-height: 34px; }
+  .cat-hero { min-height: 800px; padding: 120px 0 24px; gap: 24px; justify-content: flex-start; }
+  .cat-hero__eyebrow { font: 500 16px/20px var(--font-body); }
+  .cat-hero__track { height: 454px; gap: 11px; padding: 0 calc(50% - 151px); }
+  .cat-hero__slide { flex-basis: 303px; height: 302px; }
+  .cat-hero__slide.is-active { height: 454px; }
+  .cat-hero__title { font-size: 32px; line-height: 36px; }
   .cat-hero__kicker, .cat-hero__pager span { font-size: 16px; }
-  .cat-hero__scroll-hint { font-size: 13px; margin-top: 8px; }
+  .cat-hero__arrow svg { width: 16px; height: 16px; }
+  .cat-hero__scroll-hint { display: none; }
 }
 
 /* ---------- Content container ---------- */
@@ -247,11 +249,12 @@
 }
 .promo-banner__image img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+/* Mobile: photo on top, copy below, CTA right-aligned (node 1068:20633). */
 @media (max-width: 767.98px) {
-  .promo-banner { flex-direction: column; gap: 24px; padding: 40px 16px; }
-  .promo-banner__image { flex: none; width: 100%; height: 320px; }
-  .promo-banner__text { max-width: none; gap: 16px; }
+  .promo-banner { flex-direction: column; gap: 12px; padding: 0 0 24px; }
+  .promo-banner__image { order: -1; flex: none; width: 100%; height: 340px; border-radius: 0; }
+  .promo-banner__text { max-width: none; gap: 12px; padding: 0 16px; }
   .promo-banner__eyebrow { font: 500 16px/20px var(--font-body); }
-  .promo-banner__title { font: 400 20px/28px var(--font-body); }
-  .promo-banner__cta { padding: 12px 16px; font: 500 16px/20px var(--font-body); }
+  .promo-banner__title { font: 400 13px/16px var(--font-body); }
+  .promo-banner__cta { align-self: flex-end; padding: 8px 12px; font: 500 16px/20px var(--font-body); }
 }
