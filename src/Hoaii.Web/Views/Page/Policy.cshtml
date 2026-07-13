@@ -1,17 +1,44 @@
-@model Hoaii.Web.Models.Page.PolicyPageViewModel
+@using Hoaii.Web.Models.Page
+@model PolicyPageViewModel
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.NavLabel;
 }
 
 <div class="policy-page">
     <p class="policy-breadcrumb">@Model.BreadcrumbLabel</p>
-    <h1 class="policy-title">@Model.Title.ToUpperInvariant()</h1>
+    <h1 class="policy-title">@Model.Title</h1>
 
-    @* No Figma design exists for the policy body copy — only the page header (see
-       design-specs/policy-pages.md). Placeholder prose styling below; replace with real
-       legal text (ideally editable via CMS/DB, not hardcoded) before launch. *@
+    @* Copy transcribed from Figma (design-specs/policy-pages.md). Consecutive bullets are
+       grouped into a single <ul> so the list renders as one block. *@
     <div class="policy-body">
-        <p>Nội dung chính sách sẽ được cập nhật tại đây.</p>
+        @for (var i = 0; i < Model.Blocks.Count; i++)
+        {
+            var block = Model.Blocks[i];
+
+            if (block.Kind == PolicyBlockKind.Bullet)
+            {
+                // Already emitted as part of the preceding list.
+                if (i > 0 && Model.Blocks[i - 1].Kind == PolicyBlockKind.Bullet)
+                {
+                    continue;
+                }
+
+                <ul>
+                    @for (var j = i; j < Model.Blocks.Count && Model.Blocks[j].Kind == PolicyBlockKind.Bullet; j++)
+                    {
+                        <li>@Model.Blocks[j].Text</li>
+                    }
+                </ul>
+            }
+            else if (block.Kind == PolicyBlockKind.Heading)
+            {
+                <h2>@block.Text</h2>
+            }
+            else
+            {
+                <p>@block.Text</p>
+            }
+        }
     </div>
 </div>
 

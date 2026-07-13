@@ -46,6 +46,27 @@ public class WholesaleFormModel
 
 public class PolicyPageViewModel
 {
+    /// <summary>Page heading, e.g. "CHÍNH SÁCH ĐỔI TRẢ &amp; HOÀN TÁC".</summary>
     public required string Title { get; init; }
+
+    /// <summary>Nav/footer label, which is shorter than the heading.</summary>
+    public required string NavLabel { get; init; }
+
     public required string BreadcrumbLabel { get; init; }
+
+    /// <summary>Body copy, in document order.</summary>
+    public required IReadOnlyList<PolicyBlock> Blocks { get; init; }
+}
+
+public class PolicyBlock
+{
+    public required PolicyBlockKind Kind { get; init; }
+    public required string Text { get; init; }
+}
+
+public enum PolicyBlockKind
+{
+    Paragraph,
+    Heading,
+    Bullet,
 }
