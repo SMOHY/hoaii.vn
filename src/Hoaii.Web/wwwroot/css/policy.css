@@ -1,7 +1,9 @@
 /* Policy pages (shared template) — Figma nodes 1246:42533 / 1246:43442 / 1246:43583 / 1246:43724.
    Breadcrumb left, centred display heading, body copy full-width in the 240px gutter. */
 
-.policy-page { padding: 200px 240px 80px; }
+/* Figma's y=200 for the breadcrumb is measured from the top of the frame, which includes
+   the 168px nav — the nav is in the flow here, so only 32px of it is padding. */
+.policy-page { padding: 32px 240px 80px; }
 .policy-breadcrumb { font: 500 16px/20px var(--font-body); color: #0F0F0F; margin: 0; }
 .policy-title {
   font-family: var(--font-display);
@@ -10,7 +12,7 @@
   color: #000;
   text-align: center;
   margin: 0;
-  padding: 40px 0;
+  padding: 120px 0 40px; /* 80px section padding + the 40px Figma leaves above the title */
 }
 
 .policy-body {
@@ -30,9 +32,9 @@
 .policy-body li { line-height: 20px; }
 
 @media (max-width: 767.98px) {
-  .policy-page { padding: 92px 16px 40px; }
+  .policy-page { padding: 16px 16px 40px; }
   .policy-breadcrumb { font: 400 13px/16px var(--font-body); }
-  .policy-title { font-size: 20px; line-height: 28px; padding: 24px 0; }
+  .policy-title { font-size: 20px; line-height: 28px; padding: 40px 0 24px; }
   .policy-body { font-size: 13px; line-height: 18px; gap: 12px; }
   .policy-body h2 { font-size: 13px; line-height: 18px; }
   .policy-body li { line-height: 18px; }

@@ -3,22 +3,27 @@
 
 /* Minimal chrome — logo + avatar, no nav/footer (node 848:20065). */
 .account-nav { border-bottom: 1px solid var(--color-grey-300); background: #fff; }
+/* Logo, sidebar and content all line up inside one 1201px band (node 848:14782). */
 .account-nav__inner {
-  max-width: 1440px; margin: 0 auto; padding: 16px 24px;
+  max-width: 1201px; margin: 0 auto; padding: 28px 24px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.account-nav__logo img { display: block; width: 48px; height: 48px; }
+.account-nav__logo img { display: block; width: 64px; height: 64px; }
 .account-nav__avatar {
-  width: 32px; height: 32px; border-radius: 50%; background: var(--color-grey-100);
+  width: 40px; height: 40px; border-radius: 50%; background: var(--color-grey-100);
   display: flex; align-items: center; justify-content: center;
   font: 500 16px/20px var(--font-body); color: #1C1C1C;
 }
 
-.account-layout { display: flex; background: var(--color-grey-50); min-height: 70vh; gap: 0; }
+/* The grey field runs edge to edge; only the columns inside it are centred. */
+.account-body main { background: var(--color-grey-50); }
+.account-layout {
+  display: flex; min-height: 70vh; gap: 0;
+  max-width: 1201px; margin: 0 auto; width: 100%;
+}
 
 .account-sidebar {
-  width: auto; flex-shrink: 0; padding: 40px 0 10px; display: flex; flex-direction: column; gap: 37px;
-  margin-left: 120px;
+  width: 219px; flex-shrink: 0; padding: 40px 0 10px; display: flex; flex-direction: column; gap: 37px;
 }
 .account-sidebar a {
   font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px;
@@ -31,13 +36,14 @@
   font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-brand-red);
 }
 
-.account-content { flex: 1; padding: 40px 120px 40px 80px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+/* Figma indents the panel 120px from the sidebar and gives it 742px of width. */
+.account-content { flex: 1; padding: 40px 120px 40px 120px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 .account-content__heading { font: 500 20px/23px var(--font-body); color: #000; margin: 0; }
 
 @media (max-width: 991.98px) {
   .account-layout { flex-direction: column; }
   .account-sidebar {
-    flex-direction: row; margin-left: 0; gap: 24px; padding: 16px; overflow-x: auto;
+    width: auto; flex-direction: row; gap: 24px; padding: 16px; overflow-x: auto;
     background: #fff; border-bottom: 1px solid var(--color-grey-300);
   }
   .account-sidebar a, .account-sidebar .logout { font-size: 16px; line-height: 20px; white-space: nowrap; }
