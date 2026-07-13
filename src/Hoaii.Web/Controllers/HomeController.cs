@@ -74,11 +74,13 @@ public class HomeController : Controller
                 new() { Caption = "Tư duy khởi sinh", ImageOnTop = true, ImageUrl = "/images/home/about-khoi-sinh.jpg" },
                 new() { Caption = "Sự Tiếp nối", ImageOnTop = false, ImageUrl = "/images/home/about-tiep-noi.jpg" },
             ],
+            // The 24 logos Figma runs across the three marquee rows, in order (node 792:24979).
             CustomerLogos =
             [
                 "truong-thanh", "bondex", "nano-gold", "pro-group", "jaguar", "bee-mv",
                 "core5", "cystack", "hana-hp", "mb", "nature-hotel", "avalue",
                 "pancake", "ecomdy", "king-power", "isofh", "onpoint", "everest",
+                "binh-minh-hp", "topcv", "saquila", "dht", "koni", "prime",
             ],
             BlogPosts =
             [

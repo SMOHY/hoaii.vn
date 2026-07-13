@@ -5,10 +5,12 @@
 .partners-breadcrumb__current { color: var(--color-grey-500); }
 
 .partners-pride { padding: 80px 240px; display: flex; flex-direction: column; gap: 40px; }
-.partners-stats { text-align: center; }
+/* Heading sits on the left gutter; the three figures below it are centred as a group but
+   each one is left-aligned within itself (node 800:27764). */
+.partners-stats { text-align: left; }
 .partners-stats__heading { font: 400 32px/40px var(--font-body); color: #000; margin: 0 0 24px; }
 .partners-stats__grid { display: flex; justify-content: center; gap: 80px; flex-wrap: wrap; }
-.partners-stats__item { display: flex; flex-direction: column; gap: 8px; }
+.partners-stats__item { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .partners-stats__number { font-family: var(--font-display); font-size: 56px; color: var(--color-brand-red); }
 .partners-stats__label { font: 500 16px/20px var(--font-body); color: var(--color-grey-600); max-width: 220px; }
 
@@ -47,6 +49,21 @@
 .wholesale__request-type { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px 0; }
 .wholesale__request-type > label:first-child { font: 500 16px/20px var(--font-body); color: #000; margin-bottom: 4px; }
 .wholesale__radio { display: flex; align-items: center; gap: 8px; font: 500 16px/20px var(--font-body); color: #0F0F0F; cursor: pointer; }
+/* Figma draws these as square tick-boxes even though only one may be chosen, so the
+   radio keeps its semantics and takes the design's shape (node 800:28963). */
+.wholesale__radio input[type="radio"] {
+  appearance: none; -webkit-appearance: none;
+  width: 16px; height: 16px; margin: 0; flex-shrink: 0; cursor: pointer;
+  border: 1px solid var(--color-grey-500); border-radius: 2px; background: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.wholesale__radio input[type="radio"]:checked {
+  border-color: var(--color-brand-red); background: var(--color-brand-red);
+}
+.wholesale__radio input[type="radio"]:checked::after {
+  content: ""; width: 4px; height: 8px; margin-top: -2px;
+  border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
 
 .wholesale__submit {
   align-self: flex-start; height: 44px; padding: 10px 24px; border: none; border-radius: 4px;
