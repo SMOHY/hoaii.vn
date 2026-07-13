@@ -2,6 +2,12 @@
 
 Figma file: `uQFY9gwfNbNSeTM6zmspzo`
 
+> **Section order:** Figma places Đãi ngộ (Benefits) *after* "Danh sách sản phẩm đặc biệt",
+> not directly after the Hero. See `Views/Home/Index.cshtml` for the authoritative order.
+>
+> **Copy updated in Figma since this spec was first written** — the values below now match Figma:
+> announcement bar, utility-bar tagline, hero caption, and all three benefit columns.
+
 Design tokens referenced throughout:
 - Brand red `#AF2234` (red-500), red-600 `#9F1F2F`
 - Brand gold/tan `#AA8656` (yellow-500), yellow-400 `#BB9E78`, yellow-50 `#F7F3EE`
@@ -14,14 +20,21 @@ Design tokens referenced throughout:
 
 ### Desktop
 
-Node: `1214:38715` — 1920px wide section, `flex-col`, `justify-between`, background `#7A7A7A` (placeholder for hero background image/slide).
+Node: `1214:38715` — 1920px wide section, `flex-col`, `justify-between`.
+
+Background is the product plate photo (`wwwroot/images/home/hero.jpg`), exported from the node's
+*raw image fill* — **not** an export of the frame itself, which bakes the nav and caption into the
+bitmap and double-renders them under the real markup.
+
+The caption sits on a red scrim (node `1214:38719`), `top: 768px`, padding `40px 240px 120px`:
+`linear-gradient(to bottom, rgba(175,34,52,0) 0%, rgba(175,34,52,0.8) 46.765%, #AF2234 100%)`.
 
 **Structure (top → bottom, all children `position: absolute` within a 1920×~950px stage):**
 
 1. **Nav bar** (`top: 0`, full width 1920px, `flex-col`, gap 8px) — sits on top of hero image, transparent/overlaid:
-   - Announcement bar: height 40px, bg `#AF2234`, centered text, padding 10px. Text: "Miễn phí đơn hàng từ 500.000đ" — Josefin Sans Medium, 14px, color white, letter-spacing 0.4px, line-height 24px.
+   - Announcement bar: height 40px, bg `#AF2234`, centered text, padding 10px. Text: "Hotline: 0941.686.682" — Josefin Sans Medium, 14px, color white, letter-spacing 0.4px, line-height 24px.
    - Secondary bar: height 48px, bg `#F2F2F2`, inner row max-width 1440px (centered), `justify-content: space-between`, height 24px.
-     - Left: icon (24×24) + text "Hơn 100+ mẫu bánh và quà tặng độc đáo" — Josefin Sans Regular, 15px, black, letter-spacing 0.4px.
+     - Left: icon (24×24) + text "Đón đầu xu hướng quà tặng với những vật phẩm thiết kế mới nhất vừa ra mắt!" — Josefin Sans Regular, 15px, black, letter-spacing 0.4px.
      - Right: nav links row, gap 40px — "Về chúng tôi", "Liên hệ", "Đại lý", "Blog" — Josefin Sans Regular, 15px, black, letter-spacing 0.4px.
    - Main nav row: height 80px, border-bottom 1px solid white, inner row max-width 1440px centered, `justify-content: space-between`.
      - Logo: 48×48px, left-aligned.
@@ -32,9 +45,9 @@ Node: `1214:38715` — 1920px wide section, `flex-col`, `justify-between`, backg
 
 3. **Hero text block**: `top: 826px`, width 1920px, padding `16px 240px 80px`, `flex-col`, gap 32px, align items start.
    - Slide-dots indicator: 75×12px image/sprite (4 dots, pagination indicator placeholder), `Frame163`.
-   - Text group (gap 16px, color white):
-     - H1: "VIỆT NAM HOA THỊ" — **LC Sac Trial Regular**, 70px, line-height 64px, letter-spacing 0.7px, width 100%.
-     - Subtitle: "Concept tết mới nhất 2026" — Josefin Sans Medium, 20px, line-height 23px.
+   - Text group (gap 8px):
+     - H1: "TINH HOA VIỆT NAM" — **LC Sac Trial Regular**, 70px, line-height 80px, letter-spacing 0.7px, color `#F7F3EE`, width 100%.
+     - Subtitle: "Bộ sưu tập Quà tặng Trung Thu 2026" — Josefin Sans SemiBold, 24px, line-height 32px, white.
 
 4. **Chat/contact widget** (bottom-right, `left: 1802px`, `top: 826px`, box 69×65px): stack of 3 circular buttons (60×60px, bg `#F2F2F2`, border-radius 150px/circle, padding 15px, positioned with slight left offset 4px, top 2.5px, likely stacked/expandable on hover) — icons: phone call (36×36), Zalo logo, Messenger-style icon. Plus one "toggle" circular button 46.667px core icon, bg `#D6D6D6`, border 1.667px solid `#BFBFBF`, border-radius 46px.
 
@@ -71,7 +84,7 @@ Node: `1062:12563` — 430px wide, background `#000000` (black placeholder for h
 
 ## Đãi ngộ (Benefits)
 
-3-column trust-badge strip, icon + title (brand red) + description (grey), repeated for: **Miễn phí giao hàng**, **Cam kết chất lượng**, **Chiết khấu tới 30%**.
+3-column trust-badge strip, icon + title (brand red) + description (grey), repeated for: **Giao hàng toàn quốc**, **Cam kết chất lượng**, **Chiết khấu lên tới 35%**.
 
 ### Desktop
 
@@ -87,9 +100,9 @@ Three equal columns, each `width: 356px`, `flex-col`, `align-items:center`, `gap
 Column content:
 | # | Title | Description |
 |---|-------|--------------|
-| 1 | Miễn phí giao hàng | Trao tận tay bạn, miễn phí trên toàn quốc |
+| 1 | Giao hàng toàn quốc | Thay bạn kết nối những tri âm, đưa quà đến từng ô cửa |
 | 2 | Cam kết chất lượng | Tận tâm trong từng sản phẩm, an tâm tuyệt đối |
-| 3 | Chiết khấu tới 30% | Đặc quyền ưu đãi dành riêng cho bạn |
+| 3 | Chiết khấu lên tới 35% | Giải pháp ngân sách tối ưu cho đơn hàng doanh nghiệp |
 
 **CSS approach:** `.benefits { display:flex; justify-content:space-between; padding:40px 240px 48px; background:#fff; } .benefit-col { width:356px; display:flex; flex-direction:column; align-items:center; gap:28px; } .benefit-icon { width:120px; height:120px; display:flex; align-items:flex-end; justify-content:center; } .benefit-title { font:600 24px/32px 'Josefin Sans'; color:#AF2234; text-align:center; } .benefit-desc { font:500 16px/20px 'Josefin Sans'; color:#5A5A5A; text-align:center; }`
 
@@ -108,9 +121,9 @@ Three columns, each `flex: 1 0 0` (equal share, no fixed width), `flex-col`, `al
 Column content (mobile shows title only, split in two lines — no separate grey description paragraph):
 | # | Line 1 | Line 2 |
 |---|--------|--------|
-| 1 | Miễn phí | giao hàng |
+| 1 | Giao hàng | toàn quốc |
 | 2 | Cam kết | chất lượng |
-| 3 | Chiết khấu | tới 30% |
+| 3 | Chiết khấu | lên tới 35% |
 
 **CSS approach:** `.benefits-mobile { display:flex; justify-content:space-between; padding:40px 16px; background:#fff; } .benefit-col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; gap:16px; } .benefit-icon { width:40px; height:40px; display:flex; align-items:flex-end; justify-content:center; } .benefit-label { font:400 13px/16px 'Josefin Sans'; color:#AF2234; text-align:center; }`
 

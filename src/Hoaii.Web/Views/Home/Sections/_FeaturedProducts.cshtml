@@ -11,16 +11,28 @@
         {
             @if (tile.IsCard)
             {
+                @* Figma uses different copy per breakpoint: "Phẩm quà"/"Khám phá" on desktop,
+                   "Bộ sưu tập"/"Xem thêm" on mobile. Render both, toggle with CSS. *@
                 <a class="featured-card featured-card--@tile.AccentColor" href="@tile.LinkUrl">
                     <div class="featured-card__top">
-                        <span class="featured-card__eyebrow">@tile.CollectionLabel</span>
+                        <span class="featured-card__eyebrow">
+                            <span class="u-desktop-only">Phẩm quà</span>
+                            <span class="u-mobile-only">Bộ sưu tập</span>
+                        </span>
                         <span class="featured-card__title">
                             <span>@tile.TitleLine1</span>
                             <span>@tile.TitleLine2</span>
                         </span>
+                        @if (!string.IsNullOrEmpty(tile.EditionLabel))
+                        {
+                            <span class="featured-card__edition u-desktop-only">@tile.EditionLabel</span>
+                        }
                     </div>
                     <div class="featured-card__cta">
-                        <span class="featured-card__cta-label">Xem thêm</span>
+                        <span class="featured-card__cta-label">
+                            <span class="u-desktop-only">Khám phá</span>
+                            <span class="u-mobile-only">Xem thêm</span>
+                        </span>
                         <svg class="featured-card__cta-icon" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true"><path d="M2 8.5h13M9 3l6 5.5-6 5.5" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
                 </a>

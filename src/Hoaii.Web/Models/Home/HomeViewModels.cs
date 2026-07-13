@@ -22,10 +22,14 @@ public class BenefitViewModel
 public class FeaturedTileViewModel
 {
     public bool IsCard { get; init; }
-    public string? AccentColor { get; init; } // "red" | "gold"
+    public string? AccentColor { get; init; } // "red" | "teal" | "gold"
     public string? CollectionLabel { get; init; }
     public string? TitleLine1 { get; init; }
     public string? TitleLine2 { get; init; }
+
+    /// <summary>Edition line under the title, e.g. "(Phiên bản thường)". Desktop only; Figma omits it on mobile.</summary>
+    public string? EditionLabel { get; init; }
+
     public string? ImageUrl { get; init; }
     public string LinkUrl { get; init; } = "#";
 }
@@ -46,6 +50,7 @@ public class AboutCardViewModel
 {
     public required string Caption { get; init; }
     public required bool ImageOnTop { get; init; }
+    public required string ImageUrl { get; init; }
 }
 
 public class BlogPostViewModel

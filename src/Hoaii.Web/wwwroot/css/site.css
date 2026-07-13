@@ -124,6 +124,14 @@ button {
   }
 }
 
+/* Figma often ships different copy per breakpoint; render both and toggle. */
+.u-mobile-only { display: none; }
+
+@media (max-width: 767.98px) {
+  .u-desktop-only { display: none; }
+  .u-mobile-only { display: inline; }
+}
+
 main {
   min-height: 60vh;
 }

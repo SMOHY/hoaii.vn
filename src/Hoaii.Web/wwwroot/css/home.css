@@ -70,9 +70,16 @@ body.hero-overlay .nav-menu .item.is-open {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 20px;
   color: #fff;
-  padding: 16px 240px 80px;
+  padding: 40px 240px 120px;
+  /* Red scrim so the caption stays legible over the product plate (node 1214:38719). */
+  background: linear-gradient(
+    to bottom,
+    rgba(175, 34, 52, 0) 0%,
+    rgba(175, 34, 52, 0.8) 46.765%,
+    var(--color-brand-red) 100%
+  );
 }
 .home-hero__dots {
   display: flex;
@@ -93,14 +100,15 @@ body.hero-overlay .nav-menu .item.is-open {
 .home-hero__title {
   font-family: var(--font-display);
   font-size: 70px;
-  line-height: 64px;
+  line-height: 80px;
   letter-spacing: 0.7px;
+  color: var(--color-brand-gold-bg);
 }
 .home-hero__subtitle {
   font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 23px;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
 }
 
 @media (max-width: 767.98px) {
@@ -262,6 +270,14 @@ body.hero-overlay .nav-menu .item.is-open {
   line-height: 32px;
   color: #1C1C1C;
 }
+.featured-card__edition {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  color: #1C1C1C;
+  margin-top: -40px; /* sits directly under the title, inside the 53px stack gap */
+}
 .featured-card__title {
   font-family: var(--font-display);
   color: #1C1C1C;
@@ -372,7 +388,7 @@ body.hero-overlay .nav-menu .item.is-open {
   top: 43.9%;
   width: 13.5%;
   height: 13.4%;
-  background: var(--color-grey-300);
+  background: var(--color-grey-300) url('/images/home/story-banner.jpg') center / cover no-repeat;
 }
 .story-banner__title {
   position: relative;
@@ -407,9 +423,10 @@ body.hero-overlay .nav-menu .item.is-open {
 .about-subtitle { font-family: var(--font-body); font-size: 20px; line-height: 23px; font-weight: 500; color: var(--color-brand-gold-deep, #795F3D); }
 .about-cards { display: flex; gap: 16px; align-items: center; justify-content: center; padding-inline: 240px; width: 100%; max-width: 1920px; margin: 0 auto; }
 .about-card { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; }
-.about-card__img { background: var(--color-grey-300); height: 480px; width: 100%; border-radius: 8px; background-size: cover; background-position: center; }
+.about-card__img { background: var(--color-grey-300); height: 480px; width: 100%; border-radius: 8px; overflow: hidden; }
+.about-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .about-card__label { height: 208px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; }
-.about-card__label span { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-gold); }
+.about-card__label span { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-red); }
 .about-card__label--to-gold { background: linear-gradient(to bottom, #fff 0%, #FBEECD 100%); }
 .about-card__label--from-gold { background: linear-gradient(to bottom, #FBEECD 0%, #fff 100%); }
 

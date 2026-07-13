@@ -11,13 +11,13 @@
             <div class="about-card @(card.ImageOnTop ? "about-card--img-top" : "about-card--img-bottom")">
                 @if (card.ImageOnTop)
                 {
-                    <div class="about-card__img"></div>
+                    <div class="about-card__img"><img src="@card.ImageUrl" alt="@card.Caption" loading="lazy" /></div>
                     <div class="about-card__label about-card__label--to-gold"><span>@card.Caption</span></div>
                 }
                 else
                 {
                     <div class="about-card__label about-card__label--from-gold"><span>@card.Caption</span></div>
-                    <div class="about-card__img"></div>
+                    <div class="about-card__img"><img src="@card.ImageUrl" alt="@card.Caption" loading="lazy" /></div>
                 }
             </div>
         }
