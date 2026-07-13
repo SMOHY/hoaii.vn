@@ -4,7 +4,7 @@
 /* ---------- Hero ---------- */
 .home-hero {
   position: relative;
-  min-height: 950px;
+  min-height: 1080px; /* node 1214:38715 */
   background: var(--color-grey-500) url('/images/home/hero.jpg') center / cover no-repeat;
   display: flex;
   flex-direction: column;
@@ -137,6 +137,7 @@
   align-items: flex-end;
   justify-content: center;
 }
+.benefit-icon img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 .benefit-text--desktop { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .benefit-text--mobile { display: none; }
 .benefit-title {
@@ -174,12 +175,13 @@
 }
 
 /* ---------- Sản phẩm nổi bật (Featured Products) ---------- */
+/* 120 pad + 122 heading + 40 gap + 1640 grid + 120 pad = 2042px (node 1214:38732) */
 .featured-section {
   background: var(--color-brand-gold-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 68px;
+  gap: 40px;
   padding: 120px 0;
 }
 .featured-heading {
@@ -205,13 +207,14 @@
   color: var(--color-grey-700);
 }
 
+/* Figma: 3 tiles of 428×536 with 16px gaps -> 1316px wide, 1640px tall. */
 .featured-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 472px;
+  grid-auto-rows: 536px;
   gap: 16px;
   width: 100%;
-  max-width: 1198px;
+  max-width: 1364px; /* 1316 + 2×24 padding */
   padding: 0 24px;
 }
 .featured-tile {

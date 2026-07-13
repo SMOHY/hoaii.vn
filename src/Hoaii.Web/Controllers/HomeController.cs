@@ -13,9 +13,11 @@ public class HomeController : Controller
         {
             Benefits =
             [
-                new() { IconPath = "/images/icons/benefit-shipping.svg", Title = "Giao hàng toàn quốc", Description = "Thay bạn kết nối những tri âm, đưa quà đến từng ô cửa", MobileLine1 = "Giao hàng", MobileLine2 = "toàn quốc" },
-                new() { IconPath = "/images/icons/benefit-quality.svg", Title = "Cam kết chất lượng", Description = "Tận tâm trong từng sản phẩm, an tâm tuyệt đối", MobileLine1 = "Cam kết", MobileLine2 = "chất lượng" },
-                new() { IconPath = "/images/icons/benefit-discount.svg", Title = "Chiết khấu lên tới 35%", Description = "Giải pháp ngân sách tối ưu cho đơn hàng doanh nghiệp", MobileLine1 = "Chiết khấu", MobileLine2 = "lên tới 35%" },
+                // Illustrated icons exported from Figma (nodes 1214:38763 / 38822 / 38847) —
+                // the old SVGs were plain line icons, not the drawn artwork.
+                new() { IconPath = "/images/icons/benefit-shipping.png", Title = "Giao hàng toàn quốc", Description = "Thay bạn kết nối những tri âm, đưa quà đến từng ô cửa", MobileLine1 = "Giao hàng", MobileLine2 = "toàn quốc" },
+                new() { IconPath = "/images/icons/benefit-quality.png", Title = "Cam kết chất lượng", Description = "Tận tâm trong từng sản phẩm, an tâm tuyệt đối", MobileLine1 = "Cam kết", MobileLine2 = "chất lượng" },
+                new() { IconPath = "/images/icons/benefit-discount.png", Title = "Chiết khấu lên tới 35%", Description = "Giải pháp ngân sách tối ưu cho đơn hàng doanh nghiệp", MobileLine1 = "Chiết khấu", MobileLine2 = "lên tới 35%" },
             ],
             FeaturedTiles =
             [
