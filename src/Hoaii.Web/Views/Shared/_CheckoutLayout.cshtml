@@ -1,0 +1,38 @@
+@* Checkout runs on a stripped-back chrome — just the logo and the cart icon, no nav or
+   footer (Figma node 848:14548). Keeps people in the funnel. *@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hoài</title>
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/nav.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modals.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="checkout-body">
+    <header class="checkout-nav">
+        <div class="checkout-nav__inner">
+            <a class="checkout-nav__logo" href="/" aria-label="Hoài">
+                <img src="~/images/logo.svg" alt="Hoài" width="48" height="48" />
+            </a>
+            <a class="checkout-nav__cart" href="/gio-hang" aria-label="Giỏ hàng">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M6 7h12l-1 13H7L6 7z" stroke="currentColor" stroke-width="1.5" />
+                    <path d="M9 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5" />
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

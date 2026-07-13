@@ -26,8 +26,12 @@
     </div>
     <div class="nav-main">
         <div class="nav-main-inner">
+            @* Two files rather than one recoloured by CSS: an <img>-embedded SVG doesn't
+               inherit the page's styles, so a single white logo vanished on every
+               white-background nav. *@
             <a class="nav-logo" href="/" aria-label="Hoài">
-                <img src="/images/logo.svg" alt="Hoài" width="48" height="48" />
+                <img class="nav-logo__dark" src="/images/logo.svg" alt="Hoài" width="48" height="48" />
+                <img class="nav-logo__light" src="/images/logo-white.svg" alt="" width="48" height="48" aria-hidden="true" />
             </a>
             <nav class="nav-menu" data-mega-menu-nav>
                 @foreach (var item in mainMenu)
@@ -72,7 +76,8 @@
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2"/></svg>
             </button>
             <a href="/" aria-label="Hoài">
-                <img class="nav-m-logo" src="/images/logo.svg" alt="Hoài" width="36" height="36" />
+                <img class="nav-m-logo nav-logo__dark" src="/images/logo.svg" alt="Hoài" width="36" height="36" />
+                <img class="nav-m-logo nav-logo__light" src="/images/logo-white.svg" alt="" width="36" height="36" aria-hidden="true" />
             </a>
             <div class="nav-m-icons">
                 <button class="icon-btn" type="button" aria-label="Tìm kiếm" onclick="location.href='/tim-kiem'">

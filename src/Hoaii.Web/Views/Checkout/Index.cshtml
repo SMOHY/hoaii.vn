@@ -1,6 +1,7 @@
 @model Hoaii.Web.Models.Checkout.CheckoutViewModel
 @{
     ViewData["Title"] = "Thanh toán";
+    Layout = "_CheckoutLayout";
     var cart = Model.Cart;
 }
 
@@ -89,9 +90,11 @@
             </section>
 
             <section class="checkout-section">
+                @* placeholder=" " — these are floating labels; a real placeholder would sit
+                   on top of the label text. *@
                 <div class="form-field">
-                    <label asp-for="Form.Notes">Ghi chú đơn hàng</label>
-                    <input asp-for="Form.Notes" placeholder="Thêm ghi chú đơn hàng" />
+                    <label asp-for="Form.Notes">Thêm ghi chú đơn hàng</label>
+                    <input asp-for="Form.Notes" placeholder=" " />
                 </div>
             </section>
 
@@ -109,6 +112,8 @@
         <div class="checkout-summary">
             <h2 class="checkout-summary__heading">Thanh toán</h2>
             <div class="checkout-summary__items">
+                @* Figma keeps the line editable here — stepper and remove, same as the cart
+                   (node 848:14548) — so people don't have to go back to fix a quantity. *@
                 @foreach (var item in cart.Items)
                 {
                     <div class="checkout-line">
@@ -116,6 +121,17 @@
                         <div class="checkout-line__info">
                             <div class="checkout-line__row1">
                                 <span class="checkout-line__name">@item.Name</span>
+                                <form method="post" action="/gio-hang/xoa" class="checkout-line__remove-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <input type="hidden" name="variantId" value="@item.VariantId" />
+                                    <input type="hidden" name="returnUrl" value="/thanh-toan" />
+                                    <button type="submit" class="checkout-line__remove" aria-label="Xóa @item.Name">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                            <path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13" stroke="currentColor" stroke-width="1.5" />
+                                        </svg>
+                                    </button>
+                                </form>
                             </div>
                             @if (!string.IsNullOrEmpty(item.VariantLabel))
                             {
@@ -123,8 +139,17 @@
                             }
                             <div class="checkout-line__row2">
                                 <span class="checkout-line__price">@item.UnitPrice.ToString("N0")</span>
-                                @* Parenthesised — Razor reads a bare "x@item" as an email address and emits it literally. *@
-                                <span class="checkout-line__qty">x@(item.Quantity)</span>
+                                <form method="post" action="/gio-hang/cap-nhat" class="qty-stepper-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <input type="hidden" name="variantId" value="@item.VariantId" />
+                                    <input type="hidden" name="returnUrl" value="/thanh-toan" />
+                                    <div class="qty-stepper">
+                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="qty-stepper__btn" aria-label="Giảm số lượng">−</button>
+                                        <span class="qty-stepper__value">@item.Quantity</span>
+                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="qty-stepper__btn" aria-label="Tăng số lượng">+</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

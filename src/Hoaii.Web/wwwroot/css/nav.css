@@ -1,5 +1,11 @@
 /* Nav — see design-specs/shared-layout.md for full spec */
 
+/* ---------- Logo: brand red on the white nav, white over a dark hero.
+   Ships as two SVGs because an <img>-embedded SVG can't be recoloured from the page. ---------- */
+.nav-logo__light { display: none; }
+body.hero-overlay .nav-logo__dark { display: none; }
+body.hero-overlay .nav-logo__light { display: block; }
+
 /* ---------- Overlay variant: the nav floats over a full-bleed hero.
    Set ViewData["HeroOverlay"] on the page. Used by Home and Liên hệ. ---------- */
 body.hero-overlay .nav-desktop,

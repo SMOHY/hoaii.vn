@@ -1,4 +1,13 @@
-/* Checkout page — see design-specs/checkout-and-modals.md */
+/* Checkout page — see design-specs/checkout-and-modals.md.
+   Runs on _CheckoutLayout: logo + cart only, no nav or footer (node 848:14548). */
+
+.checkout-nav { border-bottom: 1px solid var(--color-grey-300); background: #fff; }
+.checkout-nav__inner {
+  max-width: 1440px; margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.checkout-nav__logo img { display: block; width: 48px; height: 48px; }
+.checkout-nav__cart { color: #1C1C1C; display: flex; align-items: center; }
 
 .btn-checkout-primary {
   height: 60px; width: 100%; border: none; border-radius: 8px; background: var(--color-brand-red-deep);
@@ -72,11 +81,21 @@
   background-color: var(--color-grey-50); background-size: cover; background-position: center;
 }
 .checkout-line__info { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.checkout-line__row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .checkout-line__name { font: 500 16px/20px var(--font-body); color: #000; }
-.checkout-line__variant { font: 300 16px/18px var(--font-body); color: #000; }
-.checkout-line__row2 { display: flex; align-items: flex-end; justify-content: space-between; }
+.checkout-line__variant {
+  font: 300 14px/18px var(--font-body); color: #000; align-self: flex-start;
+  border: 1px solid var(--color-grey-300); border-radius: 4px; padding: 2px 8px; background: #fff;
+}
+.checkout-line__row2 { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .checkout-line__price { font: 500 20px/23px var(--font-body); color: #000; }
-.checkout-line__qty { font: 400 16px/20px var(--font-body); color: var(--color-grey-600); }
+
+.checkout-line__remove-form { display: flex; }
+.checkout-line__remove {
+  border: none; background: none; padding: 0; cursor: pointer;
+  color: var(--color-grey-600); display: flex; align-items: center;
+}
+.checkout-line__remove:hover { color: var(--color-brand-red); }
 
 .checkout-voucher-row {
   display: flex; align-items: center; justify-content: space-between; background: #fff;
