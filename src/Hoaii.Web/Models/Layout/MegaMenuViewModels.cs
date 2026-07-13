@@ -17,4 +17,7 @@ public class MegaMenuPanelViewModel
     public required string CategoryKey { get; init; } // matches the nav item's data-menu-key
     public required IReadOnlyList<MegaMenuColumnViewModel> Columns { get; init; }
     public required string SeeAllUrl { get; init; }
+
+    /// <summary>Product shot filling the right-hand half of the panel (node 923:17080).</summary>
+    public string? ImageUrl { get; init; }
 }

@@ -279,16 +279,27 @@ body.hero-overlay .nav-menu .item.is-open {
 .mega-menu__links a:hover { color: var(--color-brand-red); }
 
 .mega-menu__visual {
-  width: 554px; flex-shrink: 0; background: var(--color-grey-100);
+  position: relative; width: 554px; flex-shrink: 0;
+  background-color: var(--color-grey-100);
+  background-size: cover; background-position: center; background-repeat: no-repeat;
   display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;
   padding: 10px 10px 40px;
+  overflow: hidden;
 }
-.mega-menu__close { background: none; border: none; color: var(--color-grey-700); cursor: pointer; padding: 10px; }
+.mega-menu__close {
+  position: relative; z-index: 1;
+  background: rgba(255, 255, 255, .8); border: none; border-radius: 50%;
+  color: var(--color-grey-700); cursor: pointer; padding: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
 .mega-menu__see-all {
-  background: rgba(0, 0, 0, 0.2); color: #fff; border-radius: var(--radius-sm); padding: 4px 16px;
+  position: relative; z-index: 1;
+  background: rgba(0, 0, 0, 0.35); color: #fff; border-radius: var(--radius-sm); padding: 8px 20px;
   font-family: var(--font-body); font-weight: 700; font-size: 15px; line-height: 24px;
   letter-spacing: 0.4px; text-decoration: none; align-self: center;
+  backdrop-filter: blur(2px);
 }
+.mega-menu__see-all:hover { background: rgba(0, 0, 0, 0.55); }
 
 /* Active pill highlight — Figma's dropdown demo (923:17080) is built for the transparent/white-text
    nav variant (rgba(255,255,255,.2) highlight, reads well over a hero image); on the solid white

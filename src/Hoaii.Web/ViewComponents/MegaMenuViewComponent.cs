@@ -47,10 +47,17 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
                 .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
                 .ToList();
 
+            var panelImage = await db.ProductImages
+                .Where(i => i.Product.CategoryId == category.Id)
+                .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
+                .Select(i => i.Url)
+                .FirstOrDefaultAsync();
+
             panels.Add(new MegaMenuPanelViewModel
             {
                 CategoryKey = slug,
                 SeeAllUrl = $"/danh-muc/{slug}",
+                ImageUrl = panelImage,
                 Columns =
                 [
                     new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = bestSellers },
@@ -72,10 +79,17 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
             .ToListAsync();
 
+        var featuredImage = await db.ProductImages
+            .Where(i => i.Product.IsFeatured)
+            .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
+            .Select(i => i.Url)
+            .FirstOrDefaultAsync();
+
         panels.Add(new MegaMenuPanelViewModel
         {
             CategoryKey = "san-pham-chon-loc",
-            SeeAllUrl = "/",
+            SeeAllUrl = "/danh-muc/san-pham-chon-loc",
+            ImageUrl = featuredImage,
             Columns =
             [
                 new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = featured },

@@ -4,34 +4,47 @@
     ViewData["HeroOverlay"] = true;
 }
 
-@* Red hero with a coverflow carousel of the category's products (node 1519:33993). *@
-<section class="cat-hero" data-cat-carousel>
+@* Red hero with a coverflow carousel of the category's products (node 1519:33993).
+   With no products the carousel and its pager collapse, leaving a compact title band. *@
+@{
+    var hasSlides = Model.HeroSlides.Count > 0;
+}
+<section class="cat-hero @(hasSlides ? "" : "cat-hero--bare")" data-cat-carousel>
     <p class="cat-hero__eyebrow">@Model.HeroEyebrow</p>
 
-    <div class="cat-hero__track" data-cat-track>
-        @foreach (var slide in Model.HeroSlides)
-        {
-            <a class="cat-hero__slide" href="/san-pham/@slide.Slug" data-cat-slide data-name="@slide.Name">
-                <img src="@slide.ImageUrl" alt="@slide.Name" />
-            </a>
-        }
-    </div>
+    @if (hasSlides)
+    {
+        <div class="cat-hero__track" data-cat-track>
+            @foreach (var slide in Model.HeroSlides)
+            {
+                <a class="cat-hero__slide" href="/san-pham/@slide.Slug" data-cat-slide data-name="@slide.Name">
+                    <img src="@slide.ImageUrl" alt="@slide.Name" />
+                </a>
+            }
+        </div>
+    }
 
     <div class="cat-hero__caption">
-        <div class="cat-hero__pager">
-            <button type="button" class="cat-hero__arrow" data-cat-prev aria-label="Sản phẩm trước">
-                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
-            </button>
-            <span data-cat-counter>1/@Math.Max(Model.HeroSlides.Count, 1)</span>
-            <button type="button" class="cat-hero__arrow" data-cat-next aria-label="Sản phẩm sau">
-                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
-            </button>
-        </div>
-        <p class="cat-hero__kicker">Bộ quà 6 hộp</p>
+        @if (hasSlides)
+        {
+            <div class="cat-hero__pager">
+                <button type="button" class="cat-hero__arrow" data-cat-prev aria-label="Sản phẩm trước">
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+                <span data-cat-counter>1/@Model.HeroSlides.Count</span>
+                <button type="button" class="cat-hero__arrow" data-cat-next aria-label="Sản phẩm sau">
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+            </div>
+            <p class="cat-hero__kicker">Bộ quà 6 hộp</p>
+        }
         <h1 class="cat-hero__title" data-cat-title>@(Model.HeroSlides.FirstOrDefault()?.Name.ToUpperInvariant() ?? Model.Title.ToUpperInvariant())</h1>
     </div>
 
-    <p class="cat-hero__scroll-hint">Cuộn xuống để xem tất cả sản phẩm</p>
+    @if (hasSlides)
+    {
+        <p class="cat-hero__scroll-hint">Cuộn xuống để xem tất cả sản phẩm</p>
+    }
 </section>
 
 <div class="container cat-content">
@@ -55,9 +68,14 @@
         </div>
     </div>
 
+    @* Empty state — Figma node 1538:39514. *@
     @if (Model.Products.Count == 0)
     {
-        <p class="cat-empty">Chưa có sản phẩm nào trong danh mục này.</p>
+        <div class="cat-empty">
+            <h2 class="cat-empty__title">SẢN PHẨM ĐANG ĐƯỢC CẬP NHẬT</h2>
+            <p class="cat-empty__text">Bạn có thể xem sản phẩm khác hoặc quay lại <a href="/">trang chủ</a></p>
+            <img class="cat-empty__art" src="~/images/empty-state.png" alt="" loading="lazy" />
+        </div>
     }
     else
     {

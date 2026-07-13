@@ -19,6 +19,9 @@
   text-align: center;
 }
 
+/* No products yet — collapse to a title band instead of a tall empty red block. */
+.cat-hero--bare { min-height: 0; padding: 204px 0 80px; gap: 16px; }
+
 /* Slides scroll horizontally and bleed past both edges; the centre one is taller. */
 .cat-hero__track {
   display: flex;
@@ -132,7 +135,25 @@
   gap: 56px 24px;
   padding-bottom: 80px;
 }
-.cat-empty { color: var(--color-grey-500); padding: 40px 0 80px; }
+/* Empty category (node 1538:39514) */
+.cat-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 120px 0; text-align: center;
+}
+.cat-empty__title {
+  font-family: var(--font-display); font-size: 48px; line-height: 56px;
+  color: var(--color-grey-500); margin: 0;
+}
+.cat-empty__text { font: 500 16px/20px var(--font-body); color: var(--color-grey-600); margin: 0 0 16px; }
+.cat-empty__text a { color: var(--color-brand-red); }
+.cat-empty__art { width: 197px; height: auto; display: block; }
+
+@media (max-width: 767.98px) {
+  .cat-empty { padding: 56px 16px; }
+  .cat-empty__title { font-size: 20px; line-height: 28px; }
+  .cat-empty__text { font-size: 13px; line-height: 18px; }
+  .cat-empty__art { width: 140px; }
+}
 
 .pagination {
   display: flex; align-items: center; justify-content: center; gap: 13px; padding: 10px;
