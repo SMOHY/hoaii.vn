@@ -8,14 +8,6 @@ namespace Hoaii.Web.Controllers;
 
 public class ProductController(HoaiiDbContext db) : Controller
 {
-    // Demo color palette used until real per-product color variants are modeled.
-    private static readonly ColorOptionViewModel[] DemoColors =
-    [
-        new() { Name = "đỏ", Hex = "#870000" },
-        new() { Name = "vàng", Hex = "#AA8656" },
-        new() { Name = "xanh", Hex = "#00488C" },
-    ];
-
     public async Task<IActionResult> Details(string slug)
     {
         var product = await db.Products
@@ -45,8 +37,12 @@ public class ProductController(HoaiiDbContext db) : Controller
         CollectionSectionViewModel? collection = null;
         if (product.IsFeatured)
         {
+            // Figma always draws three tiles here (node 826:20798). Featured siblings come
+            // first; the rest of the category fills the row so it never renders half-empty.
             var collectionItems = await db.Products
-                .Where(p => p.CategoryId == product.CategoryId && p.IsFeatured && p.Id != product.Id)
+                .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
+                .OrderByDescending(p => p.IsFeatured)
+                .ThenBy(p => p.Id)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)
                 .Take(3)
@@ -71,7 +67,6 @@ public class ProductController(HoaiiDbContext db) : Controller
             Price = product.Price,
             BreadcrumbLabel = $"Trang chủ/{product.Category.Name}",
             GalleryImages = galleryImages,
-            ColorOptions = DemoColors,
             BoxOptions = product.Variants
                 .Select(v => new BoxOptionViewModel { Id = v.Id, Label = v.Name })
                 .ToList(),

@@ -12,7 +12,7 @@ public class ProductDetailsViewModel
 
     public required IReadOnlyList<string?> GalleryImages { get; init; } // null entries render as placeholder tiles
 
-    public required IReadOnlyList<ColorOptionViewModel> ColorOptions { get; init; }
+    // No colour axis: Figma ships the colour picker hidden (node 826:20630).
     public required IReadOnlyList<BoxOptionViewModel> BoxOptions { get; init; }
 
     public required string Ingredients { get; init; }
@@ -27,12 +27,6 @@ public class ProductDetailsViewModel
 
     public CollectionSectionViewModel? Collection { get; init; }
     public required IReadOnlyList<ProductCardViewModel> RelatedProducts { get; init; }
-}
-
-public class ColorOptionViewModel
-{
-    public required string Name { get; init; }
-    public required string Hex { get; init; }
 }
 
 public class BoxOptionViewModel

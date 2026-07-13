@@ -1,18 +1,20 @@
 /* Product Detail Page — see design-specs/product-detail.md */
 
 .pdp-breadcrumb {
-  padding: 24px 240px 0;
+  padding: 32px 240px 0;
   font: 500 16px/20px var(--font-body);
   color: #1C1C1C;
 }
 .pdp-breadcrumb__current { color: var(--color-grey-500); }
 
-/* ---------- Main Product Info ---------- */
+/* ---------- Main Product Info ----------
+   Figma centres the 646 + 84 + 466 pair rather than pinning it to the 240px page
+   gutter, so the gallery starts at x=362 (node 826:20673). */
 .pdp-main {
   display: flex;
-  justify-content: space-between;
-  gap: 40px;
-  padding: 40px 240px 80px;
+  justify-content: center;
+  gap: 84px;
+  padding: 40px 24px 80px;
   background: #fff;
   flex-wrap: wrap;
 }
@@ -30,20 +32,16 @@
 .pdp-gallery__thumb.active { background-color: #9B9B9B; }
 .pdp-dots { display: none; align-items: center; justify-content: center; gap: 8px; }
 
-.pdp-info { width: 466px; max-width: 100%; display: flex; flex-direction: column; gap: 40px; }
+/* Each block sets its own top margin: Figma's rhythm here is 48 / 40 / 24 / 36,
+   not one uniform gap (node 826:20671). */
+.pdp-info { width: 466px; max-width: 100%; display: flex; flex-direction: column; }
 .pdp-title-block { display: flex; flex-direction: column; gap: 16px; }
-.pdp-title { font: 600 24px/32px var(--font-body); color: #1C1C1C; margin: 0; }
-.pdp-price { font: 500 20px/23px var(--font-body); color: var(--color-text-default); margin: 0; }
+.pdp-title { font: 600 24px/32px var(--font-body); color: var(--color-black); margin: 0; }
+.pdp-price { font: 500 20px/23px var(--font-body); color: var(--color-black); margin: 0; }
+.pdp-price-note { font: 300 16px/18px var(--font-body); color: var(--color-brand-red); margin: 0; }
 
-.pdp-option-group { display: flex; flex-direction: column; gap: 16px; }
-.pdp-option-label { font: 500 16px/20px var(--font-body); color: var(--color-text-default); }
-
-.pdp-swatches { display: flex; gap: 16px; }
-.pdp-swatch {
-  width: 32px; height: 32px; border-radius: 3px; border: 0.8px solid #303030; cursor: pointer; padding: 4px;
-  background-clip: content-box;
-}
-.pdp-swatch.selected { border: 0.8px solid var(--color-grey-500); box-shadow: 0 0 0 1px var(--color-grey-500); }
+.pdp-option-group { display: flex; flex-direction: column; gap: 16px; margin-top: 48px; }
+.pdp-option-label { font: 500 16px/20px var(--font-body); color: var(--color-black); }
 
 .pdp-box-options { display: flex; gap: 16px; flex-wrap: wrap; }
 .pdp-box-option {
@@ -53,7 +51,7 @@
 }
 .pdp-box-option.selected { border-color: var(--color-grey-600); }
 
-.pdp-qty-share-row { display: flex; align-items: center; justify-content: space-between; }
+.pdp-qty-share-row { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; }
 .pdp-qty-stepper { display: flex; align-items: center; gap: 8px; }
 .pdp-qty-stepper__btn {
   width: 60px; height: 45px; border-radius: 7.5px; border: 1.86px solid #DCDCDC;
@@ -62,7 +60,7 @@
 .pdp-qty-stepper__value { font: 500 24px/32px var(--font-body); width: 48px; text-align: center; display: inline-block; }
 .pdp-share-btn { width: 40px; height: 40px; border: none; background: none; color: #1C1C1C; cursor: pointer; }
 
-.pdp-cta-group { display: flex; flex-direction: column; gap: 16px; }
+.pdp-cta-group { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
 .pdp-cta-group form { display: contents; }
 .pdp-cta-primary, .pdp-cta-secondary {
   height: 56px; border-radius: var(--radius-sm); border: none; cursor: pointer;
@@ -71,13 +69,16 @@
 .pdp-cta-primary { background: var(--color-brand-red-deep); color: #fff; }
 .pdp-cta-secondary { background: var(--color-brand-red-tint); color: var(--color-brand-red-deep); }
 
-.pdp-ingredients { border-top: 1px solid var(--color-grey-500); padding: 36px 0; display: flex; flex-direction: column; gap: 13px; }
+.pdp-ingredients {
+  border-top: 1px solid var(--color-grey-500); margin-top: 36px; padding: 36px 0;
+  display: flex; flex-direction: column; gap: 13px;
+}
 .pdp-ingredients__label { font: 500 16px/20px var(--font-body); margin: 0; }
 .pdp-ingredients__body { font: 300 16px/18px var(--font-body); margin: 0; color: var(--color-grey-700); }
 
 @media (max-width: 767.98px) {
-  .pdp-breadcrumb { padding: 16px 16px 0; font: 400 13px/16px var(--font-body); }
-  .pdp-main { padding: 20px 16px 0; flex-direction: column; }
+  .pdp-breadcrumb { padding: 8px 16px 0; font: 400 13px/16px var(--font-body); }
+  .pdp-main { padding: 20px 16px 0; flex-direction: column; gap: 0; }
   .pdp-gallery { width: 100%; gap: 8px; }
   .pdp-gallery__main { width: 100%; height: 460px; }
   .pdp-gallery__thumbs { display: none; }
@@ -85,48 +86,54 @@
   .pdp-dot { width: 6px; height: 6px; border-radius: 20px; background: #DCDCDC; cursor: pointer; border: none; padding: 0; }
   .pdp-dot.active { width: 8px; height: 8px; border-radius: 23px; background: #9B9B9B; }
 
-  .pdp-info { width: 100%; gap: 16px; padding: 16px 0 0; }
-  .pdp-title-block { flex-direction: row; justify-content: space-between; gap: 4px; }
+  .pdp-info { width: 100%; margin-top: 20px; }
+  /* Name over price, and no VAT line — mobile drops it (node 1142:25714). */
+  .pdp-title-block { gap: 4px; }
   .pdp-title, .pdp-price { font: 500 16px/20px var(--font-body); }
-  .pdp-swatch { width: 24px; height: 24px; border-width: 0.6px; }
+  .pdp-price-note { display: none; }
+  .pdp-option-group { margin-top: 16px; gap: 8px; }
   .pdp-box-option { width: auto; padding: 8px 16px; font: 400 13px/16px var(--font-body); height: auto; }
+  .pdp-qty-share-row { margin-top: 16px; }
   .pdp-qty-stepper__btn { width: 53.3px; height: 40px; border-radius: 6.7px; border-width: 1.67px; }
   .pdp-qty-stepper__value { font-size: 14.3px; }
   .pdp-share-btn { width: 32px; height: 32px; }
   .pdp-cta-primary, .pdp-cta-secondary { height: 52px; font: 400 13px/16px var(--font-body); }
-  .pdp-ingredients { padding: 16px 0 20px; }
+  .pdp-ingredients { margin-top: 16px; padding: 16px 0 20px; }
 }
 
 /* ---------- Product Story ---------- */
 .pdp-story { background: #fff; padding: 80px 0; }
-.pdp-story__container { max-width: 1440px; margin: 0 auto; padding: 0 240px; }
+/* 1920 wide with a 240px gutter leaves the 1440px band Figma lays this out in; capping
+   the box at 1440 instead would squeeze the copy column down to 960. */
+.pdp-story__container { max-width: 1920px; margin: 0 auto; padding: 0 240px; }
 .pdp-story__row1 { display: flex; gap: 120px; align-items: flex-start; }
 .pdp-story__image {
   width: 599px; height: 561px; border-radius: 8px; flex-shrink: 0;
   background-color: var(--color-grey-300); background-size: cover; background-position: center;
 }
 .pdp-story__text { width: 702px; }
-.pdp-story__text h2 { font: 500 32px/40px var(--font-body); margin: 0 0 40px; color: var(--color-black); }
-.pdp-story__text p { font: 300 16px/1.5 var(--font-body); color: var(--color-grey-700); margin: 0; }
-.pdp-story__motif { display: block; width: 100%; max-width: 701px; height: auto; margin-top: 40px; }
+.pdp-story__text h2 { font: 500 32px/40px var(--font-body); margin: 0 0 96px; color: var(--color-brand-red); }
+.pdp-story__text p { font: 300 16px/18px var(--font-body); color: var(--color-grey-900); margin: 0; }
+.pdp-story__motif { display: block; width: 100%; max-width: 701px; height: auto; margin-top: 96px; }
 
-.pdp-story__row2 { display: flex; justify-content: space-between; margin-top: 80px; gap: 40px; }
-.pdp-story__row2 .text { width: 894px; padding-left: 80px; }
-.pdp-story__row2 .text h2 { font: 500 32px/40px var(--font-body); margin: 0 0 24px; }
-/* pre-line — the dimensions list is newline-separated (node 826:13881). */
-.pdp-story__row2 .text p { font: 400 16px/1.6 var(--font-body); color: var(--color-grey-700); margin: 0; white-space: pre-line; }
+.pdp-story__row2 { display: flex; justify-content: space-between; margin-top: 80px; gap: 80px; }
+.pdp-story__row2 .text { flex: 1 1 0; min-width: 0; padding-left: 80px; }
+.pdp-story__row2 .text h2 { font: 500 32px/40px var(--font-body); color: var(--color-brand-red); margin: 0 0 24px; }
+.pdp-feature-body { font: 300 16px/18px var(--font-body); color: var(--color-grey-900); }
+.pdp-feature-body p { margin: 0; }
+.pdp-feature-body ul { margin: 0; padding-left: 24px; list-style: disc; }
 .pdp-story__row2 .image {
   width: 466px; height: 380px; border-radius: 8px; flex-shrink: 0;
   background-color: var(--color-grey-300); background-size: cover; background-position: center;
 }
 
 @media (max-width: 767.98px) {
-  .pdp-story { padding: 20px 16px; }
+  .pdp-story { padding: 40px 16px; }
   .pdp-story__container { padding: 0; }
   .pdp-story__row1 { flex-direction: column; gap: 0; }
   .pdp-story__text { width: 100%; order: 1; }
   .pdp-story__text h2 { font: 500 20px/23px var(--font-body); margin-bottom: 8px; }
-  .pdp-story__motif { margin-top: 16px; }
+  .pdp-story__motif { margin-top: 8px; }
   .pdp-story__image { width: 100%; height: 410px; order: 2; margin-top: 20px; }
   .pdp-story__row2 { flex-direction: column; margin-top: 20px; gap: 0; }
   .pdp-story__row2 .text { width: 100%; padding-left: 0; }
@@ -139,15 +146,14 @@
 .pdp-collection__header { text-align: center; max-width: 577px; margin: 0 auto 40px; display: flex; flex-direction: column; gap: 16px; }
 .pdp-collection__eyebrow { font: 500 20px/23px var(--font-body); margin: 0; }
 .pdp-collection__title { font: 400 48px/56px var(--font-display); margin: 0; }
-.pdp-collection__grid { display: flex; gap: 24px; flex-wrap: wrap; }
-.pdp-collection__grid .product-card { flex: 1 1 0; min-width: 280px; }
+/* Three fixed columns: with flex a lone item stretched to the full 1440px band. */
+.pdp-collection__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 
 @media (max-width: 767.98px) {
-  .pdp-collection { padding: 20px 16px; }
+  .pdp-collection { padding: 40px 16px; }
   .pdp-collection__header { gap: 4px; margin-bottom: 20px; }
   .pdp-collection__title { font-size: 20px; line-height: 32px; }
-  .pdp-collection__grid { flex-direction: column; gap: 24px; }
-  .pdp-collection__grid .product-card { min-width: 0; }
+  .pdp-collection__grid { grid-template-columns: 1fr; gap: 24px; }
 }
 
 /* ---------- Related Products ---------- */
@@ -156,7 +162,13 @@
 .pdp-related__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
 @media (max-width: 767.98px) {
-  .pdp-related { padding: 20px 16px; }
-  .pdp-related__title { font-size: 20px; line-height: 32px; margin-bottom: 20px; }
-  .pdp-related__grid { grid-template-columns: 1fr 1fr; gap: 8px 8px; row-gap: 16px; }
+  .pdp-related { padding: 40px 16px; }
+  .pdp-related__title { font-size: 24px; line-height: 32px; margin-bottom: 16px; }
+  .pdp-related__grid { grid-template-columns: 1fr 1fr; gap: 16px 8px; }
+  /* Two-up tiles are half-width, so the shot has to scale with them rather than keep
+     the 470px height the full-width catalogue card uses (node 1142:32227). */
+  .pdp-related .product-card__image { height: auto; aspect-ratio: 203 / 270; }
+  .pdp-collection .product-card__image { height: 442px; }
+  .pdp-related .product-card__name { font: 500 20px/23px var(--font-body); }
+  .pdp-related .product-card__price { font: 500 16px/20px var(--font-body); }
 }

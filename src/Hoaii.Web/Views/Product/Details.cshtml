@@ -35,22 +35,12 @@
     <div class="pdp-info">
         <div class="pdp-title-block">
             <h1 class="pdp-title">@Model.Name.ToUpperInvariant()</h1>
-            <p class="pdp-price">@Model.Price.ToString("N0") đ</p>
+            <p class="pdp-price">@Model.Price.ToString("N0") VNĐ</p>
+            <p class="pdp-price-note">(Giá chưa bao gồm 8% VAT)</p>
         </div>
 
-        @if (Model.ColorOptions.Count > 0)
-        {
-            <div class="pdp-option-group">
-                <span class="pdp-option-label">MÀU SẮC : <span id="pdp-selected-color">@Model.ColorOptions[0].Name</span></span>
-                <div class="pdp-swatches">
-                    @for (var i = 0; i < Model.ColorOptions.Count; i++)
-                    {
-                        var c = Model.ColorOptions[i];
-                        <button type="button" class="pdp-swatch @(i == 0 ? "selected" : "")" style="background-color:@c.Hex" data-color-name="@c.Name" aria-label="Màu @c.Name"></button>
-                    }
-                </div>
-            </div>
-        }
+        @* Figma keeps a colour picker in the file but ships it hidden (node 826:20630),
+           so the only variant axis on the page is the box size. *@
 
         @if (Model.BoxOptions.Count > 0)
         {
@@ -108,9 +98,28 @@
             </div>
         </div>
         <div class="pdp-story__row2">
+            @{
+                // Figma renders the first line as a lead-in and the dimensions under it as a
+                // bulleted list (node 826:13881).
+                var featureLines = Model.FeatureBody.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            }
             <div class="text">
                 <h2>@Model.FeatureTitle</h2>
-                <p>@Model.FeatureBody</p>
+                @if (featureLines.Length > 0)
+                {
+                    <div class="pdp-feature-body">
+                        <p>@featureLines[0]</p>
+                        @if (featureLines.Length > 1)
+                        {
+                            <ul>
+                                @foreach (var line in featureLines.Skip(1))
+                                {
+                                    <li>@line</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
             </div>
             <div class="image" style="@(Model.FeatureImageUrl is not null ? $"background-image:url('{Model.FeatureImageUrl}')" : "")"></div>
         </div>
@@ -136,7 +145,7 @@
 @if (Model.RelatedProducts.Count > 0)
 {
     <section class="pdp-related">
-        <h2 class="pdp-related__title">SẢN PHẨM TƯƠNG TỰ</h2>
+        <h2 class="pdp-related__title">SẢN PHẨM LIÊN QUAN</h2>
         <div class="pdp-related__grid">
             @foreach (var item in Model.RelatedProducts)
             {

@@ -20,18 +20,6 @@
     dot.addEventListener('click', function () { setActiveGalleryIndex(index); });
   });
 
-  // Color swatch selection
-  var swatches = document.querySelectorAll('.pdp-swatch');
-  var selectedColorLabel = document.getElementById('pdp-selected-color');
-  swatches.forEach(function (swatch) {
-    swatch.addEventListener('click', function () {
-      swatches.forEach(function (s) { s.classList.remove('selected'); });
-      swatch.classList.add('selected');
-      if (selectedColorLabel) {
-        selectedColorLabel.textContent = swatch.getAttribute('data-color-name') || '';
-      }
-    });
-  });
 
   // Box type selection — keep the hidden variantId input (posted to /gio-hang/them) in sync.
   var boxOptions = document.querySelectorAll('.pdp-box-option');

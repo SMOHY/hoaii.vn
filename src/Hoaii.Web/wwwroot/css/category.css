@@ -257,8 +257,12 @@
 
 .product-card--out-of-stock .product-card__image { opacity: 0.6; }
 
+/* The PDP's two card variants drop the swatch row (nodes 826:20692 / 826:21046), which
+   is what makes them 656px and 520px tall rather than the catalogue card's 686px. */
+.product-card--collection .product-card__swatches,
+.product-card--related .product-card__swatches { display: none; }
 .product-card--related .product-card__name { font: 600 24px/32px var(--font-body); }
-.product-card--related .product-card__price { margin-top: 0; }
+.product-card--related .product-card__price { font: 500 24px/32px var(--font-body); margin-top: 0; }
 
 /* Collection cross-sell / Related products variants (used on the Product Detail page) —
    on desktop the floating pill overlaps the bottom edge of the image instead of sitting inset.
@@ -272,7 +276,8 @@
   .product-card--related .product-card__add-to-cart {
     left: auto; right: 24px; bottom: -30px; width: auto; padding: 0 16px;
   }
-  .product-card--related .product-card__image { height: 488px; }
+  /* 428 + 20 gap + 72 of copy = the 520px tile Figma draws (node 826:21046). */
+  .product-card--related .product-card__image { height: 428px; }
 }
 
 @media (max-width: 767.98px) {
