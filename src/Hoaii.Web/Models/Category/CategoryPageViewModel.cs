@@ -4,12 +4,27 @@ public class CategoryPageViewModel
 {
     public required string Title { get; init; }
     public required string BreadcrumbLabel { get; init; }
-    public string? HeroImageUrl { get; init; }
     public required string Description { get; init; }
     public required IReadOnlyList<ProductCardViewModel> Products { get; init; }
     public int CurrentPage { get; init; } = 1;
     public int TotalPages { get; init; } = 1;
     public required PromoBannerViewModel Promo { get; init; }
+
+    /// <summary>Slides for the red hero carousel (node 1519:33997) — the category's products.</summary>
+    public required IReadOnlyList<HeroSlideViewModel> HeroSlides { get; init; }
+
+    /// <summary>Eyebrow above the hero carousel, e.g. "Quà tết đặc sắc".</summary>
+    public required string HeroEyebrow { get; init; }
+}
+
+public class HeroSlideViewModel
+{
+    public required string ImageUrl { get; init; }
+    public required string Name { get; init; }
+    public required string Slug { get; init; }
+
+    /// <summary>Caption under the carousel, e.g. "Bộ quà 6 hộp".</summary>
+    public string Caption { get; init; } = "Bộ quà 6 hộp";
 }
 
 public class ProductCardViewModel

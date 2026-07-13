@@ -1,12 +1,37 @@
 @model Hoaii.Web.Models.Category.CategoryPageViewModel
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["HeroOverlay"] = true;
 }
 
-<section class="cat-hero-wrap">
-    <div class="cat-hero" style="@(Model.HeroImageUrl is not null ? $"background-image:url('{Model.HeroImageUrl}')" : "")">
-        <h1 class="cat-hero__title">@Model.Title.ToUpperInvariant()</h1>
+@* Red hero with a coverflow carousel of the category's products (node 1519:33993). *@
+<section class="cat-hero" data-cat-carousel>
+    <p class="cat-hero__eyebrow">@Model.HeroEyebrow</p>
+
+    <div class="cat-hero__track" data-cat-track>
+        @foreach (var slide in Model.HeroSlides)
+        {
+            <a class="cat-hero__slide" href="/san-pham/@slide.Slug" data-cat-slide data-name="@slide.Name">
+                <img src="@slide.ImageUrl" alt="@slide.Name" />
+            </a>
+        }
     </div>
+
+    <div class="cat-hero__caption">
+        <div class="cat-hero__pager">
+            <button type="button" class="cat-hero__arrow" data-cat-prev aria-label="Sản phẩm trước">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+            <span data-cat-counter>1/@Math.Max(Model.HeroSlides.Count, 1)</span>
+            <button type="button" class="cat-hero__arrow" data-cat-next aria-label="Sản phẩm sau">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+        </div>
+        <p class="cat-hero__kicker">Bộ quà 6 hộp</p>
+        <h1 class="cat-hero__title" data-cat-title>@(Model.HeroSlides.FirstOrDefault()?.Name.ToUpperInvariant() ?? Model.Title.ToUpperInvariant())</h1>
+    </div>
+
+    <p class="cat-hero__scroll-hint">Cuộn xuống để xem tất cả sản phẩm</p>
 </section>
 
 <div class="container cat-content">
@@ -60,20 +85,24 @@
     }
 </div>
 
+@* Artist collaboration banner (node 1519:34045). *@
 <section class="promo-banner">
     <div class="promo-banner__text">
         <p class="promo-banner__eyebrow">@Model.Promo.Eyebrow</p>
         <p class="promo-banner__title">@Model.Promo.Title</p>
         <a href="@Model.Promo.CtaUrl" class="promo-banner__cta">@Model.Promo.CtaText</a>
     </div>
-    <div class="promo-banner__image" style="@(Model.Promo.ImageUrl is not null ? $"background-image:url('{Model.Promo.ImageUrl}')" : "")">
-        <button type="button" class="product-card__add-to-cart promo-banner__add-to-cart" aria-label="Thêm vào giỏ">
-            <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 6v16M6 14h16" stroke="currentColor" stroke-width="2"/></svg>
-            <span class="cta-label">Thêm vào giỏ</span>
-        </button>
-    </div>
+    @if (Model.Promo.ImageUrl is not null)
+    {
+        <div class="promo-banner__image">
+            <img src="@Model.Promo.ImageUrl" alt="@Model.Promo.Eyebrow" loading="lazy" />
+        </div>
+    }
 </section>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/category.js" asp-append-version="true"></script>
 }

@@ -34,20 +34,37 @@ public class CategoryController(HoaiiDbContext db) : Controller
             .Take(PageSize)
             .ToListAsync();
 
+        // The hero carousel shows the category's own products, not a separate asset set.
+        var heroSlides = await db.Products
+            .Where(p => p.CategoryId == category.Id && p.Images.Any())
+            .Include(p => p.Images)
+            .OrderBy(p => p.Id)
+            .Take(6)
+            .Select(p => new HeroSlideViewModel
+            {
+                ImageUrl = p.Images.OrderBy(i => i.SortOrder).First().Url,
+                Name = p.Name,
+                Slug = p.Slug,
+            })
+            .ToListAsync();
+
         var model = new CategoryPageViewModel
         {
             Title = category.Name,
             BreadcrumbLabel = $"Trang chủ/{category.Name}",
-            Description = $"Khám phá bộ sưu tập {category.Name.ToLowerInvariant()} được HOÀI tuyển chọn kỹ lưỡng.",
+            Description = $"Mỗi sản phẩm quà tặng đều mang một câu chuyện riêng",
             Products = products.Select(p => ProductCardMapper.Map(p)).ToList(),
             CurrentPage = page,
             TotalPages = totalPages,
+            HeroEyebrow = $"{category.Name} đặc sắc",
+            HeroSlides = heroSlides,
             Promo = new PromoBannerViewModel
             {
-                Eyebrow = "Sản phẩm giới hạn",
-                Title = $"Bộ sưu tập {category.Name} phiên bản đặc biệt, số lượng có hạn trong dịp này.",
+                Eyebrow = "Hoài x Họa sĩ Lương Bình",
+                Title = "Bộ sưu tập được vẽ tay bởi họa sĩ Lương Bình — mỗi nét vẽ là một lát cắt văn hóa, mang câu chuyện di sản vào từng món quà.",
                 CtaText = "Mua ngay",
-                CtaUrl = "#",
+                CtaUrl = "/danh-muc/qua-tet",
+                ImageUrl = "/images/category/promo-artist.jpg",
             },
         };
 
