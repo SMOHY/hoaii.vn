@@ -1,0 +1,37 @@
+@model Hoaii.Web.Models.Cart.CartItemViewModel
+@* Reusable cart line — shared by the full Cart page and the mini-cart drawer. See design-specs/cart-and-minicart.md *@
+<div class="cart-item">
+    <div class="cart-item__thumb" style="@(Model.ThumbnailUrl is not null ? $"background-image:url('{Model.ThumbnailUrl}')" : "")"></div>
+    <div class="cart-item__info">
+        <div class="cart-item__row1">
+            <a href="/san-pham/@Model.Slug" class="cart-item__name">@Model.Name</a>
+            <form method="post" action="/gio-hang/xoa" class="cart-item__remove-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="variantId" value="@Model.VariantId" />
+                <input type="hidden" name="returnUrl" value="/gio-hang" />
+                <button type="submit" class="cart-item__remove" aria-label="Xóa sản phẩm">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+            </form>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.VariantLabel))
+        {
+            <p class="cart-item__variant">@Model.VariantLabel</p>
+        }
+        <div class="cart-item__row2">
+            <form method="post" action="/gio-hang/cap-nhat" class="qty-stepper-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="variantId" value="@Model.VariantId" />
+                <input type="hidden" name="returnUrl" value="/gio-hang" />
+                <div class="qty-stepper">
+                    <button type="submit" name="quantity" value="@(Model.Quantity - 1)" class="qty-stepper__btn" aria-label="Giảm số lượng">−</button>
+                    <span class="qty-stepper__value">@Model.Quantity</span>
+                    <button type="submit" name="quantity" value="@(Model.Quantity + 1)" class="qty-stepper__btn" aria-label="Tăng số lượng">+</button>
+                </div>
+            </form>
+            <p class="cart-item__price">@Model.UnitPrice.ToString("N0")đ</p>
+        </div>
+    </div>
+</div>

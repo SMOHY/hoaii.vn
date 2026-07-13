@@ -1,0 +1,24 @@
+@model IReadOnlyList<string>
+@* Khách hàng — see design-specs/home/03-about-and-customers.md *@
+<section class="customers-section">
+    <h2 class="customers-heading">KHÁCH HÀNG CỦA CHÚNG TÔI</h2>
+    <div class="customers-marquee">
+        @for (var row = 0; row < 3; row++)
+        {
+            <div class="customers-row">
+                <div class="customers-track">
+                    @* Render the logo list twice back-to-back for a seamless marquee loop. *@
+                    @for (var pass = 0; pass < 2; pass++)
+                    {
+                        @foreach (var logo in Model)
+                        {
+                            <div class="logo-card">
+                                <img src="/images/customers/@(logo).png" alt="@logo" loading="lazy" />
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>

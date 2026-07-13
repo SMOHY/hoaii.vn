@@ -1,0 +1,32 @@
+@model IReadOnlyList<Hoaii.Web.Models.Layout.MegaMenuPanelViewModel>
+@* Mega-menu dropdowns — see Figma node 923:17080 ("Nav desktop", Property1=Quà tết/Quà trung thu/...) *@
+<div class="mega-menu-wrap">
+    @foreach (var panel in Model)
+    {
+        <div class="mega-menu" data-menu-panel="@panel.CategoryKey" aria-hidden="true">
+            <div class="mega-menu__columns">
+                @foreach (var column in panel.Columns)
+                {
+                    @if (column.Links.Count > 0)
+                    {
+                        <div class="mega-menu__column">
+                            <p class="mega-menu__column-title">@column.Title</p>
+                            <ul class="mega-menu__links">
+                                @foreach (var link in column.Links)
+                                {
+                                    <li><a href="@link.Url">@link.Label</a></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="mega-menu__visual">
+                <button type="button" class="mega-menu__close" data-menu-close aria-label="Đóng">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+                <a href="@panel.SeeAllUrl" class="mega-menu__see-all">Xem tất cả</a>
+            </div>
+        </div>
+    }
+</div>

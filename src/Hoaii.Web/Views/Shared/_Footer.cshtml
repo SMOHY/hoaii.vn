@@ -1,0 +1,56 @@
+@using Hoaii.Web.Models.Layout
+@{
+    var footer = LayoutData.Footer;
+}
+
+<footer class="footer">
+    <div class="footer-newsletter">
+        <h2>ĐĂNG KÝ VÀO DANH SÁCH</h2>
+        <p>Bên trong có gì? Bộ sưu tập mới, ưu đãi độc quyền,nguồn cảm hứng và nhiều hơn nữa</p>
+        <form class="footer-signup" method="post" action="/newsletter/subscribe">
+            <input type="email" name="email" placeholder="Nhập email của bạn" required />
+            <button type="submit">Gửi</button>
+        </form>
+    </div>
+
+    <div class="footer-links-section">
+        <div class="footer-links-row">
+            <div class="footer-brand">
+                <img class="logo" src="/images/logo.svg" alt="Hoài" />
+                <div class="footer-brand-info">
+                    <span>Công ty TNHH MTV Hoài</span>
+                    <span>Địa chỉ : 945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội</span>
+                    <a href="https://masothue.com" target="_blank" rel="noopener">MST : 0101287214</a>
+                </div>
+            </div>
+
+            @foreach (var column in footer.Columns)
+            {
+                <div class="footer-col">
+                    <h3>@column.Title</h3>
+                    <ul>
+                        @foreach (var link in column.Links)
+                        {
+                            <li><a href="@link.Url">@link.Label</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="footer-social">
+                <h3>SOCIAL</h3>
+                <div class="icons-row">
+                    @foreach (var social in footer.SocialLinks)
+                    {
+                        <a class="icon-btn" href="@social.Url" target="_blank" rel="noopener" aria-label="@social.Name">
+                            <img src="@social.IconPath" alt="@social.Name" width="24" height="24" />
+                        </a>
+                    }
+                </div>
+                <div class="footer-badge">
+                    <img src="/images/bo-cong-thuong-badge.svg" alt="Đã thông báo Bộ Công Thương" />
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,42 @@
+@model Hoaii.Web.Models.Account.VerifyOtpViewModel
+@{
+    ViewData["Title"] = "Xác thực OTP";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-card otp-card" data-resend-after="24">
+    <p class="otp-title">Nhập mã xác thực</p>
+    <div class="otp-subtitle-block">
+        <p class="otp-subtitle">Vui lòng nhập mã xác thực gửi qua email</p>
+        <p class="otp-email">@Model.Email</p>
+    </div>
+
+    <form method="post" asp-action="VerifyOtp">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Email" />
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="text" asp-for="Code" class="otp-input" placeholder="Nhập mã xác thực"
+               inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" autofocus />
+        @if (Model.Error is not null)
+        {
+            <p class="form-field__error">@Model.Error</p>
+        }
+
+        <button type="submit" class="btn-primary">Xác nhận</button>
+    </form>
+
+    <div class="otp-resend-row">
+        <span class="prompt">Chưa nhận được mã xác thực?</span>
+        <span class="timer" data-otp-timer>Gửi lại sau 00:24</span>
+        <form method="post" asp-action="ResendOtp" asp-route-email="@Model.Email" asp-route-returnUrl="@Model.ReturnUrl" data-resend-form hidden>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="resend-link">Gửi lại mã</button>
+        </form>
+    </div>
+
+    <a href="/tai-khoan/dang-nhap" class="otp-back-link">Quay lại</a>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth.js" asp-append-version="true"></script>
+}

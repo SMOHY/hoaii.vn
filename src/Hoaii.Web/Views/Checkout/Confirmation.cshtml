@@ -1,0 +1,13 @@
+@model Hoaii.Web.Models.Checkout.OrderConfirmationViewModel
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container" style="padding: 80px 24px; text-align: center; max-width: 640px;">
+    <h1 style="font-family:var(--font-display); font-size:40px; color:var(--color-brand-red);">Đặt hàng thành công!</h1>
+    <p style="margin-top:16px;">Cảm ơn bạn đã đặt hàng tại HOÀI. Mã đơn hàng của bạn là:</p>
+    <p style="font-size:24px; font-weight:600; margin-top:8px;">@Model.OrderNumber</p>
+    <p style="margin-top:16px;">Tổng thanh toán: <strong>@Model.Total.ToString("N0")đ</strong></p>
+    <p style="margin-top:8px; color:var(--color-grey-600);">Chúng tôi sẽ gửi thông tin xác nhận đơn hàng đến email <strong>@Model.Email</strong>.</p>
+    <a href="/" style="display:inline-block; margin-top:32px; padding:12px 24px; background:var(--color-brand-red-deep); color:#fff; border-radius:4px; text-decoration:none;">Về trang chủ</a>
+</div>

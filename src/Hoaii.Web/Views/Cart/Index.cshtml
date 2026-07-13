@@ -1,0 +1,55 @@
+@model Hoaii.Web.Models.Cart.CartViewModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="cart-breadcrumb">
+    <span>Trang chủ/</span><span class="cart-breadcrumb__current">Giỏ hàng</span>
+</div>
+
+<div class="cart-page">
+    @if (Model.Items.Count == 0)
+    {
+        <div class="cart-panel cart-panel--empty">
+            <p>Giỏ hàng của bạn đang trống.</p>
+            <a href="/" class="cart-empty__cta">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-panel">
+            <div class="cart-panel__items">
+                @foreach (var item in Model.Items)
+                {
+                    <partial name="_CartItemRow" model="item" />
+                }
+            </div>
+
+            @if (Model.AddOnSuggestions.Count > 0)
+            {
+                <div class="cart-addons">
+                    <p class="cart-addons__heading">HOÀN CHỈNH VỚI</p>
+                    <div class="cart-addons__list">
+                        @foreach (var addOn in Model.AddOnSuggestions)
+                        {
+                            <partial name="_CartAddOnRow" model="addOn" />
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="cart-discount">
+                <span>Giảm giá</span>
+                <span class="cart-discount__value">@Model.Discount.ToString("N0")đ</span>
+            </div>
+
+            <div class="cart-summary">
+                <div class="cart-summary__totals">
+                    <span class="cart-summary__label">Tổng cộng</span>
+                    <span class="cart-summary__amount">@Model.Total.ToString("N0")đ</span>
+                </div>
+                <a href="/thanh-toan" class="cart-summary__checkout">Thanh toán</a>
+            </div>
+        </div>
+    }
+</div>

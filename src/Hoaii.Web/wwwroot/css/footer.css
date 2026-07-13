@@ -1,0 +1,177 @@
+/* Footer — see design-specs/shared-layout.md for full spec */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  padding-top: 80px;
+  background: var(--color-white);
+}
+
+.footer-newsletter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  text-align: center;
+  padding: 0 16px;
+}
+.footer-newsletter h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 56px;
+  color: var(--color-black);
+}
+.footer-newsletter p {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--color-text-default);
+}
+.footer-signup {
+  border: 1px solid var(--color-grey-400);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 560px;
+  width: 100%;
+}
+.footer-signup input {
+  border: none;
+  outline: none;
+  padding: 0 16px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  color: var(--color-grey-500);
+  flex: 1;
+  min-width: 0;
+}
+.footer-signup button {
+  background: var(--color-brand-red-deep);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 24px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  white-space: nowrap;
+}
+
+.footer-links-section {
+  background: var(--color-brand-gold-bg);
+  width: 100%;
+  padding: 80px 240px 120px;
+  display: flex;
+  justify-content: center;
+}
+.footer-links-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  max-width: var(--content-max-width);
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.footer-brand img.logo { width: 114px; height: 114px; }
+.footer-brand-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 284px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-brand-gold-deep);
+}
+.footer-brand-info a { text-decoration: none; }
+
+.footer-col { display: flex; flex-direction: column; gap: 24px; }
+.footer-col h3 {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  color: var(--color-brand-red);
+}
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-col a {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-brand-gold-deep);
+  text-decoration: none;
+}
+
+.footer-social { display: flex; flex-direction: column; gap: 16px; }
+.footer-social .icons-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--color-grey-400);
+  padding-bottom: 8px;
+}
+.footer-social .icon-btn {
+  width: 48px;
+  height: 48px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.footer-social .icon-btn img { width: 24px; height: 24px; }
+.footer-badge { width: 122px; height: 40px; padding-left: 8px; }
+.footer-badge img { width: 106px; height: 40px; object-fit: cover; }
+
+@media (max-width: 767.98px) {
+  .footer { gap: 40px; padding-top: 40px; }
+
+  .footer-newsletter { gap: 16px; }
+  .footer-newsletter h2 { font-size: 20px; line-height: 30px; }
+  .footer-newsletter p { font-size: 13px; line-height: 16px; }
+  .footer-signup {
+    border-color: var(--color-grey-300);
+    padding: 4px;
+    max-width: none;
+  }
+  .footer-signup input { font-weight: 300; font-size: 14px; line-height: 18px; }
+  .footer-signup button {
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .footer-links-section { padding: 40px 16px; }
+  .footer-links-row { flex-direction: column; gap: 16px; }
+
+  .footer-brand img.logo { width: 60px; height: 60px; }
+  .footer-brand-info { font-weight: 400; font-size: 13px; line-height: 16px; gap: 4px; }
+
+  .footer-col { gap: 8px; }
+  .footer-col h3 { font-size: 16px; line-height: 20px; }
+  .footer-col a { font-weight: 400; font-size: 13px; line-height: 16px; }
+}

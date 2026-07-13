@@ -1,0 +1,19 @@
+@model string
+@{
+    var items = new (string Label, string Url, string Key)[]
+    {
+        ("Lịch sử đơn hàng", "/tai-khoan/don-hang", "Orders"),
+        ("Thông tin tài khoản", "/tai-khoan", "Profile"),
+        ("Sổ địa chỉ", "/tai-khoan/dia-chi", "Addresses"),
+    };
+}
+<nav class="account-sidebar">
+    @foreach (var item in items)
+    {
+        <a href="@item.Url" class="@(Model == item.Key ? "active" : "")">@item.Label</a>
+    }
+    <form method="post" action="/tai-khoan/dang-xuat" class="account-sidebar__logout-form">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="logout">Đăng xuất</button>
+    </form>
+</nav>

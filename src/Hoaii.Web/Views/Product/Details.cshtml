@@ -1,0 +1,155 @@
+@model Hoaii.Web.Models.Product.ProductDetailsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="pdp-breadcrumb">
+    @{
+        var parts = Model.BreadcrumbLabel.Split('/');
+    }
+    <span>@parts[0]/</span><span class="pdp-breadcrumb__current">@(parts.Length > 1 ? parts[1] : "")</span>
+</div>
+
+<section class="pdp-main">
+    <div class="pdp-gallery">
+        <div class="pdp-gallery__main" id="pdp-main-image" style="@(Model.GalleryImages[0] is not null ? $"background-image:url('{Model.GalleryImages[0]}')" : "")"></div>
+        <div class="pdp-gallery__thumbs">
+            @for (var i = 0; i < Model.GalleryImages.Count; i++)
+            {
+                <button type="button" class="pdp-gallery__thumb @(i == 0 ? "active" : "")" data-image="@Model.GalleryImages[i]"
+                        style="@(Model.GalleryImages[i] is not null ? $"background-image:url('{Model.GalleryImages[i]}')" : "")" aria-label="Ảnh @(i + 1)"></button>
+            }
+        </div>
+        <div class="pdp-dots">
+            @for (var i = 0; i < Model.GalleryImages.Count; i++)
+            {
+                <span class="pdp-dot @(i == 0 ? "active" : "")" data-dot-index="@i"></span>
+            }
+        </div>
+    </div>
+
+    <div class="pdp-info">
+        <div class="pdp-title-block">
+            <h1 class="pdp-title">@Model.Name.ToUpperInvariant()</h1>
+            <p class="pdp-price">@Model.Price.ToString("N0") đ</p>
+        </div>
+
+        @if (Model.ColorOptions.Count > 0)
+        {
+            <div class="pdp-option-group">
+                <span class="pdp-option-label">MÀU SẮC : <span id="pdp-selected-color">@Model.ColorOptions[0].Name</span></span>
+                <div class="pdp-swatches">
+                    @for (var i = 0; i < Model.ColorOptions.Count; i++)
+                    {
+                        var c = Model.ColorOptions[i];
+                        <button type="button" class="pdp-swatch @(i == 0 ? "selected" : "")" style="background-color:@c.Hex" data-color-name="@c.Name" aria-label="Màu @c.Name"></button>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.BoxOptions.Count > 0)
+        {
+            <div class="pdp-option-group">
+                <span class="pdp-option-label">LOẠI HỘP</span>
+                <div class="pdp-box-options">
+                    @for (var i = 0; i < Model.BoxOptions.Count; i++)
+                    {
+                        var b = Model.BoxOptions[i];
+                        <button type="button" class="pdp-box-option @(i == 0 ? "selected" : "")" data-box-id="@b.Id">@b.Label</button>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="pdp-qty-share-row">
+            <div class="pdp-qty-stepper">
+                <button type="button" class="pdp-qty-stepper__btn" data-qty-decrease aria-label="Giảm số lượng">−</button>
+                <span class="pdp-qty-stepper__value" id="pdp-qty-value">1</span>
+                <button type="button" class="pdp-qty-stepper__btn" data-qty-increase aria-label="Tăng số lượng">+</button>
+            </div>
+            <button type="button" class="pdp-share-btn" aria-label="Chia sẻ">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M8.6 10.5l6.8-3.7M8.6 13.5l6.8 3.7" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+        </div>
+
+        <div class="pdp-cta-group">
+            <form method="post" action="/gio-hang/them" id="pdp-add-to-cart-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="variantId" id="pdp-variant-id-input" value="@(Model.BoxOptions.Count > 0 ? Model.BoxOptions[0].Id.ToString() : "")" />
+                <input type="hidden" name="quantity" id="pdp-qty-input" value="1" />
+                <input type="hidden" name="returnUrl" value="/san-pham/@Model.Slug" />
+                <button type="submit" class="pdp-cta-primary">THÊM VÀO GIỎ HÀNG</button>
+            </form>
+            <button type="button" class="pdp-cta-secondary" data-contact-popup-open>NHẬN ƯU ĐÃI MUA SỐ LƯỢNG LỚN</button>
+        </div>
+
+        <div class="pdp-ingredients">
+            <p class="pdp-ingredients__label">THÀNH PHẦN :</p>
+            <p class="pdp-ingredients__body">@Model.Ingredients</p>
+        </div>
+    </div>
+</section>
+
+<section class="pdp-story">
+    <div class="pdp-story__container">
+        <div class="pdp-story__row1">
+            <div class="pdp-story__image" style="@(Model.StoryImageUrl is not null ? $"background-image:url('{Model.StoryImageUrl}')" : "")"></div>
+            <div class="pdp-story__text">
+                <h2>@Model.StoryTitle</h2>
+                <p>@Model.StoryBody</p>
+                <div class="pdp-story__badges">
+                    @for (var i = 0; i < 6; i++)
+                    {
+                        <div class="pdp-story__badge"></div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="pdp-story__row2">
+            <div class="text">
+                <h2>@Model.FeatureTitle</h2>
+                <p>@Model.FeatureBody</p>
+            </div>
+            <div class="image" style="@(Model.FeatureImageUrl is not null ? $"background-image:url('{Model.FeatureImageUrl}')" : "")"></div>
+        </div>
+    </div>
+</section>
+
+@if (Model.Collection is not null)
+{
+    <section class="pdp-collection">
+        <div class="pdp-collection__header">
+            <p class="pdp-collection__eyebrow">@Model.Collection.Eyebrow</p>
+            <h2 class="pdp-collection__title">@Model.Collection.Title</h2>
+        </div>
+        <div class="pdp-collection__grid">
+            @foreach (var item in Model.Collection.Items)
+            {
+                <partial name="_ProductCard" model="item" />
+            }
+        </div>
+    </section>
+}
+
+@if (Model.RelatedProducts.Count > 0)
+{
+    <section class="pdp-related">
+        <h2 class="pdp-related__title">SẢN PHẨM TƯƠNG TỰ</h2>
+        <div class="pdp-related__grid">
+            @foreach (var item in Model.RelatedProducts)
+            {
+                <partial name="_ProductCard" model="item" />
+            }
+        </div>
+    </section>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pdp.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/pdp.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,18 @@
+@model IReadOnlyList<Hoaii.Web.Models.Home.BenefitViewModel>
+@* Đãi ngộ (Benefits) — see design-specs/home/01-hero-and-benefits.md *@
+<section class="benefits">
+    @foreach (var b in Model)
+    {
+        <div class="benefit-col">
+            <div class="benefit-icon"><img src="@b.IconPath" alt="" width="40" height="40" /></div>
+            <div class="benefit-text benefit-text--desktop">
+                <div class="benefit-title">@b.Title</div>
+                <div class="benefit-desc">@b.Description</div>
+            </div>
+            <div class="benefit-text benefit-text--mobile">
+                <p class="benefit-label">@b.MobileLine1</p>
+                <p class="benefit-label">@b.MobileLine2</p>
+            </div>
+        </div>
+    }
+</section>

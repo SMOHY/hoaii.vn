@@ -1,0 +1,88 @@
+@model Hoaii.Web.Models.Page.ContactFormModel
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<section class="contact-hero">
+    <div class="contact-hero__text">
+        <p class="contact-breadcrumb"><span>Trang chủ/</span><span class="contact-breadcrumb__current">Liên hệ</span></p>
+        <h1 class="contact-hero__title">LIÊN HỆ</h1>
+    </div>
+    <div class="contact-hero__img"></div>
+</section>
+
+<section class="contact-address">
+    <h2>Địa chỉ</h2>
+    <div class="contact-address__row">
+        <div class="contact-address__img"></div>
+        <p class="contact-address__text">945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội</p>
+    </div>
+</section>
+
+<section class="contact-methods">
+    <h2>Liên hệ</h2>
+    <div class="contact-methods__grid">
+        <div class="contact-method-card">
+            <h3>TRÒ CHUYỆN TRỰC TIẾP</h3>
+            <p>Hãy truy cập facebook hoặc zalo của chúng tôi để nói chuyện trực tiếp với đội ngũ chăm sóc khách hàng về bất kỳ thắc mắc nào.</p>
+            <a href="https://facebook.com" target="_blank" rel="noopener" class="contact-method-card__link">Liên hệ facebook</a>
+        </div>
+        <div class="contact-method-card">
+            <h3>LIÊN QUAN ĐẾN ĐƠN HÀNG</h3>
+            <p>Hãy truy cập facebook hoặc zalo của chúng tôi để nói chuyện trực tiếp với đội ngũ chăm sóc khách hàng về bất kỳ thắc mắc nào.</p>
+            <button type="button" class="contact-method-card__link" data-contact-popup-open>Trò chuyện trực tiếp</button>
+        </div>
+        <div class="contact-method-card">
+            <h3>YÊU CẦU BÁN BUÔN</h3>
+            <p>Bạn muốn xem mẫu? Vui lòng gửi email cho chúng tôi</p>
+            <a href="mailto:hoai@gmail.com" class="contact-method-card__link">Hoai@gmail.com</a>
+        </div>
+        <div class="contact-method-card">
+            <h3>ĐIỆN THOẠI</h3>
+            <p>Hãy gửi cho chúng tôi một lời nhắn</p>
+            <a href="tel:0335006783" class="contact-method-card__link">033 500 6783</a>
+        </div>
+    </div>
+</section>
+
+<section class="contact-form-section">
+    <h2>Hãy gửi email cho chúng tôi</h2>
+    <div class="contact-form-section__row">
+        <p class="contact-form-section__intro">Chúng tôi rất vui vì điều gì đó ở đây đã thu hút sự chú ý của bạn. Hãy liên hệ để chào hỏi, trao đổi về nhu cầu của bạn và cùng nhau tìm hiểu cách hợp tác nhé.</p>
+        <form method="post" asp-action="Contact" class="contact-form">
+            @Html.AntiForgeryToken()
+            @if (TempData["ContactSubmitted"] is not null)
+            {
+                <p class="wholesale__success">Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
+            }
+            <div class="wholesale__row">
+                <div class="simple-field">
+                    <label>Tên*</label>
+                    <input type="text" asp-for="FirstName" />
+                </div>
+                <div class="simple-field">
+                    <label>Họ*</label>
+                    <input type="text" asp-for="LastName" />
+                </div>
+            </div>
+            <div class="simple-field">
+                <label>Email*</label>
+                <input type="email" asp-for="Email" />
+            </div>
+            <div class="simple-field">
+                <label>Điện thoại</label>
+                <input type="text" asp-for="Phone" />
+            </div>
+            <div class="simple-field">
+                <label>Tin nhắn*</label>
+                <textarea asp-for="Message" rows="4"></textarea>
+            </div>
+            <button type="submit" class="wholesale__submit">Gửi</button>
+        </form>
+    </div>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contact.css" asp-append-version="true" />
+}

@@ -1,0 +1,486 @@
+/* Home page — see design-specs/home/*.md and design-specs/custom-services.md */
+
+/* ---------- Nav overlay (hero sits behind a transparent nav) ---------- */
+body.hero-overlay .nav-desktop,
+body.hero-overlay .nav-mobile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+}
+body.hero-overlay .nav-main,
+body.hero-overlay .nav-m-main {
+  background: transparent;
+}
+body.hero-overlay .nav-main-inner {
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+body.hero-overlay .nav-m-main-inner {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+body.hero-overlay .nav-menu .item span,
+body.hero-overlay .nav-lang,
+body.hero-overlay .nav-icons .icon-btn,
+body.hero-overlay .nav-m-hamburger,
+body.hero-overlay .nav-m-icons .icon-btn {
+  color: #fff;
+}
+body.hero-overlay .nav-menu .item.is-open {
+  background: rgba(255, 255, 255, 0.2); /* literal Figma value (node 923:17080) for the overlay nav */
+}
+
+/* ---------- Hero ---------- */
+.home-hero {
+  position: relative;
+  min-height: 950px;
+  background: var(--color-grey-500) url('/images/home/hero.jpg') center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+.home-hero__stage {
+  position: absolute;
+  top: 168px; /* below the 3-row nav height */
+  left: 0;
+  right: 0;
+  bottom: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  pointer-events: none;
+}
+.home-hero__arrow {
+  pointer-events: auto;
+  width: 48px;
+  height: 48px;
+  border-radius: 52px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.home-hero__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  color: #fff;
+  padding: 16px 240px 80px;
+}
+.home-hero__dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.home-hero__dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+.home-hero__dots .dot--active {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+}
+.home-hero__title {
+  font-family: var(--font-display);
+  font-size: 70px;
+  line-height: 64px;
+  letter-spacing: 0.7px;
+}
+.home-hero__subtitle {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+}
+
+@media (max-width: 767.98px) {
+  .home-hero {
+    min-height: 700px;
+    background: #000 url('/images/home/hero.jpg') center / cover no-repeat;
+  }
+  .home-hero__stage {
+    top: 92px;
+    bottom: 200px;
+    padding: 0 20px;
+  }
+  .home-hero__arrow {
+    width: 40px;
+    height: 40px;
+  }
+  .home-hero__content {
+    padding: 16px 16px 28px 28px;
+    gap: 8px;
+  }
+  .home-hero__title {
+    font-size: 28px;
+    line-height: 26px;
+    white-space: nowrap;
+  }
+  .home-hero__subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 18px;
+  }
+}
+
+/* ---------- Đãi ngộ (Benefits) ---------- */
+.benefits {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 40px 240px 48px;
+  background: #fff;
+  gap: 24px;
+}
+.benefit-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.benefit-icon {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.benefit-text--desktop { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.benefit-text--mobile { display: none; }
+.benefit-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  color: var(--color-brand-red);
+  text-align: center;
+}
+.benefit-desc {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-grey-600);
+  text-align: center;
+}
+
+@media (max-width: 767.98px) {
+  .benefits { padding: 40px 16px; gap: 8px; }
+  .benefit-col { gap: 16px; }
+  .benefit-icon { width: 40px; height: 40px; }
+  .benefit-text--desktop { display: none; }
+  .benefit-text--mobile { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .benefit-label {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--color-brand-red);
+    text-align: center;
+    margin: 0;
+  }
+}
+
+/* ---------- Sản phẩm nổi bật (Featured Products) ---------- */
+.featured-section {
+  background: var(--color-brand-gold-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 68px;
+  padding: 120px 0;
+}
+.featured-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  text-align: center;
+  max-width: 1084px;
+  padding: 0 24px;
+}
+.featured-title {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 56px;
+  color: var(--color-black);
+  text-transform: uppercase;
+}
+.featured-subtitle {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--color-grey-700);
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 472px;
+  gap: 16px;
+  width: 100%;
+  max-width: 1198px;
+  padding: 0 24px;
+}
+.featured-tile {
+  display: block;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-grey-300);
+  background-size: cover;
+  background-position: center;
+}
+.featured-card {
+  border-radius: var(--radius-sm);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #1C1C1C;
+  text-decoration: none;
+}
+.featured-card--red { background: var(--color-brand-red); }
+.featured-card--gold { background: var(--color-brand-gold); }
+.featured-card--teal { background: #94B8BD; }
+.featured-card__top { display: flex; flex-direction: column; gap: 53px; }
+.featured-card__eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  color: #1C1C1C;
+}
+.featured-card__title {
+  font-family: var(--font-display);
+  color: #1C1C1C;
+  letter-spacing: 0.58px;
+  line-height: 60px;
+  font-size: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 13.3px;
+}
+.featured-card__cta {
+  display: flex;
+  gap: 6.66px;
+  align-items: center;
+  justify-content: flex-end;
+  height: 33.3px;
+}
+.featured-card__cta-label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  color: #1C1C1C;
+  white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+  .featured-section { gap: 16px; padding: 40px 16px; }
+  .featured-heading { gap: 4px; }
+  .featured-title { font-size: 20px; line-height: 32px; }
+  .featured-subtitle { display: none; }
+  .featured-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; gap: 4px; padding: 0; }
+  .featured-tile { aspect-ratio: 1 / 1.28; }
+  .featured-card { aspect-ratio: 1 / 1.28; padding: 16px; }
+  .featured-card__top { gap: 16px; }
+  .featured-card__title { font-size: 28px; line-height: 34px; }
+}
+
+/* ---------- Dịch vụ theo yêu cầu (custom-services) ---------- */
+.custom-services { background: var(--color-brand-gold-bg); padding: 120px 240px; }
+.custom-services__inner { display: flex; gap: 80px; align-items: center; min-height: 676px; }
+.custom-services__col { flex: 1 1 0; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
+.custom-services__eyebrow { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-grey-500); margin: 0 0 8px; }
+.custom-services__title { font-family: var(--font-display); font-size: 48px; line-height: 60px; color: var(--color-black); text-transform: uppercase; }
+.custom-services__tabs { display: flex; flex-direction: column; gap: 24px; width: 480px; max-width: 100%; }
+.custom-services__tab {
+  display: flex; align-items: center; gap: 24px; padding: 16px; width: 100%;
+  border-radius: 40px; background: #fff; border: none; cursor: pointer; text-align: left;
+}
+.custom-services__tab.is-active { background: var(--color-brand-red); }
+.custom-services__tab-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 68px; height: 68px; border-radius: 50%; background: var(--color-grey-50); color: var(--color-grey-500); flex-shrink: 0;
+}
+.custom-services__tab.is-active .custom-services__tab-icon { background: #BF4E5D; color: #fff; }
+.custom-services__tab-label { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-grey-400); }
+.custom-services__tab.is-active .custom-services__tab-label { color: var(--color-brand-red-tint); }
+
+.custom-services__panel { flex: 1 1 0; min-height: 676px; border-radius: 16px; overflow: hidden; position: relative; background: #C4C4C4; }
+.custom-services__panel-item { position: absolute; inset: 0; display: none; }
+.custom-services__panel-item.is-active { display: block; }
+.custom-services__panel-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.custom-services__panel-overlay {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 40px;
+  padding: 64px 40px;
+  background: linear-gradient(to bottom, rgba(159, 31, 47, 0) 0%, #9F1F2F 100%);
+}
+.custom-services__panel-caption { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; max-width: 374px; margin: 0; }
+.custom-services__cta {
+  display: flex; align-items: center; gap: 8px; padding: 16px 40px; border-radius: 40px;
+  background: #fff; text-decoration: none; flex-shrink: 0;
+}
+.custom-services__cta span { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-brand-red-deep); }
+
+@media (max-width: 767.98px) {
+  .custom-services { padding: 40px 16px; }
+  .custom-services__inner { flex-direction: column; gap: 20px; align-items: stretch; }
+  .custom-services__col { gap: 24px; }
+  .custom-services__eyebrow { font-size: 16px; line-height: 20px; font-weight: 500; text-align: center; margin: 0; }
+  .custom-services__title { font-size: 20px; line-height: 30px; text-align: center; }
+  .custom-services__tabs { width: 100%; gap: 8px; }
+  .custom-services__tab { padding: 8px; border-radius: 20px; gap: 8px; }
+  .custom-services__tab-icon { width: 40px; height: 40px; }
+  .custom-services__tab-icon svg { width: 20px; height: 20px; }
+  .custom-services__tab-label { font-size: 16px; line-height: 20px; font-weight: 500; }
+  .custom-services__panel, .custom-services__panel-item { min-height: 345px; height: 345px; }
+  .custom-services__panel-overlay { flex-direction: column; gap: 20px; padding: 16px 40px; align-items: center; }
+  .custom-services__panel-caption { font-size: 16px; line-height: 20px; font-weight: 500; text-align: center; }
+  .custom-services__cta { padding: 8px 16px; gap: 4px; }
+  .custom-services__cta span { font-size: 16px; line-height: 20px; }
+}
+
+/* ---------- Câu chuyện trong từng sản phẩm (story banner) ---------- */
+.story-banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1920 / 1080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  overflow: hidden;
+}
+.story-banner__accent {
+  position: absolute;
+  left: 43.2%;
+  top: 43.9%;
+  width: 13.5%;
+  height: 13.4%;
+  background: var(--color-grey-300);
+}
+.story-banner__title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  color: var(--color-brand-red);
+  text-align: center;
+  padding: 0 24px;
+}
+.story-banner__title--desktop {
+  display: block;
+  font-size: 56px;
+  line-height: 56px;
+  white-space: nowrap;
+}
+.story-banner__title--mobile { display: none; }
+
+@media (max-width: 767.98px) {
+  .story-banner { aspect-ratio: 430 / 340; }
+  .story-banner__accent { left: 37.9%; top: 37.9%; width: 24.2%; height: 24.1%; }
+  .story-banner__title--desktop { display: none; }
+  .story-banner__title--mobile {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 28px; line-height: 36px;
+  }
+}
+
+/* ---------- Về Hoài (About) ---------- */
+.about-section { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 120px 0; background: #fff; }
+.about-heading { display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; max-width: 1118px; margin: 0 auto; padding: 0 24px; }
+.about-heading h2 { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); }
+.about-subtitle { font-family: var(--font-body); font-size: 20px; line-height: 23px; font-weight: 500; color: var(--color-brand-gold-deep, #795F3D); }
+.about-cards { display: flex; gap: 16px; align-items: center; justify-content: center; padding-inline: 240px; width: 100%; max-width: 1920px; margin: 0 auto; }
+.about-card { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; }
+.about-card__img { background: var(--color-grey-300); height: 480px; width: 100%; border-radius: 8px; background-size: cover; background-position: center; }
+.about-card__label { height: 208px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; }
+.about-card__label span { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-gold); }
+.about-card__label--to-gold { background: linear-gradient(to bottom, #fff 0%, #FBEECD 100%); }
+.about-card__label--from-gold { background: linear-gradient(to bottom, #FBEECD 0%, #fff 100%); }
+
+@media (max-width: 767.98px) {
+  .about-section { padding: 40px 16px; gap: 16px; }
+  .about-heading h2 { font-size: 20px; line-height: 30px; }
+  .about-subtitle { font-size: 13px; line-height: 16px; font-weight: 400; }
+  .about-cards { flex-direction: column; padding-inline: 16px; max-width: 430px; height: 378px; gap: 16px; }
+  .about-card { height: 100%; }
+  .about-card__label { height: auto; padding-block: 8px; }
+  .about-card__label span { font-family: var(--font-body); font-size: 16px; line-height: 20px; font-weight: 500; }
+}
+
+/* ---------- Khách hàng (Customers) ---------- */
+.customers-section { width: 100%; padding: 120px 0; background: #fff; text-align: center; }
+.customers-heading { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); margin: 0 0 64px; }
+.customers-marquee {
+  display: flex; flex-direction: column; gap: 24px; overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+.customers-track { display: flex; gap: 24px; width: max-content; animation: home-marquee 40s linear infinite; }
+.customers-row:nth-child(even) .customers-track { animation-direction: reverse; }
+.logo-card { width: 200px; height: 100px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-card img { max-width: 140px; max-height: 64px; object-fit: contain; filter: grayscale(100%); opacity: .7; transition: filter .2s, opacity .2s; }
+.logo-card img:hover { filter: none; opacity: 1; }
+@keyframes home-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 767.98px) {
+  .customers-section { padding: 40px 16px; }
+  .customers-heading { font-size: 20px; line-height: 30px; margin-bottom: 24px; }
+  .customers-marquee { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 8px; overflow: visible; mask-image: none; }
+  .customers-row { display: contents; }
+  .customers-track { display: contents; animation: none; }
+  .logo-card { width: auto; height: 70px; }
+  .logo-card img { max-width: 100px; max-height: 44px; }
+}
+
+/* ---------- Blog (HOÀI MÁCH BẠN) ---------- */
+.blog-section { background: #fff; display: flex; flex-direction: column; align-items: center; gap: 80px; padding: 80px 240px; }
+.blog-heading { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); text-align: center; width: 100%; }
+
+.blog-cards--desktop { display: flex; gap: 40px; align-items: flex-start; justify-content: center; width: 100%; }
+.blog-cards--mobile { display: none; }
+
+.blog-featured { flex: 1 1 0; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+.blog-featured__img { width: 100%; height: 340px; border-radius: 8px; background-color: rgba(0, 0, 0, 0.2); background-size: cover; background-position: center; }
+.blog-featured__text { display: flex; flex-direction: column; gap: 16px; }
+
+.blog-list { flex: 1 1 0; display: flex; flex-direction: column; width: 100%; }
+.blog-list__row {
+  display: flex; gap: 24px; padding: 8px 0; align-items: flex-start; width: 100%;
+  text-decoration: none; color: inherit;
+}
+.blog-list__row:not(:last-child) { border-bottom: 1px solid var(--color-grey-100); }
+.blog-list__thumb { width: 240px; height: 140px; border-radius: 4px; background-color: rgba(0, 0, 0, 0.2); background-size: cover; background-position: center; flex-shrink: 0; }
+
+.blog-card__meta { display: flex; flex-direction: column; gap: 8px; }
+.blog-card__category { font-family: var(--font-body); font-weight: 500; font-size: 16px; line-height: 20px; color: var(--color-brand-gold); }
+.blog-card__title { font-family: var(--font-body); font-weight: 500; font-size: 20px; line-height: 23px; color: var(--color-black); }
+.blog-card__excerpt { font-family: var(--font-body); font-size: 16px; line-height: 20px; color: #525252; margin-top: 8px; }
+
+@media (max-width: 767.98px) {
+  .blog-section { gap: 8px; padding: 40px 16px; }
+  .blog-heading { font-size: 20px; line-height: 30px; }
+  .blog-cards--desktop { display: none; }
+  .blog-cards--mobile { display: flex; flex-direction: column; width: 100%; }
+  .blog-cards--mobile .blog-list__row { gap: 12px; }
+  .blog-cards--mobile .blog-list__thumb { width: 137px; height: 80px; border-radius: 2px; }
+  .blog-cards--mobile .blog-card__category { font-weight: 400; font-size: 13px; line-height: 16px; }
+  .blog-cards--mobile .blog-card__title { font-weight: 500; font-size: 16px; line-height: 20px; }
+}

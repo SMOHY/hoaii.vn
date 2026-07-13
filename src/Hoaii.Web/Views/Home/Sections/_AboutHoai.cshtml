@@ -1,0 +1,25 @@
+@model IReadOnlyList<Hoaii.Web.Models.Home.AboutCardViewModel>
+@* Về Hoài — see design-specs/home/03-about-and-customers.md *@
+<section class="about-section">
+    <div class="about-heading">
+        <h2>VỀ HOÀI</h2>
+        <p class="about-subtitle">Khởi nguồn từ tình yêu dành cho di sản Việt Nam, HOÀI chọn hành trình gìn giữ và lan tỏa giá trị truyền thống thông qua những tặng phẩm văn hóa cao cấp. Bằng lăng kính của thế hệ trẻ, chúng tôi đưa nét đẹp xưa hòa cùng nhịp sống hôm nay, để ký ức, câu chuyện và tinh thần dân tộc được tiếp nối một cách mới mẻ, đầy cảm hứng qua ngôn ngữ thiết kế đương đại.</p>
+    </div>
+    <div class="about-cards">
+        @foreach (var card in Model)
+        {
+            <div class="about-card @(card.ImageOnTop ? "about-card--img-top" : "about-card--img-bottom")">
+                @if (card.ImageOnTop)
+                {
+                    <div class="about-card__img"></div>
+                    <div class="about-card__label about-card__label--to-gold"><span>@card.Caption</span></div>
+                }
+                else
+                {
+                    <div class="about-card__label about-card__label--from-gold"><span>@card.Caption</span></div>
+                    <div class="about-card__img"></div>
+                }
+            </div>
+        }
+    </div>
+</section>

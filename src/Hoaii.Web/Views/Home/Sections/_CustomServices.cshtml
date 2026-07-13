@@ -1,0 +1,45 @@
+@model IReadOnlyList<Hoaii.Web.Models.Home.CustomServiceTabViewModel>
+@* Dịch vụ theo yêu cầu — see design-specs/custom-services.md *@
+<section class="custom-services" data-component="custom-services">
+    <div class="custom-services__inner">
+        <div class="custom-services__col">
+            <header class="custom-services__heading">
+                <p class="custom-services__eyebrow">Dịch vụ theo yêu cầu</p>
+                <h2 class="custom-services__title">
+                    CÁ NHÂN HÓA SẢN PHẨM<br />ĐỂ MANG DẤU ẤN CỦA RIÊNG BẠN
+                </h2>
+            </header>
+
+            <div class="custom-services__tabs" role="tablist">
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    var tab = Model[i];
+                    <button type="button" class="custom-services__tab @(i == 0 ? "is-active" : "")"
+                            role="tab" aria-selected="@(i == 0 ? "true" : "false")" data-tab="@tab.Key">
+                        <span class="custom-services__tab-icon">
+                            <partial name="Sections/_ServiceIcon" model="tab.IconSvg" />
+                        </span>
+                        <span class="custom-services__tab-label">@tab.Label</span>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="custom-services__panel">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var tab = Model[i];
+                <div class="custom-services__panel-item @(i == 0 ? "is-active" : "")" data-panel="@tab.Key">
+                    <div class="custom-services__panel-img" style="background-image:url('@tab.PanelImageUrl')"></div>
+                    <div class="custom-services__panel-overlay">
+                        <p class="custom-services__panel-caption" style="color:@tab.CaptionColorHex">@tab.Caption</p>
+                        <a href="@tab.CtaUrl" class="custom-services__cta">
+                            <span>@tab.CtaText</span>
+                            <svg class="custom-services__cta-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6" stroke="#410C13" stroke-width="1.5"/></svg>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,54 @@
+@model Hoaii.Web.Models.Cart.CartViewModel
+@using Hoaii.Web.Services
+@* Voucher / promo modal — see design-specs/checkout-and-modals.md ("Voucher Modal") *@
+<div class="modal-backdrop" data-voucher-modal-backdrop></div>
+<div class="voucher-modal" data-voucher-modal aria-hidden="true">
+    <div class="voucher-modal__panel">
+        <div class="voucher-modal__header">
+            <h2>Ưu đãi &amp; khuyến mãi</h2>
+            <button type="button" class="voucher-modal__close" data-voucher-modal-close aria-label="Đóng">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+        </div>
+
+        <form method="post" action="/gio-hang/ap-dung-ma" class="voucher-modal__form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="/thanh-toan" />
+
+            <div class="voucher-modal__code-row">
+                <input type="text" name="code" id="voucher-code-input" placeholder="Nhập mã ưu đãi hoặc voucher" autocomplete="off" />
+                <button type="submit" class="voucher-modal__apply-link">ÁP DỤNG</button>
+            </div>
+
+            <div class="voucher-modal__list">
+                @foreach (var voucher in CartService.AvailableVouchers)
+                {
+                    var isSelected = Model.AppliedVoucherCode == voucher.Code;
+                    <label class="voucher-item @(isSelected ? "is-selected" : "")">
+                        <span class="voucher-item__icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10a2 2 0 100-4 2 2 0 000 4zM3 18a2 2 0 100-4 2 2 0 000 4z" fill="currentColor"/><path d="M21 4H9v16h12V4z" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </span>
+                        <span class="voucher-item__text">
+                            <span class="voucher-item__title">@voucher.Label</span>
+                            <span class="voucher-item__tag">@voucher.Tag</span>
+                        </span>
+                        <input type="radio" class="voucher-item__input" value="@voucher.Code"
+                               onclick="document.getElementById('voucher-code-input').value='@voucher.Code'"
+                               checked="@(isSelected ? "checked" : null)" />
+                        <span class="voucher-item__check"></span>
+                    </label>
+                }
+            </div>
+
+            <div class="voucher-modal__summary">
+                @if (Model.AppliedVoucherLabel is not null)
+                {
+                    <p>Đã áp dụng 1 ưu đãi (@Model.AppliedVoucherLabel)</p>
+                }
+                <p>Tổng tiền : @Model.Total.ToString("N0")đ</p>
+            </div>
+
+            <button type="submit" class="btn-checkout-primary">Đồng ý</button>
+        </form>
+    </div>
+</div>

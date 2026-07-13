@@ -1,0 +1,48 @@
+@model IReadOnlyList<Hoaii.Web.Models.Home.BlogPostViewModel>
+@* Blog (HOÀI MÁCH BẠN) — see design-specs/home/04-blog-and-story.md *@
+@{
+    var featured = Model.FirstOrDefault(p => p.IsFeatured) ?? Model[0];
+    var rest = Model.Where(p => p != featured).ToList();
+}
+<section class="blog-section">
+    <h2 class="blog-heading">HOÀI MÁCH BẠN</h2>
+
+    <div class="blog-cards blog-cards--desktop">
+        <div class="blog-featured">
+            <div class="blog-featured__img" style="background-image:url('@featured.ImageUrl')"></div>
+            <div class="blog-featured__text">
+                <div class="blog-card__meta">
+                    <span class="blog-card__category">@featured.Category</span>
+                    <span class="blog-card__title">@featured.Title</span>
+                </div>
+                <p class="blog-card__excerpt">@featured.Excerpt</p>
+            </div>
+        </div>
+        <div class="blog-list">
+            @foreach (var post in rest)
+            {
+                <a class="blog-list__row" href="@post.Url">
+                    <div class="blog-card__meta">
+                        <span class="blog-card__category">@post.Category</span>
+                        <span class="blog-card__title">@post.Title</span>
+                    </div>
+                    <p class="blog-card__excerpt">@post.Excerpt</p>
+                    <div class="blog-list__thumb" style="background-image:url('@post.ImageUrl')"></div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="blog-cards blog-cards--mobile">
+        @foreach (var post in Model)
+        {
+            <a class="blog-list__row" href="@post.Url">
+                <div class="blog-list__thumb" style="background-image:url('@post.ImageUrl')"></div>
+                <div class="blog-card__meta">
+                    <span class="blog-card__category">@post.Category</span>
+                    <span class="blog-card__title">@post.Title</span>
+                </div>
+            </a>
+        }
+    </div>
+</section>

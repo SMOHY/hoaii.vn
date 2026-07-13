@@ -1,0 +1,21 @@
+@model Hoaii.Web.Models.Home.HomeIndexViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
+    ViewData["HeroOverlay"] = true;
+}
+
+<partial name="Sections/_Hero" />
+<partial name="Sections/_Benefits" model="Model.Benefits" />
+<partial name="Sections/_FeaturedProducts" model="Model.FeaturedTiles" />
+<partial name="Sections/_CustomServices" model="Model.CustomServiceTabs" />
+<partial name="Sections/_StoryBanner" />
+<partial name="Sections/_AboutHoai" model="Model.AboutCards" />
+<partial name="Sections/_Customers" model="Model.CustomerLogos" />
+<partial name="Sections/_Blog" model="Model.BlogPosts" />
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+}

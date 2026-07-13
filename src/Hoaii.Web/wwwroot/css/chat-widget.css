@@ -1,0 +1,90 @@
+/* Chat widget — see design-specs/shared-layout.md for full spec */
+
+.chat-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 148px;
+  height: 179px;
+  z-index: 1000;
+}
+
+.chat-widget .bubble {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 150px;
+  background: var(--color-grey-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: left 0.25s ease, top 0.25s ease, opacity 0.2s ease;
+}
+.chat-widget .bubble img { width: 36px; height: 36px; }
+
+.chat-widget .bubble--phone { left: 72px; top: 2.5px; }
+.chat-widget .bubble--zalo { left: 3px; top: 40.5px; }
+.chat-widget .bubble--messenger { left: 12px; top: 114.5px; }
+
+.chat-widget .toggle {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 150px;
+  background: var(--color-grey-100);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6.667px;
+  left: 72px;
+  top: 74.5px;
+  transition: left 0.25s ease, top 0.25s ease;
+}
+.chat-widget .toggle img { width: 46.667px; height: 46.667px; }
+
+/* Collapsed (closed) state */
+.chat-widget.is-collapsed { width: 69px; height: 65px; }
+.chat-widget.is-collapsed .toggle {
+  left: 4px;
+  top: 2.5px;
+  border: 1.667px solid var(--color-grey-300);
+}
+.chat-widget.is-collapsed .bubble--phone,
+.chat-widget.is-collapsed .bubble--zalo,
+.chat-widget.is-collapsed .bubble--messenger {
+  left: 4px;
+  top: 2.5px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Back-to-top — see Figma node 1214:38730 ("Chat box desktop" sibling) */
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 210px;
+  width: 64px;
+  height: 64px;
+  border-radius: 76.8px;
+  background: var(--color-grey-50);
+  border: 1.067px solid var(--color-grey-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-grey-700);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.back-to-top.is-visible { opacity: 1; }
+
+@media (max-width: 767.98px) {
+  .back-to-top { right: 16px; bottom: 96px; width: 48px; height: 48px; }
+}

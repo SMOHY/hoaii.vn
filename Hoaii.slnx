@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Hoaii.Application/Hoaii.Application.csproj" />
+    <Project Path="src/Hoaii.Domain/Hoaii.Domain.csproj" />
+    <Project Path="src/Hoaii.Infrastructure/Hoaii.Infrastructure.csproj" />
+    <Project Path="src/Hoaii.Web/Hoaii.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Hoaii.Tests/Hoaii.Tests.csproj" />
+  </Folder>
+</Solution>

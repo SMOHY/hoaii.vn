@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="106" height="40" viewBox="0 0 106 40">
+  <!-- Placeholder "Đã thông báo Bộ Công Thương" badge — replace with the real exported asset. -->
+  <rect width="106" height="40" rx="4" fill="#F2F2F2" stroke="#BFBFBF"/>
+  <text x="53" y="24" font-family="Arial, sans-serif" font-size="8" fill="#5A5A5A" text-anchor="middle">Đã thông báo BCT</text>
+</svg>

@@ -1,0 +1,22 @@
+@model Hoaii.Web.Models.Blog.BlogPostDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@* No Figma spec exists for the blog post detail template — this is a minimal, typography-consistent
+   placeholder so listing links have a real destination. Extend once a design is provided. *@
+<div class="container" style="padding: 40px 24px 80px; max-width: 800px;">
+    <p style="color:var(--color-brand-gold); font:500 16px/20px var(--font-body); margin:0 0 16px;">@Model.Category</p>
+    <h1 style="font-family:var(--font-display); font-size:40px; margin:0 0 8px;">@Model.Title</h1>
+    <p style="color:var(--color-grey-500); font:500 16px/20px var(--font-body); margin:0 0 32px;">@Model.DateText</p>
+    <div class="blog-featured__img" style="height:420px; @(Model.ImageUrl is not null ? $"background-image:url('{Model.ImageUrl}')" : "")"></div>
+    @if (!string.IsNullOrEmpty(Model.Excerpt))
+    {
+        <p style="margin-top:32px; font:300 20px/1.6 var(--font-body); color:var(--color-grey-700);">@Model.Excerpt</p>
+    }
+    <a href="/blog" style="display:inline-block; margin-top:32px; color:var(--color-brand-red); text-decoration:underline;">← Quay lại Blog</a>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/blog.css" asp-append-version="true" />
+}

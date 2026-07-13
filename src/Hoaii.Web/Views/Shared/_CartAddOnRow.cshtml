@@ -1,0 +1,17 @@
+@model Hoaii.Web.Models.Cart.CartAddOnViewModel
+@* "HOÀN CHỈNH VỚI" upsell row — see design-specs/cart-and-minicart.md *@
+<div class="addon-row">
+    <a href="/san-pham/@Model.Slug" class="addon-row__link">
+        <div class="addon-row__thumb" style="@(Model.ThumbnailUrl is not null ? $"background-image:url('{Model.ThumbnailUrl}')" : "")"></div>
+        <div class="addon-row__text">
+            <span class="addon-row__name">@Model.Name</span>
+            <span class="addon-row__price">@Model.Price.ToString("N0")đ</span>
+        </div>
+    </a>
+    <form method="post" action="/gio-hang/them">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="productId" value="@Model.ProductId" />
+        <input type="hidden" name="returnUrl" value="/gio-hang" />
+        <button type="submit" class="addon-row__add">Thêm</button>
+    </form>
+</div>

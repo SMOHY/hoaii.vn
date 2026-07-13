@@ -1,0 +1,196 @@
+/* Category landing page template — see design-specs/category-page-template.md */
+/* Reused for all 13 category/occasion pages: only content (title/hero image/description/products) changes. */
+
+/* ---------- Hero Banner ---------- */
+.cat-hero-wrap {
+  padding: 0 240px;
+}
+.cat-hero {
+  width: 100%;
+  max-width: 1440px;
+  height: 600px;
+  margin: 0 auto;
+  background: var(--color-grey-100) center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 0 56px 80px;
+}
+.cat-hero__title {
+  font-family: var(--font-display);
+  font-size: 80px;
+  line-height: 70px;
+  letter-spacing: 0.7px;
+  color: var(--color-brand-red);
+  margin: 0;
+}
+
+@media (max-width: 767.98px) {
+  .cat-hero-wrap { padding: 0; }
+  .cat-hero { height: 280px; padding: 0 28px; }
+  .cat-hero__title { font-size: 28px; line-height: 70px; }
+}
+
+/* ---------- Content container ---------- */
+.cat-content { padding: 24px 24px 0; }
+.cat-breadcrumb {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-grey-500);
+  margin: 16px 0 0;
+}
+
+/* ---------- Filter/Sort Bar ---------- */
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 16px 0 24px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.filter-bar__heading { max-width: 722px; }
+.filter-bar__title { font: 500 32px/40px var(--font-body); color: var(--color-black); margin: 0; }
+.filter-bar__desc { font: 400 24px/32px var(--font-body); color: var(--color-grey-600); margin: 4px 0 0; }
+.filter-bar__actions { display: flex; align-items: center; gap: 24px; }
+.filter-bar__sort-label { font: 400 20px/24px var(--font-body); color: var(--color-text-default); }
+.filter-bar__dropdown,
+.filter-bar__filter-btn {
+  display: flex; align-items: center; gap: 8px; height: 48px; border-radius: var(--radius-sm);
+  padding: 8px 8px 8px 16px; font: 500 20px/23px var(--font-body); color: var(--color-text-default); cursor: pointer;
+}
+.filter-bar__dropdown { border: 1px solid var(--color-grey-400); background: transparent; }
+.filter-bar__filter-btn { background: var(--color-brand-gold-bg); border: none; }
+
+@media (max-width: 767.98px) {
+  .filter-bar { flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px 0; }
+  .filter-bar__title { font: 500 20px/23px var(--font-body); }
+  .filter-bar__desc { font: 400 13px/16px var(--font-body); }
+  .filter-bar__sort-label { font: 500 16px/20px var(--font-body); }
+  .filter-bar__actions { gap: 16px; }
+  .filter-bar__dropdown, .filter-bar__filter-btn {
+    height: 32px; padding: 4px 8px 4px 16px; gap: 16px; font: 400 13px/16px var(--font-body);
+  }
+}
+
+/* ---------- Product Grid ---------- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 56px 24px;
+  padding-bottom: 80px;
+}
+.cat-empty { color: var(--color-grey-500); padding: 40px 0 80px; }
+
+.pagination {
+  display: flex; align-items: center; justify-content: center; gap: 13px; padding: 10px;
+  margin-bottom: 80px;
+}
+.pagination__label { font: 500 20px/23px var(--font-body); color: var(--color-text-default); }
+.pagination__arrow { width: 20px; height: 20px; color: var(--color-text-default); }
+.pagination__arrow--disabled { opacity: 0; pointer-events: none; }
+
+@media (max-width: 767.98px) {
+  .product-grid { grid-template-columns: 1fr; gap: 24px; padding-bottom: 40px; }
+  .pagination { margin-bottom: 40px; }
+}
+
+/* ---------- Product Card ---------- */
+.product-card { display: flex; flex-direction: column; gap: 20px; }
+.product-card__image {
+  position: relative; display: block; width: 100%; height: 556px;
+  background-color: var(--color-grey-50); background-size: cover; background-position: center;
+  border-radius: var(--radius-sm); overflow: hidden;
+}
+.product-card__image-link { position: absolute; inset: 0; z-index: 0; }
+.product-card__badges { position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; z-index: 1; }
+.product-card__badge {
+  height: 36px; padding: 8px 16px; border-radius: var(--radius-sm);
+  font: 400 14px/20px var(--font-body); display: flex; align-items: center;
+}
+.product-card__badge--new { background: #fff; color: #1C1C1C; }
+.product-card__badge--sale { background: var(--color-brand-red); color: #fff; }
+.product-card__badge--out-of-stock { background: var(--color-grey-400); color: #fff; }
+
+.product-card__add-to-cart {
+  position: absolute; right: 16px; bottom: 24px; left: 16px; z-index: 1;
+  height: 60px; margin: 0;
+}
+.product-card__add-to-cart button {
+  all: unset; box-sizing: border-box; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  background: var(--color-brand-red-deep); border-radius: var(--radius-sm);
+  color: var(--color-grey-50); font: 500 20px/23px var(--font-body); cursor: pointer;
+}
+.product-card__add-to-cart svg { width: 28px; height: 28px; }
+
+.product-card__info { display: flex; flex-direction: column; gap: 12px; }
+.product-card__name {
+  font: 500 32px/40px var(--font-body); color: #1C1C1C; text-decoration: none; display: block;
+}
+.product-card__price { font: 500 24px/32px var(--font-body); color: var(--color-text-default); margin: 0; }
+.product-card__compare-price {
+  font-size: 16px; color: var(--color-grey-400); text-decoration: line-through; margin-left: 8px;
+}
+.product-card__swatches { display: flex; align-items: center; gap: 9px; }
+.product-card__swatch { width: 24px; height: 10px; }
+.product-card__swatch--active { box-shadow: 0 5px 0 -4px #000; }
+
+.product-card--out-of-stock .product-card__image { opacity: 0.6; }
+
+.product-card--related .product-card__name { font: 600 24px/32px var(--font-body); }
+.product-card--related .product-card__price { margin-top: 0; }
+
+/* Collection cross-sell / Related products variants (used on the Product Detail page) —
+   on desktop the floating pill overlaps the bottom edge of the image instead of sitting inset.
+   Scoped to desktop only — mobile always uses the shared icon-only inset style below. */
+@media (min-width: 768px) {
+  .product-card--collection .product-card__image,
+  .product-card--related .product-card__image {
+    overflow: visible;
+  }
+  .product-card--collection .product-card__add-to-cart,
+  .product-card--related .product-card__add-to-cart {
+    left: auto; right: 24px; bottom: -30px; width: auto; padding: 0 16px;
+  }
+  .product-card--related .product-card__image { height: 488px; }
+}
+
+@media (max-width: 767.98px) {
+  .product-card__image { height: 470px; }
+  .product-card__add-to-cart {
+    right: 16px; bottom: 16px; left: auto; width: 44px; height: 44px;
+  }
+  .product-card__add-to-cart button {
+    border-radius: var(--radius-sm); background: rgba(247, 243, 238, 0.5); padding: 0; gap: 0; color: #1C1C1C;
+  }
+  .product-card__add-to-cart .cta-label { display: none; }
+  .product-card__name { font: 500 20px/23px var(--font-body); }
+  .product-card__price { font: 500 16px/20px var(--font-body); }
+}
+
+/* ---------- Promo banner ("Sản phẩm giới hạn") ---------- */
+.promo-banner {
+  display: flex; gap: 80px; padding: 80px 240px; background: #E5D9CB; align-items: center;
+}
+.promo-banner__text { flex: 0 0 auto; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+.promo-banner__eyebrow { font: 600 24px/32px var(--font-body); color: #0F0F0F; margin: 0; }
+.promo-banner__title { font: 500 32px/40px var(--font-body); color: #0F0F0F; margin: 0; }
+.promo-banner__cta {
+  display: inline-flex; align-self: flex-start; padding: 16px 20px; border-radius: var(--radius-sm);
+  background: #fff; color: #1C1C1C; font: 600 24px/32px var(--font-body); text-decoration: none;
+}
+.promo-banner__image {
+  position: relative; flex: 1 1 0; height: 660px; border-radius: 8px;
+  background-color: var(--color-grey-300); background-size: cover; background-position: center;
+}
+.promo-banner__add-to-cart { left: 16px; right: auto; width: auto; }
+
+@media (max-width: 767.98px) {
+  .promo-banner { flex-direction: column; gap: 0; padding: 0; }
+  .promo-banner__image { width: 100%; height: 260px; border-radius: 0; order: -1; }
+  .promo-banner__text { max-width: none; padding: 16px; align-items: flex-end; text-align: right; }
+  .promo-banner__eyebrow { font: 400 13px/16px var(--font-body); color: var(--color-grey-600); }
+  .promo-banner__title { font: 500 20px/24px var(--font-body); text-align: right; }
+  .promo-banner__cta { padding: 12px 16px; font: 500 16px/20px var(--font-body); }
+}

@@ -1,0 +1,50 @@
+@* Bulk-order Zalo contact popup — see design-specs/checkout-and-modals.md.
+   Global partial rendered once in _Layout; opened from any [data-contact-popup-open] trigger
+   (e.g. the "NHẬN ƯU ĐÃI MUA SỐ LƯỢNG LỚN" button on the Product Detail page). *@
+@{
+    const string zaloPhone = "033 500 6783";
+}
+<div class="modal-backdrop" data-contact-popup-backdrop></div>
+<div class="contact-popup" data-contact-popup aria-hidden="true">
+    <div class="contact-popup__panel">
+        <div class="contact-popup__header">
+            <div class="contact-popup__header-row">
+                <div class="contact-popup__brand">
+                    <span class="contact-popup__avatar">Z</span>
+                    <h2 class="contact-popup__title">Liên hệ qua Zalo</h2>
+                </div>
+                <button type="button" class="contact-popup__close" data-contact-popup-close aria-label="Đóng">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+            </div>
+            <p class="contact-popup__body-copy">Chat với chúng tôi để được tư vấn nhanh về thiết kế, gói quà và ưu đãi khi mua số lượng lớn</p>
+            <div class="contact-popup__info-card">
+                <span class="contact-popup__info-name">Hoài</span>
+                <span class="contact-popup__info-line">@zaloPhone - Phản hồi trong 5-10 phút</span>
+                <span class="contact-popup__info-line">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 9v4l3 2" stroke="currentColor" stroke-width="1.5"/></svg>
+                    09:00-18:00 (T2 - T7)
+                </span>
+            </div>
+        </div>
+
+        <div class="contact-popup__actions-row">
+            <div class="contact-popup__qr" role="img" aria-label="Mã QR Zalo"></div>
+            <div class="contact-popup__action-col">
+                <a href="https://zalo.me" target="_blank" rel="noopener" class="contact-popup__btn contact-popup__btn--primary">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v12H7l-3 3V4z" stroke="currentColor" stroke-width="1.5"/></svg>
+                    <span>Mở zalo để chat</span>
+                </a>
+                <button type="button" class="contact-popup__btn contact-popup__btn--secondary" data-copy="@zaloPhone">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M5 15V5a1 1 0 011-1h10" stroke="currentColor" stroke-width="1.5"/></svg>
+                    <span>Sao chép số zalo</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="contact-popup__footer-caption">
+            <span>Quét để mở zalo</span>
+            <span>Nếu không mở được, hãy sao chép số và tìm trong ứng dụng zalo</span>
+        </div>
+    </div>
+</div>

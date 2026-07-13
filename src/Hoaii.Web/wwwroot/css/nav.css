@@ -1,0 +1,282 @@
+/* Nav — see design-specs/shared-layout.md for full spec */
+
+.nav-announcement {
+  height: 40px;
+  background: var(--color-brand-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.nav-announcement span {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--color-white);
+  letter-spacing: 0.4px;
+}
+
+.nav-subbar {
+  height: 48px;
+  background: var(--color-grey-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+.nav-subbar-inner {
+  width: 100%;
+  max-width: var(--content-max-width);
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-subbar-left,
+.nav-subbar-right {
+  display: flex;
+  align-items: center;
+}
+.nav-subbar-left { gap: 12px; }
+.nav-subbar-right { gap: 40px; }
+.nav-subbar-left span,
+.nav-subbar-right a {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--color-black);
+  letter-spacing: 0.4px;
+  text-decoration: none;
+}
+.nav-subbar-left img { width: 24px; height: 24px; }
+
+.nav-desktop { position: relative; } /* anchors the mega-menu dropdown panels */
+.nav-main {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+}
+.nav-main-inner {
+  width: 100%;
+  max-width: var(--content-max-width);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  border-bottom: 1px solid var(--color-grey-500);
+}
+.nav-logo { width: 48px; height: 48px; }
+.nav-menu { display: flex; align-items: center; gap: 16px; }
+.nav-menu .item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 8px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.nav-menu .item span {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--color-black);
+  letter-spacing: 0.4px;
+}
+.nav-menu .chevron { width: 16px; height: 16px; }
+.nav-icons { display: flex; align-items: center; gap: 16px; }
+.nav-icons .icon-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+}
+.nav-icons .icon-btn img { width: 18.67px; height: 18.67px; }
+.nav-cart-btn { position: relative; text-decoration: none; }
+.nav-cart-badge {
+  position: absolute; top: -4px; right: -6px; min-width: 16px; height: 16px; padding: 0 3px;
+  border-radius: 8px; background: var(--color-brand-red); color: #fff; font-size: 10px; line-height: 16px;
+  text-align: center; font-family: var(--font-body); font-weight: 600;
+}
+.nav-lang {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--color-black);
+  text-decoration: none;
+}
+.nav-lang .en { opacity: 0.5; }
+
+/* Mobile nav */
+.nav-m-announcement {
+  height: 32px;
+  background: var(--color-brand-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.nav-m-announcement span {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  color: var(--color-white);
+}
+
+.nav-m-main {
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-m-main-inner {
+  width: 100%;
+  border-bottom: 1.5px solid var(--color-grey-50);
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-m-hamburger {
+  width: 64px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.nav-m-hamburger img { width: 28px; height: 28px; }
+.nav-m-logo { width: 36px; height: 36px; }
+.nav-m-icons { display: flex; align-items: center; gap: 8px; }
+.nav-m-icons .icon-btn {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Mobile off-canvas drawer (reuses desktop menu item list) */
+.nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: none;
+}
+.nav-drawer.is-open { display: block; }
+.nav-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+.nav-drawer__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 280px;
+  max-width: 80vw;
+  background: var(--color-white);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+.nav-drawer__panel a {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-black);
+  text-decoration: none;
+}
+.nav-drawer__close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 20px;
+}
+
+@media (min-width: 768px) {
+  .nav-mobile { display: none; }
+}
+@media (max-width: 767.98px) {
+  .nav-desktop { display: none; }
+}
+
+/* ---------- Mega-menu dropdowns — see Figma node 923:17080 ("Nav desktop") ---------- */
+.mega-menu-wrap { position: absolute; top: 168px; left: 0; right: 0; z-index: 50; display: flex; justify-content: center; }
+.mega-menu {
+  display: none;
+  width: 1440px;
+  max-width: calc(100% - 48px);
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+.mega-menu__columns { display: flex; gap: 40px; padding: 40px; flex: 1; }
+.mega-menu__column { display: flex; flex-direction: column; gap: 8px; width: 200px; flex-shrink: 0; }
+.mega-menu__column-title { font-family: var(--font-display); font-size: 24px; line-height: 56px; color: #000; margin: 0; }
+.mega-menu__links { display: flex; flex-direction: column; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.mega-menu__links a {
+  font-family: var(--font-body); font-weight: 500; font-size: 16px; line-height: 20px;
+  color: var(--color-text-default); text-decoration: none;
+}
+.mega-menu__links a:hover { color: var(--color-brand-red); }
+
+.mega-menu__visual {
+  width: 554px; flex-shrink: 0; background: var(--color-grey-100);
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;
+  padding: 10px 10px 40px;
+}
+.mega-menu__close { background: none; border: none; color: var(--color-grey-700); cursor: pointer; padding: 10px; }
+.mega-menu__see-all {
+  background: rgba(0, 0, 0, 0.2); color: #fff; border-radius: var(--radius-sm); padding: 4px 16px;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px; line-height: 24px;
+  letter-spacing: 0.4px; text-decoration: none; align-self: center;
+}
+
+/* Active pill highlight — Figma's dropdown demo (923:17080) is built for the transparent/white-text
+   nav variant (rgba(255,255,255,.2) highlight, reads well over a hero image); on the solid white
+   nav bar used everywhere else, a light grey highlight is substituted so it stays visible
+   (see body.hero-overlay override in home.css for the literal Figma value). */
+.nav-menu .item.is-open { background: var(--color-grey-50); }
+
+/* Hover-to-reveal, pure CSS (no JS required) — the matching mega-menu panel opens while the
+   trigger pill OR the panel itself is hovered/focused (so the mouse can travel down into the
+   dropdown without it closing). JS (site.js) only adds click support for touch/keyboard users. */
+@media (min-width: 992px) {
+  .nav-desktop:has([data-menu-trigger="qua-tet"]:hover) [data-menu-panel="qua-tet"],
+  .nav-desktop:has([data-menu-panel="qua-tet"]:hover) [data-menu-panel="qua-tet"],
+  .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"] { display: flex; }
+
+  .nav-desktop:has([data-menu-trigger="qua-trung-thu"]:hover) [data-menu-panel="qua-trung-thu"],
+  .nav-desktop:has([data-menu-panel="qua-trung-thu"]:hover) [data-menu-panel="qua-trung-thu"],
+  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"] { display: flex; }
+
+  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"]:hover) [data-menu-panel="qua-tang-theo-dip"],
+  .nav-desktop:has([data-menu-panel="qua-tang-theo-dip"]:hover) [data-menu-panel="qua-tang-theo-dip"],
+  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"].is-open) [data-menu-panel="qua-tang-theo-dip"] { display: flex; }
+
+  .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"]:hover) [data-menu-panel="san-pham-chon-loc"],
+  .nav-desktop:has([data-menu-panel="san-pham-chon-loc"]:hover) [data-menu-panel="san-pham-chon-loc"],
+  .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] { display: flex; }
+}
+

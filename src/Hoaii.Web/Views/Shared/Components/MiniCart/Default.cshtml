@@ -1,0 +1,56 @@
+@model Hoaii.Web.Models.Cart.CartViewModel
+@* Mini-cart drawer — see design-specs/cart-and-minicart.md. Toggled from the Nav cart icon (nav.js). *@
+<div class="minicart__backdrop" data-minicart-backdrop></div>
+<aside class="minicart" data-minicart-panel data-cart-count="@Model.ItemCount" aria-hidden="true">
+    <div class="minicart__header">
+        <h2 class="minicart__title">Giỏ hàng</h2>
+        <button type="button" class="minicart__close" data-minicart-close>
+            <span>Đóng</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+    </div>
+
+    <div class="minicart__body">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="minicart__empty">Giỏ hàng của bạn đang trống.</p>
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                <partial name="_CartItemRow" model="item" />
+            }
+
+            @if (Model.AddOnSuggestions.Count > 0)
+            {
+                <div class="cart-addons">
+                    <p class="cart-addons__heading">HOÀN CHỈNH VỚI</p>
+                    <div class="cart-addons__list">
+                        @foreach (var addOn in Model.AddOnSuggestions)
+                        {
+                            <partial name="_CartAddOnRow" model="addOn" />
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (Model.Items.Count > 0)
+    {
+        <div class="minicart__footer">
+            <div class="cart-discount">
+                <span>Giảm giá</span>
+                <span class="cart-discount__value">@Model.Discount.ToString("N0")đ</span>
+            </div>
+            <div class="cart-summary">
+                <div class="cart-summary__totals">
+                    <span class="cart-summary__label">Tổng cộng</span>
+                    <span class="cart-summary__amount">@Model.Total.ToString("N0")đ</span>
+                </div>
+                <a href="/thanh-toan" class="cart-summary__checkout">Kiểm tra</a>
+            </div>
+        </div>
+    }
+</aside>

@@ -1,0 +1,20 @@
+@model Hoaii.Web.Models.Page.PolicyPageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="policy-page">
+    <p class="policy-breadcrumb">@Model.BreadcrumbLabel</p>
+    <h1 class="policy-title">@Model.Title.ToUpperInvariant()</h1>
+
+    @* No Figma design exists for the policy body copy — only the page header (see
+       design-specs/policy-pages.md). Placeholder prose styling below; replace with real
+       legal text (ideally editable via CMS/DB, not hardcoded) before launch. *@
+    <div class="policy-body">
+        <p>Nội dung chính sách sẽ được cập nhật tại đây.</p>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/policy.css" asp-append-version="true" />
+}

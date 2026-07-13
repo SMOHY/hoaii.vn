@@ -1,0 +1,116 @@
+/* Shared centered-dialog chrome for Voucher Modal + Bulk-order Contact Popup —
+   see design-specs/checkout-and-modals.md */
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 1299;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+/* ---------- Voucher Modal ---------- */
+.voucher-modal {
+  position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center;
+  padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.voucher-modal.is-open { opacity: 1; pointer-events: auto; }
+.voucher-modal__panel {
+  background: #fff; border-radius: 16px; width: 548px; max-width: 100%; max-height: 90vh;
+  padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto;
+}
+.voucher-modal__header { display: flex; align-items: center; justify-content: space-between; }
+.voucher-modal__header h2 { font: 500 20px/23px var(--font-body); color: #000; margin: 0; }
+.voucher-modal__close { background: none; border: none; color: #1C1C1C; cursor: pointer; padding: 0; }
+.voucher-modal__form { display: flex; flex-direction: column; gap: 24px; }
+
+.voucher-modal__code-row {
+  display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1C1C1C; padding-bottom: 12px;
+}
+.voucher-modal__code-row input {
+  border: none; outline: none; flex: 1; font: 400 13px/16px var(--font-body); color: #000;
+}
+.voucher-modal__code-row input::placeholder { color: var(--color-grey-400); }
+.voucher-modal__apply-link {
+  background: none; border: none; font: 400 13px/16px var(--font-body); color: var(--color-grey-600);
+  text-transform: uppercase; cursor: pointer;
+}
+
+.voucher-modal__list { display: flex; flex-direction: column; gap: 16px; }
+.voucher-item {
+  display: flex; align-items: center; height: 80px; border: 1px solid var(--color-grey-50); border-radius: 8px;
+  overflow: hidden; cursor: pointer; padding-right: 24px; gap: 16px;
+}
+.voucher-item.is-selected { border-color: var(--color-grey-400); }
+.voucher-item__icon {
+  width: 80px; height: 80px; flex-shrink: 0; background: var(--color-grey-100);
+  display: flex; align-items: center; justify-content: center; color: #1C1C1C;
+}
+.voucher-item__text { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.voucher-item__title { font: 400 13px/16px var(--font-body); color: #000; }
+.voucher-item__tag {
+  align-self: flex-start; background: var(--color-grey-50); border-radius: 2px; padding: 4px 8px;
+  font: 300 11px/14px var(--font-body); color: #000;
+}
+.voucher-item__input { position: absolute; opacity: 0; width: 0; height: 0; }
+.voucher-item__check {
+  width: 20px; height: 20px; border: 1px solid var(--color-grey-400); border-radius: 1.5px; flex-shrink: 0; position: relative;
+}
+.voucher-item.is-selected .voucher-item__check { border-color: #1C1C1C; }
+.voucher-item.is-selected .voucher-item__check::after {
+  content: ""; position: absolute; inset: 4px; background: #1C1C1C; border-radius: 1px;
+}
+
+.voucher-modal__summary { display: flex; flex-direction: column; gap: 8px; font: 400 13px/16px var(--font-body); color: #000; }
+.voucher-modal__summary p { margin: 0; }
+
+@media (max-width: 767.98px) {
+  .voucher-modal__panel { padding: 16px 16px 32px; width: 100%; }
+}
+
+/* ---------- Bulk-order Contact Popup ---------- */
+.contact-popup {
+  position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center;
+  padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.contact-popup.is-open { opacity: 1; pointer-events: auto; }
+.contact-popup__panel {
+  background: #fff; border-radius: 16px; padding: 40px; width: 634px; max-width: 100%;
+  display: flex; flex-direction: column; gap: 28px; max-height: 90vh; overflow-y: auto;
+}
+.contact-popup__header { display: flex; flex-direction: column; gap: 16px; }
+.contact-popup__header-row { display: flex; align-items: center; justify-content: space-between; }
+.contact-popup__brand { display: flex; align-items: center; gap: 16px; }
+.contact-popup__avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--color-grey-50);
+  border: 1.111px solid var(--color-grey-500); display: flex; align-items: center; justify-content: center;
+  font: 700 16px var(--font-body); color: var(--color-brand-red);
+}
+.contact-popup__title { font: 500 24px/32px var(--font-body); color: #000; margin: 0; }
+.contact-popup__close { background: none; border: none; color: #1C1C1C; cursor: pointer; padding: 0; }
+.contact-popup__body-copy { font: 500 16px/20px var(--font-body); color: var(--color-grey-500); margin: 0; }
+.contact-popup__info-card {
+  background: var(--color-grey-50); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px;
+}
+.contact-popup__info-name { font: 500 20px/23px var(--font-body); color: #000; }
+.contact-popup__info-line { font: 500 16px/20px var(--font-body); color: var(--color-grey-500); display: flex; align-items: center; gap: 8px; }
+
+.contact-popup__actions-row { display: flex; gap: 24px; align-items: center; }
+.contact-popup__qr {
+  width: 148px; height: 143.5px; border: 2px solid var(--color-grey-300); border-radius: 15.16px;
+  object-fit: cover; flex-shrink: 0; background: var(--color-grey-50);
+}
+.contact-popup__action-col { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.contact-popup__btn {
+  display: flex; align-items: center; justify-content: center; gap: 16px; padding: 16px 24px;
+  border-radius: 8px; border: none; cursor: pointer; font: 500 16px/20px var(--font-body); text-decoration: none;
+}
+.contact-popup__btn--primary { background: var(--color-brand-red-deep); color: var(--color-grey-50); }
+.contact-popup__btn--secondary { background: var(--color-brand-red-tint); color: var(--color-brand-red-deep); }
+.contact-popup__footer-caption {
+  padding: 0 16px; display: flex; flex-direction: column; gap: 8px; font: 300 16px/18px var(--font-body); color: var(--color-text-default);
+}
+
+@media (max-width: 767.98px) {
+  .contact-popup__panel { padding: 24px; gap: 20px; }
+  .contact-popup__actions-row { flex-direction: column; }
+  .contact-popup__qr { width: 148px; }
+}

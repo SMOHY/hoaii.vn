@@ -1,0 +1,103 @@
+@using Hoaii.Web.Models.Layout
+@{
+    var mainMenu = LayoutData.MainMenu;
+    var subNav = LayoutData.SubNavLinks;
+}
+
+@* Icons below are inline SVG placeholders — replace with exported Figma assets under wwwroot/images/icons/. *@
+
+<header class="nav-desktop">
+    <div class="nav-announcement">
+        <span>Miễn phí đơn hàng từ 500.000đ</span>
+    </div>
+    <div class="nav-subbar">
+        <div class="nav-subbar-inner">
+            <div class="nav-subbar-left">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l2.4 7.2H22l-6 4.5 2.4 7.3L12 16.5 5.6 21l2.4-7.3L2 9.2h7.6L12 2z" fill="currentColor"/></svg>
+                <span>Hơn 100+ mẫu bánh và quà tặng độc đáo</span>
+            </div>
+            <div class="nav-subbar-right">
+                @foreach (var link in subNav)
+                {
+                    <a href="@link.Url">@link.Label</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="nav-main">
+        <div class="nav-main-inner">
+            <a class="nav-logo" href="/" aria-label="Hoài">
+                <img src="/images/logo.svg" alt="Hoài" width="48" height="48" />
+            </a>
+            <nav class="nav-menu" data-mega-menu-nav>
+                @foreach (var item in mainMenu)
+                {
+                    var menuKey = item.Url.Split('/').Last();
+                    <button type="button" class="item" data-menu-trigger="@menuKey" aria-expanded="false">
+                        <span>@item.Label</span>
+                        @if (item.HasDropdown)
+                        {
+                            <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                        }
+                    </button>
+                }
+            </nav>
+            <div class="nav-icons">
+                <button class="icon-btn" type="button" aria-label="Tìm kiếm" onclick="location.href='/tim-kiem'">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2"/></svg>
+                </button>
+                <a class="icon-btn" href="/tai-khoan" aria-label="Tài khoản">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2"/></svg>
+                </a>
+                <a class="icon-btn nav-cart-btn" href="/gio-hang" aria-label="Giỏ hàng" data-minicart-open>
+                    <svg width="19" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 8h12l-1.5 10h-9L6 8z" stroke="currentColor" stroke-width="2"/><path d="M9 8V6a3 3 0 016 0v2" stroke="currentColor" stroke-width="2"/></svg>
+                    <span class="nav-cart-badge" data-cart-badge hidden>0</span>
+                </a>
+                <button class="nav-lang" type="button" aria-label="Ngôn ngữ">
+                    VN/<span class="en">EN</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    @await Component.InvokeAsync("MegaMenu")
+</header>
+
+<header class="nav-mobile">
+    <div class="nav-m-announcement">
+        <span>Miễn phí đơn hàng từ 500.000đ</span>
+    </div>
+    <div class="nav-m-main">
+        <div class="nav-m-main-inner">
+            <button class="nav-m-hamburger" type="button" aria-label="Menu" data-nav-drawer-open>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+            <a href="/" aria-label="Hoài">
+                <img class="nav-m-logo" src="/images/logo.svg" alt="Hoài" width="36" height="36" />
+            </a>
+            <div class="nav-m-icons">
+                <button class="icon-btn" type="button" aria-label="Tìm kiếm" onclick="location.href='/tim-kiem'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2"/></svg>
+                </button>
+                <a class="icon-btn nav-cart-btn" href="/gio-hang" aria-label="Giỏ hàng" data-minicart-open>
+                    <svg width="16" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 8h12l-1.5 10h-9L6 8z" stroke="currentColor" stroke-width="2"/><path d="M9 8V6a3 3 0 016 0v2" stroke="currentColor" stroke-width="2"/></svg>
+                    <span class="nav-cart-badge" data-cart-badge hidden>0</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="nav-drawer" data-nav-drawer>
+    <div class="nav-drawer__backdrop"></div>
+    <div class="nav-drawer__panel">
+        <button class="nav-drawer__close" type="button" aria-label="Đóng" data-nav-drawer-close>&times;</button>
+        @foreach (var item in mainMenu)
+        {
+            <a href="@item.Url">@item.Label</a>
+        }
+        @foreach (var link in subNav)
+        {
+            <a href="@link.Url">@link.Label</a>
+        }
+    </div>
+</div>

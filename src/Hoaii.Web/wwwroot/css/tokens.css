@@ -1,0 +1,59 @@
+/*
+  Design tokens extracted from Figma (file uQFY9gwfNbNSeTM6zmspzo).
+  See /design-specs/ at the repo root for full pixel-level specs per page.
+*/
+:root {
+  /* Brand */
+  --color-brand-red: #AF2234;       /* red-500 / primary CTA, nav announcement */
+  --color-brand-red-dark: #9F1F2F;  /* red-600 / hover */
+  --color-brand-red-deep: #410C13;  /* red-900 / buttons, headings on dark */
+  --color-brand-red-light: #BF4E5D; /* red-400 */
+  --color-brand-red-tint: #F7E9EB;  /* red-50 */
+  --color-brand-gold: #AA8656;      /* yellow-500 / tan accent */
+  --color-brand-gold-tint: #BB9E78; /* yellow-400 */
+  --color-brand-gold-deep: #5E4A2F; /* yellow-800 / footer link text */
+  --color-brand-gold-bg: #F7F3EE;   /* yellow-50 / footer section bg */
+
+  /* Grey scale */
+  --color-grey-50: #F2F2F2;
+  --color-grey-100: #D6D6D6;
+  --color-grey-200: #DCDCDC;
+  --color-grey-300: #BFBFBF;
+  --color-grey-400: #9B9B9B;
+  --color-grey-500: #7A7A7A;
+  --color-grey-600: #5A5A5A;
+  --color-grey-700: #3C3C3C;
+  --color-grey-900: #0F0F0F;
+
+  --color-text-default: #303030;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* Typography */
+  --font-body: 'Josefin Sans', sans-serif;
+  --font-display: 'LC Sac Trial', Georgia, serif; /* self-hosted, see @font-face in site.css */
+
+  /* Common type scale (Common/*) */
+  --text-caption-size: 13px;
+  --text-caption-line: 16px;
+  --text-label-size: 16px;
+  --text-label-line: 20px;
+  --text-body1-size: 20px;
+  --text-body1-line: 24px;
+  --text-body2-size: 16px;
+  --text-body2-line: 18px;
+  --text-subtitle-size: 20px;
+  --text-subtitle-line: 23px;
+
+  /* Desktop heading scale */
+  --heading-4-size: 24px;
+  --heading-4-line: 32px;
+  --heading-2-size: 48px;
+  --heading-2-line: 56px;
+
+  /* Layout */
+  --content-max-width: 1440px;
+  --mobile-max-width: 480px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}

@@ -1,0 +1,37 @@
+@model Hoaii.Web.Models.Account.OrderCardViewModel
+@* Order card — see design-specs/account/order-history.md *@
+<div class="order-card">
+    <div class="order-card__header">
+        <div>
+            <span class="order-card__number">Mã đơn: #@Model.OrderNumber</span>
+            <span class="order-card__date">@Model.OrderDate.ToString("dd/MM/yyyy")</span>
+        </div>
+        <span class="order-status-badge order-status-badge--@Model.StatusVariant">@Model.StatusLabel</span>
+    </div>
+
+    <div class="order-card__items">
+        @foreach (var item in Model.Items)
+        {
+            <div class="order-line">
+                <div class="order-line__thumb" style="@(item.ThumbnailUrl is not null ? $"background-image:url('{item.ThumbnailUrl}')" : "")"></div>
+                <div class="order-line__info">
+                    <span class="order-line__name">@item.Name</span>
+                    @if (!string.IsNullOrEmpty(item.VariantLabel))
+                    {
+                        <span class="order-line__variant">@item.VariantLabel</span>
+                    }
+                </div>
+                <span class="order-line__price">@item.Price.ToString("N0")đ x@item.Quantity</span>
+            </div>
+        }
+    </div>
+
+    <div class="order-card__footer">
+        <span class="order-card__total">Tổng: @Model.Total.ToString("N0")đ</span>
+        <a href="#" class="btn-outline">Xem chi tiết</a>
+        @if (Model.CanReorder)
+        {
+            <a href="#" class="btn-outline btn-outline--filled">Mua lại</a>
+        }
+    </div>
+</div>

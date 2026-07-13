@@ -1,0 +1,89 @@
+@model Hoaii.Web.Models.Page.WholesaleFormModel
+@{
+    ViewData["Title"] = "Hợp tác";
+}
+
+<section class="partners-pride">
+    <div class="partners-stats">
+        <p class="partners-stats__heading">Thương hiệu Hoài tự hào với</p>
+        <div class="partners-stats__grid">
+            <div class="partners-stats__item">
+                <span class="partners-stats__number">6+</span>
+                <span class="partners-stats__label">Năm thành lập và phát triển</span>
+            </div>
+            <div class="partners-stats__item">
+                <span class="partners-stats__number">100+</span>
+                <span class="partners-stats__label">Đối tác tập đoàn hàng đầu Việt Nam</span>
+            </div>
+            <div class="partners-stats__item">
+                <span class="partners-stats__number">150.000+</span>
+                <span class="partners-stats__label">Sản phẩm đã được gửi trao</span>
+            </div>
+        </div>
+    </div>
+    <div class="partners-logos">
+        @for (var i = 0; i < 24; i++)
+        {
+            <div class="partners-logos__tile"></div>
+        }
+    </div>
+</section>
+
+<section class="wholesale">
+    <h2 class="wholesale__heading">Yêu cầu mua sỉ</h2>
+    <div class="wholesale__panel">
+        <div class="wholesale__image"></div>
+        <form method="post" asp-action="Partners" class="wholesale__form">
+            @Html.AntiForgeryToken()
+            @if (TempData["WholesaleSubmitted"] is not null)
+            {
+                <p class="wholesale__success">Cảm ơn bạn đã gửi yêu cầu! Đội ngũ HOÀI sẽ liên hệ trong thời gian sớm nhất.</p>
+            }
+            <div class="wholesale__row">
+                <div class="simple-field">
+                    <label>Tên*</label>
+                    <input type="text" asp-for="FirstName" />
+                </div>
+                <div class="simple-field">
+                    <label>Họ*</label>
+                    <input type="text" asp-for="LastName" />
+                </div>
+            </div>
+            <div class="simple-field">
+                <label>Email*</label>
+                <input type="email" asp-for="Email" />
+            </div>
+            <div class="wholesale__row">
+                <div class="simple-field">
+                    <label>Điện thoại</label>
+                    <input type="text" asp-for="Phone" />
+                </div>
+                <div class="simple-field">
+                    <label>Mã bưu điện</label>
+                    <input type="text" asp-for="PostalCode" />
+                </div>
+            </div>
+            <div class="simple-field">
+                <label>Tên doanh nghiệp*</label>
+                <input type="text" asp-for="CompanyName" />
+            </div>
+
+            <div class="wholesale__request-type">
+                <label>Loại yêu cầu</label>
+                <label class="wholesale__radio"><input type="radio" asp-for="RequestType" value="Business" /> Kinh doanh</label>
+                <label class="wholesale__radio"><input type="radio" asp-for="RequestType" value="CorporateGift" /> Quà doanh nghiệp</label>
+            </div>
+
+            <div class="simple-field">
+                <label>Tin nhắn</label>
+                <textarea asp-for="Message" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="wholesale__submit">Gửi</button>
+        </form>
+    </div>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
+}

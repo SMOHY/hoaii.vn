@@ -1,0 +1,50 @@
+@model Hoaii.Web.Models.Blog.BlogIndexViewModel
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<div class="blog-hero">
+    <p class="blog-breadcrumb"><span>Trang chủ/</span><span class="blog-breadcrumb__current">Blog</span></p>
+    <h1 class="blog-heading">HOÀI MÁCH BẠN</h1>
+</div>
+
+@if (Model.Featured is not null)
+{
+    <div class="blog-featured">
+        <div class="blog-featured__img" style="@(Model.Featured.ImageUrl is not null ? $"background-image:url('{Model.Featured.ImageUrl}')" : "")"></div>
+        <div class="blog-featured__body">
+            <div class="blog-featured__top">
+                <span class="blog-featured__category">@Model.Featured.Category</span>
+                <h2 class="blog-featured__title">@Model.Featured.Title</h2>
+                @if (!string.IsNullOrEmpty(Model.Featured.Excerpt))
+                {
+                    <p class="blog-featured__excerpt">@Model.Featured.Excerpt</p>
+                }
+                <span class="blog-featured__date">@Model.Featured.DateText</span>
+            </div>
+            <a href="@Model.Featured.Url" class="btn--dark">Xem bài viết</a>
+        </div>
+    </div>
+}
+
+<div class="blog-grid">
+    @foreach (var post in Model.Posts)
+    {
+        <a class="blog-card" href="@post.Url">
+            <div class="blog-card__img" style="@(post.ImageUrl is not null ? $"background-image:url('{post.ImageUrl}')" : "")"></div>
+            <div class="blog-card__meta">
+                <span class="blog-card__category">@post.Category</span>
+                <h3 class="blog-card__title">@post.Title</h3>
+                @if (!string.IsNullOrEmpty(post.Excerpt))
+                {
+                    <p class="blog-card__excerpt">@post.Excerpt</p>
+                }
+            </div>
+            <span class="blog-card__date">@post.DateText</span>
+        </a>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/blog.css" asp-append-version="true" />
+}

@@ -1,0 +1,129 @@
+/*
+  Self-hosted fonts (replaces the earlier Google Fonts CDN import + Georgia fallback).
+  Files live under wwwroot/fonts/ — see tokens.css for the --font-body / --font-display vars.
+*/
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('/fonts/Josefin Sans/JosefinSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LC Sac Trial';
+  src: url('/fonts/LC Sac/LCSac Trial-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-line);
+  color: var(--color-black);
+  background: var(--color-white);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: inherit;
+}
+
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 767.98px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+main {
+  min-height: 60vh;
+}

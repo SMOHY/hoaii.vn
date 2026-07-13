@@ -1,0 +1,174 @@
+@model Hoaii.Web.Models.Checkout.CheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+    var cart = Model.Cart;
+}
+
+<div class="checkout-page">
+    <div class="checkout-col checkout-col--form">
+        <form method="post" action="/thanh-toan/dat-hang" id="checkout-form" class="checkout-form" novalidate>
+            @Html.AntiForgeryToken()
+
+            <section class="checkout-section">
+                <div class="checkout-section__heading-row">
+                    <h2>Liên hệ</h2>
+                    <a href="/tai-khoan/dang-nhap" class="checkout-section__login-link">Đăng nhập</a>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Form.Email">Email*</label>
+                    <input asp-for="Form.Email" type="email" placeholder=" " />
+                    <span asp-validation-for="Form.Email" class="form-field__error"></span>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Thông tin giao hàng</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label asp-for="Form.FirstName">Tên*</label>
+                        <input asp-for="Form.FirstName" placeholder=" " />
+                        <span asp-validation-for="Form.FirstName" class="form-field__error"></span>
+                    </div>
+                    <div class="form-field">
+                        <label asp-for="Form.LastName">Họ*</label>
+                        <input asp-for="Form.LastName" placeholder=" " />
+                        <span asp-validation-for="Form.LastName" class="form-field__error"></span>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Form.CompanyName">Tên doanh nghiệp (Tùy chọn)</label>
+                    <input asp-for="Form.CompanyName" placeholder=" " />
+                </div>
+                <div class="form-field">
+                    <label asp-for="Form.Address">Địa chỉ*</label>
+                    <input asp-for="Form.Address" placeholder=" " />
+                    <span asp-validation-for="Form.Address" class="form-field__error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Form.ProvinceDistrictWard">Tỉnh/TP, Quận/Huyện, Phường/Xã*</label>
+                    <input asp-for="Form.ProvinceDistrictWard" placeholder=" " />
+                    <span asp-validation-for="Form.ProvinceDistrictWard" class="form-field__error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="Form.Phone">Số điện thoại*</label>
+                    <input asp-for="Form.Phone" placeholder=" " />
+                    <span asp-validation-for="Form.Phone" class="form-field__error"></span>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Phương thức vận chuyển</h2>
+                <div class="option-group">
+                    <label class="option-row is-selected">
+                        <input type="radio" asp-for="Form.ShippingMethod" value="InnerCity" checked />
+                        <span class="option-row__radio"></span>
+                        <span class="option-row__label">Nội thành Hà Nội</span>
+                    </label>
+                    <label class="option-row">
+                        <input type="radio" asp-for="Form.ShippingMethod" value="Intercity" />
+                        <span class="option-row__radio"></span>
+                        <span class="option-row__label">Vận chuyển liên tỉnh</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Phương thức thanh toán</h2>
+                <div class="option-group">
+                    <label class="option-row is-selected">
+                        <input type="radio" asp-for="Form.PaymentMethod" value="BankTransfer" checked />
+                        <span class="option-row__radio"></span>
+                        <span class="option-row__label">Chuyển khoản qua ngân hàng</span>
+                    </label>
+                    <label class="option-row">
+                        <input type="radio" asp-for="Form.PaymentMethod" value="CashOnDelivery" />
+                        <span class="option-row__radio"></span>
+                        <span class="option-row__label">Thanh toán khi giao hàng</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <div class="form-field">
+                    <label asp-for="Form.Notes">Ghi chú đơn hàng</label>
+                    <input asp-for="Form.Notes" placeholder="Thêm ghi chú đơn hàng" />
+                </div>
+            </section>
+
+            <button type="submit" class="checkout-submit-mobile btn-checkout-primary">Thanh toán với VN PAY</button>
+
+            <footer class="checkout-policy-strip">
+                <a href="/chinh-sach/giao-hang">Chính sách vận chuyển</a>
+                <a href="/chinh-sach/bao-mat">Chính sách bảo mật</a>
+                <a href="#">Hủy bỏ</a>
+            </footer>
+        </form>
+    </div>
+
+    <div class="checkout-col checkout-col--summary">
+        <div class="checkout-summary">
+            <h2 class="checkout-summary__heading">Thanh toán</h2>
+            <div class="checkout-summary__items">
+                @foreach (var item in cart.Items)
+                {
+                    <div class="checkout-line">
+                        <div class="checkout-line__thumb" style="@(item.ThumbnailUrl is not null ? $"background-image:url('{item.ThumbnailUrl}')" : "")"></div>
+                        <div class="checkout-line__info">
+                            <div class="checkout-line__row1">
+                                <span class="checkout-line__name">@item.Name</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(item.VariantLabel))
+                            {
+                                <span class="checkout-line__variant">@item.VariantLabel</span>
+                            }
+                            <div class="checkout-line__row2">
+                                <span class="checkout-line__price">@item.UnitPrice.ToString("N0")</span>
+                                <span class="checkout-line__qty">x@item.Quantity</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="checkout-voucher-row">
+                <div class="checkout-voucher-row__label">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10a2 2 0 100-4 2 2 0 000 4zM3 18a2 2 0 100-4 2 2 0 000 4z" fill="currentColor"/><path d="M21 4H9v16h12V4z" stroke="currentColor" stroke-width="1.5"/></svg>
+                    <span>@(cart.AppliedVoucherLabel ?? "Ưu đãi & khuyến mãi")</span>
+                </div>
+                <button type="button" class="checkout-voucher-row__add" data-voucher-modal-open aria-label="Thêm voucher">+</button>
+            </div>
+
+            <div class="checkout-totals">
+                <div class="checkout-totals__row">
+                    <span>Tổng : @cart.ItemCount mặt hàng</span>
+                    <span>@cart.Subtotal.ToString("N0")</span>
+                </div>
+                <div class="checkout-totals__row">
+                    <span>Vận chuyển</span>
+                    <span>Miễn phí</span>
+                </div>
+                <div class="checkout-totals__row checkout-totals__row--grand">
+                    <span>Tổng cộng</span>
+                    <span>@cart.Total.ToString("N0")đ</span>
+                </div>
+                @if (cart.Discount > 0)
+                {
+                    <p class="checkout-totals__savings">TỔNG SỐ TIẾT KIỆM @cart.Discount.ToString("N0")đ</p>
+                }
+            </div>
+
+            <button type="submit" form="checkout-form" class="btn-checkout-primary checkout-summary__cta">
+                Thanh toán với VN PAY
+            </button>
+        </div>
+    </div>
+</div>
+
+<partial name="_VoucherModal" model="cart" />
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/checkout.js" asp-append-version="true"></script>
+}

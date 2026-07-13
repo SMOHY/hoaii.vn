@@ -1,0 +1,105 @@
+@model Hoaii.Web.Models.Account.AddressesPageViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Sổ địa chỉ";
+    var wardsJson = JsonSerializer.Serialize(Model.AllWards, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+}
+
+<div class="account-layout">
+    <partial name="_AccountSidebar" model="@("Addresses")" />
+
+    <div class="account-content">
+        @if (Model.Addresses.Count > 0)
+        {
+            <div class="address-list">
+                @foreach (var address in Model.Addresses)
+                {
+                    <div class="address-card">
+                        <div class="address-card__info">
+                            <div class="address-card__name-row">
+                                <span class="address-card__name">@address.FullName</span>
+                                @if (address.IsDefault)
+                                {
+                                    <span class="address-card__default-tag">Mặc định</span>
+                                }
+                            </div>
+                            <span class="address-card__phone">@address.Phone</span>
+                            <span class="address-card__detail">@address.AddressDetail, @address.WardName, @address.ProvinceName</span>
+                        </div>
+                        <form method="post" asp-action="RemoveAddress">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@address.Id" />
+                            <button type="submit" class="address-card__remove" aria-label="Xóa địa chỉ">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+
+        <h2 class="address-form__heading">Thêm địa chỉ mới</h2>
+        <form method="post" asp-action="AddAddress" class="address-form" id="address-form">
+            @Html.AntiForgeryToken()
+
+            <div class="form-field">
+                <label class="form-field__label">Họ và tên *</label>
+                <input type="text" asp-for="NewAddress.FullName" class="form-field__input" placeholder=" " />
+            </div>
+            <span asp-validation-for="NewAddress.FullName" class="form-field__error"></span>
+
+            <div class="form-field">
+                <label class="form-field__label">Số điện thoại *</label>
+                <input type="text" asp-for="NewAddress.Phone" class="form-field__input" placeholder=" " />
+            </div>
+            <span asp-validation-for="NewAddress.Phone" class="form-field__error"></span>
+
+            <div class="form-field form-field--select">
+                <label class="form-field__label">Tỉnh thành phố *</label>
+                <select asp-for="NewAddress.ProvinceId" id="province-select" class="form-field__input">
+                    <option value="">-- Chọn tỉnh/thành phố --</option>
+                    @foreach (var p in Model.Provinces)
+                    {
+                        <option value="@p.Id">@p.Name</option>
+                    }
+                </select>
+            </div>
+            <span asp-validation-for="NewAddress.ProvinceId" class="form-field__error"></span>
+
+            <div class="form-row form-row--split">
+                <div class="form-field form-field--select">
+                    <label class="form-field__label">Phường xã *</label>
+                    <select asp-for="NewAddress.WardId" id="ward-select" class="form-field__input" disabled>
+                        <option value="">-- Chọn phường/xã --</option>
+                    </select>
+                </div>
+            </div>
+            <span asp-validation-for="NewAddress.WardId" class="form-field__error"></span>
+
+            <div class="form-field">
+                <label class="form-field__label">Địa chỉ cụ thể *</label>
+                <input type="text" asp-for="NewAddress.AddressDetail" class="form-field__input" placeholder=" " />
+            </div>
+            <span asp-validation-for="NewAddress.AddressDetail" class="form-field__error"></span>
+
+            <div class="form-field">
+                <label class="form-field__label">Mã bưu chính</label>
+                <input type="text" asp-for="NewAddress.PostalCode" class="form-field__input" placeholder=" " />
+            </div>
+
+            <button type="submit" class="btn-outline address-form__submit">Lưu địa chỉ</button>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script>
+        window.__allWards = @Html.Raw(wardsJson);
+        window.__selectedProvinceId = @(Model.NewAddress.ProvinceId?.ToString() ?? "null");
+        window.__selectedWardId = @(Model.NewAddress.WardId?.ToString() ?? "null");
+    </script>
+    <script src="~/js/account.js" asp-append-version="true"></script>
+}
