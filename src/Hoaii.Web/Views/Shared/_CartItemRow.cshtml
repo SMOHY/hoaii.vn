@@ -4,7 +4,9 @@
     <div class="cart-item__thumb" style="@(Model.ThumbnailUrl is not null ? $"background-image:url('{Model.ThumbnailUrl}')" : "")"></div>
     <div class="cart-item__info">
         <div class="cart-item__row1">
-            <a href="/san-pham/@Model.Slug" class="cart-item__name">@Model.Name</a>
+            @* Figma puts the variant on the same line as the name — "Set quà Việt Nam Hoa
+               Thị - Vàng" (node 1154:36023). *@
+            <a href="/san-pham/@Model.Slug" class="cart-item__name">@(string.IsNullOrEmpty(Model.VariantLabel) ? Model.Name : $"{Model.Name} - {Model.VariantLabel}")</a>
             <form method="post" action="/gio-hang/xoa" class="cart-item__remove-form">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="productId" value="@Model.ProductId" />
@@ -15,10 +17,6 @@
                 </button>
             </form>
         </div>
-        @if (!string.IsNullOrEmpty(Model.VariantLabel))
-        {
-            <p class="cart-item__variant">@Model.VariantLabel</p>
-        }
         <div class="cart-item__row2">
             <form method="post" action="/gio-hang/cap-nhat" class="qty-stepper-form">
                 @Html.AntiForgeryToken()
