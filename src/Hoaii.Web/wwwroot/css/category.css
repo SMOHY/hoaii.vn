@@ -6,7 +6,7 @@
   background: var(--color-brand-red);
   color: var(--color-grey-50);
   min-height: 1080px;
-  padding: 204px 0 40px;
+  padding: 204px 0 20px; /* hint sits at y=1040 of an 1080-tall hero */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,8 +47,15 @@
 .cat-hero__slide.is-active { height: 525px; }
 .cat-hero__slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.cat-hero__caption { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
-.cat-hero__pager { display: flex; align-items: center; gap: 12px; }
+.cat-hero__caption { display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; }
+
+/* Kicker centred, pager right, empty column left to balance them (node 1519:34009). */
+.cat-hero__meta { display: flex; align-items: center; width: 100%; }
+.cat-hero__meta-spacer,
+.cat-hero__meta .cat-hero__kicker,
+.cat-hero__meta .cat-hero__pager { flex: 1 0 0; min-width: 0; }
+.cat-hero__meta .cat-hero__kicker { text-align: center; }
+.cat-hero__pager { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .cat-hero__arrow {
   width: 24px; height: 24px; padding: 0; border: none; background: none;
   color: var(--color-grey-50); cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -81,18 +88,31 @@
   .cat-hero__slide { flex-basis: 303px; height: 302px; }
   .cat-hero__slide.is-active { height: 454px; }
   .cat-hero__title { font-size: 32px; line-height: 36px; }
-  .cat-hero__kicker, .cat-hero__pager span { font-size: 16px; }
+  .cat-hero__kicker { font: 500 16px/20px var(--font-body); }
+  .cat-hero__pager span { font: 500 16px/16px var(--font-body); }
   .cat-hero__arrow svg { width: 16px; height: 16px; }
   .cat-hero__scroll-hint { display: none; }
+  /* Mobile stacks the pager above the kicker instead of putting it to the right
+     (node 1068:20592). */
+  .cat-hero__caption { gap: 16px; }
+  .cat-hero__meta { flex-direction: column; gap: 28px; }
+  .cat-hero__meta-spacer { display: none; }
+  .cat-hero__meta .cat-hero__pager { order: -1; flex: none; }
+  .cat-hero__meta .cat-hero__kicker { flex: none; }
+  .cat-hero__arrow { width: 16px; height: 16px; }
 }
 
-/* ---------- Content container ---------- */
-.cat-content { padding: 24px 24px 0; }
+/* ---------- Content container ----------
+   Figma runs a 240px gutter each side of 1920 -> 1440px of content, so the tiles land
+   at 464px. The .container padding was eating 48px and squashing them to 448px. */
+.cat-content { padding: 40px 0 80px; max-width: 1440px; }
 .cat-breadcrumb {
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--color-grey-500);
-  margin: 16px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #1C1C1C;
+  margin: 0 0 40px;
 }
 
 /* ---------- Filter/Sort Bar ---------- */
@@ -118,11 +138,17 @@
 .filter-bar__filter-btn { background: var(--color-brand-gold-bg); border: none; }
 
 @media (max-width: 767.98px) {
-  .filter-bar { flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px 0; }
+  /* Figma mobile: 16px gutter, 398px of content (node 1068:20610). */
+  .cat-content { padding: 16px 16px 24px; }
+  .cat-breadcrumb { font: 400 13px/16px var(--font-body); margin-bottom: 20px; }
+
+  .filter-bar { flex-direction: column; align-items: flex-start; gap: 8px; padding: 0; }
   .filter-bar__title { font: 500 20px/23px var(--font-body); }
   .filter-bar__desc { font: 400 13px/16px var(--font-body); }
   .filter-bar__sort-label { font: 500 16px/20px var(--font-body); }
-  .filter-bar__actions { gap: 16px; }
+  /* "Sắp xếp theo" gets its own line above the two controls (node 1068:21188). */
+  .filter-bar__actions { flex-wrap: wrap; gap: 4px 16px; }
+  .filter-bar__sort-label { flex: 0 0 100%; }
   .filter-bar__dropdown, .filter-bar__filter-btn {
     height: 32px; padding: 4px 8px 4px 16px; gap: 16px; font: 400 13px/16px var(--font-body);
   }
@@ -133,6 +159,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 56px 24px;
+  margin-top: 28px;   /* filter bar sits 28px above the grid (node 1519:34031) */
   padding-bottom: 80px;
 }
 /* Empty category (node 1538:39514) */
@@ -164,7 +191,7 @@
 .pagination__arrow--disabled { opacity: 0; pointer-events: none; }
 
 @media (max-width: 767.98px) {
-  .product-grid { grid-template-columns: 1fr; gap: 24px; padding-bottom: 40px; }
+  .product-grid { grid-template-columns: 1fr; gap: 24px; margin-top: 20px; padding-bottom: 40px; }
   .pagination { margin-bottom: 40px; }
 }
 
@@ -206,7 +233,10 @@
 }
 .product-card__add-to-cart svg { width: 28px; height: 28px; }
 
-.product-card__info { display: flex; flex-direction: column; gap: 12px; }
+/* Figma nests name+price in their own 8px-gap column, then leaves 12px before the
+   swatch row (node 1519:34033). */
+.product-card__info { display: flex; flex-direction: column; gap: 8px; }
+.product-card__swatches { margin-top: 4px; }
 .product-card__name {
   font: 500 32px/40px var(--font-body); color: #1C1C1C; text-decoration: none; display: block;
 }
@@ -214,9 +244,16 @@
 .product-card__compare-price {
   font-size: 16px; color: var(--color-grey-400); text-decoration: line-through; margin-left: 8px;
 }
+/* Figma: 24px-wide swatch, 10px of colour with 4px padding above and below, and the
+   selected one underlined in black (node 1519:34033). */
 .product-card__swatches { display: flex; align-items: center; gap: 9px; }
-.product-card__swatch { width: 24px; height: 10px; }
-.product-card__swatch--active { box-shadow: 0 5px 0 -4px #000; }
+.product-card__swatch {
+  box-sizing: content-box; /* the global border-box would swallow the 4px padding */
+  width: 24px; height: 10px; padding: 4px 0;
+  background-clip: content-box;
+  border-bottom: 1px solid transparent;
+}
+.product-card__swatch--active { border-bottom-color: #000; }
 
 .product-card--out-of-stock .product-card__image { opacity: 0.6; }
 

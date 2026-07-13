@@ -27,16 +27,22 @@
     <div class="cat-hero__caption">
         @if (hasSlides)
         {
-            <div class="cat-hero__pager">
-                <button type="button" class="cat-hero__arrow" data-cat-prev aria-label="Sản phẩm trước">
-                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
-                </button>
-                <span data-cat-counter>1/@Model.HeroSlides.Count</span>
-                <button type="button" class="cat-hero__arrow" data-cat-next aria-label="Sản phẩm sau">
-                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
-                </button>
+            @* One row of three equal columns (node 1519:34009): the kicker centres in the
+               middle one, the pager sits right, and the left column is an empty spacer —
+               Figma ships it as a second pager at opacity 0. *@
+            <div class="cat-hero__meta">
+                <span class="cat-hero__meta-spacer" aria-hidden="true"></span>
+                <p class="cat-hero__kicker">Bộ quà 6 hộp</p>
+                <div class="cat-hero__pager">
+                    <button type="button" class="cat-hero__arrow" data-cat-prev aria-label="Sản phẩm trước">
+                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </button>
+                    <span data-cat-counter>1/@Model.HeroSlides.Count</span>
+                    <button type="button" class="cat-hero__arrow" data-cat-next aria-label="Sản phẩm sau">
+                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </button>
+                </div>
             </div>
-            <p class="cat-hero__kicker">Bộ quà 6 hộp</p>
         }
         <h1 class="cat-hero__title" data-cat-title>@(Model.HeroSlides.FirstOrDefault()?.Name.ToUpperInvariant() ?? Model.Title.ToUpperInvariant())</h1>
     </div>
