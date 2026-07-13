@@ -2,55 +2,102 @@
     ViewData["Title"] = "Về chúng tôi";
 }
 
-<section class="about-page-hero">
-    <div class="about-page-hero__text">
-        <p class="about-page-hero__intro">Chúng tôi là một nhóm thiết kế độc lập, được thành lập vào năm 2021 và có văn phòng tại Hà Nội</p>
-        <div class="about-page-hero__media">
-            <div class="about-page-hero__img"></div>
-            <div class="about-page-hero__caption">
-                <p class="about-page-hero__caption-label">KHỞI ĐẦU</p>
-                <p class="about-page-hero__caption-text">Tết Nguyên Đán là dịp lễ sum vầy lớn nhất Việt Nam. Đây là thời khắc mọi người trao gửi những lời yêu và tấm lòng chân thành. Khám phá bộ sưu tập của HOÀI để mang tới niềm vui và khởi đầu tốt đẹp nhân dịp năm mới.</p>
-            </div>
+@* Section tabs (node 778:24899). Anchor links into the sections below. *@
+<nav class="about-tabs">
+    <div class="about-tabs__inner">
+        <a class="about-tabs__link is-active" href="#khoi-dau">Khởi đầu</a>
+        <a class="about-tabs__link" href="#nen-tang">Nền tảng</a>
+        <a class="about-tabs__link" href="#doi-ngu">Đội ngũ</a>
+        <a class="about-tabs__link" href="#khach-hang">Khách hàng</a>
+    </div>
+</nav>
+
+<section class="about-page-hero" id="khoi-dau">
+    @* Figma runs different headlines per breakpoint: desktop 955:18592, mobile 1068:33689. *@
+    <h1 class="about-page-hero__headline">
+        <span class="u-desktop-only">HOÀI - CHÚNG TÔI LÀ NHỮNG NGƯỜI TRẺ, BƯỚC ĐI VỚI MONG MUỐN ĐEM CÂU CHUYỆN VĂN HÓA DÂN TỘC LAN TỎA KHẮP MUÔN NƠI.</span>
+        <span class="u-mobile-only">CHÚNG TÔI LÀ MỘT NHÓM THIẾT KẾ ĐỘC LẬP, ĐƯỢC THÀNH LẬP VÀO NĂM 2021 VÀ CÓ VĂN PHÒNG TẠI HÀ NỘI</span>
+    </h1>
+
+    <div class="about-page-hero__media">
+        <div class="about-page-hero__img">
+            <img src="~/images/about/hero.jpg" alt="Đội ngũ HOÀI" loading="lazy" />
+        </div>
+        <div class="about-page-hero__caption">
+            <p class="about-page-hero__caption-label">KHỞI ĐẦU</p>
+            <p class="about-page-hero__caption-text">
+                Khởi nguồn từ tình yêu dành cho di sản Việt Nam, HOÀI chọn hành trình gìn giữ và lan tỏa giá trị truyền thống thông qua những tặng phẩm văn hóa cao cấp.
+            </p>
+            <p class="about-page-hero__caption-text">
+                Mỗi sản phẩm tại HOÀI đều được chăm chút tỉ mỉ như một lát cắt văn hóa tinh tế, nơi mỹ cảm thời đại song hành cùng chiều sâu nội dung. Không đơn thuần là thức quà mang dấu ấn bản địa, đây còn là nơi chắt lọc tinh hoa từ phong tục và nếp sống, trở thành cầu nối ngoại giao tinh tế giúp các cá nhân, tổ chức kết nối thâm giao.
+            </p>
         </div>
     </div>
-    <blockquote class="about-page-hero__quote">"Gói ghém chân tình, viết tiếp dòng di sản"</blockquote>
-    <p class="about-page-hero__body">
-        Trên thực tế, điều này có nghĩa là: "Văn hóa là một dòng chảy bất tận. Tại HOÀI, chúng tôi chọn đứng nơi giao lộ của thời gian để thực hiện một việc đơn giản nhưng bền bỉ: Gói ghém chân tình, viết tiếp dòng di sản. Chúng tôi tìm thấy cảm hứng từ những câu chuyện xưa, rồi kể lại chúng bằng ngôn ngữ thiết kế của ngày hôm nay. Qua những món quà tinh xảo, HOÀI mong muốn vẻ đẹp di sản hiện diện thật tự nhiên và duyên dáng trong nhịp sống hiện đại."
-    </p>
+
+    <blockquote class="about-page-hero__quote">“Gói ghém chân tình, viết tiếp dòng di sản”</blockquote>
+
+    <div class="about-page-hero__story">
+        <p class="about-page-hero__story-text">
+            Văn hóa là một dòng chảy bất tận. Tại HOÀI, chúng tôi chọn đứng nơi giao lộ của thời gian để thực hiện một nhiệm vụ đơn giản nhưng bền bỉ: Gói ghém chân tình, viết tiếp dòng di sản.
+            <br /><br />
+            Bằng lăng kính của thế hệ trẻ, chúng tôi đưa nét đẹp xưa hòa cùng nhịp sống hôm nay, để ký ức, câu chuyện và tinh thần dân tộc được tiếp nối một cách mới mẻ, đầy cảm hứng qua ngôn ngữ thiết kế đương đại.
+        </p>
+        <div class="about-page-hero__story-img">
+            <img src="~/images/about/story.jpg" alt="Sản phẩm HOÀI" loading="lazy" />
+        </div>
+    </div>
 </section>
 
-<section class="about-foundation">
+<section class="about-foundation" id="nen-tang">
     <h2 class="about-foundation__heading">NỀN TẢNG THƯƠNG HIỆU</h2>
     <div class="about-foundation__grid">
         <div class="about-foundation__item">
             <span class="about-foundation__number">01</span>
-            <h3>Mục đích</h3>
-            <p>Hoài được hình thành từ niềm tin rằng văn hóa chỉ thực sự trường tồn khi được tiếp nối qua từng thế hệ. Với tinh thần "Gìn giữ để khởi sinh", Hoài mong muốn góp phần kết nối truyền thống với hiện tại thông qua những sản phẩm mang đậm bản sắc văn hóa Việt Nam.</p>
+            <div class="about-foundation__body">
+                <h3>Mục đích</h3>
+                <p>
+                    HOÀI ra đời từ niềm tin: Di sản chỉ thực sự sống khi được tiếp nối. Không nhìn truyền thống như một khái niệm đứng yên, chúng tôi chọn tinh thần “Gìn giữ để Khởi sinh” làm kim chỉ nam để tái hiện những giá trị xưa cũ qua cảm quan nghệ thuật đương đại.
+                    <br /><br />
+                    Những món quà, vật phẩm từ HOÀI là sự giao thoa hoàn mỹ giữa kỹ nghệ tinh xảo và bề dày văn hóa, biến mỗi vật phẩm trao đi trở thành một câu chuyện di sản được viết tiếp đầy kiêu hãnh.
+                </p>
+            </div>
         </div>
         <div class="about-foundation__item">
             <span class="about-foundation__number">02</span>
-            <h3>Tầm nhìn</h3>
-            <p>Chúng tôi mong muốn xây dựng một thương hiệu có khả năng kết nối con người với bản sắc dân tộc thông qua những sản phẩm giàu chiều sâu văn hóa và được chế tác một cách chỉn chu, tinh tế.</p>
+            <div class="about-foundation__body">
+                <h3>Tầm nhìn</h3>
+                <p>Trở thành biểu tượng của ngành quà tặng thiết kế cao cấp tại Việt Nam, là thương hiệu đầu tiên khách hàng nghĩ đến khi muốn tặng một món quà mang “quốc hồn quốc túy” nhưng có thẩm mỹ đương đại.</p>
+            </div>
         </div>
         <div class="about-foundation__item">
             <span class="about-foundation__number">03</span>
-            <h3>Sứ mệnh</h3>
-            <p>Sứ mệnh của Hoài là đánh thức những giá trị di sản thông qua hơi thở thiết kế đương đại, biến mỗi món quà trở thành một sứ giả văn hoá kết nối quá khứ với hiện tại.</p>
+            <div class="about-foundation__body">
+                <h3>Sứ mệnh</h3>
+                <p>Sứ mệnh của Hoài là đánh thức những giá trị di sản thông qua hơi thở thiết kế đương đại, biến mỗi món quà trở thành một sứ giả văn hoá kết nối quá khứ với hiện tại. Chúng tôi chăm chút trong từng bao bì và vật phẩm tinh xảo để người Việt tìm thấy niềm tự hào trong gốc rễ, và để bạn bè năm châu chạm đến những tầng sâu tinh tế của tâm hồn Việt giữa dòng chảy thời đại.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="about-team">
-    <h2 class="about-team__heading">ĐỘI NGŨ</h2>
-    <p class="about-team__subtitle">Những con người trẻ, yêu văn hóa Việt và tận tâm với từng sản phẩm mang tên HOÀI.</p>
+<section class="about-team" id="doi-ngu">
+    <div class="about-team__intro">
+        <h2 class="about-team__heading">ĐỘI NGŨ</h2>
+        <p class="about-team__subtitle">Chúng tôi là những người trẻ cùng chung tình yêu dành cho văn hóa và thủ công Việt. Bằng sự thấu hiểu, tinh thần sáng tạo và sự chỉn chu trong từng chi tiết, đội ngũ HOÀI không ngừng kết nối giá trị truyền thống với nhịp sống đương đại, để mỗi sản phẩm trở thành một món quà mang theo câu chuyện, cảm xúc và dấu ấn riêng.</p>
+    </div>
+    @* Collage: one tall tile on the right, one wide tile above two small ones (node 792:24972). *@
     <div class="about-team__collage">
-        <div class="about-team__tile about-team__tile--lg"></div>
-        <div class="about-team__tile"></div>
-        <div class="about-team__tile"></div>
+        <div class="about-team__tile about-team__tile--wide"><img src="~/images/about/team-wide.jpg" alt="Đội ngũ HOÀI" loading="lazy" /></div>
+        <div class="about-team__smalls">
+            <div class="about-team__tile"><img src="~/images/about/team-small-1.jpg" alt="Đội ngũ HOÀI" loading="lazy" /></div>
+            <div class="about-team__tile"><img src="~/images/about/team-small-2.jpg" alt="Đội ngũ HOÀI" loading="lazy" /></div>
+        </div>
+        <div class="about-team__tile about-team__tile--main"><img src="~/images/about/team-main.jpg" alt="Đội ngũ HOÀI" loading="lazy" /></div>
     </div>
 </section>
 
-@await Html.PartialAsync("~/Views/Home/Sections/_Customers.cshtml", new List<string> { "truong-thanh", "bondex", "nano-gold", "pro-group", "jaguar", "bee-mv", "core5", "cystack", "hana-hp", "mb", "nature-hotel", "avalue", "pancake", "ecomdy", "king-power", "isofh", "onpoint", "everest" })
+<div id="khach-hang">
+    @await Html.PartialAsync("~/Views/Home/Sections/_Customers.cshtml", new List<string> { "truong-thanh", "bondex", "nano-gold", "pro-group", "jaguar", "bee-mv", "core5", "cystack", "hana-hp", "mb", "nature-hotel", "avalue", "pancake", "ecomdy", "king-power", "isofh", "onpoint", "everest" })
+</div>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
