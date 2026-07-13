@@ -23,10 +23,9 @@
             </div>
             @* background-image, not <img> — the global `img { height: auto }` reset stops
                object-fit from filling the panel. *@
+            @* No close button: the panel opens on hover and closes when the pointer leaves,
+               which is how Figma draws it (node 923:17081). *@
             <div class="mega-menu__visual" style="@(panel.ImageUrl is not null ? $"background-image:url('{panel.ImageUrl}')" : "")">
-                <button type="button" class="mega-menu__close" data-menu-close aria-label="Đóng">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
-                </button>
                 <a href="@panel.SeeAllUrl" class="mega-menu__see-all">Xem tất cả</a>
             </div>
         </div>

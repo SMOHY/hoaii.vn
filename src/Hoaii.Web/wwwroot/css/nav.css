@@ -282,15 +282,9 @@ body.hero-overlay .nav-menu .item.is-open {
   position: relative; width: 554px; flex-shrink: 0;
   background-color: var(--color-grey-100);
   background-size: cover; background-position: center; background-repeat: no-repeat;
-  display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
   padding: 10px 10px 40px;
   overflow: hidden;
-}
-.mega-menu__close {
-  position: relative; z-index: 1;
-  background: rgba(255, 255, 255, .8); border: none; border-radius: 50%;
-  color: var(--color-grey-700); cursor: pointer; padding: 10px;
-  display: flex; align-items: center; justify-content: center;
 }
 .mega-menu__see-all {
   position: relative; z-index: 1;

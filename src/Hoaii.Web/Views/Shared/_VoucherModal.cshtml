@@ -25,8 +25,12 @@
                 {
                     var isSelected = Model.AppliedVoucherCode == voucher.Code;
                     <label class="voucher-item @(isSelected ? "is-selected" : "")">
+                        @* Discount ticket, as drawn in the modal (node 1239:40930). *@
                         <span class="voucher-item__icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10a2 2 0 100-4 2 2 0 000 4zM3 18a2 2 0 100-4 2 2 0 000 4z" fill="currentColor"/><path d="M21 4H9v16h12V4z" stroke="currentColor" stroke-width="1.5"/></svg>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v1.5a2.5 2.5 0 000 5V16a2 2 0 01-2 2H5a2 2 0 01-2-2v-1.5a2.5 2.5 0 000-5V8z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M9.5 10.5h.01M14.5 13.5h.01M15 9l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
                         </span>
                         <span class="voucher-item__text">
                             <span class="voucher-item__title">@voucher.Label</span>

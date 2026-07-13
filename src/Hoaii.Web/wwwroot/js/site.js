@@ -89,7 +89,6 @@
 // panels with zero JS; this just adds a click affordance for touch/keyboard users).
 (function () {
   const triggers = document.querySelectorAll('[data-menu-trigger]');
-  const closeBtns = document.querySelectorAll('[data-menu-close]');
 
   function closeAll(except) {
     triggers.forEach(function (t) {
@@ -107,10 +106,6 @@
       trigger.classList.toggle('is-open', willOpen);
       trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     });
-  });
-
-  closeBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () { closeAll(); });
   });
 
   document.addEventListener('click', function (e) {
