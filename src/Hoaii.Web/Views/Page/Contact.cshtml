@@ -1,26 +1,40 @@
 @model Hoaii.Web.Models.Page.ContactFormModel
 @{
     ViewData["Title"] = "Liên hệ";
+    ViewData["HeroOverlay"] = true;
 }
 
+@* Hero sits on brand red with the nav overlaid (node 809:29894). Figma's breadcrumb
+   still reads "Mua quà tết" on both breakpoints — using the page's own name. *@
 <section class="contact-hero">
-    <div class="contact-hero__text">
-        <p class="contact-breadcrumb"><span>Trang chủ/</span><span class="contact-breadcrumb__current">Liên hệ</span></p>
-        <h1 class="contact-hero__title">LIÊN HỆ</h1>
+    <div class="contact-hero__inner">
+        <div class="contact-hero__text">
+            <p class="contact-breadcrumb"><a href="/">Trang chủ</a>/<span>Liên hệ</span></p>
+            <h1 class="contact-hero__title">LIÊN HỆ</h1>
+        </div>
+        <div class="contact-hero__aside">
+            <div class="contact-hero__img">
+                <img src="~/images/contact/hero.jpg" alt="Hộp quà HOÀI" />
+            </div>
+            <p class="contact-hero__caption">Hãy liên hệ với chúng tôi</p>
+        </div>
     </div>
-    <div class="contact-hero__img"></div>
 </section>
 
 <section class="contact-address">
-    <h2>Địa chỉ</h2>
+    <h2 class="contact-section__heading">Địa chỉ</h2>
     <div class="contact-address__row">
-        <div class="contact-address__img"></div>
-        <p class="contact-address__text">945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội</p>
+        <a class="contact-address__img" href="https://maps.google.com/?q=945+Ngô+Gia+Tự,+Việt+Hưng,+Hà+Nội" target="_blank" rel="noopener">
+            <img src="~/images/contact/map.jpg" alt="Bản đồ tới HOÀI" loading="lazy" />
+            @* Google Maps place card, overlaid top-left of the map (node 970:20952). *@
+            <img class="contact-address__map-card" src="~/images/contact/map-card.png" alt="" loading="lazy" />
+        </a>
+        <p class="contact-address__text">945 Ngô Gia Tự, P. Việt Hưng,<br />TP. Hà Nội</p>
     </div>
 </section>
 
 <section class="contact-methods">
-    <h2>Liên hệ</h2>
+    <h2 class="contact-section__heading">Liên hệ</h2>
     <div class="contact-methods__grid">
         <div class="contact-method-card">
             <h3>TRÒ CHUYỆN TRỰC TIẾP</h3>
@@ -46,43 +60,26 @@
 </section>
 
 <section class="contact-form-section">
-    <h2>Hãy gửi email cho chúng tôi</h2>
+    <h2 class="contact-section__heading">Hãy gửi email cho chúng tôi</h2>
     <div class="contact-form-section__row">
         <p class="contact-form-section__intro">Chúng tôi rất vui vì điều gì đó ở đây đã thu hút sự chú ý của bạn. Hãy liên hệ để chào hỏi, trao đổi về nhu cầu của bạn và cùng nhau tìm hiểu cách hợp tác nhé.</p>
         <form method="post" asp-action="Contact" class="contact-form">
             @Html.AntiForgeryToken()
             @if (TempData["ContactSubmitted"] is not null)
             {
-                <p class="wholesale__success">Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
+                <p class="contact-form__success">Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
             }
-            <div class="wholesale__row">
-                <div class="simple-field">
-                    <label>Tên*</label>
-                    <input type="text" asp-for="FirstName" />
-                </div>
-                <div class="simple-field">
-                    <label>Họ*</label>
-                    <input type="text" asp-for="LastName" />
-                </div>
-            </div>
-            <div class="simple-field">
-                <label>Email*</label>
-                <input type="email" asp-for="Email" />
-            </div>
-            <div class="simple-field">
-                <label>Điện thoại</label>
-                <input type="text" asp-for="Phone" />
-            </div>
-            <div class="simple-field">
-                <label>Tin nhắn*</label>
-                <textarea asp-for="Message" rows="4"></textarea>
-            </div>
-            <button type="submit" class="wholesale__submit">Gửi</button>
+            @* Figma stacks every field full-width with the label as the field's own text (node 809:30314). *@
+            <input type="text" asp-for="FirstName" class="contact-form__field" placeholder="Tên*" />
+            <input type="text" asp-for="LastName" class="contact-form__field" placeholder="Họ*" />
+            <input type="email" asp-for="Email" class="contact-form__field" placeholder="Email*" />
+            <input type="text" asp-for="Phone" class="contact-form__field" placeholder="Điện thoại" />
+            <textarea asp-for="Message" class="contact-form__field contact-form__field--message" placeholder="Tin nhắn :"></textarea>
+            <button type="submit" class="contact-form__submit">Gửi</button>
         </form>
     </div>
 </section>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/contact.css" asp-append-version="true" />
 }

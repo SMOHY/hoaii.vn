@@ -1,34 +1,5 @@
 /* Home page — see design-specs/home/*.md and design-specs/custom-services.md */
-
-/* ---------- Nav overlay (hero sits behind a transparent nav) ---------- */
-body.hero-overlay .nav-desktop,
-body.hero-overlay .nav-mobile {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 20;
-}
-body.hero-overlay .nav-main,
-body.hero-overlay .nav-m-main {
-  background: transparent;
-}
-body.hero-overlay .nav-main-inner {
-  border-bottom-color: rgba(255, 255, 255, 0.4);
-}
-body.hero-overlay .nav-m-main-inner {
-  border-bottom-color: rgba(255, 255, 255, 0.3);
-}
-body.hero-overlay .nav-menu .item span,
-body.hero-overlay .nav-lang,
-body.hero-overlay .nav-icons .icon-btn,
-body.hero-overlay .nav-m-hamburger,
-body.hero-overlay .nav-m-icons .icon-btn {
-  color: #fff;
-}
-body.hero-overlay .nav-menu .item.is-open {
-  background: rgba(255, 255, 255, 0.2); /* literal Figma value (node 923:17080) for the overlay nav */
-}
+/* The body.hero-overlay nav rules live in nav.css — Contact needs them too. */
 
 /* ---------- Hero ---------- */
 .home-hero {
