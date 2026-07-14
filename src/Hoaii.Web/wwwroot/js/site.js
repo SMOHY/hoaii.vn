@@ -18,15 +18,7 @@
   const panel = document.querySelector('[data-minicart-panel]');
   const backdrop = document.querySelector('[data-minicart-backdrop]');
   const openBtns = document.querySelectorAll('[data-minicart-open]');
-  const closeBtn = document.querySelector('[data-minicart-close]');
-  const badges = document.querySelectorAll('[data-cart-badge]');
-
-  // Reflect the current cart count (rendered server-side into the panel) onto the nav badges.
-  const count = parseInt(panel?.getAttribute('data-cart-count') || '0', 10);
-  badges.forEach(function (badge) {
-    badge.textContent = String(count);
-    badge.hidden = count <= 0;
-  });
+  // The close button is re-rendered by cart-live.js, so it is resolved on each click.
 
   function open() {
     panel?.classList.add('is-open');
@@ -45,8 +37,14 @@
       open();
     });
   });
-  closeBtn?.addEventListener('click', close);
+
+  // Delegated: the drawer's contents are replaced whenever the cart changes.
+  panel?.addEventListener('click', function (e) {
+    if (e.target.closest('[data-minicart-close]')) close();
+  });
   backdrop?.addEventListener('click', close);
+
+  document.addEventListener('minicart:open', open);
 })();
 
 // Bulk-order Zalo contact popup (global — triggered from any [data-contact-popup-open] button)

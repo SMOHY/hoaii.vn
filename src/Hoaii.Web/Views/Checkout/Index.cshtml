@@ -7,7 +7,7 @@
 
 <div class="checkout-page">
     <div class="checkout-col checkout-col--form">
-        <form method="post" action="/thanh-toan/dat-hang" id="checkout-form" class="checkout-form" novalidate>
+        <form method="post" action="/thanh-toan/dat-hang" id="checkout-form" class="checkout-form">
             @Html.AntiForgeryToken()
 
             <section class="checkout-section">
@@ -17,7 +17,7 @@
                 </div>
                 <div class="form-field">
                     <label asp-for="Form.Email">Email*</label>
-                    <input asp-for="Form.Email" type="email" placeholder=" " />
+                    <input asp-for="Form.Email" type="email" placeholder=" " required />
                     <span asp-validation-for="Form.Email" class="form-field__error"></span>
                 </div>
             </section>
@@ -27,12 +27,12 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label asp-for="Form.FirstName">Tên*</label>
-                        <input asp-for="Form.FirstName" placeholder=" " />
+                        <input asp-for="Form.FirstName" placeholder=" " required />
                         <span asp-validation-for="Form.FirstName" class="form-field__error"></span>
                     </div>
                     <div class="form-field">
                         <label asp-for="Form.LastName">Họ*</label>
-                        <input asp-for="Form.LastName" placeholder=" " />
+                        <input asp-for="Form.LastName" placeholder=" " required />
                         <span asp-validation-for="Form.LastName" class="form-field__error"></span>
                     </div>
                 </div>
@@ -42,17 +42,17 @@
                 </div>
                 <div class="form-field">
                     <label asp-for="Form.Address">Địa chỉ*</label>
-                    <input asp-for="Form.Address" placeholder=" " />
+                    <input asp-for="Form.Address" placeholder=" " required />
                     <span asp-validation-for="Form.Address" class="form-field__error"></span>
                 </div>
                 <div class="form-field">
                     <label asp-for="Form.ProvinceDistrictWard">Tỉnh/TP, Quận/Huyện, Phường/Xã*</label>
-                    <input asp-for="Form.ProvinceDistrictWard" placeholder=" " />
+                    <input asp-for="Form.ProvinceDistrictWard" placeholder=" " required />
                     <span asp-validation-for="Form.ProvinceDistrictWard" class="form-field__error"></span>
                 </div>
                 <div class="form-field">
                     <label asp-for="Form.Phone">Số điện thoại*</label>
-                    <input asp-for="Form.Phone" placeholder=" " />
+                    <input asp-for="Form.Phone" placeholder=" " required />
                     <span asp-validation-for="Form.Phone" class="form-field__error"></span>
                 </div>
             </section>
@@ -110,7 +110,7 @@
 
     <div class="checkout-col checkout-col--summary">
         @* No heading on this column — Figma opens straight into the line items (node 887:16122). *@
-        <div class="checkout-summary">
+        <div class="checkout-summary" data-cart-region="checkout-summary">
             <div class="checkout-summary__items">
                 @* Figma keeps the line editable here — stepper and remove, same as the cart
                    (node 848:14548) — so people don't have to go back to fix a quantity. *@

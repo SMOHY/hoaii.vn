@@ -7,10 +7,16 @@
     <div class="footer-newsletter">
         <h2>ĐĂNG KÝ VÀO DANH SÁCH</h2>
         <p>Bên trong có gì? Bộ sưu tập mới, ưu đãi độc quyền,nguồn cảm hứng và nhiều hơn nữa</p>
-        <form class="footer-signup" method="post" action="/newsletter/subscribe">
+        <form class="footer-signup" method="post" action="/newsletter/subscribe" data-async-form>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
             <input type="email" name="email" placeholder="Nhập email của bạn" required />
             <button type="submit">Gửi</button>
         </form>
+        @if (TempData["NewsletterSubscribed"] is not null)
+        {
+            <p class="footer-signup__done" role="status">Cảm ơn bạn! Chúng tôi sẽ gửi tin mới nhất tới hộp thư của bạn.</p>
+        }
     </div>
 
     <div class="footer-links-section">

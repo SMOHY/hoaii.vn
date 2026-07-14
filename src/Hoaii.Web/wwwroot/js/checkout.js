@@ -35,6 +35,10 @@
   closeBtn?.addEventListener('click', close);
   backdrop?.addEventListener('click', close);
 
+  // The modal used to close by virtue of the page reloading; the apply now happens in the
+  // background, so it has to close itself.
+  document.addEventListener('voucher:applied', close);
+
   // Selecting a voucher card visually marks it selected too (server also re-marks on reload).
   document.querySelectorAll('.voucher-item__input').forEach(function (input) {
     input.addEventListener('change', function () {

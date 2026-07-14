@@ -55,8 +55,18 @@ public class CartController(CartService cart) : Controller
         return SafeRedirect(returnUrl);
     }
 
+    /// <summary>
+    /// With JS on, cart.js posts these forms in the background and then re-fetches the page to
+    /// swap the cart regions in place, so there is nothing to redirect to. Without JS the forms
+    /// still post normally and land back where they came from.
+    /// </summary>
     private IActionResult SafeRedirect(string? returnUrl)
     {
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        {
+            return NoContent();
+        }
+
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
             return Redirect(returnUrl);
