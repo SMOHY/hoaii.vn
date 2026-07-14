@@ -45,8 +45,8 @@ public static class LayoutData
                 Links =
                 [
                     new() { Label = "Liên hệ", Url = "/lien-he" },
-                    new() { Label = "Chính sách trao đổi", Url = "/chinh-sach/trao-doi" },
-                    new() { Label = "Chính sách giao hàng", Url = "/chinh-sach/giao-hang" },
+                    new() { Label = "Chính sách trao đổi & hoàn tác", Url = "/chinh-sach/trao-doi" },
+                    new() { Label = "Chính sách giao nhận hàng hóa", Url = "/chinh-sach/giao-hang" },
                 ],
             },
             new FooterColumn
@@ -61,9 +61,10 @@ public static class LayoutData
         ],
         SocialLinks =
         [
+            // Figma's footer shows Facebook / Instagram / TikTok, not Zalo (node 683:4422).
             new() { Name = "Facebook", Url = "https://facebook.com", IconPath = "/images/icons/social-facebook.svg" },
-            new() { Name = "Zalo", Url = "https://zalo.me", IconPath = "/images/icons/social-zalo.svg" },
             new() { Name = "Instagram", Url = "https://instagram.com", IconPath = "/images/icons/social-instagram.svg" },
+            new() { Name = "TikTok", Url = "https://tiktok.com", IconPath = "/images/icons/social-tiktok.svg" },
         ],
     };
 }

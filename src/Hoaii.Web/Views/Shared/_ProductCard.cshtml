@@ -3,11 +3,17 @@
 @{
     var swatchPalette = new[] { "#E60000", "#0077FF", "#FFC300", "#00E007" };
     var isOutOfStock = Model.BadgeVariant == "out-of-stock";
+
+    // The collection tile on the product page carries the name and nothing else — no price,
+    // no swatches (node 826:20692).
+    var isCollection = Model.CardVariant == "collection";
 }
 <div class="product-card product-card--@Model.CardVariant @(isOutOfStock ? "product-card--out-of-stock" : "")">
     <div class="product-card__image" style="@(Model.ImageUrl is not null ? $"background-image:url('{Model.ImageUrl}')" : "")">
         <a class="product-card__image-link" href="/san-pham/@Model.Slug" aria-label="@Model.Name"></a>
-        @if (!string.IsNullOrEmpty(Model.BadgeLabel))
+        @* Figma keeps the "Hàng mới" / "-20%" badges in the component but ships them hidden
+           (node 722:18122, Frame 54), so they only show for out-of-stock. *@
+        @if (isOutOfStock)
         {
             <div class="product-card__badges">
                 <span class="product-card__badge product-card__badge--@Model.BadgeVariant">@Model.BadgeLabel</span>
@@ -28,21 +34,24 @@
     </div>
     <div class="product-card__info">
         <a href="/san-pham/@Model.Slug" class="product-card__name">@Model.Name</a>
-        <p class="product-card__price">
-            @Model.Price.ToString("N0")đ
-            @if (Model.CompareAtPrice is not null)
-            {
-                <span class="product-card__compare-price">@Model.CompareAtPrice.Value.ToString("N0")đ</span>
-            }
-        </p>
-        @if (Model.VariantCount > 1)
+        @if (!isCollection)
         {
-            <div class="product-card__swatches">
-                @for (var i = 0; i < Math.Min(Model.VariantCount, swatchPalette.Length); i++)
+            <p class="product-card__price">
+                @Model.Price.ToString("N0") VNĐ
+                @if (Model.CompareAtPrice is not null)
                 {
-                    <span class="product-card__swatch @(i == 0 ? "product-card__swatch--active" : "")" style="background-color:@swatchPalette[i]"></span>
+                    <span class="product-card__compare-price">@Model.CompareAtPrice.Value.ToString("N0") VNĐ</span>
                 }
-            </div>
+            </p>
+            @if (Model.VariantCount > 1)
+            {
+                <div class="product-card__swatches">
+                    @for (var i = 0; i < Math.Min(Model.VariantCount, swatchPalette.Length); i++)
+                    {
+                        <span class="product-card__swatch @(i == 0 ? "product-card__swatch--active" : "")" style="background-color:@swatchPalette[i]"></span>
+                    }
+                </div>
+            }
         }
     </div>
 </div>

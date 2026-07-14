@@ -7,7 +7,9 @@ namespace Hoaii.Web.Controllers;
 
 public class CategoryController(HoaiiDbContext db) : Controller
 {
-    private const int PageSize = 9; // 3 columns x 3 rows desktop grid
+    // Figma lays the grid out as 3 columns x 2 rows and then pages (node 1519:34031).
+    // At 9 a category with 6-9 products never showed the pager at all.
+    private const int PageSize = 6;
 
     /// <summary>Nav and footer both link here, but it is a cross-category view of the
     /// featured products rather than a category row of its own.</summary>

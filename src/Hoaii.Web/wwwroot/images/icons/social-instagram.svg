@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <!-- Placeholder Instagram icon — replace with the real exported asset. -->
-  <circle cx="12" cy="12" r="11" fill="#5E4A2F"/>
-  <text x="12" y="16" font-family="Arial, sans-serif" font-size="8" fill="#fff" text-anchor="middle">IG</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5.25" stroke="#1C1C1C" stroke-width="1.6"/>
+  <circle cx="12" cy="12" r="4.2" stroke="#1C1C1C" stroke-width="1.6"/>
+  <circle cx="17.2" cy="6.8" r="1.2" fill="#1C1C1C"/>
 </svg>

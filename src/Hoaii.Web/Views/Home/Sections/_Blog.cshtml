@@ -25,12 +25,16 @@
         <div class="blog-list">
             @foreach (var post in rest)
             {
+                @* Copy stacked in one column, thumbnail beside it — not three columns, which
+                   squeezed the headline onto three lines (node 1214:38925). *@
                 <a class="blog-list__row" href="@post.Url">
-                    <div class="blog-card__meta">
-                        <span class="blog-card__category">@post.Category</span>
-                        <span class="blog-card__title">@post.Title</span>
+                    <div class="blog-list__text">
+                        <div class="blog-card__meta">
+                            <span class="blog-card__category">@post.Category</span>
+                            <span class="blog-card__title">@post.Title</span>
+                        </div>
+                        <p class="blog-card__excerpt">@post.Excerpt</p>
                     </div>
-                    <p class="blog-card__excerpt">@post.Excerpt</p>
                     <div class="blog-list__thumb" style="background-image:url('@post.ImageUrl')"></div>
                 </a>
             }

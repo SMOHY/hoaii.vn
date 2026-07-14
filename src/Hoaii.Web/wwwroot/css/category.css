@@ -31,7 +31,8 @@
   height: 525px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 0 calc(50% - 200px); /* so the first/last slide can still centre */
+  /* No end padding: category.js clones the slides either side, so there is always something
+     running off both edges the way Figma draws it. */
   scroll-snap-type: x mandatory;
 }
 .cat-hero__track::-webkit-scrollbar { display: none; }
