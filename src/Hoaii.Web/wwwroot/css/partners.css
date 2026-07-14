@@ -4,17 +4,33 @@
 .partners-breadcrumb a { color: inherit; text-decoration: none; }
 .partners-breadcrumb__current { color: var(--color-grey-500); }
 
-.partners-pride { padding: 80px 240px; display: flex; flex-direction: column; gap: 40px; }
+.partners-pride { padding: 80px 240px 120px; display: flex; flex-direction: column; gap: 64px; }
 /* Heading sits on the left gutter; the three figures below it are centred as a group but
    each one is left-aligned within itself (node 800:27764). */
 .partners-stats { text-align: left; }
-.partners-stats__heading { font: 400 32px/40px var(--font-body); color: #000; margin: 0 0 24px; }
-.partners-stats__grid { display: flex; justify-content: center; gap: 80px; flex-wrap: wrap; }
-.partners-stats__item { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.partners-stats__number { font-family: var(--font-display); font-size: 56px; color: var(--color-brand-red); }
-.partners-stats__label { font: 500 16px/20px var(--font-body); color: var(--color-grey-600); max-width: 220px; }
+.partners-stats__heading { font: 600 24px/32px var(--font-body); color: #000; margin: 0; }
+.partners-stats__grid {
+  display: flex; justify-content: center; gap: 80px; flex-wrap: wrap;
+  padding: 40px 0;
+}
+.partners-stats__item { display: flex; flex-direction: column; align-items: flex-start; }
+/* The figures are the display serif at 100px — they carry the whole section (node 800:28234).
+   They were set at 56px with a 20px line-height, which squashed them into a single line of
+   body-sized text. */
+.partners-stats__number {
+  font-family: var(--font-display);
+  font-size: 100px;
+  line-height: 163px;
+  color: var(--color-brand-red);
+}
+.partners-stats__label { font: 600 24px/32px var(--font-body); color: #000; max-width: none; }
 
-.partners-logos { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px 20px; }
+/* Figma runs this band wider than the page gutter (x=160, 1600px) with 40px between rows —
+   it was sitting inside the 1440px column with the rows almost touching (node 800:29089). */
+.partners-logos {
+  display: grid; grid-template-columns: repeat(8, 1fr); gap: 40px 20px;
+  margin: 0 -80px;
+}
 .partners-logos__tile {
   height: 96px;
   border-bottom: 1.5px solid var(--color-grey-300);
@@ -25,12 +41,13 @@
 }
 .partners-logos__tile img { max-width: 100%; max-height: 64px; object-fit: contain; }
 
-.wholesale { padding: 40px 240px 80px; }
-.wholesale__heading { font: 500 32px/40px var(--font-body); color: #000; margin: 0 0 24px; }
-.wholesale__panel { display: flex; gap: 40px; align-items: flex-start; }
-.wholesale__image { flex: 1; height: 527px; border-radius: 8px; overflow: hidden; background: var(--color-grey-300); }
+/* 707px photo, 120px gutter, 613px form — not two equal halves (node 800:29682). */
+.wholesale { padding: 120px 240px; }
+.wholesale__heading { font: 500 32px/40px var(--font-body); color: #000; margin: 0 0 64px; }
+.wholesale__panel { display: flex; gap: 120px; align-items: flex-start; }
+.wholesale__image { flex: 0 0 707px; height: 527px; border-radius: 8px; overflow: hidden; background: var(--color-grey-300); }
 .wholesale__image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.wholesale__form { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.wholesale__form { flex: 0 0 613px; max-width: 100%; display: flex; flex-direction: column; gap: 8px; }
 
 .wholesale__success { background: var(--color-brand-red-tint); color: var(--color-brand-red-deep); padding: 12px 16px; border-radius: 8px; font: 500 16px/20px var(--font-body); margin: 0 0 8px; }
 .wholesale__row { display: flex; gap: 8px; }
@@ -73,14 +90,21 @@
 @media (max-width: 767.98px) {
   .partners-breadcrumb { padding: 16px 16px 0; font: 400 13px/16px var(--font-body); }
   .partners-pride, .wholesale { padding: 40px 16px; gap: 24px; }
+  .partners-logos { margin: 0; gap: 8px; }
   .partners-stats { text-align: left; }
   .partners-stats__heading { font-size: 20px; line-height: 24px; margin-bottom: 16px; }
 
   /* Three columns side by side, left-aligned (node 1068:39192) — not stacked. */
-  .partners-stats__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-wrap: nowrap; }
+  .partners-stats__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-wrap: nowrap; padding: 0; }
   .partners-stats__item { align-items: flex-start; gap: 4px; }
-  .partners-stats__number { font-size: 28px; }
+  .partners-stats__number { font-size: 28px; line-height: 36px; }
   .partners-stats__label { font: 400 13px/16px var(--font-body); max-width: none; }
+  /* The two-line break is a desktop typographic choice; at 13px the label already fits. */
+  .partners-stats__label br { display: none; }
+
+  .wholesale__panel { flex-direction: column; gap: 16px; }
+  .wholesale__image, .wholesale__form { flex: none; width: 100%; }
+  .wholesale__heading { margin-bottom: 16px; }
 
   .partners-logos { grid-template-columns: repeat(6, 1fr); gap: 8px; }
   .partners-logos__tile { height: 48px; padding: 4px; }
