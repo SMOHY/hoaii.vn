@@ -4,56 +4,64 @@
 */
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-Thin.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-Thin.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-Thin.ttf') format('truetype');
   font-weight: 100;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-Light.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-Light.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-Regular.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-Regular.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-Italic.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-Italic.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-LightItalic.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-LightItalic.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-LightItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-Medium.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-Medium.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-SemiBold.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-SemiBold.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('/fonts/Josefin Sans/JosefinSans-Bold.ttf') format('truetype');
+  src: url('/fonts/Josefin Sans/JosefinSans-Bold.woff2') format('woff2'),
+       url('/fonts/Josefin Sans/JosefinSans-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -61,7 +69,8 @@
 
 @font-face {
   font-family: 'LC Sac Trial';
-  src: url('/fonts/LC Sac/LCSac Trial-Regular.otf') format('opentype');
+  src: url('/fonts/LC Sac/LCSac Trial-Regular.woff2') format('woff2'),
+       url('/fonts/LC Sac/LCSac Trial-Regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;

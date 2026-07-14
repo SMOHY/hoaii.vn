@@ -1,6 +1,8 @@
 @model Hoaii.Web.Models.Product.ProductDetailsViewModel
 @{
     ViewData["Title"] = Model.Name;
+    // Main gallery shot is a CSS background — name it so it starts downloading immediately.
+    ViewData["PreloadImage"] = Model.GalleryImages.FirstOrDefault();
 }
 
 <div class="pdp-breadcrumb">

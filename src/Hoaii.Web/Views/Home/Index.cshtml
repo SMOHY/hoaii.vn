@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Trang chủ";
     ViewData["HeroOverlay"] = true;
+    // The hero is a CSS background, so the browser would not find it until the stylesheet parsed.
+    ViewData["PreloadImage"] = Model.HeroSlides.FirstOrDefault()?.ImageUrl;
 }
 
 <partial name="Sections/_Hero" model="Model.HeroSlides" />

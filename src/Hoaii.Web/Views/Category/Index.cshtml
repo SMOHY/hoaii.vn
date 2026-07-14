@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Model.Title;
     ViewData["HeroOverlay"] = true;
+    ViewData["PreloadImage"] = Model.HeroSlides.FirstOrDefault()?.ImageUrl;
 }
 
 @* Red hero with a coverflow carousel of the category's products (node 1519:33993).
@@ -15,10 +16,14 @@
     @if (hasSlides)
     {
         <div class="cat-hero__track" data-cat-track>
-            @foreach (var slide in Model.HeroSlides)
+            @* Only the slide on screen is worth fetching up front; the rest wait until swiped to. *@
+            @for (var i = 0; i < Model.HeroSlides.Count; i++)
             {
+                var slide = Model.HeroSlides[i];
                 <a class="cat-hero__slide" href="/san-pham/@slide.Slug" data-cat-slide data-name="@slide.Name">
-                    <img src="@slide.ImageUrl" alt="@slide.Name" />
+                    <img src="@slide.ImageUrl" alt="@slide.Name"
+                         loading="@(i == 0 ? "eager" : "lazy")"
+                         fetchpriority="@(i == 0 ? "high" : "auto")" />
                 </a>
             }
         </div>
