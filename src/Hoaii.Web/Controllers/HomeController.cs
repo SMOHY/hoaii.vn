@@ -11,6 +11,19 @@ public class HomeController : Controller
     {
         var model = new HomeIndexViewModel
         {
+            // Only one hero image has been delivered so far. Adding a second entry here is all
+            // it takes to turn the arrows and dots back on — see HomeIndexViewModel.HeroSlides.
+            HeroSlides =
+            [
+                new()
+                {
+                    ImageUrl = "/images/home/hero.jpg",
+                    Title = "TINH HOA VIỆT NAM",
+                    Subtitle = "Bộ sưu tập Quà tặng Trung Thu 2026",
+                    MobileTitle = "VIỆT NAM HOA THỊ",
+                    MobileSubtitle = "Concept tết mới nhất 2026",
+                },
+            ],
             Benefits =
             [
                 // Illustrated icons exported from Figma (nodes 1214:38763 / 38822 / 38847) —

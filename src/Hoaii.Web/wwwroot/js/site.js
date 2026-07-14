@@ -5,12 +5,29 @@
   const closeBtn = document.querySelector('[data-nav-drawer-close]');
   const backdrop = drawer?.querySelector('.nav-drawer__backdrop');
 
-  function open() { drawer?.classList.add('is-open'); }
-  function close() { drawer?.classList.remove('is-open'); }
+  function open() {
+    drawer?.classList.add('is-open');
+    openBtn?.setAttribute('aria-expanded', 'true');
+  }
+  function close() {
+    drawer?.classList.remove('is-open');
+    openBtn?.setAttribute('aria-expanded', 'false');
+  }
 
   openBtn?.addEventListener('click', open);
   closeBtn?.addEventListener('click', close);
   backdrop?.addEventListener('click', close);
+
+  // Category accordions — the only way into the mega-menu links on a phone.
+  drawer?.querySelectorAll('[data-drawer-toggle]').forEach(function (toggle) {
+    const group = toggle.closest('[data-drawer-group]');
+    const sub = group?.querySelector('[data-drawer-sub]');
+    toggle.addEventListener('click', function () {
+      const willOpen = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(willOpen));
+      if (sub) sub.hidden = !willOpen;
+    });
+  });
 })();
 
 // Mini-cart drawer
@@ -75,10 +92,14 @@
   closeBtn?.addEventListener('click', close);
   backdrop?.addEventListener('click', close);
 
-  copyBtn?.addEventListener('click', function () {
+  // Used to copy silently — you could not tell whether it had worked.
+  copyBtn?.addEventListener('click', async function () {
     var value = copyBtn.getAttribute('data-copy') || '';
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(value);
+    try {
+      await navigator.clipboard.writeText(value);
+      window.hoaiiToast?.('Đã sao chép số Zalo: ' + value, 'ok');
+    } catch {
+      window.hoaiiToast?.('Không sao chép được. Số Zalo: ' + value, 'error');
     }
   });
 })();

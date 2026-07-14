@@ -1,30 +1,57 @@
-@* Hero — see design-specs/home/01-hero-and-benefits.md *@
-<section class="home-hero">
-    <div class="home-hero__stage">
-        <button class="home-hero__arrow home-hero__arrow--prev" type="button" aria-label="Slide trước">
-            <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M1 5h18M1 5l5-4M1 5l5 4" stroke="currentColor" stroke-width="1.5"/></svg>
-        </button>
-        <button class="home-hero__arrow home-hero__arrow--next" type="button" aria-label="Slide tiếp theo">
-            <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M1 5h18M19 5l-5-4M19 5l-5 4" stroke="currentColor" stroke-width="1.5"/></svg>
-        </button>
+@model IReadOnlyList<Hoaii.Web.Models.Home.HeroSlideViewModel>
+@* Hero — see design-specs/home/01-hero-and-benefits.md.
+   The arrows and dots only render when there is more than one slide; with a single image
+   they were controls that did nothing. *@
+@{
+    var hasCarousel = Model.Count > 1;
+}
+<section class="home-hero" data-hero-carousel>
+    <div class="home-hero__slides">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            <div class="home-hero__slide @(i == 0 ? "is-active" : "")"
+                 data-hero-slide
+                 data-title="@Model[i].Title"
+                 data-subtitle="@Model[i].Subtitle"
+                 data-mobile-title="@Model[i].MobileTitle"
+                 data-mobile-subtitle="@Model[i].MobileSubtitle"
+                 style="background-image:url('@Model[i].ImageUrl')"
+                 role="img"
+                 aria-label="@Model[i].Title"></div>
+        }
     </div>
 
-    <div class="home-hero__content">
-        <div class="home-hero__dots" aria-hidden="true">
-            <span class="dot dot--active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+    @if (hasCarousel)
+    {
+        <div class="home-hero__stage">
+            <button class="home-hero__arrow home-hero__arrow--prev" type="button" data-hero-prev aria-label="Slide trước">
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M1 5h18M1 5l5-4M1 5l5 4" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+            <button class="home-hero__arrow home-hero__arrow--next" type="button" data-hero-next aria-label="Slide tiếp theo">
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M1 5h18M19 5l-5-4M19 5l-5 4" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
         </div>
-        @* Figma ships different hero copy per breakpoint:
-           desktop node 1214:38726, mobile node 1062:12563. *@
+    }
+
+    <div class="home-hero__content">
+        @if (hasCarousel)
+        {
+            <div class="home-hero__dots">
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    <button type="button" class="dot @(i == 0 ? "dot--active" : "")"
+                            data-hero-dot aria-label="Slide @(i + 1)"></button>
+                }
+            </div>
+        }
+
         <h1 class="home-hero__title">
-            <span class="u-desktop-only">TINH HOA VIỆT NAM</span>
-            <span class="u-mobile-only">VIỆT NAM HOA THỊ</span>
+            <span class="u-desktop-only" data-hero-title>@Model[0].Title</span>
+            <span class="u-mobile-only" data-hero-mobile-title>@Model[0].MobileTitle</span>
         </h1>
         <p class="home-hero__subtitle">
-            <span class="u-desktop-only">Bộ sưu tập Quà tặng Trung Thu 2026</span>
-            <span class="u-mobile-only">Concept tết mới nhất 2026</span>
+            <span class="u-desktop-only" data-hero-subtitle>@Model[0].Subtitle</span>
+            <span class="u-mobile-only" data-hero-mobile-subtitle>@Model[0].MobileSubtitle</span>
         </p>
     </div>
 </section>

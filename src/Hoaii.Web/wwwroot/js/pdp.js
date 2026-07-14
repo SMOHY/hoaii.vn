@@ -51,4 +51,28 @@
 
   decreaseBtn && decreaseBtn.addEventListener('click', function () { setQty(getQty() - 1); });
   increaseBtn && increaseBtn.addEventListener('click', function () { setQty(getQty() + 1); });
+
+  // Share — the button was rendered but did nothing. Native share sheet on phones,
+  // copy-the-link everywhere else.
+  var shareBtn = document.querySelector('.pdp-share-btn');
+  shareBtn && shareBtn.addEventListener('click', async function () {
+    var url = location.href;
+    var title = document.querySelector('.pdp-title')?.textContent?.trim() || document.title;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: title, url: url });
+        return;
+      } catch {
+        return; // user dismissed the sheet
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      window.hoaiiToast?.('Đã sao chép liên kết sản phẩm.', 'ok');
+    } catch {
+      window.hoaiiToast?.('Không sao chép được liên kết.', 'error');
+    }
+  });
 })();

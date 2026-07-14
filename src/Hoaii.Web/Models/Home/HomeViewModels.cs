@@ -2,12 +2,30 @@ namespace Hoaii.Web.Models.Home;
 
 public class HomeIndexViewModel
 {
+    /// <summary>
+    /// Hero slides. Figma draws arrows and four dots, but only one hero image was delivered —
+    /// with a single slide the controls are not rendered at all rather than sitting there dead.
+    /// Add more slides here and the carousel comes to life on its own.
+    /// </summary>
+    public required IReadOnlyList<HeroSlideViewModel> HeroSlides { get; init; }
+
     public required IReadOnlyList<BenefitViewModel> Benefits { get; init; }
     public required IReadOnlyList<FeaturedTileViewModel> FeaturedTiles { get; init; }
     public required IReadOnlyList<CustomServiceTabViewModel> CustomServiceTabs { get; init; }
     public required IReadOnlyList<AboutCardViewModel> AboutCards { get; init; }
     public required IReadOnlyList<string> CustomerLogos { get; init; }
     public required IReadOnlyList<BlogPostViewModel> BlogPosts { get; init; }
+}
+
+public class HeroSlideViewModel
+{
+    public required string ImageUrl { get; init; }
+
+    // Figma ships different copy per breakpoint (desktop 1214:38726 / mobile 1062:12563).
+    public required string Title { get; init; }
+    public required string Subtitle { get; init; }
+    public required string MobileTitle { get; init; }
+    public required string MobileSubtitle { get; init; }
 }
 
 public class BenefitViewModel

@@ -61,16 +61,42 @@
             <h2 class="filter-bar__title">Tất cả @Model.Title.ToLowerInvariant()</h2>
             <p class="filter-bar__desc">@Model.Description</p>
         </div>
+        @{
+            var sortOptions = Hoaii.Web.Controllers.CategoryController.SortOptions;
+            var activeSort = sortOptions.First(o => o.Key == Model.Sort);
+        }
+        @* Both controls were rendered but inert. They are plain links now, so sorting and
+           filtering keep working with JS off; category.js only turns them into popovers. *@
         <div class="filter-bar__actions">
             <span class="filter-bar__sort-label">Sắp xếp theo</span>
-            <button type="button" class="filter-bar__dropdown">
-                <span>Nổi bật</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5"/></svg>
-            </button>
-            <button type="button" class="filter-bar__filter-btn">
-                <span>Bộ lọc</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.5"/></svg>
-            </button>
+
+            <div class="filter-menu" data-filter-menu>
+                <button type="button" class="filter-bar__dropdown" data-filter-toggle aria-expanded="false" aria-haspopup="true">
+                    <span>@activeSort.Label</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+                <ul class="filter-menu__panel" data-filter-panel>
+                    @foreach (var option in sortOptions)
+                    {
+                        <li>
+                            <a href="/danh-muc/@Model.Slug?sort=@option.Key" class="@(option.Key == Model.Sort ? "is-active" : "")">@option.Label</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="filter-menu" data-filter-menu>
+                <button type="button" class="filter-bar__filter-btn" data-filter-toggle aria-expanded="false" aria-haspopup="true">
+                    <span>Bộ lọc</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.5"/></svg>
+                </button>
+                <ul class="filter-menu__panel filter-menu__panel--right" data-filter-panel>
+                    <li><a href="/danh-muc/@Model.Slug?sort=gia-tang">Giá thấp đến cao</a></li>
+                    <li><a href="/danh-muc/@Model.Slug?sort=gia-giam">Giá cao đến thấp</a></li>
+                    <li><a href="/danh-muc/@Model.Slug?sort=moi-nhat">Hàng mới về</a></li>
+                    <li><a href="/danh-muc/@Model.Slug">Xóa bộ lọc</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -94,14 +120,19 @@
 
         @if (Model.TotalPages > 1)
         {
+            @* Paging has to carry the sort through, or page 2 silently reverts to the default order. *@
+            var atStart = Model.CurrentPage <= 1;
+            var atEnd = Model.CurrentPage >= Model.TotalPages;
             <nav class="pagination" aria-label="Phân trang">
-                <a class="pagination__arrow @(Model.CurrentPage <= 1 ? "pagination__arrow--disabled" : "")"
-                   href="?page=@(Model.CurrentPage - 1)" aria-label="Trang trước">
+                <a class="pagination__arrow @(atStart ? "pagination__arrow--disabled" : "")"
+                   href="?sort=@Model.Sort&page=@(Model.CurrentPage - 1)" aria-label="Trang trước"
+                   aria-disabled="@(atStart ? "true" : "false")" tabindex="@(atStart ? "-1" : "0")">
                     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
                 </a>
                 <span class="pagination__label">@Model.CurrentPage/@Model.TotalPages</span>
-                <a class="pagination__arrow @(Model.CurrentPage >= Model.TotalPages ? "pagination__arrow--disabled" : "")"
-                   href="?page=@(Model.CurrentPage + 1)" aria-label="Trang sau">
+                <a class="pagination__arrow @(atEnd ? "pagination__arrow--disabled" : "")"
+                   href="?sort=@Model.Sort&page=@(Model.CurrentPage + 1)" aria-label="Trang sau"
+                   aria-disabled="@(atEnd ? "true" : "false")" tabindex="@(atEnd ? "-1" : "0")">
                     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
                 </a>
             </nav>

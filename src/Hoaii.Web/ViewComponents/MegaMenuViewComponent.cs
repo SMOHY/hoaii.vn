@@ -16,7 +16,12 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
 {
     private static readonly string[] OccasionSlugs = ["qua-tet", "qua-trung-thu", "qua-tang-theo-dip"];
 
-    public async Task<IViewComponentResult> InvokeAsync()
+    /// <param name="view">
+    /// "Default" renders the desktop hover panels. "Drawer" renders the same links as an
+    /// accordion inside the mobile drawer — the panels are hover-only, so on a phone none of
+    /// these sub-category links were reachable at all.
+    /// </param>
+    public async Task<IViewComponentResult> InvokeAsync(string view = "Default")
     {
         var panels = new List<MegaMenuPanelViewModel>();
 
@@ -102,6 +107,6 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             ],
         });
 
-        return View(panels);
+        return View(view, panels);
     }
 }

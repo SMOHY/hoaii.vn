@@ -1,0 +1,30 @@
+@using Hoaii.Web.Models.Layout
+@model IReadOnlyList<Hoaii.Web.Models.Layout.MegaMenuPanelViewModel>
+@* The mega-menu panels open on hover, which never happens on a phone — so every sub-category
+   link in them used to be unreachable on mobile. Same data, rendered as an accordion. *@
+@{
+    var labels = LayoutData.MainMenu.ToDictionary(m => m.Url.Split('/').Last(), m => m.Label);
+}
+@foreach (var panel in Model)
+{
+    var label = labels.TryGetValue(panel.CategoryKey, out var l) ? l : panel.CategoryKey;
+    <div class="nav-drawer__group" data-drawer-group>
+        <button type="button" class="nav-drawer__group-toggle" data-drawer-toggle aria-expanded="false">
+            <span>@label</span>
+            <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" />
+            </svg>
+        </button>
+        <div class="nav-drawer__sub" data-drawer-sub hidden>
+            @foreach (var column in panel.Columns.Where(c => c.Links.Count > 0))
+            {
+                <p class="nav-drawer__sub-title">@column.Title</p>
+                @foreach (var link in column.Links)
+                {
+                    <a href="@link.Url">@link.Label</a>
+                }
+            }
+            <a class="nav-drawer__see-all" href="@panel.SeeAllUrl">Xem tất cả @label.ToLowerInvariant()</a>
+        </div>
+    </div>
+}

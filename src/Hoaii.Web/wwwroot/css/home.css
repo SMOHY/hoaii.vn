@@ -5,11 +5,24 @@
 .home-hero {
   position: relative;
   min-height: 1080px; /* node 1214:38715 */
-  background: var(--color-grey-500) url('/images/home/hero.jpg') center / cover no-repeat;
+  background: var(--color-grey-500);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+}
+/* Slides live in the markup now (one element per image) so the carousel can cross-fade
+   between them; the hero image is no longer baked into this rule. */
+.home-hero__slides { position: absolute; inset: 0; z-index: 0; }
+.home-hero__slide {
+  position: absolute; inset: 0;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity .5s ease;
+}
+.home-hero__slide.is-active { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__slide { transition: none; }
 }
 .home-hero__stage {
   position: absolute;
@@ -57,13 +70,27 @@
   align-items: center;
   gap: 6px;
 }
+/* The dot Figma draws is 6px; the button around it is 44px so it can actually be tapped. */
 .home-hero__dots .dot {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.home-hero__dots .dot::before {
+  content: "";
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
+  transition: width .2s ease, height .2s ease, background .2s ease;
 }
-.home-hero__dots .dot--active {
+.home-hero__dots .dot--active::before {
   width: 8px;
   height: 8px;
   background: #fff;

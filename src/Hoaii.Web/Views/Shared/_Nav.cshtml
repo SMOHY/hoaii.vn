@@ -96,13 +96,12 @@
     <div class="nav-drawer__backdrop"></div>
     <div class="nav-drawer__panel">
         <button class="nav-drawer__close" type="button" aria-label="Đóng" data-nav-drawer-close>&times;</button>
-        @foreach (var item in mainMenu)
-        {
-            <a href="@item.Url">@item.Label</a>
-        }
-        @foreach (var link in subNav)
-        {
-            <a href="@link.Url">@link.Label</a>
-        }
+        @await Component.InvokeAsync("MegaMenu", new { view = "Drawer" })
+        <div class="nav-drawer__links">
+            @foreach (var link in subNav)
+            {
+                <a href="@link.Url">@link.Label</a>
+            }
+        </div>
     </div>
 </div>

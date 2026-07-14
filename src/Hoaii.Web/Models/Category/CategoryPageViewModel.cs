@@ -10,6 +10,15 @@ public class CategoryPageViewModel
     public int TotalPages { get; init; } = 1;
     public required PromoBannerViewModel Promo { get; init; }
 
+    /// <summary>Category slug, so the sort links can rebuild this page's URL.</summary>
+    public string Slug { get; init; } = "";
+
+    /// <summary>Active sort key — one of CategoryController.SortOptions.</summary>
+    public string Sort { get; init; } = "noi-bat";
+
+    /// <summary>Count across all pages, shown next to the heading.</summary>
+    public int TotalProducts { get; init; }
+
     /// <summary>Slides for the red hero carousel (node 1519:33997) — the category's products.</summary>
     public required IReadOnlyList<HeroSlideViewModel> HeroSlides { get; init; }
 

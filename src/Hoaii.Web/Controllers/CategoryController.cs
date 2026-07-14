@@ -13,7 +13,17 @@ public class CategoryController(HoaiiDbContext db) : Controller
     /// featured products rather than a category row of its own.</summary>
     private const string FeaturedSlug = "san-pham-chon-loc";
 
-    public async Task<IActionResult> Index(string slug, int page = 1)
+    /// <summary>Keys are what appears in the querystring; the labels feed the sort dropdown.</summary>
+    public static readonly IReadOnlyList<(string Key, string Label)> SortOptions =
+    [
+        ("noi-bat", "Nổi bật"),
+        ("moi-nhat", "Mới nhất"),
+        ("gia-tang", "Giá: thấp đến cao"),
+        ("gia-giam", "Giá: cao đến thấp"),
+        ("ten-az", "Tên: A-Z"),
+    ];
+
+    public async Task<IActionResult> Index(string slug, int page = 1, string? sort = null)
     {
         var isFeaturedView = slug == FeaturedSlug;
 
@@ -28,12 +38,22 @@ public class CategoryController(HoaiiDbContext db) : Controller
 
         var categoryName = category?.Name ?? "Sản phẩm chọn lọc";
 
-        var query = (isFeaturedView
+        var baseQuery = (isFeaturedView
                 ? db.Products.Where(p => p.IsFeatured)
                 : db.Products.Where(p => p.CategoryId == category!.Id))
             .Include(p => p.Images)
-            .Include(p => p.Variants)
-            .OrderBy(p => p.Id);
+            .Include(p => p.Variants);
+
+        sort = SortOptions.Any(o => o.Key == sort) ? sort : SortOptions[0].Key;
+
+        var query = sort switch
+        {
+            "moi-nhat" => baseQuery.OrderByDescending(p => p.Badge == Hoaii.Domain.Entities.ProductBadge.New).ThenByDescending(p => p.Id),
+            "gia-tang" => baseQuery.OrderBy(p => p.Price).ThenBy(p => p.Id),
+            "gia-giam" => baseQuery.OrderByDescending(p => p.Price).ThenBy(p => p.Id),
+            "ten-az" => baseQuery.OrderBy(p => p.Name).ThenBy(p => p.Id),
+            _ => baseQuery.OrderByDescending(p => p.IsFeatured).ThenBy(p => p.Id),
+        };
 
         var totalProducts = await query.CountAsync();
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalProducts / (double)PageSize));
@@ -67,6 +87,9 @@ public class CategoryController(HoaiiDbContext db) : Controller
             Products = products.Select(p => ProductCardMapper.Map(p)).ToList(),
             CurrentPage = page,
             TotalPages = totalPages,
+            Slug = slug,
+            Sort = sort,
+            TotalProducts = totalProducts,
             HeroEyebrow = $"{categoryName} đặc sắc",
             HeroSlides = heroSlides,
             Promo = new PromoBannerViewModel
