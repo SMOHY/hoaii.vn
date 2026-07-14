@@ -12,11 +12,14 @@
     <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/modals.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    @* Last, so the touch-target sizes win over the page stylesheets without !important. *@
+    <link rel="stylesheet" href="~/css/touch.css" asp-append-version="true" />
 </head>
 <body class="@(ViewData["HeroOverlay"] as bool? == true ? "hero-overlay" : "")">
+    <a class="skip-link" href="#main">Bỏ qua, tới nội dung chính</a>
     <partial name="_Nav" />
 
-    <main>
+    <main id="main" tabindex="-1">
         @RenderBody()
     </main>
 
@@ -26,6 +29,7 @@
     @await Component.InvokeAsync("MiniCart")
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/overlays.js" asp-append-version="true"></script>
     <script src="~/js/cart-live.js" asp-append-version="true"></script>
     <script src="~/js/form-validate.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

@@ -1,0 +1,40 @@
+/* Loaded last, after every page-level stylesheet, so these can win without !important.
+
+   Touch targets: icon buttons were 28-32px, the carousel arrows 16px on mobile and the
+   product-detail dots 6px. The glyphs stay the size Figma drew; only the hit area grows. */
+
+@media (hover: none) and (pointer: coarse) {
+  .icon-btn,
+  .nav-m-hamburger,
+  .cat-hero__arrow,
+  .pdp-share-btn,
+  .pdp-qty-stepper__btn,
+  .qty-stepper__btn,
+  .minicart__close,
+  .pagination__arrow {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .pdp-dots { gap: 0; }
+  .pdp-dot {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+  }
+  .pdp-dot::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #DCDCDC;
+  }
+  .pdp-dot.active::before {
+    width: 8px;
+    height: 8px;
+    background: #9B9B9B;
+  }
+}
+

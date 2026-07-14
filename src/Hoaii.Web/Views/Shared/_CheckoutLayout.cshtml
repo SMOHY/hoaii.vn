@@ -12,8 +12,11 @@
     <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/modals.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    @* Last, so the touch-target sizes win over the page stylesheets without !important. *@
+    <link rel="stylesheet" href="~/css/touch.css" asp-append-version="true" />
 </head>
 <body class="checkout-body">
+    <a class="skip-link" href="#main">Bỏ qua, tới nội dung chính</a>
     <header class="checkout-nav">
         <div class="checkout-nav__inner">
             <a class="checkout-nav__logo" href="/" aria-label="Hoài">
@@ -28,11 +31,12 @@
         </div>
     </header>
 
-    <main>
+    <main id="main" tabindex="-1">
         @RenderBody()
     </main>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/overlays.js" asp-append-version="true"></script>
     <script src="~/js/cart-live.js" asp-append-version="true"></script>
     <script src="~/js/form-validate.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
