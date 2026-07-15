@@ -1,14 +1,10 @@
 @model Hoaii.Web.Models.Page.WholesaleFormModel
+@using Hoaii.Web.Services
+@inject PageContentService Page
 @{
     ViewData["Title"] = "Hợp tác";
-
-    // 24 partner logos, in the order Figma lays them out (node 800:29089 — 3 rows of 8).
-    var partnerLogos = new[]
-    {
-        "hakyo", "mb", "truong-thanh", "bondex", "nano-gold", "pro-group", "jaguar", "bee-mv",
-        "isocial", "core5", "cystack", "arent", "nature-hotel", "100bold", "eventista", "gosu",
-        "avalue", "isofh", "deli", "winggo", "kleur", "eysin", "nam-viet", "happy-sun",
-    };
+    string T(string k) => Page.Get(PageContentKeys.Partners, k);
+    var partnerLogos = ViewBag.PartnerLogos as IReadOnlyList<string> ?? new List<string>();
 }
 
 @* Figma's desktop frame still reads "Mua quà tết" here while its mobile frame reads
@@ -19,22 +15,15 @@
 
 <section class="partners-pride">
     <div class="partners-stats">
-        <p class="partners-stats__heading">Thương hiệu Hoài tự hào với</p>
+        <p class="partners-stats__heading">@T("stats_heading")</p>
         <div class="partners-stats__grid">
-            @* Figma breaks each label over two lines rather than letting it run wide
-               (node 800:28228). The break is dropped on mobile, where the type is small. *@
-            <div class="partners-stats__item">
-                <span class="partners-stats__number">6+</span>
-                <span class="partners-stats__label">Năm thành lập <br />và phát triển</span>
-            </div>
-            <div class="partners-stats__item">
-                <span class="partners-stats__number">100+</span>
-                <span class="partners-stats__label">Đối tác tập đoàn <br />hàng đầu Việt Nam</span>
-            </div>
-            <div class="partners-stats__item">
-                <span class="partners-stats__number">150.000+</span>
-                <span class="partners-stats__label">Sản phẩm đã <br />được gửi trao</span>
-            </div>
+            @for (var i = 1; i <= 3; i++)
+            {
+                <div class="partners-stats__item">
+                    <span class="partners-stats__number">@T($"stat_{i}_number")</span>
+                    <span class="partners-stats__label">@T($"stat_{i}_label")</span>
+                </div>
+            }
         </div>
     </div>
     <div class="partners-logos">
@@ -48,10 +37,10 @@
 </section>
 
 <section class="wholesale">
-    <h2 class="wholesale__heading">Yêu cầu mua sỉ</h2>
+    <h2 class="wholesale__heading">@T("wholesale_heading")</h2>
     <div class="wholesale__panel">
         <div class="wholesale__image">
-            <img src="~/images/partners/wholesale.jpg" alt="Hộp quà HOÀI" loading="lazy" />
+            <img src="@T("wholesale_image")" alt="Hộp quà HOÀI" loading="lazy" />
         </div>
         <form method="post" asp-action="Partners" class="wholesale__form">
             @Html.AntiForgeryToken()

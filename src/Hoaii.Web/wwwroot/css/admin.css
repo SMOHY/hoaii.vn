@@ -165,8 +165,12 @@
 .admin-btn:disabled, .admin-btn.is-busy { opacity: .55; cursor: not-allowed; }
 
 /* ---------- Forms ---------- */
-.admin-form { display: flex; flex-direction: column; gap: 18px; max-width: 720px; }
+.admin-form { display: flex; flex-direction: column; gap: 18px; max-width: 860px; }
 .admin-form--wide { max-width: none; }
+
+/* A card that holds a simple form hugs the form instead of stretching full-width and leaving
+   half the panel empty. Wide/multi-card forms (product editor) are unaffected. */
+.admin-card:has(> .admin-form:not(.admin-form--wide)) { max-width: 940px; }
 .admin-field { display: flex; flex-direction: column; gap: 6px; }
 .admin-field > label { font-weight: 600; font-size: 14px; }
 .admin-field__hint { font-size: 12px; color: var(--color-grey-500); }

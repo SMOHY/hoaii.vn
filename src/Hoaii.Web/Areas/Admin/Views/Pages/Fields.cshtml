@@ -1,0 +1,86 @@
+@using Hoaii.Web.Services
+@using Hoaii.Domain.Entities
+@model IReadOnlyDictionary<string, string>
+@{
+    var fields = ViewBag.Fields as IReadOnlyList<PageContentKeys.Field> ?? new List<PageContentKeys.Field>();
+    var action = ViewBag.FormAction as string ?? "";
+    ViewData["Title"] = ViewBag.Title as string ?? "Nội dung trang";
+    var note = ViewBag.Note as string;
+    var logos = ViewBag.Logos as List<PartnerLogo>;
+    var hasImage = fields.Any(f => f.Kind == FieldKind.Image);
+}
+
+@if (!string.IsNullOrEmpty(note))
+{
+    <p style="color:var(--color-grey-500);margin:0 0 16px;">@note</p>
+}
+
+<div class="admin-card">
+    <form method="post" action="@action" class="admin-form">
+        @Html.AntiForgeryToken()
+        @foreach (var f in fields)
+        {
+            if (f.Kind == FieldKind.Image)
+            {
+                <partial name="_ImageField" model="@((f.Label, $"f[{f.Key}]", f.Key, (string?)Model[f.Key]))" />
+            }
+            else
+            {
+                <div class="admin-field">
+                    <label>@f.Label</label>
+                    @if (f.Kind == FieldKind.Multiline)
+                    {
+                        <textarea name="f[@f.Key]" rows="4">@Model[f.Key]</textarea>
+                    }
+                    else
+                    {
+                        <input type="text" name="f[@f.Key]" value="@Model[f.Key]" />
+                    }
+                </div>
+            }
+        }
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+        </div>
+    </form>
+</div>
+
+@if (logos is not null)
+{
+    <div class="admin-card">
+        <h2 style="font-family:var(--font-display);margin:0 0 8px;font-size:20px;">Logo đối tác (@logos.Count)</h2>
+        <p style="color:var(--color-grey-500);margin:0 0 16px;">Tên tệp trong /images/partners/ (không đuôi). VD: <code>mb</code></p>
+        <form method="post" action="/admin/trang/hop-tac/logo/them" style="display:flex;gap:8px;align-items:flex-end;margin-bottom:16px;max-width:420px;">
+            @Html.AntiForgeryToken()
+            <div class="admin-field" style="flex:1;margin:0;">
+                <label>Thêm logo (mã tệp)</label>
+                <input type="text" name="logoKey" placeholder="mb" required />
+            </div>
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Thêm</button>
+        </form>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            @foreach (var l in logos)
+            {
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--color-grey-200);border-radius:6px;padding:6px 8px;background:#fff;">
+                    <span style="font:500 13px var(--font-body);color:var(--color-grey-700);">@l.LogoKey</span>
+                    <form method="post" action="/admin/trang/hop-tac/logo/@l.Id/xoa" style="display:inline;line-height:0;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" style="border:none;background:none;color:var(--color-brand-red);cursor:pointer;font-size:14px;" aria-label="Xóa @l.LogoKey">✕</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@if (hasImage)
+{
+    <partial name="_PickerModal" />
+}
+
+@section Scripts {
+    @if (hasImage)
+    {
+        <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+    }
+}

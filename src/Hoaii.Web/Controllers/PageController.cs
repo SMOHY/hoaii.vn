@@ -9,13 +9,22 @@ namespace Hoaii.Web.Controllers;
 public class PageController(HoaiiDbContext db) : Controller
 {
 
-    public IActionResult AboutUs()
+    public async Task<IActionResult> AboutUs()
     {
+        // The customer-logo strip reuses the same list the homepage manages (no more duplicate).
+        ViewBag.CustomerLogos = await db.HomeCustomerLogos
+            .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
+            .Select(l => l.LogoKey)
+            .ToListAsync();
         return View();
     }
 
-    public IActionResult Partners()
+    public async Task<IActionResult> Partners()
     {
+        ViewBag.PartnerLogos = await db.PartnerLogos
+            .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
+            .Select(l => l.LogoKey)
+            .ToListAsync();
         return View(new WholesaleFormModel());
     }
 

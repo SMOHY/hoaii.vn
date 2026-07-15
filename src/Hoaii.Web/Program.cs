@@ -27,6 +27,7 @@ builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<OrderWorkflowService>();
 builder.Services.AddScoped<SiteSettingsService>();
 builder.Services.AddScoped<NavigationService>();
+builder.Services.AddScoped<PageContentService>();
 builder.Services.AddScoped<EmailSender>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -249,6 +250,7 @@ using (var scope = app.Services.CreateScope())
     await HomeContentSeeder.EnsureSeedAsync(db);
     await NavigationSeeder.EnsureSeedAsync(db);
     await VoucherSeeder.EnsureSeedAsync(db);
+    await PartnerLogoSeeder.EnsureSeedAsync(db);
 }
 
 app.Run();

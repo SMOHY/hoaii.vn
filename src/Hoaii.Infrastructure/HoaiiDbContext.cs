@@ -37,6 +37,8 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
     public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
     public DbSet<Voucher> Vouchers => Set<Voucher>();
+    public DbSet<PageContent> PageContents => Set<PageContent>();
+    public DbSet<PartnerLogo> PartnerLogos => Set<PartnerLogo>();
     public DbSet<ContactSubmission> ContactSubmissions => Set<ContactSubmission>();
     public DbSet<WholesaleLead> WholesaleLeads => Set<WholesaleLead>();
     public DbSet<NewsletterSubscriber> NewsletterSubscribers => Set<NewsletterSubscriber>();
@@ -222,6 +224,14 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
                 .HasForeignKey(b => b.PolicyPageId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+        modelBuilder.Entity<PageContent>(e =>
+        {
+            e.HasIndex(x => new { x.PageKey, x.BlockKey }).IsUnique();
+            e.Property(x => x.PageKey).HasMaxLength(60);
+            e.Property(x => x.BlockKey).HasMaxLength(80);
+        });
+        modelBuilder.Entity<PartnerLogo>(e => e.Property(x => x.LogoKey).HasMaxLength(120));
 
         modelBuilder.Entity<ContactSubmission>(e => { e.Property(x => x.Email).HasMaxLength(320); e.HasIndex(x => x.CreatedAt); });
         modelBuilder.Entity<WholesaleLead>(e => { e.Property(x => x.Email).HasMaxLength(320); e.HasIndex(x => x.CreatedAt); });
