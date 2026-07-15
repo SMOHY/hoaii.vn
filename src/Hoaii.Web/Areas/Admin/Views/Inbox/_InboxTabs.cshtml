@@ -1,0 +1,12 @@
+@{
+    var current = ViewContext.RouteData.Values["action"] as string ?? "Contacts";
+    int cc = ViewBag.ContactCount ?? 0, cn = ViewBag.ContactNew ?? 0;
+    int wc = ViewBag.WholesaleCount ?? 0, wn = ViewBag.WholesaleNew ?? 0;
+    int nc = ViewBag.NewsletterCount ?? 0;
+    string Cls(string a) => current == a ? "admin-btn admin-btn--primary admin-btn--sm" : "admin-btn admin-btn--secondary admin-btn--sm";
+}
+<div class="admin-toolbar" style="gap:8px;margin-bottom:20px;">
+    <a class="@Cls("Contacts")" href="/admin/hop-thu">Liên hệ (@cc@(cn > 0 ? $" · {cn} mới" : ""))</a>
+    <a class="@Cls("Wholesale")" href="/admin/hop-thu/ban-buon">Bán buôn (@wc@(wn > 0 ? $" · {wn} mới" : ""))</a>
+    <a class="@Cls("Newsletter")" href="/admin/hop-thu/newsletter">Đăng ký nhận tin (@nc)</a>
+</div>

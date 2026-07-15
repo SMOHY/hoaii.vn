@@ -1,0 +1,36 @@
+@model List<Hoaii.Domain.Entities.NewsletterSubscriber>
+@{
+    ViewData["Title"] = "Hộp thư — Đăng ký nhận tin";
+}
+
+<partial name="_InboxTabs" />
+
+<div class="admin-toolbar" style="margin-bottom:12px;">
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--secondary admin-btn--sm" href="data:text/csv;charset=utf-8,@Uri.EscapeDataString("email\n" + string.Join("\n", Model.Select(m => m.Email)))" download="newsletter.csv">Tải CSV</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Email</th><th>Ngày đăng ký</th><th></th></tr></thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="3" style="color:var(--color-grey-500);text-align:center;padding:32px;">Chưa có ai đăng ký.</td></tr>
+            }
+            @foreach (var n in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="mailto:@n.Email">@n.Email</a></td>
+                    <td style="color:var(--color-grey-500);">@n.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                    <td class="num">
+                        <form method="post" action="/admin/hop-thu/newsletter/@n.Id/xoa" data-confirm="Xóa email này?" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

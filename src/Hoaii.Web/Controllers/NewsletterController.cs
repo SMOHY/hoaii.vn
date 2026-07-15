@@ -1,19 +1,21 @@
 using System.ComponentModel.DataAnnotations;
+using Hoaii.Domain.Entities;
+using Hoaii.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hoaii.Web.Controllers;
 
 /// <summary>
-/// The footer sign-up form posts here from every page. Like the contact and wholesale forms,
-/// there is no email/CRM integration configured yet, so this only acknowledges receipt —
-/// wire up real delivery before production.
+/// The footer sign-up form posts here from every page. Subscribers are stored in the DB
+/// (deduplicated by email); actual email delivery is wired once SMTP is configured (Đợt 3.6).
 /// </summary>
 [Route("newsletter")]
-public class NewsletterController(ILogger<NewsletterController> logger) : Controller
+public class NewsletterController(HoaiiDbContext db, ILogger<NewsletterController> logger) : Controller
 {
     [HttpPost("subscribe")]
     [ValidateAntiForgeryToken]
-    public IActionResult Subscribe([Required, EmailAddress] string email, string? returnUrl = null)
+    public async Task<IActionResult> Subscribe([Required, EmailAddress] string email, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
         {
@@ -22,7 +24,13 @@ public class NewsletterController(ILogger<NewsletterController> logger) : Contro
                 : SafeRedirect(returnUrl);
         }
 
-        logger.LogInformation("Newsletter sign-up: {Email}", email);
+        var normalized = email.Trim().ToLowerInvariant();
+        if (!await db.NewsletterSubscribers.AnyAsync(s => s.Email == normalized))
+        {
+            db.NewsletterSubscribers.Add(new NewsletterSubscriber { Email = normalized, CreatedAt = DateTime.UtcNow });
+            await db.SaveChangesAsync();
+        }
+        logger.LogInformation("Newsletter sign-up: {Email}", normalized);
 
         if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {

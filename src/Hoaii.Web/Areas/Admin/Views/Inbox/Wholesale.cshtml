@@ -1,0 +1,41 @@
+@model List<Hoaii.Domain.Entities.WholesaleLead>
+@{
+    ViewData["Title"] = "Hộp thư — Bán buôn";
+    string ReqLabel(string r) => r == "CorporateGift" ? "Quà doanh nghiệp" : "Bán buôn";
+}
+
+<partial name="_InboxTabs" />
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Ngày</th><th>Người gửi</th><th>Công ty</th><th>Loại</th><th>Liên hệ</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="8" style="color:var(--color-grey-500);text-align:center;padding:32px;">Chưa có yêu cầu nào.</td></tr>
+            }
+            @foreach (var w in Model)
+            {
+                <tr style="@(w.IsHandled ? "opacity:.6;" : "")">
+                    <td style="white-space:nowrap;color:var(--color-grey-500);">@w.CreatedAt.ToLocalTime().ToString("dd/MM/yy HH:mm")</td>
+                    <td>@w.FullName</td>
+                    <td>@w.CompanyName</td>
+                    <td>@ReqLabel(w.RequestType)</td>
+                    <td><a class="admin-row-link" href="mailto:@w.Email">@w.Email</a>@(string.IsNullOrEmpty(w.Phone) ? "" : $" · {w.Phone}")</td>
+                    <td style="max-width:280px;">@w.Message</td>
+                    <td>@(w.IsHandled ? Html.Raw("<span class=\"admin-badge admin-badge--green\">Đã xử lý</span>") : Html.Raw("<span class=\"admin-badge admin-badge--amber\">Mới</span>"))</td>
+                    <td class="num" style="white-space:nowrap;">
+                        <form method="post" action="/admin/hop-thu/ban-buon/@w.Id/xu-ly" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">@(w.IsHandled ? "Bỏ" : "Xong")</button>
+                        </form>
+                        <form method="post" action="/admin/hop-thu/ban-buon/@w.Id/xoa" data-confirm="Xóa yêu cầu này?" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

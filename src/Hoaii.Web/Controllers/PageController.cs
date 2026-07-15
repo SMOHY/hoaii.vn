@@ -21,15 +21,27 @@ public class PageController(HoaiiDbContext db) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Partners(WholesaleFormModel form)
+    public async Task<IActionResult> Partners(WholesaleFormModel form)
     {
         if (!ModelState.IsValid)
         {
             return View(form);
         }
 
-        // No email/CRM integration configured yet — see design-specs notes; this simply
-        // acknowledges receipt. Wire up real delivery (email/CRM) before production.
+        db.WholesaleLeads.Add(new WholesaleLead
+        {
+            FirstName = form.FirstName,
+            LastName = form.LastName,
+            Email = form.Email,
+            Phone = form.Phone,
+            PostalCode = form.PostalCode,
+            CompanyName = form.CompanyName,
+            RequestType = form.RequestType,
+            Message = form.Message,
+            CreatedAt = DateTime.UtcNow,
+        });
+        await db.SaveChangesAsync();
+
         TempData["WholesaleSubmitted"] = true;
         return RedirectToAction(nameof(Partners));
     }
@@ -41,12 +53,23 @@ public class PageController(HoaiiDbContext db) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Contact(ContactFormModel form)
+    public async Task<IActionResult> Contact(ContactFormModel form)
     {
         if (!ModelState.IsValid)
         {
             return View(form);
         }
+
+        db.ContactSubmissions.Add(new ContactSubmission
+        {
+            FirstName = form.FirstName,
+            LastName = form.LastName,
+            Email = form.Email,
+            Phone = form.Phone,
+            Message = form.Message,
+            CreatedAt = DateTime.UtcNow,
+        });
+        await db.SaveChangesAsync();
 
         TempData["ContactSubmitted"] = true;
         return RedirectToAction(nameof(Contact));

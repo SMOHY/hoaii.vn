@@ -37,6 +37,9 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
     public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
     public DbSet<Voucher> Vouchers => Set<Voucher>();
+    public DbSet<ContactSubmission> ContactSubmissions => Set<ContactSubmission>();
+    public DbSet<WholesaleLead> WholesaleLeads => Set<WholesaleLead>();
+    public DbSet<NewsletterSubscriber> NewsletterSubscribers => Set<NewsletterSubscriber>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -219,6 +222,10 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
                 .HasForeignKey(b => b.PolicyPageId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+        modelBuilder.Entity<ContactSubmission>(e => { e.Property(x => x.Email).HasMaxLength(320); e.HasIndex(x => x.CreatedAt); });
+        modelBuilder.Entity<WholesaleLead>(e => { e.Property(x => x.Email).HasMaxLength(320); e.HasIndex(x => x.CreatedAt); });
+        modelBuilder.Entity<NewsletterSubscriber>(e => { e.Property(x => x.Email).HasMaxLength(320); e.HasIndex(x => x.Email).IsUnique(); });
 
         modelBuilder.Entity<Voucher>(entity =>
         {
