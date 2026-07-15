@@ -1,0 +1,97 @@
+@model Hoaii.Web.Areas.Admin.Models.ReportsViewModel
+@using Hoaii.Web.Areas.Admin.Models
+@{
+    ViewData["Title"] = "Báo cáo";
+    var maxMonth = Model.MonthlyRevenue.Count > 0 ? Model.MonthlyRevenue.Max(m => m.Revenue) : 0;
+}
+
+<div class="admin-stats" style="margin-bottom:24px;">
+    <div class="admin-stat">
+        <span class="admin-stat__label">Doanh thu tháng này</span>
+        <span class="admin-stat__value">@AdminDisplay.Money(Model.RevenueThisMonth)</span>
+        <span class="admin-stat__sub">@Model.OrdersThisMonth đơn</span>
+    </div>
+    <div class="admin-stat">
+        <span class="admin-stat__label">Doanh thu tất cả</span>
+        <span class="admin-stat__value">@AdminDisplay.Money(Model.RevenueAllTime)</span>
+        <span class="admin-stat__sub">@Model.OrdersAllTime đơn (trừ hủy/hoàn)</span>
+    </div>
+    <div class="admin-stat">
+        <span class="admin-stat__label">Đã thanh toán</span>
+        <span class="admin-stat__value">@AdminDisplay.Money(Model.PaidRevenue)</span>
+    </div>
+    <div class="admin-stat">
+        <span class="admin-stat__label">Giá trị đơn TB</span>
+        <span class="admin-stat__value">@AdminDisplay.Money(Model.AvgOrderValue)</span>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+    <div class="admin-card">
+        <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Doanh thu 6 tháng</h2>
+        @foreach (var m in Model.MonthlyRevenue)
+        {
+            var pct = maxMonth > 0 ? (int)Math.Round((double)(m.Revenue / maxMonth) * 100) : 0;
+            <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+                    <span style="color:var(--color-grey-600);">@m.Label</span>
+                    <span>@AdminDisplay.Money(m.Revenue)</span>
+                </div>
+                <div style="height:8px;background:var(--color-grey-100,#f0ece5);border-radius:4px;overflow:hidden;">
+                    <div style="height:100%;width:@(pct)%;background:var(--color-brand-red,#a23);"></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="admin-card">
+        <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Đơn theo trạng thái</h2>
+        <table class="admin-table">
+            <thead><tr><th>Trạng thái</th><th class="num">Số đơn</th><th class="num">Giá trị</th></tr></thead>
+            <tbody>
+                @foreach (var s in Model.StatusBreakdown.OrderBy(s => s.Status))
+                {
+                    <tr>
+                        <td>@AdminDisplay.OrderStatusLabel(s.Status)</td>
+                        <td class="num">@s.Count</td>
+                        <td class="num">@AdminDisplay.Money(s.Total)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-card">
+        <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Sản phẩm bán chạy</h2>
+        <table class="admin-table">
+            <thead><tr><th>Sản phẩm</th><th class="num">SL</th><th class="num">Doanh thu</th></tr></thead>
+            <tbody>
+                @if (Model.TopProducts.Count == 0)
+                {
+                    <tr><td colspan="3" style="color:var(--color-grey-500);text-align:center;padding:20px;">Chưa có dữ liệu.</td></tr>
+                }
+                @foreach (var p in Model.TopProducts)
+                {
+                    <tr><td>@p.Name</td><td class="num">@p.Quantity</td><td class="num">@AdminDisplay.Money(p.Revenue)</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-card">
+        <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Khách chi tiêu nhiều</h2>
+        <table class="admin-table">
+            <thead><tr><th>Email</th><th class="num">Đơn</th><th class="num">Tổng chi</th></tr></thead>
+            <tbody>
+                @if (Model.TopCustomers.Count == 0)
+                {
+                    <tr><td colspan="3" style="color:var(--color-grey-500);text-align:center;padding:20px;">Chưa có dữ liệu.</td></tr>
+                }
+                @foreach (var c in Model.TopCustomers)
+                {
+                    <tr><td>@c.Email</td><td class="num">@c.Orders</td><td class="num">@AdminDisplay.Money(c.Spent)</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
