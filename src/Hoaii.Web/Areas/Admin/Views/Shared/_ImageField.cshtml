@@ -1,0 +1,17 @@
+@*
+    Reusable CMS image field. Pass a tuple (Label, Name, Id, Value).
+    Requires _PickerModal to be rendered once on the page and admin-imagefield.js loaded.
+*@
+@model (string Label, string Name, string Id, string? Value)
+
+<div class="admin-field">
+    <label>@Model.Label</label>
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+        <div class="admin-image-item__thumb" data-preview-for="@Model.Id"
+             style="width:150px;height:100px;border:1px solid var(--color-grey-300);border-radius:6px;flex:none;"></div>
+        <div style="flex:1;">
+            <input type="text" id="@Model.Id" name="@Model.Name" value="@Model.Value" data-image-input placeholder="/images/..." style="margin-bottom:8px;" />
+            <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker data-target="@Model.Id">Chọn từ thư viện</button>
+        </div>
+    </div>
+</div>

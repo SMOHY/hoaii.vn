@@ -1,0 +1,50 @@
+@model Hoaii.Domain.Entities.HomeBenefit
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm lợi ích" : "Sửa lợi ích";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/trang-chu">← Trang chủ</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/trang-chu/loi-ich/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <partial name="_ImageField" model="@(("Biểu tượng", "iconPath", "benefit-icon", Model.IconPath))" />
+
+        <div class="admin-field">
+            <label>Tiêu đề</label>
+            <input type="text" name="title" value="@Model.Title" required autofocus />
+        </div>
+        <div class="admin-field">
+            <label>Mô tả</label>
+            <input type="text" name="description" value="@Model.Description" />
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Dòng 1 (mobile)</label>
+                <input type="text" name="mobileLine1" value="@Model.MobileLine1" />
+            </div>
+            <div class="admin-field">
+                <label>Dòng 2 (mobile)</label>
+                <input type="text" name="mobileLine2" value="@Model.MobileLine2" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Thứ tự</label>
+            <input type="number" name="sortOrder" value="@Model.SortOrder" style="max-width:120px;" />
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/trang-chu">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

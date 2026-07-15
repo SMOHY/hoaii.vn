@@ -1,0 +1,58 @@
+@model Hoaii.Domain.Entities.HomeHeroSlide
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm ảnh hero" : "Sửa ảnh hero";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/trang-chu">← Trang chủ</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/trang-chu/hero/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <partial name="_ImageField" model="@(("Ảnh nền hero", "imageUrl", "hero-img", Model.ImageUrl))" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Tiêu đề (desktop)</label>
+                <input type="text" name="title" value="@Model.Title" />
+            </div>
+            <div class="admin-field">
+                <label>Phụ đề (desktop)</label>
+                <input type="text" name="subtitle" value="@Model.Subtitle" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Tiêu đề (mobile)</label>
+                <input type="text" name="mobileTitle" value="@Model.MobileTitle" />
+            </div>
+            <div class="admin-field">
+                <label>Phụ đề (mobile)</label>
+                <input type="text" name="mobileSubtitle" value="@Model.MobileSubtitle" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" />
+            </div>
+            <label class="admin-checkbox" style="align-self:end;">
+                <input type="checkbox" name="isActive" value="true" @(isNew || Model.IsActive ? "checked" : "") />
+                Hiển thị
+            </label>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/trang-chu">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

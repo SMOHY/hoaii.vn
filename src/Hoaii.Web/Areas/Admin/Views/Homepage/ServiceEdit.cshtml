@@ -1,0 +1,74 @@
+@model Hoaii.Domain.Entities.HomeServiceTab
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm dịch vụ" : "Sửa dịch vụ";
+    var icons = new[] { "engraving", "gift", "notepad-edit" };
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/trang-chu">← Trang chủ</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/trang-chu/dich-vu/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Mã (key)</label>
+                <input type="text" name="key" value="@Model.Key" required placeholder="vd: in-khac" />
+            </div>
+            <div class="admin-field">
+                <label>Nhãn tab</label>
+                <input type="text" name="label" value="@Model.Label" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Biểu tượng</label>
+            <select name="iconSvg">
+                @foreach (var ic in icons)
+                {
+                    <option value="@ic" selected="@(Model.IconSvg == ic)">@ic</option>
+                }
+            </select>
+            <span class="admin-field__hint">Biểu tượng dựng sẵn trong giao diện.</span>
+        </div>
+
+        <partial name="_ImageField" model="@(("Ảnh panel", "panelImageUrl", "svc-img", Model.PanelImageUrl))" />
+
+        <div class="admin-field">
+            <label>Chú thích</label>
+            <input type="text" name="caption" value="@Model.Caption" />
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Màu chữ chú thích (hex)</label>
+                <input type="text" name="captionColorHex" value="@Model.CaptionColorHex" placeholder="#F2F2F2" />
+            </div>
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Chữ nút</label>
+                <input type="text" name="ctaText" value="@Model.CtaText" />
+            </div>
+            <div class="admin-field">
+                <label>Liên kết nút</label>
+                <input type="text" name="ctaUrl" value="@Model.CtaUrl" placeholder="/lien-he" />
+            </div>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/trang-chu">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

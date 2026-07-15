@@ -1,0 +1,78 @@
+@model Hoaii.Domain.Entities.HomeFeaturedTile
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm ô nổi bật" : "Sửa ô nổi bật";
+    var accents = new[] { ("", "— (ảnh)"), ("red", "Đỏ"), ("teal", "Xanh ngọc"), ("yellow", "Vàng") };
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/trang-chu">← Trang chủ</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/trang-chu/o-noi-bat/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <label class="admin-checkbox" style="margin-bottom:16px;">
+            <input type="checkbox" name="isCard" value="true" @(Model.IsCard ? "checked" : "") />
+            Là thẻ chữ (bỏ chọn = ô ảnh)
+        </label>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Màu nhấn (thẻ chữ)</label>
+                <select name="accentColor">
+                    @foreach (var (val, text) in accents)
+                    {
+                        <option value="@val" selected="@(( Model.AccentColor ?? "") == val)">@text</option>
+                    }
+                </select>
+            </div>
+            <div class="admin-field">
+                <label>Nhãn bộ sưu tập</label>
+                <input type="text" name="collectionLabel" value="@Model.CollectionLabel" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Dòng tiêu đề 1</label>
+                <input type="text" name="titleLine1" value="@Model.TitleLine1" />
+            </div>
+            <div class="admin-field">
+                <label>Dòng tiêu đề 2</label>
+                <input type="text" name="titleLine2" value="@Model.TitleLine2" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Nhãn phiên bản</label>
+            <input type="text" name="editionLabel" value="@Model.EditionLabel" placeholder="VD: (Phiên bản thường)" />
+        </div>
+
+        <partial name="_ImageField" model="@(("Ảnh (ô ảnh)", "imageUrl", "tile-img", Model.ImageUrl))" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Liên kết</label>
+                <input type="text" name="linkUrl" value="@Model.LinkUrl" placeholder="/danh-muc/..." />
+            </div>
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" />
+            </div>
+        </div>
+        <label class="admin-checkbox" style="margin-bottom:16px;">
+            <input type="checkbox" name="hideOnMobile" value="true" @(Model.HideOnMobile ? "checked" : "") />
+            Ẩn trên mobile
+        </label>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/trang-chu">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

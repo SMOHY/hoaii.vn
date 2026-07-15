@@ -1,0 +1,43 @@
+@model Hoaii.Domain.Entities.HomeAboutCard
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm thẻ giá trị" : "Sửa thẻ giá trị";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/trang-chu">← Trang chủ</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/trang-chu/gia-tri/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-field">
+            <label>Chú thích</label>
+            <input type="text" name="caption" value="@Model.Caption" required autofocus />
+        </div>
+
+        <partial name="_ImageField" model="@(("Ảnh", "imageUrl", "about-img", Model.ImageUrl))" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" style="max-width:120px;" />
+            </div>
+            <label class="admin-checkbox" style="align-self:end;">
+                <input type="checkbox" name="imageOnTop" value="true" @(Model.ImageOnTop ? "checked" : "") />
+                Ảnh nằm trên (bỏ chọn = ảnh nằm dưới)
+            </label>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/trang-chu">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

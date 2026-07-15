@@ -1,0 +1,15 @@
+@* Shared media-picker modal for CMS image fields. Render once per page; pair with admin-imagefield.js. *@
+<div class="modal-backdrop" data-picker-backdrop></div>
+<div class="voucher-modal" data-picker-modal aria-hidden="true">
+    <div class="voucher-modal__panel" style="max-width:720px;">
+        <div class="voucher-modal__header">
+            <h2>Chọn ảnh</h2>
+            <button type="button" class="voucher-modal__close" data-picker-close aria-label="Đóng">✕</button>
+        </div>
+        <form data-picker-upload enctype="multipart/form-data" style="margin:16px 0;">
+            <input type="file" name="files" accept="image/jpeg,image/png,image/webp,image/svg+xml" />
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Tải lên</button>
+        </form>
+        <div class="admin-picker-grid" data-picker-grid></div>
+    </div>
+</div>

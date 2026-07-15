@@ -1,0 +1,201 @@
+@using Hoaii.Domain.Entities
+@{
+    ViewData["Title"] = "Trang chủ";
+    var heroes = ViewBag.Heroes as List<HomeHeroSlide> ?? [];
+    var benefits = ViewBag.Benefits as List<HomeBenefit> ?? [];
+    var tiles = ViewBag.Tiles as List<HomeFeaturedTile> ?? [];
+    var services = ViewBag.Services as List<HomeServiceTab> ?? [];
+    var abouts = ViewBag.Abouts as List<HomeAboutCard> ?? [];
+    var logos = ViewBag.Logos as List<HomeCustomerLogo> ?? [];
+}
+
+@functions {
+    string Thumb(string? url) => string.IsNullOrEmpty(url)
+        ? "background:var(--color-grey-50);"
+        : $"background:var(--color-grey-50) center/cover no-repeat url('{url}');";
+}
+
+<p style="color:var(--color-grey-500);margin:0 0 24px;">Quản lý toàn bộ nội dung trang chủ. Mỗi mục hiển thị theo thứ tự bạn đặt.</p>
+
+@* ---------- Hero ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <div class="admin-toolbar" style="margin-bottom:16px;">
+        <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Ảnh hero</h2>
+        <div class="spacer"></div>
+        <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/trang-chu/hero/them">+ Thêm</a>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th></th><th>Tiêu đề</th><th>Phụ đề</th><th class="num">Thứ tự</th><th>Hiện</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var h in heroes)
+                {
+                    <tr>
+                        <td><div style="width:64px;height:40px;border-radius:4px;@Thumb(h.ImageUrl)"></div></td>
+                        <td><a class="admin-row-link" href="/admin/trang-chu/hero/@h.Id/sua">@h.Title</a></td>
+                        <td style="color:var(--color-grey-500);">@h.Subtitle</td>
+                        <td class="num">@h.SortOrder</td>
+                        <td>@(h.IsActive ? "✓" : "—")</td>
+                        <td class="num">
+                            <form method="post" action="/admin/trang-chu/hero/@h.Id/xoa" data-confirm="Xóa ảnh hero này?" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* ---------- Benefits ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <div class="admin-toolbar" style="margin-bottom:16px;">
+        <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Lợi ích (3 cột)</h2>
+        <div class="spacer"></div>
+        <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/trang-chu/loi-ich/them">+ Thêm</a>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th></th><th>Tiêu đề</th><th>Mô tả</th><th class="num">Thứ tự</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var b in benefits)
+                {
+                    <tr>
+                        <td><div style="width:40px;height:40px;border-radius:4px;@Thumb(b.IconPath)"></div></td>
+                        <td><a class="admin-row-link" href="/admin/trang-chu/loi-ich/@b.Id/sua">@b.Title</a></td>
+                        <td style="color:var(--color-grey-500);">@b.Description</td>
+                        <td class="num">@b.SortOrder</td>
+                        <td class="num">
+                            <form method="post" action="/admin/trang-chu/loi-ich/@b.Id/xoa" data-confirm="Xóa lợi ích này?" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* ---------- Featured tiles ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <div class="admin-toolbar" style="margin-bottom:16px;">
+        <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Ô nổi bật</h2>
+        <div class="spacer"></div>
+        <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/trang-chu/o-noi-bat/them">+ Thêm</a>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th></th><th>Loại</th><th>Nội dung</th><th>Liên kết</th><th class="num">Thứ tự</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var t in tiles)
+                {
+                    <tr>
+                        <td><div style="width:64px;height:40px;border-radius:4px;@Thumb(t.ImageUrl)"></div></td>
+                        <td>@(t.IsCard ? $"Thẻ ({t.AccentColor})" : "Ảnh")</td>
+                        <td><a class="admin-row-link" href="/admin/trang-chu/o-noi-bat/@t.Id/sua">@(t.IsCard ? $"{t.TitleLine1} {t.TitleLine2}" : (t.ImageUrl ?? "—"))</a></td>
+                        <td style="color:var(--color-grey-500);">@t.LinkUrl</td>
+                        <td class="num">@t.SortOrder</td>
+                        <td class="num">
+                            <form method="post" action="/admin/trang-chu/o-noi-bat/@t.Id/xoa" data-confirm="Xóa ô này?" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* ---------- Service tabs ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <div class="admin-toolbar" style="margin-bottom:16px;">
+        <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Dịch vụ theo yêu cầu</h2>
+        <div class="spacer"></div>
+        <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/trang-chu/dich-vu/them">+ Thêm</a>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Nhãn</th><th>Mô tả</th><th>Liên kết</th><th class="num">Thứ tự</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var s in services)
+                {
+                    <tr>
+                        <td><a class="admin-row-link" href="/admin/trang-chu/dich-vu/@s.Id/sua">@s.Label</a></td>
+                        <td style="color:var(--color-grey-500);">@s.Caption</td>
+                        <td style="color:var(--color-grey-500);">@s.CtaUrl</td>
+                        <td class="num">@s.SortOrder</td>
+                        <td class="num">
+                            <form method="post" action="/admin/trang-chu/dich-vu/@s.Id/xoa" data-confirm="Xóa dịch vụ này?" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* ---------- About cards ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <div class="admin-toolbar" style="margin-bottom:16px;">
+        <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Thẻ giá trị (HOÀI là ai)</h2>
+        <div class="spacer"></div>
+        <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/trang-chu/gia-tri/them">+ Thêm</a>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th></th><th>Chú thích</th><th>Ảnh trên</th><th class="num">Thứ tự</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var a in abouts)
+                {
+                    <tr>
+                        <td><div style="width:56px;height:40px;border-radius:4px;@Thumb(a.ImageUrl)"></div></td>
+                        <td><a class="admin-row-link" href="/admin/trang-chu/gia-tri/@a.Id/sua">@a.Caption</a></td>
+                        <td>@(a.ImageOnTop ? "✓" : "—")</td>
+                        <td class="num">@a.SortOrder</td>
+                        <td class="num">
+                            <form method="post" action="/admin/trang-chu/gia-tri/@a.Id/xoa" data-confirm="Xóa thẻ này?" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* ---------- Customer logos ---------- *@
+<div class="admin-card">
+    <h2 style="font-family:var(--font-display);margin:0 0 8px;font-size:20px;">Logo khách hàng</h2>
+    <p style="color:var(--color-grey-500);margin:0 0 16px;">Tên tệp (không đuôi) trong /images/customers/. VD: <code>truong-thanh</code></p>
+    <form method="post" action="/admin/trang-chu/logo/them" class="admin-form" style="display:flex;gap:8px;align-items:flex-end;margin-bottom:16px;max-width:420px;">
+        @Html.AntiForgeryToken()
+        <div class="admin-field" style="flex:1;margin:0;">
+            <label>Thêm logo (mã tệp)</label>
+            <input type="text" name="logoKey" placeholder="truong-thanh" required />
+        </div>
+        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Thêm</button>
+    </form>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        @foreach (var l in logos)
+        {
+            <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--color-grey-200);border-radius:6px;padding:6px 8px;background:#fff;">
+                <span style="font:500 13px var(--font-body);color:var(--color-grey-700);">@l.LogoKey</span>
+                <form method="post" action="/admin/trang-chu/logo/@l.Id/xoa" style="display:inline;line-height:0;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="admin-block-row__controls" style="border:none;background:none;color:var(--color-brand-red);cursor:pointer;font-size:14px;" aria-label="Xóa @l.LogoKey">✕</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>
