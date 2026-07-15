@@ -237,6 +237,25 @@
 }
 .admin-picker-cell:hover { border-color: var(--color-brand-red); box-shadow: 0 0 0 2px var(--color-brand-red-tint); }
 
+/* ---------- Policy block editor ---------- */
+.admin-block-row {
+  display: grid; grid-template-columns: 150px 1fr auto; gap: 12px; align-items: start;
+  padding: 12px; border: 1px solid var(--color-grey-200); border-radius: var(--radius-sm);
+  background: #fff; margin-bottom: 10px;
+}
+.admin-block-row__kind { align-self: stretch; }
+.admin-block-row__text { width: 100%; resize: vertical; font: 400 14px/1.5 var(--font-body); }
+.admin-block-row__controls { display: flex; flex-direction: column; gap: 4px; }
+.admin-block-row__controls button {
+  border: 1px solid var(--color-grey-200); background: #fff; border-radius: 4px;
+  width: 30px; height: 26px; cursor: pointer; font-size: 12px; color: var(--color-grey-600);
+}
+.admin-block-row__controls button:hover { background: var(--color-brand-gold-bg); color: var(--color-brand-red); }
+@media (max-width: 700px) {
+  .admin-block-row { grid-template-columns: 1fr auto; }
+  .admin-block-row__kind { grid-column: 1 / -1; }
+}
+
 /* ---------- Login ---------- */
 .admin-login-body {
   min-height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center;

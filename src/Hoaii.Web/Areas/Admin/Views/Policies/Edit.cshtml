@@ -1,0 +1,89 @@
+@model Hoaii.Domain.Entities.PolicyPage
+@using Hoaii.Domain.Entities
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm trang chính sách" : "Sửa trang chính sách";
+
+    string KindLabel(PolicyBlockKind k) => k switch
+    {
+        PolicyBlockKind.Heading => "Tiêu đề mục",
+        PolicyBlockKind.Bullet => "Gạch đầu dòng",
+        _ => "Đoạn văn",
+    };
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/chinh-sach">← Chính sách</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/chinh-sach/luu" class="admin-form" data-policy-form>
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-field">
+            <label>Tiêu đề trang</label>
+            <input type="text" name="title" value="@Model.Title" required autofocus />
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Nhãn nav/footer</label>
+                <input type="text" name="navLabel" value="@Model.NavLabel" required placeholder="VD: Chính sách giao hàng" />
+            </div>
+            <div class="admin-field">
+                <label>Slug</label>
+                <input type="text" name="slug" value="@Model.Slug" placeholder="Để trống sẽ tự sinh" />
+                <span class="admin-field__hint">Địa chỉ: /chinh-sach/&lt;slug&gt;</span>
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Breadcrumb</label>
+                <input type="text" name="breadcrumbLabel" value="@Model.BreadcrumbLabel" placeholder="Để trống: Trang chủ/&lt;nhãn&gt;" />
+            </div>
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" />
+            </div>
+        </div>
+
+        <label class="admin-checkbox" style="margin-bottom:16px;">
+            <input type="checkbox" name="isPublished" value="true" @(isNew || Model.IsPublished ? "checked" : "") />
+            Hiển thị trên website
+        </label>
+
+        <div class="admin-field">
+            <label>Nội dung</label>
+            <span class="admin-field__hint" style="display:block;margin-bottom:12px;">Mỗi khối là một đoạn, tiêu đề mục hoặc một gạch đầu dòng. Kéo thứ tự bằng nút ▲▼.</span>
+            <div data-block-list>
+                @foreach (var block in Model.Blocks)
+                {
+                    <div class="admin-block-row" data-block-row>
+                        <select name="blockKinds" class="admin-block-row__kind">
+                            @foreach (PolicyBlockKind k in Enum.GetValues<PolicyBlockKind>())
+                            {
+                                <option value="@k" selected="@(block.Kind == k)">@KindLabel(k)</option>
+                            }
+                        </select>
+                        <textarea name="blockTexts" rows="2" class="admin-block-row__text">@block.Text</textarea>
+                        <div class="admin-block-row__controls">
+                            <button type="button" data-move="-1" aria-label="Lên">▲</button>
+                            <button type="button" data-move="1" aria-label="Xuống">▼</button>
+                            <button type="button" data-remove-block aria-label="Xóa">✕</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-add-block style="margin-top:12px;">+ Thêm khối</button>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/chinh-sach">Hủy</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-policy.js" asp-append-version="true"></script>
+}

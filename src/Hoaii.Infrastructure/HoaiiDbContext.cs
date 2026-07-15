@@ -25,6 +25,8 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
 
     // CMS.
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+    public DbSet<PolicyPage> PolicyPages => Set<PolicyPage>();
+    public DbSet<PolicyBlock> PolicyBlocks => Set<PolicyBlock>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -192,6 +194,20 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             entity.HasKey(s => s.Key);
             entity.Property(s => s.Key).HasMaxLength(100);
             entity.Property(s => s.Value).HasMaxLength(2000);
+        });
+
+        modelBuilder.Entity<PolicyPage>(entity =>
+        {
+            entity.HasIndex(p => p.Slug).IsUnique();
+            entity.Property(p => p.Slug).HasMaxLength(120);
+            entity.Property(p => p.Title).HasMaxLength(300);
+            entity.Property(p => p.NavLabel).HasMaxLength(200);
+            entity.Property(p => p.BreadcrumbLabel).HasMaxLength(300);
+
+            entity.HasMany(p => p.Blocks)
+                .WithOne(b => b.PolicyPage!)
+                .HasForeignKey(b => b.PolicyPageId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         SeedCategories(modelBuilder);

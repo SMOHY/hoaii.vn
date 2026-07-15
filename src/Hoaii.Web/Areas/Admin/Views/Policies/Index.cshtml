@@ -1,0 +1,46 @@
+@model List<(int Id, string Title, string Slug, bool IsPublished, int BlockCount)>
+@{
+    ViewData["Title"] = "Chính sách";
+}
+
+<div class="admin-toolbar">
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--primary" href="/admin/chinh-sach/them">+ Thêm trang</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Tiêu đề</th><th>Slug</th><th class="num">Số khối</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="5" style="color:var(--color-grey-500);text-align:center;padding:32px;">Chưa có trang nào.</td></tr>
+            }
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/chinh-sach/@p.Id/sua">@p.Title</a></td>
+                    <td style="color:var(--color-grey-500);">/chinh-sach/@p.Slug</td>
+                    <td class="num">@p.BlockCount</td>
+                    <td>
+                        @if (p.IsPublished)
+                        {
+                            <span class="admin-badge admin-badge--green">Hiển thị</span>
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--grey">Ẩn</span>
+                        }
+                    </td>
+                    <td class="num">
+                        <a class="admin-btn admin-btn--secondary admin-btn--sm" href="/chinh-sach/@p.Slug" target="_blank">Xem</a>
+                        <form method="post" action="/admin/chinh-sach/@p.Id/xoa" data-confirm="Xóa trang &quot;@p.Title&quot;?" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
