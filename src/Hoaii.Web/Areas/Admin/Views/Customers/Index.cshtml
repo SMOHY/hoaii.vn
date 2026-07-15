@@ -1,0 +1,39 @@
+@model List<(int Id, string Email, string? FullName, DateTime CreatedAt, int OrderCount, decimal Spend)>
+@{
+    ViewData["Title"] = "Khách hàng";
+    int page = ViewBag.Page; int totalPages = ViewBag.TotalPages; string? q = ViewBag.Query;
+    string BuildUrl(int p) => "/admin/khach-hang?page=" + p + (string.IsNullOrWhiteSpace(q) ? "" : "&q=" + Uri.EscapeDataString(q));
+}
+
+<div class="admin-toolbar">
+    <form method="get" action="/admin/khach-hang">
+        <input type="text" name="q" value="@q" placeholder="Tìm email, tên…" style="min-width:240px;padding:9px 12px;border:1px solid var(--color-grey-300);border-radius:var(--radius-sm);" />
+        <button type="submit" class="admin-btn admin-btn--primary">Tìm</button>
+    </form>
+    <div class="spacer"></div>
+    <span style="color:var(--color-grey-500);">@ViewBag.Total khách hàng</span>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Email</th><th>Họ tên</th><th class="num">Số đơn</th><th class="num">Đã chi</th><th>Ngày tạo</th></tr></thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="5" class="admin-table__empty">Không có khách hàng nào.</td></tr>
+            }
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/khach-hang/@c.Id">@c.Email</a></td>
+                    <td>@(c.FullName ?? "—")</td>
+                    <td class="num">@c.OrderCount</td>
+                    <td class="num">@AdminDisplay.Money(c.Spend)</td>
+                    <td>@c.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<partial name="_Pager" model="@((page, totalPages, (Func<int,string>)BuildUrl))" />

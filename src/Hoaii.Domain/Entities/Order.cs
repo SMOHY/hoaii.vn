@@ -22,6 +22,13 @@ public enum PaymentMethod
     CashOnDelivery,
 }
 
+public enum PaymentStatus
+{
+    Unpaid,
+    Paid,
+    Refunded,
+}
+
 public class Order
 {
     public int Id { get; set; }
@@ -46,10 +53,26 @@ public class Order
 
     public decimal Subtotal { get; set; }
     public decimal ShippingFee { get; set; }
+
+    // The voucher used to vanish the moment the order was placed: the discount was subtracted
+    // into Total and the code was never written down, so a disputed total could not be explained.
+    public decimal Discount { get; set; }
+    public string? VoucherCode { get; set; }
+
     public decimal Total { get; set; }
 
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
+    public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Unpaid;
+
+    /// <summary>Carrier tracking number, filled in by an admin when the order ships.</summary>
+    public string? TrackingNumber { get; set; }
+
+    /// <summary>Internal note. Never shown to the customer.</summary>
+    public string? AdminNote { get; set; }
+
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public ICollection<OrderItem> Items { get; set; } = [];
+    public ICollection<OrderStatusHistory> StatusHistory { get; set; } = [];
 }

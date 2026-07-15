@@ -1,0 +1,145 @@
+@model OrderDetailViewModel
+@{
+    var o = Model.Order;
+    ViewData["Title"] = $"Đơn {o.OrderNumber}";
+}
+
+<div style="margin-bottom:20px;">
+    <a class="admin-row-link" href="/admin/don-hang">← Danh sách đơn hàng</a>
+</div>
+
+<div class="admin-detail-grid">
+    <div>
+        <div class="admin-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h2 class="admin-card__title" style="margin:0;">@o.OrderNumber</h2>
+                <span class="admin-badge admin-badge--@AdminDisplay.OrderStatusBadge(o.Status)">@AdminDisplay.OrderStatusLabel(o.Status)</span>
+            </div>
+            <div class="admin-table-wrap" style="border:none;">
+                <table class="admin-table">
+                    <thead><tr><th>Sản phẩm</th><th>Phân loại</th><th class="num">Đơn giá</th><th class="num">SL</th><th class="num">Thành tiền</th></tr></thead>
+                    <tbody>
+                        @foreach (var it in o.Items)
+                        {
+                            <tr>
+                                <td>@it.ProductName</td>
+                                <td>@(it.VariantName ?? "—")</td>
+                                <td class="num">@AdminDisplay.Money(it.UnitPrice)</td>
+                                <td class="num">@it.Quantity</td>
+                                <td class="num">@AdminDisplay.Money(it.UnitPrice * it.Quantity)</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr><td colspan="4" class="num">Tạm tính</td><td class="num">@AdminDisplay.Money(o.Subtotal)</td></tr>
+                        @if (o.Discount > 0)
+                        {
+                            <tr><td colspan="4" class="num">Giảm giá@(o.VoucherCode is not null ? $" ({o.VoucherCode})" : "")</td><td class="num">-@AdminDisplay.Money(o.Discount)</td></tr>
+                        }
+                        <tr><td colspan="4" class="num">Vận chuyển</td><td class="num">@(o.ShippingFee > 0 ? AdminDisplay.Money(o.ShippingFee) : "Miễn phí")</td></tr>
+                        <tr><td colspan="4" class="num"><strong>Tổng cộng</strong></td><td class="num"><strong>@AdminDisplay.Money(o.Total)</strong></td></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <h3 class="admin-section-title">Thông tin giao hàng</h3>
+            <dl class="admin-dl">
+                <dt>Người nhận</dt><dd>@o.LastName @o.FirstName</dd>
+                @if (!string.IsNullOrWhiteSpace(o.CompanyName)) { <dt>Công ty</dt><dd>@o.CompanyName</dd> }
+                <dt>Điện thoại</dt><dd>@o.Phone</dd>
+                <dt>Email</dt><dd>@o.Email</dd>
+                <dt>Địa chỉ</dt><dd>@o.Address, @o.ProvinceDistrictWard</dd>
+                <dt>Vận chuyển</dt><dd>@AdminDisplay.ShippingMethodLabel(o.ShippingMethod)</dd>
+                <dt>Thanh toán</dt><dd>@AdminDisplay.PaymentMethodLabel(o.PaymentMethod)</dd>
+                @if (!string.IsNullOrWhiteSpace(o.Notes)) { <dt>Ghi chú của khách</dt><dd>@o.Notes</dd> }
+            </dl>
+        </div>
+
+        <div class="admin-card">
+            <h3 class="admin-section-title">Lịch sử trạng thái</h3>
+            @if (o.StatusHistory.Count == 0)
+            {
+                <p style="color:var(--color-grey-500);">Đơn được tạo ở trạng thái "@AdminDisplay.OrderStatusLabel(Hoaii.Domain.Entities.OrderStatus.Pending)" lúc @o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm").</p>
+            }
+            else
+            {
+                <ul class="admin-timeline">
+                    @foreach (var h in o.StatusHistory.OrderByDescending(h => h.CreatedAt))
+                    {
+                        <li>
+                            <div><strong>@AdminDisplay.OrderStatusLabel(h.FromStatus)</strong> → <strong>@AdminDisplay.OrderStatusLabel(h.ToStatus)</strong></div>
+                            @if (!string.IsNullOrWhiteSpace(h.Note)) { <div>@h.Note</div> }
+                            <div class="admin-timeline__meta">@(h.AdminUser?.FullName ?? "Hệ thống") · @h.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+    <aside>
+        <div class="admin-card">
+            <h3 class="admin-section-title">Thanh toán</h3>
+            <p style="margin:0 0 12px;"><span class="admin-badge admin-badge--@AdminDisplay.PaymentStatusBadge(o.PaymentStatus)">@AdminDisplay.PaymentStatusLabel(o.PaymentStatus)</span></p>
+            <form method="post" action="/admin/don-hang/@o.Id/thanh-toan" class="admin-form">
+                @Html.AntiForgeryToken()
+                <div class="admin-field">
+                    <select name="paymentStatus">
+                        @foreach (var p in Enum.GetValues<Hoaii.Domain.Entities.PaymentStatus>())
+                        {
+                            <option value="@p" selected="@(o.PaymentStatus == p)">@AdminDisplay.PaymentStatusLabel(p)</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Cập nhật</button>
+            </form>
+        </div>
+
+        <div class="admin-card">
+            <h3 class="admin-section-title">Chuyển trạng thái</h3>
+            @if (Model.NextStatuses.Count == 0)
+            {
+                <p style="color:var(--color-grey-500);margin:0;">Đơn đã ở trạng thái cuối, không thể chuyển tiếp.</p>
+            }
+            else
+            {
+                <form method="post" action="/admin/don-hang/@o.Id/trang-thai" class="admin-form">
+                    @Html.AntiForgeryToken()
+                    <div class="admin-field">
+                        <label>Chuyển sang</label>
+                        <select name="to">
+                            @foreach (var s in Model.NextStatuses)
+                            {
+                                <option value="@s">@AdminDisplay.OrderStatusLabel(s)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="admin-field">
+                        <label>Ghi chú (tuỳ chọn)</label>
+                        <input type="text" name="note" placeholder="Lý do, thông tin thêm…" />
+                    </div>
+                    <button type="submit" class="admin-btn admin-btn--primary">Xác nhận</button>
+                </form>
+            }
+        </div>
+
+        <div class="admin-card">
+            <h3 class="admin-section-title">Vận đơn & ghi chú</h3>
+            <form method="post" action="/admin/don-hang/@o.Id/cap-nhat" class="admin-form">
+                @Html.AntiForgeryToken()
+                <div class="admin-field">
+                    <label>Mã vận đơn</label>
+                    <input type="text" name="trackingNumber" value="@o.TrackingNumber" />
+                </div>
+                <div class="admin-field">
+                    <label>Ghi chú nội bộ</label>
+                    <textarea name="adminNote" rows="3">@o.AdminNote</textarea>
+                    <span class="admin-field__hint">Không hiển thị cho khách.</span>
+                </div>
+                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+            </form>
+        </div>
+    </aside>
+</div>

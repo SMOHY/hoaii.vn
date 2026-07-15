@@ -1,0 +1,26 @@
+@*
+    Reusable admin pager. Pass the current page, total pages, and a Func that builds the URL
+    for a given page number (so each list keeps its own filters in the querystring).
+*@
+@model (int Page, int TotalPages, Func<int, string> Url)
+@{
+    var (page, totalPages, url) = Model;
+}
+@if (totalPages > 1)
+{
+    <nav class="admin-pager" aria-label="Phân trang">
+        <a class="@(page <= 1 ? "is-disabled" : "")" href="@url(page - 1)" aria-label="Trang trước">‹</a>
+        @for (var i = 1; i <= totalPages; i++)
+        {
+            @if (i == page)
+            {
+                <span class="is-current">@i</span>
+            }
+            else
+            {
+                <a href="@url(i)">@i</a>
+            }
+        }
+        <a class="@(page >= totalPages ? "is-disabled" : "")" href="@url(page + 1)" aria-label="Trang sau">›</a>
+    </nav>
+}

@@ -1,0 +1,75 @@
+@using System.Security.Claims
+@{
+    var adminName = User.FindFirstValue(ClaimTypes.Name) ?? "Admin";
+    var roleRaw = User.FindFirstValue(Hoaii.Web.Services.Admin.AdminAuth.RoleClaim);
+    var roleLabel = roleRaw == nameof(AdminRole.Owner) ? "Chủ shop" : "Nhân viên";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Quản trị Hoài</title>
+    <link rel="preload" href="/fonts/Josefin Sans/JosefinSans-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/LC Sac/LCSac Trial-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modals.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="admin-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar" data-admin-sidebar>
+            <a class="admin-sidebar__brand" href="/admin">
+                <img src="/images/logo.svg" alt="Hoài" />
+                <span class="admin-sidebar__brand-text">
+                    <span class="admin-sidebar__brand-name">Hoài</span>
+                    <span class="admin-sidebar__brand-sub">Quản trị</span>
+                </span>
+            </a>
+            <partial name="_AdminSidebar" />
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:16px;">
+                    <button type="button" class="admin-menu-toggle" data-admin-menu-toggle aria-label="Menu">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2"/></svg>
+                    </button>
+                    <h1 class="admin-topbar__title">@ViewData["Title"]</h1>
+                </div>
+                <div class="admin-topbar__right">
+                    <a class="admin-btn admin-btn--secondary admin-btn--sm" href="/" target="_blank" rel="noopener">Xem web ↗</a>
+                    <div class="admin-topbar__user">
+                        <span class="admin-topbar__user-name">@adminName</span>
+                        <span class="admin-topbar__user-role">@roleLabel</span>
+                    </div>
+                    <form method="post" action="/admin/dang-xuat">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="admin-topbar__logout">Đăng xuất</button>
+                    </form>
+                </div>
+            </header>
+
+            <main class="admin-content" id="main" tabindex="-1">
+                @if (TempData["AdminOk"] is string ok)
+                {
+                    <div class="admin-alert admin-alert--ok" role="status">@ok</div>
+                }
+                @if (TempData["AdminError"] is string err)
+                {
+                    <div class="admin-alert admin-alert--error" role="alert">@err</div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/js/overlays.js" asp-append-version="true"></script>
+    <script src="~/js/cart-live.js" asp-append-version="true"></script>
+    <script src="~/js/form-validate.js" asp-append-version="true"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

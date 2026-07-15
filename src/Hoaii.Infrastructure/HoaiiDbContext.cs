@@ -17,6 +17,12 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<Ward> Wards => Set<Ward>();
     public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
 
+    // Admin area.
+    public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
+    public DbSet<AdminAuditLog> AdminAuditLogs => Set<AdminAuditLog>();
+    public DbSet<OrderStatusHistory> OrderStatusHistories => Set<OrderStatusHistory>();
+    public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
@@ -62,7 +68,14 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             entity.HasIndex(o => o.OrderNumber).IsUnique();
             entity.Property(o => o.Subtotal).HasColumnType("decimal(18,2)");
             entity.Property(o => o.ShippingFee).HasColumnType("decimal(18,2)");
+            entity.Property(o => o.Discount).HasColumnType("decimal(18,2)");
             entity.Property(o => o.Total).HasColumnType("decimal(18,2)");
+            entity.Property(o => o.VoucherCode).HasMaxLength(50);
+            entity.Property(o => o.TrackingNumber).HasMaxLength(100);
+
+            // The admin order list filters and sorts on these two constantly.
+            entity.HasIndex(o => o.Status);
+            entity.HasIndex(o => o.CreatedAt);
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -121,6 +134,52 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             entity.HasIndex(b => b.Slug).IsUnique();
             entity.Property(b => b.Title).HasMaxLength(300);
             entity.Property(b => b.Slug).HasMaxLength(300);
+        });
+
+        modelBuilder.Entity<AdminUser>(entity =>
+        {
+            entity.HasIndex(a => a.Email).IsUnique();
+            entity.Property(a => a.Email).HasMaxLength(320);
+            entity.Property(a => a.FullName).HasMaxLength(200);
+            entity.Property(a => a.PasswordHash).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<OrderStatusHistory>(entity =>
+        {
+            entity.HasOne(h => h.Order)
+                .WithMany(o => o.StatusHistory)
+                .HasForeignKey(h => h.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Keep the history if the admin who made the change is later removed.
+            entity.HasOne(h => h.AdminUser)
+                .WithMany()
+                .HasForeignKey(h => h.AdminUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<AdminAuditLog>(entity =>
+        {
+            entity.Property(l => l.Action).HasMaxLength(100);
+            entity.Property(l => l.EntityType).HasMaxLength(100);
+            entity.HasIndex(l => l.CreatedAt);
+
+            entity.HasOne(l => l.AdminUser)
+                .WithMany()
+                .HasForeignKey(l => l.AdminUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<MediaAsset>(entity =>
+        {
+            entity.Property(m => m.Url).HasMaxLength(500);
+            entity.Property(m => m.FileName).HasMaxLength(300);
+            entity.HasIndex(m => m.CreatedAt);
+
+            entity.HasOne(m => m.UploadedByAdminUser)
+                .WithMany()
+                .HasForeignKey(m => m.UploadedByAdminUserId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         SeedCategories(modelBuilder);
@@ -200,8 +259,11 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             new Product { Id = 9, Name = "Trà oolong túi lọc cao cấp", Slug = "tra-oolong-tui-loc-cao-cap", Price = 260_000m, CategoryId = 1 },
             new Product { Id = 10, Name = "Trà bạc hà hộp thiếc", Slug = "tra-bac-ha-hop-thiec", Price = 165_000m, CategoryId = 1 },
 
-            new Product { Id = 20, Name = "Hộp quà Tết Xuân Phú Quý", Slug = "hop-qua-tet-xuan-phu-quy", Price = 890_000m, CategoryId = 5, Badge = ProductBadge.New, IsFeatured = true },
-            new Product { Id = 21, Name = "Hộp quà Tết An Khang", Slug = "hop-qua-tet-an-khang", Price = 650_000m, CategoryId = 5 },
+            // These two were renamed in place by the SeedTetProductsFromFigma migration. The
+            // seed had kept the old names, so the model snapshot and the real database
+            // disagreed — EF would have "helpfully" renamed them back on the next migration.
+            new Product { Id = 20, Name = "Thiên điểu lạc hồng", Slug = "thien-dieu-lac-hong", Price = 899_000m, CategoryId = 5, Badge = ProductBadge.New, IsFeatured = true },
+            new Product { Id = 21, Name = "Tinh hoa bắc bộ", Slug = "tinh-hoa-bac-bo", Price = 899_000m, CategoryId = 5, IsFeatured = true },
         };
 
         modelBuilder.Entity<Product>().HasData(products);

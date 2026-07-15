@@ -1,0 +1,33 @@
+@model List<(int Id, string Name, string Slug, Hoaii.Domain.Entities.CategoryType Type, int SortOrder, int ProductCount)>
+@{
+    ViewData["Title"] = "Danh mục";
+}
+
+<div class="admin-toolbar">
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--primary" href="/admin/danh-muc/them">+ Thêm danh mục</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Tên</th><th>Slug</th><th>Loại</th><th class="num">Thứ tự</th><th class="num">Sản phẩm</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/danh-muc/@c.Id/sua">@c.Name</a></td>
+                    <td style="color:var(--color-grey-500);">@c.Slug</td>
+                    <td>@(c.Type == Hoaii.Domain.Entities.CategoryType.Occasion ? "Theo dịp" : "Loại sản phẩm")</td>
+                    <td class="num">@c.SortOrder</td>
+                    <td class="num">@c.ProductCount</td>
+                    <td class="num">
+                        <form method="post" action="/admin/danh-muc/@c.Id/xoa" data-confirm="Xóa danh mục &quot;@c.Name&quot;?" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

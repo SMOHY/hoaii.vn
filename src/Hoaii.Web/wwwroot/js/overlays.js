@@ -14,6 +14,7 @@
     '[data-voucher-modal]',
     '[data-contact-popup]',
     '[data-edit-modal]',
+    '[data-picker-modal]',
   ];
 
   const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -75,7 +76,7 @@
 
   function close(panel) {
     // Prefer the panel's own close button so its bespoke logic (aria-hidden, backdrop) runs.
-    const btn = panel.querySelector('[data-minicart-close], [data-voucher-modal-close], [data-contact-popup-close], [data-nav-drawer-close], [data-modal-close]');
+    const btn = panel.querySelector('[data-minicart-close], [data-voucher-modal-close], [data-contact-popup-close], [data-nav-drawer-close], [data-modal-close], [data-picker-close]');
     if (btn) btn.click();
     else panel.classList.remove('is-open');
   }

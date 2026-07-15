@@ -1,0 +1,79 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Tổng quan";
+}
+
+<div class="admin-stats">
+    <div class="admin-stat">
+        <div class="admin-stat__label">Doanh thu hôm nay</div>
+        <div class="admin-stat__value">@AdminDisplay.Money(Model.RevenueToday)</div>
+        <div class="admin-stat__sub">@Model.OrdersToday đơn hôm nay</div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat__label">Doanh thu tháng này</div>
+        <div class="admin-stat__value">@AdminDisplay.Money(Model.RevenueMonth)</div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat__label">Chờ xử lý</div>
+        <div class="admin-stat__value">@Model.PendingCount</div>
+        <div class="admin-stat__sub">@Model.ProcessingCount đơn đang giao / chờ lấy</div>
+    </div>
+    <div class="admin-stat">
+        <div class="admin-stat__label">Khách hàng</div>
+        <div class="admin-stat__value">@Model.CustomerCount</div>
+        <div class="admin-stat__sub">@Model.ProductCount sản phẩm</div>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 360px;gap:24px;margin-top:24px;align-items:start;">
+    <div class="admin-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 class="admin-card__title" style="margin:0;">Đơn hàng mới nhất</h2>
+            <a class="admin-row-link" href="/admin/don-hang">Xem tất cả →</a>
+        </div>
+        <div class="admin-table-wrap" style="border:none;">
+            <table class="admin-table">
+                <thead>
+                    <tr><th>Mã đơn</th><th>Khách hàng</th><th class="num">Tổng</th><th>Trạng thái</th></tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentOrders.Count == 0)
+                    {
+                        <tr><td colspan="4" class="admin-table__empty">Chưa có đơn hàng nào.</td></tr>
+                    }
+                    @foreach (var o in Model.RecentOrders)
+                    {
+                        <tr>
+                            <td><a class="admin-row-link" href="/admin/don-hang/@o.Id">@o.OrderNumber</a></td>
+                            <td>@o.CustomerName</td>
+                            <td class="num">@AdminDisplay.Money(o.Total)</td>
+                            <td><span class="admin-badge admin-badge--@AdminDisplay.OrderStatusBadge(o.Status)">@AdminDisplay.OrderStatusLabel(o.Status)</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2 class="admin-card__title">Sắp hết hàng</h2>
+        @if (Model.LowStock.Count == 0)
+        {
+            <p style="color:var(--color-grey-500);">Không có biến thể nào dưới 5 sản phẩm.</p>
+        }
+        else
+        {
+            <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;">
+                @foreach (var s in Model.LowStock)
+                {
+                    <li style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+                        <a class="admin-row-link" href="/admin/san-pham/@s.ProductId/sua" style="font-weight:500;">
+                            @s.ProductName <span style="color:var(--color-grey-500);">· @s.VariantName</span>
+                        </a>
+                        <span class="admin-badge admin-badge--@(s.Stock == 0 ? "red" : "amber")">Còn @s.Stock</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

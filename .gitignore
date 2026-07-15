@@ -9,3 +9,6 @@ obj/
 
 ## Node (if a build tool is added later)
 node_modules/
+
+# User-uploaded media (admin) — not source
+src/Hoaii.Web/wwwroot/uploads/

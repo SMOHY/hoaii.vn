@@ -182,9 +182,13 @@ public class AccountController(HoaiiDbContext db, OtpService otp) : Controller
     public async Task<IActionResult> Orders(string status = "Pending", string? q = null)
     {
         var email = User.FindFirstValue(ClaimTypes.Email)!;
+        var customerId = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var cid) ? cid : (int?)null;
         var parsedStatus = Enum.TryParse<OrderStatus>(status, out var s) ? s : OrderStatus.Pending;
 
-        var query = db.Orders.Where(o => o.Email == email && o.Status == parsedStatus);
+        // Match by account id (orders placed while logged in) OR email (guest orders, and orders
+        // from before this account existed).
+        var query = db.Orders.Where(o =>
+            (o.CustomerId == customerId || o.Email == email) && o.Status == parsedStatus);
         if (!string.IsNullOrWhiteSpace(q))
         {
             query = query.Where(o => o.OrderNumber.Contains(q) || o.Items.Any(i => i.ProductName.Contains(q)));

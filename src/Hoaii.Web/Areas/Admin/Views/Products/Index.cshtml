@@ -1,0 +1,59 @@
+@model ProductListViewModel
+@{
+    ViewData["Title"] = "Sản phẩm";
+    string BuildUrl(int p)
+    {
+        var qs = new List<string> { $"page={p}" };
+        if (!string.IsNullOrWhiteSpace(Model.Query)) qs.Add($"q={Uri.EscapeDataString(Model.Query)}");
+        if (Model.CategoryId is not null) qs.Add($"categoryId={Model.CategoryId}");
+        return "/admin/san-pham?" + string.Join("&", qs);
+    }
+}
+
+<div class="admin-toolbar">
+    <form method="get" action="/admin/san-pham">
+        <input type="text" name="q" value="@Model.Query" placeholder="Tìm tên, slug…" style="min-width:220px;padding:9px 12px;border:1px solid var(--color-grey-300);border-radius:var(--radius-sm);" />
+        <select name="categoryId" style="padding:9px 12px;border:1px solid var(--color-grey-300);border-radius:var(--radius-sm);">
+            <option value="">— Mọi danh mục —</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option>
+            }
+        </select>
+        <button type="submit" class="admin-btn admin-btn--primary">Lọc</button>
+    </form>
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--primary" href="/admin/san-pham/them">+ Thêm sản phẩm</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th></th><th>Tên</th><th>Danh mục</th><th class="num">Giá</th><th class="num">Tồn</th><th>Nhãn</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+            @if (Model.Products.Count == 0)
+            {
+                <tr><td colspan="8" class="admin-table__empty">Không có sản phẩm nào.</td></tr>
+            }
+            @foreach (var p in Model.Products)
+            {
+                <tr>
+                    <td><div class="admin-table__thumb" style="background:var(--color-grey-50) url('@p.ImageUrl') center/cover;"></div></td>
+                    <td><a class="admin-row-link" href="/admin/san-pham/@p.Id/sua">@p.Name</a>@if (p.IsFeatured) { <span class="admin-badge admin-badge--red" style="margin-left:6px;">Nổi bật</span> }</td>
+                    <td>@p.CategoryName</td>
+                    <td class="num">@AdminDisplay.Money(p.Price)</td>
+                    <td class="num">@p.Stock</td>
+                    <td>@(p.Badge == Hoaii.Domain.Entities.ProductBadge.None ? "—" : AdminDisplay.BadgeLabel(p.Badge))</td>
+                    <td><span class="admin-badge admin-badge--@(p.IsActive ? "green" : "grey")">@(p.IsActive ? "Đang bán" : "Đã ẩn")</span></td>
+                    <td class="num">
+                        <form method="post" action="/admin/san-pham/@p.Id/an-hien" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">@(p.IsActive ? "Ẩn" : "Hiện")</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<partial name="_Pager" model="@((Model.Page, Model.TotalPages, (Func<int,string>)BuildUrl))" />

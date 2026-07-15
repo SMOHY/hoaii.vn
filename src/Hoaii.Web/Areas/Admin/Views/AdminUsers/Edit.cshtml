@@ -1,0 +1,45 @@
+@model Hoaii.Domain.Entities.AdminUser
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm tài khoản admin" : "Sửa tài khoản admin";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/tai-khoan">← Tài khoản admin</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/tai-khoan/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-field">
+            <label>Họ tên</label>
+            <input type="text" name="fullName" value="@Model.FullName" required autofocus />
+        </div>
+        <div class="admin-field">
+            <label>Email</label>
+            <input type="email" name="email" value="@Model.Email" required />
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Vai trò</label>
+                <select name="role">
+                    <option value="Staff" selected="@(Model.Role == Hoaii.Domain.Entities.AdminRole.Staff)">Nhân viên</option>
+                    <option value="Owner" selected="@(Model.Role == Hoaii.Domain.Entities.AdminRole.Owner)">Chủ shop</option>
+                </select>
+            </div>
+            <div class="admin-field">
+                <label class="admin-checkbox"><input type="checkbox" name="isActive" value="true" @(Model.IsActive || isNew ? "checked" : "") /> Cho phép đăng nhập</label>
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Mật khẩu@(isNew ? "" : " mới")</label>
+            <input type="password" name="password" autocomplete="new-password" required="@isNew" />
+            <span class="admin-field__hint">@(isNew ? "Đặt mật khẩu cho tài khoản mới." : "Để trống nếu không đổi mật khẩu.")</span>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/tai-khoan">Hủy</a>
+        </div>
+    </form>
+</div>

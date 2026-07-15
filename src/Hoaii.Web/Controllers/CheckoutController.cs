@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Models.Checkout;
@@ -42,9 +43,19 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
         var shippingMethod = form.ShippingMethod == "Intercity" ? ShippingMethod.Intercity : ShippingMethod.InnerCity;
         var paymentMethod = form.PaymentMethod == "CashOnDelivery" ? PaymentMethod.CashOnDelivery : PaymentMethod.BankTransfer;
 
+        // Tie the order to the signed-in customer so it shows in their history even if they
+        // later change the email on their account; guests still fall back to email matching.
+        int? customerId = null;
+        if (User.Identity?.IsAuthenticated == true
+            && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var cid))
+        {
+            customerId = cid;
+        }
+
         var order = new Order
         {
-            OrderNumber = $"HD{DateTime.UtcNow:yyMMdd}{Random.Shared.Next(1000, 9999)}",
+            OrderNumber = await NextOrderNumberAsync(),
+            CustomerId = customerId,
             Email = form.Email,
             FirstName = form.FirstName,
             LastName = form.LastName,
@@ -57,8 +68,13 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
             PaymentMethod = paymentMethod,
             Subtotal = cartModel.Subtotal,
             ShippingFee = 0,
+            // Persist the discount and the code that produced it, so the total can be explained
+            // after the fact — the voucher used to disappear the moment the order was placed.
+            Discount = cartModel.Discount,
+            VoucherCode = cartModel.AppliedVoucherCode,
             Total = cartModel.Total,
             Status = OrderStatus.Pending,
+            PaymentStatus = PaymentStatus.Unpaid,
             CreatedAt = DateTime.UtcNow,
             Items = cartModel.Items.Select(i => new OrderItem
             {
@@ -71,12 +87,33 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
             }).ToList(),
         };
 
+        // Draw down stock for variants that track it (0 = untracked / made to order).
+        foreach (var item in cartModel.Items.Where(i => i.VariantId is not null))
+        {
+            var variant = await db.ProductVariants.FirstOrDefaultAsync(v => v.Id == item.VariantId);
+            if (variant is not null && variant.StockQuantity > 0)
+            {
+                variant.StockQuantity = Math.Max(0, variant.StockQuantity - item.Quantity);
+            }
+        }
+
         db.Orders.Add(order);
         await db.SaveChangesAsync();
 
         cart.Clear();
 
         return RedirectToAction(nameof(Confirmation), new { orderNumber = order.OrderNumber });
+    }
+
+    /// <summary>
+    /// Sequential daily number (HDyyMMdd-0001) rather than a random 4-digit suffix, which
+    /// collided against the unique index roughly one order in a thousand per day.
+    /// </summary>
+    private async Task<string> NextOrderNumberAsync()
+    {
+        var prefix = $"HD{DateTime.UtcNow:yyMMdd}";
+        var todayCount = await db.Orders.CountAsync(o => o.OrderNumber.StartsWith(prefix));
+        return $"{prefix}-{todayCount + 1:D4}";
     }
 
     public async Task<IActionResult> Confirmation(string orderNumber)

@@ -1,0 +1,66 @@
+@model Hoaii.Domain.Entities.Customer
+@{
+    ViewData["Title"] = Model.FullName ?? Model.Email;
+    var orders = ViewBag.Orders as List<Hoaii.Domain.Entities.Order> ?? new();
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/khach-hang">← Khách hàng</a></div>
+
+<div class="admin-detail-grid">
+    <div>
+        <div class="admin-card">
+            <h3 class="admin-section-title">Đơn hàng (@orders.Count)</h3>
+            <div class="admin-table-wrap" style="border:none;">
+                <table class="admin-table">
+                    <thead><tr><th>Mã đơn</th><th class="num">Tổng</th><th>Trạng thái</th><th>Ngày</th></tr></thead>
+                    <tbody>
+                        @if (orders.Count == 0)
+                        {
+                            <tr><td colspan="4" class="admin-table__empty">Chưa có đơn hàng.</td></tr>
+                        }
+                        @foreach (var o in orders)
+                        {
+                            <tr>
+                                <td><a class="admin-row-link" href="/admin/don-hang/@o.Id">@o.OrderNumber</a></td>
+                                <td class="num">@AdminDisplay.Money(o.Total)</td>
+                                <td><span class="admin-badge admin-badge--@AdminDisplay.OrderStatusBadge(o.Status)">@AdminDisplay.OrderStatusLabel(o.Status)</span></td>
+                                <td>@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <h3 class="admin-section-title">Sổ địa chỉ</h3>
+            @if (Model.Addresses.Count == 0)
+            {
+                <p style="color:var(--color-grey-500);">Chưa có địa chỉ.</p>
+            }
+            else
+            {
+                foreach (var a in Model.Addresses)
+                {
+                    <div style="padding:12px 0;border-bottom:1px solid var(--color-grey-100);">
+                        <strong>@a.FullName</strong> · @a.Phone @if (a.IsDefault) { <span class="admin-badge admin-badge--green" style="margin-left:6px;">Mặc định</span> }
+                        <div style="color:var(--color-grey-600);">@a.AddressDetail, @a.Ward?.Name, @a.Province?.Name</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <aside>
+        <div class="admin-card">
+            <h3 class="admin-section-title">Thông tin</h3>
+            <dl class="admin-dl">
+                <dt>Email</dt><dd>@Model.Email</dd>
+                <dt>Họ tên</dt><dd>@(Model.FullName ?? "—")</dd>
+                <dt>Giới tính</dt><dd>@(Model.Gender is null ? "—" : Model.Gender == Hoaii.Domain.Entities.Gender.Male ? "Nam" : "Nữ")</dd>
+                <dt>Ngày sinh</dt><dd>@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "—")</dd>
+                <dt>Ngày tạo</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</dd>
+            </dl>
+        </div>
+    </aside>
+</div>

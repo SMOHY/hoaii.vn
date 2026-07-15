@@ -1,0 +1,78 @@
+@model OrderListViewModel
+@{
+    ViewData["Title"] = "Đơn hàng";
+
+    string BuildUrl(int p)
+    {
+        var qs = new List<string> { $"page={p}" };
+        if (Model.Status is not null) qs.Add($"status={Model.Status}");
+        if (Model.Payment is not null) qs.Add($"payment={Model.Payment}");
+        if (!string.IsNullOrWhiteSpace(Model.Query)) qs.Add($"q={Uri.EscapeDataString(Model.Query)}");
+        return "/admin/don-hang?" + string.Join("&", qs);
+    }
+}
+
+<div class="admin-toolbar">
+    <form method="get" action="/admin/don-hang">
+        <input type="text" name="q" value="@Model.Query" placeholder="Tìm mã đơn, email, SĐT, tên…" style="min-width:260px;padding:9px 12px;border:1px solid var(--color-grey-300);border-radius:var(--radius-sm);" />
+        <select name="status" style="padding:9px 12px;border:1px solid var(--color-grey-300);border-radius:var(--radius-sm);">
+            <option value="">— Mọi trạng thái —</option>
+            @foreach (var s in Enum.GetValues<Hoaii.Domain.Entities.OrderStatus>())
+            {
+                <option value="@s" selected="@(Model.Status == s)">@AdminDisplay.OrderStatusLabel(s)</option>
+            }
+        </select>
+        <select name="payment" style="padding:9px 12px;border:1px solid var(--color-grey-300);border-radius:var(--radius-sm);">
+            <option value="">— Thanh toán —</option>
+            @foreach (var p in Enum.GetValues<Hoaii.Domain.Entities.PaymentStatus>())
+            {
+                <option value="@p" selected="@(Model.Payment == p)">@AdminDisplay.PaymentStatusLabel(p)</option>
+            }
+        </select>
+        <button type="submit" class="admin-btn admin-btn--primary">Lọc</button>
+        @if (Model.Status is not null || Model.Payment is not null || !string.IsNullOrWhiteSpace(Model.Query))
+        {
+            <a class="admin-btn admin-btn--secondary" href="/admin/don-hang">Xóa lọc</a>
+        }
+    </form>
+    <div class="spacer"></div>
+    <span style="color:var(--color-grey-500);">@Model.TotalCount đơn</span>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>SĐT</th>
+                <th class="num">SP</th>
+                <th class="num">Tổng</th>
+                <th>Thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Ngày</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Orders.Count == 0)
+            {
+                <tr><td colspan="8" class="admin-table__empty">Không có đơn hàng nào khớp bộ lọc.</td></tr>
+            }
+            @foreach (var o in Model.Orders)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/don-hang/@o.Id">@o.OrderNumber</a></td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.Phone</td>
+                    <td class="num">@o.ItemCount</td>
+                    <td class="num">@AdminDisplay.Money(o.Total)</td>
+                    <td><span class="admin-badge admin-badge--@AdminDisplay.PaymentStatusBadge(o.PaymentStatus)">@AdminDisplay.PaymentStatusLabel(o.PaymentStatus)</span></td>
+                    <td><span class="admin-badge admin-badge--@AdminDisplay.OrderStatusBadge(o.Status)">@AdminDisplay.OrderStatusLabel(o.Status)</span></td>
+                    <td>@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<partial name="_Pager" model="@((Model.Page, Model.TotalPages, (Func<int,string>)BuildUrl))" />

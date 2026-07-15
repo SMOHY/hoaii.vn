@@ -1,0 +1,176 @@
+@model ProductEditViewModel
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm sản phẩm" : "Sửa sản phẩm";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/san-pham">← Sản phẩm</a></div>
+
+<form method="post" action="/admin/san-pham/luu" class="admin-form admin-form--wide" data-product-form>
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;">
+        <div>
+            <div class="admin-card">
+                <h3 class="admin-section-title">Thông tin chung</h3>
+                <div class="admin-field">
+                    <label>Tên sản phẩm</label>
+                    <input type="text" name="Name" value="@Model.Name" required autofocus />
+                </div>
+                <div class="admin-field">
+                    <label>Slug</label>
+                    <input type="text" name="Slug" value="@Model.Slug" placeholder="Để trống sẽ tự sinh" />
+                    <span class="admin-field__hint">/san-pham/&lt;slug&gt;</span>
+                </div>
+                <div class="admin-field">
+                    <label>Mô tả (thành phần)</label>
+                    <textarea name="Description" rows="4">@Model.Description</textarea>
+                </div>
+                <div class="admin-form-row">
+                    <div class="admin-field">
+                        <label>Giá bán (đ)</label>
+                        <input type="number" name="Price" value="@Model.Price" step="1000" min="0" required />
+                    </div>
+                    <div class="admin-field">
+                        <label>Giá gạch ngang (đ)</label>
+                        <input type="number" name="CompareAtPrice" value="@(Model.CompareAtPrice)" step="1000" min="0" placeholder="Không bắt buộc" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <h3 class="admin-section-title" style="margin:0;">Hình ảnh</h3>
+                    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker>+ Thêm ảnh</button>
+                </div>
+                <span class="admin-field__hint">Ảnh đầu tiên là ảnh bìa. Dùng nút ◀ ▶ để đổi thứ tự.</span>
+                <div class="admin-image-list" data-image-list>
+                    @foreach (var url in Model.ImageUrls)
+                    {
+                        <div class="admin-image-item" data-image-item>
+                            <input type="hidden" name="ImageUrls" value="@url" />
+                            <div class="admin-image-item__thumb" style="background-image:url('@url')"></div>
+                            <div class="admin-image-item__controls">
+                                <button type="button" data-move="-1" aria-label="Trái">◀</button>
+                                <button type="button" data-move="1" aria-label="Phải">▶</button>
+                                <button type="button" data-remove aria-label="Xóa">✕</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <h3 class="admin-section-title" style="margin:0;">Biến thể (loại hộp)</h3>
+                    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-add-variant>+ Thêm biến thể</button>
+                </div>
+                <span class="admin-field__hint">Ô màu dưới giá sản phẩm chỉ hiện khi có từ 2 biến thể. Tồn = 0 nghĩa là không theo dõi tồn kho.</span>
+                <div class="admin-table-wrap" style="border:none;margin-top:8px;">
+                    <table class="admin-table" data-variant-table>
+                        <thead><tr><th>Tên biến thể</th><th class="num">Giá chênh (đ)</th><th>SKU</th><th class="num">Tồn</th><th></th></tr></thead>
+                        <tbody data-variant-body>
+                            @foreach (var v in Model.Variants)
+                            {
+                                <tr data-variant-row>
+                                    <td><input type="hidden" name="VariantIds" value="@v.Id" /><input type="text" name="VariantNames" value="@v.Name" placeholder="VD: 4 Bánh" style="width:100%;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
+                                    <td class="num"><input type="number" name="VariantPrices" value="@v.PriceModifier" step="1000" style="width:120px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
+                                    <td><input type="text" name="VariantSkus" value="@v.Sku" style="width:120px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
+                                    <td class="num"><input type="number" name="VariantStocks" value="@v.StockQuantity" min="0" style="width:90px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
+                                    <td class="num"><button type="button" class="admin-btn admin-btn--danger admin-btn--sm" data-remove-variant>✕</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3 class="admin-section-title">SEO</h3>
+                <div class="admin-field">
+                    <label>Tiêu đề trang (meta title)</label>
+                    <input type="text" name="MetaTitle" value="@Model.MetaTitle" placeholder="Để trống sẽ dùng tên sản phẩm" />
+                </div>
+                <div class="admin-field">
+                    <label>Mô tả trang (meta description)</label>
+                    <textarea name="MetaDescription" rows="2">@Model.MetaDescription</textarea>
+                </div>
+            </div>
+        </div>
+
+        <aside>
+            <div class="admin-card">
+                <h3 class="admin-section-title">Xuất bản</h3>
+                <div class="admin-field">
+                    <label>Danh mục</label>
+                    <select name="CategoryId" required>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="admin-field">
+                    <label>Nhãn</label>
+                    <select name="Badge">
+                        @foreach (var b in Enum.GetValues<Hoaii.Domain.Entities.ProductBadge>())
+                        {
+                            <option value="@b" selected="@(Model.Badge == b)">@(b == Hoaii.Domain.Entities.ProductBadge.None ? "Không" : AdminDisplay.BadgeLabel(b))</option>
+                        }
+                    </select>
+                </div>
+                <div class="admin-field">
+                    <label>Thứ tự trong danh mục</label>
+                    <input type="number" name="SortOrder" value="@Model.SortOrder" />
+                </div>
+                <label class="admin-checkbox"><input type="checkbox" name="IsFeatured" value="true" @(Model.IsFeatured ? "checked" : "") /> Sản phẩm nổi bật</label>
+                <label class="admin-checkbox" style="margin-top:10px;"><input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") /> Đang bán (hiển thị trên web)</label>
+
+                <div class="admin-form-actions" style="margin-top:20px;flex-direction:column;align-items:stretch;">
+                    <button type="submit" class="admin-btn admin-btn--primary">Lưu sản phẩm</button>
+                    @if (!isNew)
+                    {
+                        <a class="admin-btn admin-btn--secondary" href="/san-pham/@Model.Slug" target="_blank" rel="noopener" style="margin-top:8px;">Xem trên web ↗</a>
+                    }
+                </div>
+            </div>
+
+            @if (!isNew)
+            {
+                <div class="admin-card">
+                    <h3 class="admin-section-title">Nguy hiểm</h3>
+                    <p style="font-size:13px;color:var(--color-grey-500);margin:0 0 12px;">Xóa sản phẩm không ảnh hưởng đơn hàng cũ.</p>
+                </div>
+            }
+        </aside>
+    </div>
+</form>
+
+@if (!isNew)
+{
+    <form method="post" action="/admin/san-pham/@Model.Id/xoa" data-confirm="Xóa vĩnh viễn sản phẩm này?" style="margin-top:-72px;position:relative;z-index:1;max-width:340px;margin-left:auto;">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="admin-btn admin-btn--danger" style="width:100%;">Xóa sản phẩm</button>
+    </form>
+}
+
+@* Image picker modal — reuses overlays.js (Escape / focus trap via the is-open class). *@
+<div class="modal-backdrop" data-picker-backdrop></div>
+<div class="voucher-modal" data-picker-modal data-image-picker aria-hidden="true">
+    <div class="voucher-modal__panel" style="max-width:720px;">
+        <div class="voucher-modal__header">
+            <h2>Chọn ảnh</h2>
+            <button type="button" class="voucher-modal__close" data-picker-close aria-label="Đóng">✕</button>
+        </div>
+        <form data-picker-upload enctype="multipart/form-data" style="margin:16px 0;">
+            <input type="file" name="files" accept="image/jpeg,image/png,image/webp,image/svg+xml" multiple />
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Tải lên</button>
+        </form>
+        <div class="admin-picker-grid" data-picker-grid></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-product.js" asp-append-version="true"></script>
+}

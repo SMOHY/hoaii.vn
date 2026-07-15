@@ -1,0 +1,33 @@
+@model List<Hoaii.Domain.Entities.AdminUser>
+@{
+    ViewData["Title"] = "Tài khoản admin";
+}
+
+<div class="admin-toolbar">
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--primary" href="/admin/tai-khoan/them">+ Thêm tài khoản</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Họ tên</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th>Đăng nhập gần nhất</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/tai-khoan/@u.Id/sua">@u.FullName</a></td>
+                    <td>@u.Email</td>
+                    <td><span class="admin-badge admin-badge--@(u.Role == Hoaii.Domain.Entities.AdminRole.Owner ? "red" : "blue")">@(u.Role == Hoaii.Domain.Entities.AdminRole.Owner ? "Chủ shop" : "Nhân viên")</span></td>
+                    <td><span class="admin-badge admin-badge--@(u.IsActive ? "green" : "grey")">@(u.IsActive ? "Hoạt động" : "Vô hiệu")</span></td>
+                    <td>@(u.LastLoginAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                    <td class="num">
+                        <form method="post" action="/admin/tai-khoan/@u.Id/xoa" data-confirm="Xóa tài khoản @u.Email?" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

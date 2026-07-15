@@ -1,5 +1,6 @@
 using Hoaii.Infrastructure;
 using Hoaii.Web.Services;
+using Hoaii.Web.Services.Admin;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,9 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddScoped<CartService>();
 builder.Services.AddScoped<OtpService>();
+builder.Services.AddScoped<AdminAuthService>();
+builder.Services.AddScoped<MediaService>();
+builder.Services.AddScoped<OrderWorkflowService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -30,7 +34,30 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
         options.SlidingExpiration = true;
         options.Cookie.Name = "hoaii.auth";
+    })
+    // A separate cookie for the admin area — its own name, its own login path, a shorter life.
+    // Signing out as a customer never logs the admin out and vice-versa.
+    .AddCookie(AdminAuth.Scheme, options =>
+    {
+        options.LoginPath = "/admin/dang-nhap";
+        options.AccessDeniedPath = "/admin/khong-co-quyen";
+        options.LogoutPath = "/admin/dang-xuat";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Cookie.Name = "hoaii.admin";
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AdminAuth.PolicyAdmin, policy => policy
+        .AddAuthenticationSchemes(AdminAuth.Scheme)
+        .RequireAuthenticatedUser());
+
+    options.AddPolicy(AdminAuth.PolicyOwner, policy => policy
+        .AddAuthenticationSchemes(AdminAuth.Scheme)
+        .RequireAuthenticatedUser()
+        .RequireClaim(AdminAuth.RoleClaim, nameof(Hoaii.Domain.Entities.AdminRole.Owner)));
+});
 
 var app = builder.Build();
 
@@ -206,5 +233,15 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// The admin area uses attribute routing (every route is spelled out on the controller), so it
+// needs the attribute-route endpoint map in addition to the conventional routes above.
+app.MapControllers();
+
+// Create the first Owner account if none exists, so /admin is reachable on a fresh database.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<HoaiiDbContext>();
+    await AdminAuthService.EnsureSeedAdminAsync(db, app.Configuration);
+}
 
 app.Run();

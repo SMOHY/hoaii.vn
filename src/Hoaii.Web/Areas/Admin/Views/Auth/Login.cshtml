@@ -1,0 +1,35 @@
+@model AdminLoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_AdminAuthLayout";
+}
+<div class="admin-login-card">
+    <div class="admin-login-card__brand">
+        <img src="/images/logo.svg" alt="Hoài" />
+        <h1>Hoài</h1>
+        <p>Trang quản trị</p>
+    </div>
+
+    @if (Model.Error is not null)
+    {
+        <div class="admin-alert admin-alert--error" role="alert">@Model.Error</div>
+    }
+
+    <form method="post" action="/admin/dang-nhap" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div class="admin-field">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" type="email" autocomplete="username" autofocus required />
+            <span asp-validation-for="Email" class="field-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Password">Mật khẩu</label>
+            <input asp-for="Password" type="password" autocomplete="current-password" required />
+            <span asp-validation-for="Password" class="field-error"></span>
+        </div>
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary" style="width:100%;">Đăng nhập</button>
+        </div>
+    </form>
+</div>

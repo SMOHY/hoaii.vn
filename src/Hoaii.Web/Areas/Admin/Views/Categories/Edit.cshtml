@@ -1,0 +1,45 @@
+@model Hoaii.Domain.Entities.Category
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm danh mục" : "Sửa danh mục";
+    var types = ViewBag.Types as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>;
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/danh-muc">← Danh mục</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/danh-muc/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-field">
+            <label>Tên danh mục</label>
+            <input type="text" name="name" value="@Model.Name" required autofocus />
+        </div>
+        <div class="admin-field">
+            <label>Slug</label>
+            <input type="text" name="slug" value="@Model.Slug" placeholder="Để trống sẽ tự sinh từ tên" />
+            <span class="admin-field__hint">Địa chỉ trang: /danh-muc/&lt;slug&gt;</span>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Loại</label>
+                <select name="type">
+                    @foreach (var t in types!)
+                    {
+                        <option value="@t.Value" selected="@(Model.Type.ToString() == t.Value)">@t.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="admin-field">
+                <label>Thứ tự hiển thị</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" />
+            </div>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/danh-muc">Hủy</a>
+        </div>
+    </form>
+</div>
