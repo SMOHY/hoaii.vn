@@ -21,7 +21,7 @@
             </div>
 
             <div class="voucher-modal__list">
-                @foreach (var voucher in CartService.AvailableVouchers)
+                @foreach (var voucher in Model.AvailableVouchers)
                 {
                     var isSelected = Model.AppliedVoucherCode == voucher.Code;
                     <label class="voucher-item @(isSelected ? "is-selected" : "")">

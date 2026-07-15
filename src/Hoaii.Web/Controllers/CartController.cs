@@ -37,11 +37,11 @@ public class CartController(CartService cart) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult ApplyVoucher(string code, string? returnUrl = null)
+    public async Task<IActionResult> ApplyVoucher(string code, string? returnUrl = null)
     {
-        if (!string.IsNullOrWhiteSpace(code))
+        if (!string.IsNullOrWhiteSpace(code) && !await cart.ApplyVoucherAsync(code.Trim()))
         {
-            cart.ApplyVoucher(code.Trim());
+            TempData["VoucherError"] = "Mã không hợp lệ hoặc chưa đủ điều kiện áp dụng.";
         }
 
         return SafeRedirect(returnUrl);

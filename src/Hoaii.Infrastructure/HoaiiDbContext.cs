@@ -36,6 +36,7 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<NavLink> NavLinks => Set<NavLink>();
     public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
     public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
+    public DbSet<Voucher> Vouchers => Set<Voucher>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -217,6 +218,17 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
                 .WithOne(b => b.PolicyPage!)
                 .HasForeignKey(b => b.PolicyPageId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Voucher>(entity =>
+        {
+            entity.HasIndex(v => v.Code).IsUnique();
+            entity.Property(v => v.Code).HasMaxLength(50);
+            entity.Property(v => v.Label).HasMaxLength(200);
+            entity.Property(v => v.Tag).HasMaxLength(50);
+            entity.Property(v => v.Value).HasColumnType("decimal(18,2)");
+            entity.Property(v => v.MinOrderAmount).HasColumnType("decimal(18,2)");
+            entity.Property(v => v.MaxDiscountAmount).HasColumnType("decimal(18,2)");
         });
 
         modelBuilder.Entity<FooterMenuColumn>(entity =>

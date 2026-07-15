@@ -1,0 +1,91 @@
+@model Hoaii.Domain.Entities.Voucher
+@using Hoaii.Domain.Entities
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm voucher" : "Sửa voucher";
+    var types = new[]
+    {
+        (VoucherType.Percentage, "Giảm theo phần trăm"),
+        (VoucherType.FixedAmount, "Giảm số tiền cố định"),
+        (VoucherType.FreeShipping, "Miễn phí vận chuyển"),
+    };
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/voucher">← Voucher</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/voucher/luu" class="admin-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Mã (khách nhập)</label>
+                <input type="text" name="code" value="@Model.Code" required autofocus placeholder="VD: GIAM20" style="text-transform:uppercase;" />
+            </div>
+            <div class="admin-field">
+                <label>Nhãn hiển thị</label>
+                <input type="text" name="label" value="@Model.Label" placeholder="Giảm giá 20%" />
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Loại</label>
+                <select name="type" data-voucher-type>
+                    @foreach (var (val, text) in types)
+                    {
+                        <option value="@val" selected="@(Model.Type == val)">@text</option>
+                    }
+                </select>
+            </div>
+            <div class="admin-field">
+                <label>Thẻ (nhóm)</label>
+                <input type="text" name="tag" value="@Model.Tag" placeholder="Voucher / Ưu đãi" />
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Giá trị <span class="admin-field__hint" style="display:inline;">(% hoặc đ, tùy loại)</span></label>
+                <input type="number" name="value" value="@Model.Value" step="1000" min="0" />
+            </div>
+            <div class="admin-field">
+                <label>Giảm tối đa (chỉ loại %)</label>
+                <input type="number" name="maxDiscountAmount" value="@Model.MaxDiscountAmount" step="1000" min="0" placeholder="Để trống = không giới hạn" />
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Đơn tối thiểu (đ)</label>
+                <input type="number" name="minOrderAmount" value="@Model.MinOrderAmount" step="1000" min="0" />
+            </div>
+            <div class="admin-field">
+                <label>Giới hạn lượt dùng</label>
+                <input type="number" name="usageLimit" value="@Model.UsageLimit" min="0" placeholder="Để trống = không giới hạn" />
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Bắt đầu</label>
+                <input type="date" name="startsAt" value="@Model.StartsAt?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="admin-field">
+                <label>Hết hạn</label>
+                <input type="date" name="expiresAt" value="@Model.ExpiresAt?.ToString("yyyy-MM-dd")" />
+            </div>
+        </div>
+
+        <label class="admin-checkbox" style="margin-bottom:16px;">
+            <input type="checkbox" name="isActive" value="true" @(isNew || Model.IsActive ? "checked" : "") />
+            Đang bật
+        </label>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/voucher">Hủy</a>
+        </div>
+    </form>
+</div>

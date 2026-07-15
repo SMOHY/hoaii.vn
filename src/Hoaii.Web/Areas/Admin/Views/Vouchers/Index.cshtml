@@ -1,0 +1,66 @@
+@model List<Hoaii.Domain.Entities.Voucher>
+@using Hoaii.Domain.Entities
+@{
+    ViewData["Title"] = "Voucher";
+    string TypeLabel(VoucherType t) => t switch
+    {
+        VoucherType.Percentage => "Giảm %",
+        VoucherType.FixedAmount => "Giảm tiền",
+        _ => "Miễn ship",
+    };
+    string ValueText(Voucher v) => v.Type switch
+    {
+        VoucherType.Percentage => $"{v.Value:0.#}%" + (v.MaxDiscountAmount is { } c ? $" (tối đa {c:N0}đ)" : ""),
+        VoucherType.FixedAmount => $"{v.Value:N0}đ",
+        _ => "—",
+    };
+}
+
+<div class="admin-toolbar">
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--primary" href="/admin/voucher/them">+ Thêm voucher</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Mã</th><th>Tên</th><th>Loại</th><th>Giá trị</th><th class="num">Đơn tối thiểu</th><th class="num">Đã dùng</th><th>Hạn</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="9" style="color:var(--color-grey-500);text-align:center;padding:32px;">Chưa có voucher nào.</td></tr>
+            }
+            @foreach (var v in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/voucher/@v.Id/sua"><code>@v.Code</code></a></td>
+                    <td>@v.Label</td>
+                    <td>@TypeLabel(v.Type)</td>
+                    <td>@ValueText(v)</td>
+                    <td class="num">@(v.MinOrderAmount > 0 ? v.MinOrderAmount.ToString("N0") + "đ" : "—")</td>
+                    <td class="num">@v.UsedCount@(v.UsageLimit is { } l ? $"/{l}" : "")</td>
+                    <td style="color:var(--color-grey-500);">@(v.ExpiresAt?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>
+                        @if (v.IsActive)
+                        {
+                            <span class="admin-badge admin-badge--green">Bật</span>
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--grey">Tắt</span>
+                        }
+                    </td>
+                    <td class="num" style="white-space:nowrap;">
+                        <form method="post" action="/admin/voucher/@v.Id/an-hien" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">@(v.IsActive ? "Tắt" : "Bật")</button>
+                        </form>
+                        <form method="post" action="/admin/voucher/@v.Id/xoa" data-confirm="Xóa voucher &quot;@v.Code&quot;?" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

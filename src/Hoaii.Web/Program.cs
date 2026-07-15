@@ -247,6 +247,7 @@ using (var scope = app.Services.CreateScope())
     await PolicyPageSeeder.EnsureSeedAsync(db);
     await HomeContentSeeder.EnsureSeedAsync(db);
     await NavigationSeeder.EnsureSeedAsync(db);
+    await VoucherSeeder.EnsureSeedAsync(db);
 }
 
 app.Run();

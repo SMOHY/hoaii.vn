@@ -32,11 +32,18 @@ public class CartViewModel
     public required decimal Discount { get; init; }
     public string? AppliedVoucherCode { get; init; }
     public string? AppliedVoucherLabel { get; init; }
+
+    /// <summary>Set by a free-shipping voucher; the checkout waives the shipping fee.</summary>
+    public bool FreeShipping { get; init; }
+
+    /// <summary>Codes shown in the voucher modal (only those usable for the current cart).</summary>
+    public IReadOnlyList<VoucherOption> AvailableVouchers { get; init; } = [];
+
     public decimal Total => Subtotal - Discount;
     public int ItemCount => Items.Sum(i => i.Quantity);
 }
 
-public record VoucherDefinition(string Code, string Label, string Tag, decimal Value, bool IsPercentage);
+public record VoucherOption(string Code, string Label, string Tag);
 
 public class VoucherViewModel
 {

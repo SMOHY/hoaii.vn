@@ -98,6 +98,17 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
         }
 
         db.Orders.Add(order);
+
+        // Count the redemption so per-code usage limits mean something.
+        if (cartModel.AppliedVoucherCode is { } usedCode)
+        {
+            var voucher = await db.Vouchers.FirstOrDefaultAsync(v => v.Code == usedCode);
+            if (voucher is not null)
+            {
+                voucher.UsedCount++;
+            }
+        }
+
         await db.SaveChangesAsync();
 
         cart.Clear();

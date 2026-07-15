@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Models.Cart;
 using Microsoft.EntityFrameworkCore;
@@ -14,14 +15,6 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
 {
     private const string SessionKey = "cart_v1";
     private const string VoucherSessionKey = "cart_voucher_v1";
-
-    // Demo voucher catalog — see design-specs/checkout-and-modals.md ("Voucher Modal").
-    // Replace with a real Voucher table/admin UI when promotions need to be managed dynamically.
-    public static readonly IReadOnlyList<VoucherDefinition> AvailableVouchers =
-    [
-        new VoucherDefinition("FREESHIP", "Miễn phí vận chuyển", "Ưu đãi", 0m, IsPercentage: false),
-        new VoucherDefinition("GIAM20", "Giảm giá 20%", "Voucher", 0.20m, IsPercentage: true),
-    ];
 
     private ISession Session => httpContextAccessor.HttpContext!.Session;
 
@@ -94,10 +87,24 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         RemoveVoucher();
     }
 
-    public bool ApplyVoucher(string code)
+    /// <summary>Validates the code against the DB and the current cart subtotal, storing it on
+    /// the session when it applies. Returns false for unknown / expired / below-minimum codes.</summary>
+    public async Task<bool> ApplyVoucherAsync(string code)
     {
-        var voucher = AvailableVouchers.FirstOrDefault(v => v.Code.Equals(code, StringComparison.OrdinalIgnoreCase));
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            return false;
+        }
+
+        var trimmed = code.Trim();
+        var voucher = await db.Vouchers.FirstOrDefaultAsync(v => v.Code == trimmed);
         if (voucher is null)
+        {
+            return false;
+        }
+
+        var subtotal = await GetSubtotalAsync();
+        if (!voucher.IsUsableFor(subtotal, DateTime.UtcNow))
         {
             return false;
         }
@@ -109,6 +116,27 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
     public void RemoveVoucher() => Session.Remove(VoucherSessionKey);
 
     private string? GetAppliedVoucherCode() => Session.GetString(VoucherSessionKey);
+
+    private async Task<decimal> GetSubtotalAsync()
+    {
+        var lines = GetLines();
+        if (lines.Count == 0) return 0m;
+
+        var productIds = lines.Select(l => l.ProductId).Distinct().ToList();
+        var products = await db.Products
+            .Where(p => productIds.Contains(p.Id))
+            .Include(p => p.Variants)
+            .ToDictionaryAsync(p => p.Id);
+
+        var subtotal = 0m;
+        foreach (var line in lines)
+        {
+            if (!products.TryGetValue(line.ProductId, out var product)) continue;
+            var variant = line.VariantId is int vid ? product.Variants.FirstOrDefault(v => v.Id == vid) : null;
+            subtotal += (product.Price + (variant?.PriceModifier ?? 0)) * line.Quantity;
+        }
+        return subtotal;
+    }
 
     public async Task<CartViewModel> GetCartAsync()
     {
@@ -124,11 +152,6 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
                 Discount = 0,
             };
         }
-
-        var appliedVoucherCode = GetAppliedVoucherCode();
-        var appliedVoucher = appliedVoucherCode is not null
-            ? AvailableVouchers.FirstOrDefault(v => v.Code == appliedVoucherCode)
-            : null;
 
         var productIds = lines.Select(l => l.ProductId).Distinct().ToList();
         var products = await db.Products
@@ -164,9 +187,19 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
 
         var categoryIds = products.Values.Select(p => p.CategoryId).Distinct().ToList();
         var subtotal = items.Sum(i => i.LineTotal);
-        var discount = appliedVoucher is null ? 0m
-            : appliedVoucher.IsPercentage ? Math.Round(subtotal * appliedVoucher.Value, 0)
-            : appliedVoucher.Value;
+        var now = DateTime.UtcNow;
+
+        // Only vouchers that are live and reach the cart's minimum are offered / kept applied.
+        var usableVouchers = (await db.Vouchers.Where(v => v.IsActive).ToListAsync())
+            .Where(v => v.IsUsableFor(subtotal, now))
+            .ToList();
+
+        var appliedVoucherCode = GetAppliedVoucherCode();
+        var appliedVoucher = appliedVoucherCode is not null
+            ? usableVouchers.FirstOrDefault(v => v.Code == appliedVoucherCode)
+            : null;
+
+        var discount = appliedVoucher?.DiscountFor(subtotal) ?? 0m;
 
         return new CartViewModel
         {
@@ -176,6 +209,10 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
             Discount = discount,
             AppliedVoucherCode = appliedVoucher?.Code,
             AppliedVoucherLabel = appliedVoucher?.Label,
+            FreeShipping = appliedVoucher?.Type == VoucherType.FreeShipping,
+            AvailableVouchers = usableVouchers
+                .Select(v => new VoucherOption(v.Code, v.Label, v.Tag))
+                .ToList(),
         };
     }
 
