@@ -30,6 +30,15 @@ public class Product
     public string? MetaTitle { get; set; }
     public string? MetaDescription { get; set; }
 
+    // Product detail page copy. Null falls back to a name-based default so every product still
+    // renders a story and a feature block before anyone edits them.
+    public string? StoryTitle { get; set; }
+    public string? StoryBody { get; set; }
+    public string? StoryImageUrl { get; set; }
+    public string? FeatureTitle { get; set; }
+    public string? FeatureBody { get; set; }
+    public string? FeatureImageUrl { get; set; }
+
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 

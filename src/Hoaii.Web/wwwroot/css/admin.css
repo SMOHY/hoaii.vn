@@ -256,6 +256,10 @@
   .admin-block-row__kind { grid-column: 1 / -1; }
 }
 
+/* ---------- Menu editor rows ---------- */
+.admin-menu-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.admin-menu-row__form { display: flex; gap: 8px; align-items: center; flex: 1; flex-wrap: wrap; }
+
 /* ---------- Login ---------- */
 .admin-login-body {
   min-height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center;

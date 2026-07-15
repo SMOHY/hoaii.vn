@@ -37,9 +37,49 @@
             </div>
         </div>
 
+        <hr style="border:none;border-top:1px solid var(--color-grey-200);margin:24px 0;" />
+        <h3 style="font-family:var(--font-display);font-size:18px;margin:0 0 4px;">Nội dung trang danh mục</h3>
+        <p class="admin-field__hint" style="margin:0 0 16px;">Để trống sẽ dùng nội dung mặc định.</p>
+
+        <div class="admin-field">
+            <label>Mô tả (dưới tiêu đề)</label>
+            <input type="text" name="cms.Description" value="@Model.Description" />
+        </div>
+        <div class="admin-field">
+            <label>Eyebrow hero</label>
+            <input type="text" name="cms.HeroEyebrow" value="@Model.HeroEyebrow" placeholder="VD: Quà tết đặc sắc" />
+        </div>
+
+        <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Banner khuyến mãi</h4>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Eyebrow banner</label>
+                <input type="text" name="cms.PromoEyebrow" value="@Model.PromoEyebrow" />
+            </div>
+            <div class="admin-field">
+                <label>Nút — chữ</label>
+                <input type="text" name="cms.PromoCtaText" value="@Model.PromoCtaText" placeholder="Mua ngay" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Tiêu đề banner</label>
+            <textarea name="cms.PromoTitle" rows="2">@Model.PromoTitle</textarea>
+        </div>
+        <div class="admin-field">
+            <label>Nút — liên kết</label>
+            <input type="text" name="cms.PromoCtaUrl" value="@Model.PromoCtaUrl" placeholder="/danh-muc/qua-tet" />
+        </div>
+        <partial name="_ImageField" model="@(("Ảnh banner", "cms.PromoImageUrl", "cat-promo-img", Model.PromoImageUrl))" />
+
         <div class="admin-form-actions">
             <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
             <a class="admin-btn admin-btn--secondary" href="/admin/danh-muc">Hủy</a>
         </div>
     </form>
 </div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

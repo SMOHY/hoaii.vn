@@ -33,6 +33,9 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<HomeServiceTab> HomeServiceTabs => Set<HomeServiceTab>();
     public DbSet<HomeAboutCard> HomeAboutCards => Set<HomeAboutCard>();
     public DbSet<HomeCustomerLogo> HomeCustomerLogos => Set<HomeCustomerLogo>();
+    public DbSet<NavLink> NavLinks => Set<NavLink>();
+    public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
+    public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -213,6 +216,14 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             entity.HasMany(p => p.Blocks)
                 .WithOne(b => b.PolicyPage!)
                 .HasForeignKey(b => b.PolicyPageId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<FooterMenuColumn>(entity =>
+        {
+            entity.HasMany(c => c.Links)
+                .WithOne(l => l.Column!)
+                .HasForeignKey(l => l.FooterMenuColumnId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

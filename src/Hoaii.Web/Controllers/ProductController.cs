@@ -72,12 +72,14 @@ public class ProductController(HoaiiDbContext db) : Controller
                 .ToList(),
             Ingredients = product.Description
                 ?? "Thông tin thành phần sẽ được cập nhật chi tiết theo từng sản phẩm.",
-            StoryTitle = "Câu chuyện sản phẩm",
-            StoryBody = $"{product.Name} được HOÀI chế tác tỉ mỉ, gói ghém tinh thần văn hóa Việt trong từng chi tiết — từ nguyên liệu chọn lọc đến bao bì thủ công, mang đến một món quà trọn vẹn ý nghĩa.",
-            StoryImageUrl = "/images/pdp/story.jpg",
-            FeatureTitle = "Đặc điểm",
-            FeatureBody = "KÍCH THƯỚC:\nHộp cứng: 48x15.7x6cm\nHộp con: 9.5x9.5x5cm\nQuai xách: 38x15.7x6.2cm\nTúi đựng: 49x17x7cm",
-            FeatureImageUrl = "/images/pdp/feature.jpg",
+            StoryTitle = product.StoryTitle is { Length: > 0 } st ? st : "Câu chuyện sản phẩm",
+            StoryBody = product.StoryBody is { Length: > 0 } sb ? sb
+                : $"{product.Name} được HOÀI chế tác tỉ mỉ, gói ghém tinh thần văn hóa Việt trong từng chi tiết — từ nguyên liệu chọn lọc đến bao bì thủ công, mang đến một món quà trọn vẹn ý nghĩa.",
+            StoryImageUrl = product.StoryImageUrl is { Length: > 0 } si ? si : "/images/pdp/story.jpg",
+            FeatureTitle = product.FeatureTitle is { Length: > 0 } ft ? ft : "Đặc điểm",
+            FeatureBody = product.FeatureBody is { Length: > 0 } fb ? fb
+                : "KÍCH THƯỚC:\nHộp cứng: 48x15.7x6cm\nHộp con: 9.5x9.5x5cm\nQuai xách: 38x15.7x6.2cm\nTúi đựng: 49x17x7cm",
+            FeatureImageUrl = product.FeatureImageUrl is { Length: > 0 } fi ? fi : "/images/pdp/feature.jpg",
             Collection = collection,
             RelatedProducts = related.Select(p => ProductCardMapper.Map(p, "related")).ToList(),
         };

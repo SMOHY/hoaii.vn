@@ -1,9 +1,11 @@
 @using Hoaii.Web.Models.Layout
+@using Hoaii.Web.Services
+@inject NavigationService Nav
 @model IReadOnlyList<Hoaii.Web.Models.Layout.MegaMenuPanelViewModel>
 @* The mega-menu panels open on hover, which never happens on a phone — so every sub-category
    link in them used to be unreachable on mobile. Same data, rendered as an accordion. *@
 @{
-    var labels = LayoutData.MainMenu.ToDictionary(m => m.Url.Split('/').Last(), m => m.Label);
+    var labels = Nav.MainMenu.ToDictionary(m => m.Url.Split('/').Last(), m => m.Label);
 }
 @foreach (var panel in Model)
 {

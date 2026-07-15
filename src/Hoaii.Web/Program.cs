@@ -26,6 +26,7 @@ builder.Services.AddScoped<AdminAuthService>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<OrderWorkflowService>();
 builder.Services.AddScoped<SiteSettingsService>();
+builder.Services.AddScoped<NavigationService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -245,6 +246,7 @@ using (var scope = app.Services.CreateScope())
     await AdminAuthService.EnsureSeedAdminAsync(db, app.Configuration);
     await PolicyPageSeeder.EnsureSeedAsync(db);
     await HomeContentSeeder.EnsureSeedAsync(db);
+    await NavigationSeeder.EnsureSeedAsync(db);
 }
 
 app.Run();

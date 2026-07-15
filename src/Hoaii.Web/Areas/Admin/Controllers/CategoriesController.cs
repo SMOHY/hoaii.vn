@@ -38,7 +38,7 @@ public class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : Ba
 
     [HttpPost("/admin/danh-muc/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(int id, string name, string? slug, CategoryType type, int sortOrder)
+    public async Task<IActionResult> Save(int id, string name, string? slug, CategoryType type, int sortOrder, CategoryCms cms)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -58,6 +58,7 @@ public class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : Ba
         if (id == 0)
         {
             var category = new Category { Name = name.Trim(), Slug = finalSlug, Type = type, SortOrder = sortOrder };
+            ApplyCms(category, cms);
             Db.Categories.Add(category);
             auth.Audit("Thêm danh mục", nameof(Category), null, name);
             await Db.SaveChangesAsync();
@@ -71,11 +72,37 @@ public class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : Ba
             category.Slug = finalSlug;
             category.Type = type;
             category.SortOrder = sortOrder;
+            ApplyCms(category, cms);
             auth.Audit("Sửa danh mục", nameof(Category), id, name);
             await Db.SaveChangesAsync();
             Ok("Đã lưu danh mục.");
         }
         return RedirectToAction(nameof(Index));
+    }
+
+    /// <summary>CMS copy for the category landing page, model-bound as cms.Description etc.</summary>
+    public class CategoryCms
+    {
+        public string? Description { get; set; }
+        public string? HeroEyebrow { get; set; }
+        public string? PromoEyebrow { get; set; }
+        public string? PromoTitle { get; set; }
+        public string? PromoCtaText { get; set; }
+        public string? PromoCtaUrl { get; set; }
+        public string? PromoImageUrl { get; set; }
+    }
+
+    private static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+
+    private static void ApplyCms(Category c, CategoryCms cms)
+    {
+        c.Description = Clean(cms.Description);
+        c.HeroEyebrow = Clean(cms.HeroEyebrow);
+        c.PromoEyebrow = Clean(cms.PromoEyebrow);
+        c.PromoTitle = Clean(cms.PromoTitle);
+        c.PromoCtaText = Clean(cms.PromoCtaText);
+        c.PromoCtaUrl = Clean(cms.PromoCtaUrl);
+        c.PromoImageUrl = Clean(cms.PromoImageUrl);
     }
 
     [HttpPost("/admin/danh-muc/{id:int}/xoa")]

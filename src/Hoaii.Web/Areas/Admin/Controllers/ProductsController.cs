@@ -95,6 +95,12 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
             CategoryId = p.CategoryId,
             MetaTitle = p.MetaTitle,
             MetaDescription = p.MetaDescription,
+            StoryTitle = p.StoryTitle,
+            StoryBody = p.StoryBody,
+            StoryImageUrl = p.StoryImageUrl,
+            FeatureTitle = p.FeatureTitle,
+            FeatureBody = p.FeatureBody,
+            FeatureImageUrl = p.FeatureImageUrl,
             ImageUrls = p.Images.OrderBy(i => i.SortOrder).Select(i => i.Url).ToList(),
             Variants = p.Variants.Select(v => new ProductEditViewModel.VariantRow
             {
@@ -119,6 +125,14 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         public int CategoryId { get; set; }
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }
+
+        // Product detail page copy.
+        public string? StoryTitle { get; set; }
+        public string? StoryBody { get; set; }
+        public string? StoryImageUrl { get; set; }
+        public string? FeatureTitle { get; set; }
+        public string? FeatureBody { get; set; }
+        public string? FeatureImageUrl { get; set; }
 
         // Parallel arrays from the dynamic form rows.
         public List<string>? ImageUrls { get; set; }
@@ -163,6 +177,12 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         product.CategoryId = form.CategoryId;
         product.MetaTitle = form.MetaTitle;
         product.MetaDescription = form.MetaDescription;
+        product.StoryTitle = Clean(form.StoryTitle);
+        product.StoryBody = Clean(form.StoryBody);
+        product.StoryImageUrl = Clean(form.StoryImageUrl);
+        product.FeatureTitle = Clean(form.FeatureTitle);
+        product.FeatureBody = Clean(form.FeatureBody);
+        product.FeatureImageUrl = Clean(form.FeatureImageUrl);
 
         if (form.Id == 0)
         {
@@ -182,6 +202,8 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         Ok(form.Id == 0 ? "Đã thêm sản phẩm." : "Đã lưu sản phẩm.");
         return RedirectToAction(nameof(Edit), new { id = product.Id });
     }
+
+    private static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
 
     private static void SyncImages(Product product, List<string> urls)
     {

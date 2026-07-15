@@ -81,26 +81,34 @@ public class CategoryController(HoaiiDbContext db) : Controller
             })
             .ToListAsync();
 
+        // Per-category CMS copy overrides these defaults; the cross-category "featured" view has no
+        // Category row, so it always uses the defaults.
+        var description = category?.Description is { Length: > 0 } d
+            ? d : "Mỗi sản phẩm quà tặng đều mang một câu chuyện riêng";
+        var heroEyebrow = category?.HeroEyebrow is { Length: > 0 } he
+            ? he : $"{categoryName} đặc sắc";
+
         var model = new CategoryPageViewModel
         {
             Title = categoryName,
             BreadcrumbLabel = $"Trang chủ/{categoryName}",
-            Description = "Mỗi sản phẩm quà tặng đều mang một câu chuyện riêng",
+            Description = description,
             Products = products.Select(p => ProductCardMapper.Map(p)).ToList(),
             CurrentPage = page,
             TotalPages = totalPages,
             Slug = slug,
             Sort = sort,
             TotalProducts = totalProducts,
-            HeroEyebrow = $"{categoryName} đặc sắc",
+            HeroEyebrow = heroEyebrow,
             HeroSlides = heroSlides,
             Promo = new PromoBannerViewModel
             {
-                Eyebrow = "Hoài x Họa sĩ Lương Bình",
-                Title = "Bộ sưu tập được vẽ tay bởi họa sĩ Lương Bình — mỗi nét vẽ là một lát cắt văn hóa, mang câu chuyện di sản vào từng món quà.",
-                CtaText = "Mua ngay",
-                CtaUrl = "/danh-muc/qua-tet",
-                ImageUrl = "/images/category/promo-artist.jpg",
+                Eyebrow = category?.PromoEyebrow is { Length: > 0 } pe ? pe : "Hoài x Họa sĩ Lương Bình",
+                Title = category?.PromoTitle is { Length: > 0 } pt ? pt
+                    : "Bộ sưu tập được vẽ tay bởi họa sĩ Lương Bình — mỗi nét vẽ là một lát cắt văn hóa, mang câu chuyện di sản vào từng món quà.",
+                CtaText = category?.PromoCtaText is { Length: > 0 } pct ? pct : "Mua ngay",
+                CtaUrl = category?.PromoCtaUrl is { Length: > 0 } pcu ? pcu : "/danh-muc/qua-tet",
+                ImageUrl = category?.PromoImageUrl is { Length: > 0 } pi ? pi : "/images/category/promo-artist.jpg",
             },
         };
 

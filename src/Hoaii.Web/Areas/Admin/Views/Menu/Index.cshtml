@@ -1,0 +1,140 @@
+@using Hoaii.Domain.Entities
+@{
+    ViewData["Title"] = "Menu điều hướng";
+    var main = ViewBag.Main as List<NavLink> ?? [];
+    var sub = ViewBag.Sub as List<NavLink> ?? [];
+    var columns = ViewBag.Columns as List<FooterMenuColumn> ?? [];
+}
+
+@functions {
+    const string Ph = "padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;";
+}
+
+<p style="color:var(--color-grey-500);margin:0 0 24px;">Sửa menu đầu trang (chính + phụ) và các cột chân trang. Thay đổi áp dụng ngay.</p>
+
+@* ---------- Main menu ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Menu chính (đầu trang)</h2>
+    @foreach (var l in main)
+    {
+        <div class="admin-menu-row">
+            <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@l.Id" />
+                <input type="hidden" name="placement" value="@NavPlacement.Main" />
+                <input type="text" name="label" value="@l.Label" style="@Ph;flex:1;min-width:120px;" />
+                <input type="text" name="url" value="@l.Url" style="@Ph;flex:1;min-width:140px;" />
+                <label style="display:flex;align-items:center;gap:4px;font-size:13px;white-space:nowrap;"><input type="checkbox" name="hasDropdown" value="true" @(l.HasDropdown ? "checked" : "") /> Dropdown</label>
+                <input type="number" name="sortOrder" value="@l.SortOrder" style="@Ph;width:60px;" />
+                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+            </form>
+            <form method="post" action="/admin/menu/lien-ket/@l.Id/xoa" data-confirm="Xóa liên kết?">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+            </form>
+        </div>
+    }
+    <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form" style="margin-top:8px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="0" />
+        <input type="hidden" name="placement" value="@NavPlacement.Main" />
+        <input type="text" name="label" placeholder="Nhãn mới" style="@Ph;flex:1;min-width:120px;" />
+        <input type="text" name="url" placeholder="/danh-muc/..." style="@Ph;flex:1;min-width:140px;" />
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;white-space:nowrap;"><input type="checkbox" name="hasDropdown" value="true" /> Dropdown</label>
+        <input type="number" name="sortOrder" value="@main.Count" style="@Ph;width:60px;" />
+        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
+    </form>
+</div>
+
+@* ---------- Sub nav ---------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Menu phụ (thanh trên)</h2>
+    @foreach (var l in sub)
+    {
+        <div class="admin-menu-row">
+            <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@l.Id" />
+                <input type="hidden" name="placement" value="@NavPlacement.Sub" />
+                <input type="hidden" name="hasDropdown" value="false" />
+                <input type="text" name="label" value="@l.Label" style="@Ph;flex:1;min-width:120px;" />
+                <input type="text" name="url" value="@l.Url" style="@Ph;flex:1;min-width:140px;" />
+                <input type="number" name="sortOrder" value="@l.SortOrder" style="@Ph;width:60px;" />
+                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+            </form>
+            <form method="post" action="/admin/menu/lien-ket/@l.Id/xoa" data-confirm="Xóa liên kết?">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+            </form>
+        </div>
+    }
+    <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form" style="margin-top:8px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="0" />
+        <input type="hidden" name="placement" value="@NavPlacement.Sub" />
+        <input type="hidden" name="hasDropdown" value="false" />
+        <input type="text" name="label" placeholder="Nhãn mới" style="@Ph;flex:1;min-width:120px;" />
+        <input type="text" name="url" placeholder="/..." style="@Ph;flex:1;min-width:140px;" />
+        <input type="number" name="sortOrder" value="@sub.Count" style="@Ph;width:60px;" />
+        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
+    </form>
+</div>
+
+@* ---------- Footer columns ---------- *@
+<div class="admin-card">
+    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Chân trang</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+        @foreach (var col in columns)
+        {
+            <div style="border:1px solid var(--color-grey-200);border-radius:8px;padding:16px;background:#fff;">
+                <form method="post" action="/admin/menu/cot/luu" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@col.Id" />
+                    <input type="text" name="title" value="@col.Title" style="@Ph;flex:1;font-weight:600;" />
+                    <input type="number" name="sortOrder" value="@col.SortOrder" style="@Ph;width:56px;" title="Thứ tự" />
+                    <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+                </form>
+                @foreach (var link in col.Links)
+                {
+                    <div class="admin-menu-row" style="margin-bottom:6px;">
+                        <form method="post" action="/admin/menu/cot-lien-ket/luu" class="admin-menu-row__form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@link.Id" />
+                            <input type="hidden" name="columnId" value="@col.Id" />
+                            <input type="text" name="label" value="@link.Label" style="@Ph;flex:1;min-width:80px;" />
+                            <input type="text" name="url" value="@link.Url" style="@Ph;width:90px;" />
+                            <input type="number" name="sortOrder" value="@link.SortOrder" style="@Ph;width:48px;" />
+                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">✓</button>
+                        </form>
+                        <form method="post" action="/admin/menu/cot-lien-ket/@link.Id/xoa">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">✕</button>
+                        </form>
+                    </div>
+                }
+                <form method="post" action="/admin/menu/cot-lien-ket/luu" class="admin-menu-row__form" style="margin:8px 0;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="0" />
+                    <input type="hidden" name="columnId" value="@col.Id" />
+                    <input type="text" name="label" placeholder="Link mới" style="@Ph;flex:1;min-width:80px;" />
+                    <input type="text" name="url" placeholder="/..." style="@Ph;width:90px;" />
+                    <input type="number" name="sortOrder" value="@col.Links.Count" style="@Ph;width:48px;" />
+                    <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+</button>
+                </form>
+                <form method="post" action="/admin/menu/cot/@col.Id/xoa" data-confirm="Xóa cả cột &quot;@col.Title&quot;?" style="text-align:right;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa cột</button>
+                </form>
+            </div>
+        }
+        <div style="border:1px dashed var(--color-grey-300);border-radius:8px;padding:16px;">
+            <form method="post" action="/admin/menu/cot/luu">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="0" />
+                <div class="admin-field"><label>Cột mới</label><input type="text" name="title" placeholder="Tiêu đề cột" /></div>
+                <div class="admin-field"><label>Thứ tự</label><input type="number" name="sortOrder" value="@columns.Count" style="max-width:100px;" /></div>
+                <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm cột</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,10 @@
 @using Hoaii.Web.Models.Layout
 @using Hoaii.Web.Services
 @inject SiteSettingsService Settings
+@inject NavigationService Nav
 @{
-    var mainMenu = LayoutData.MainMenu;
-    var subNav = LayoutData.SubNavLinks;
+    var mainMenu = Nav.MainMenu;
+    var subNav = Nav.SubNavLinks;
 }
 
 @* Icons below are inline SVG placeholders — replace with exported Figma assets under wwwroot/images/icons/. *@

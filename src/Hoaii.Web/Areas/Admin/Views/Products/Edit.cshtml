@@ -97,6 +97,39 @@
                     <textarea name="MetaDescription" rows="2">@Model.MetaDescription</textarea>
                 </div>
             </div>
+
+            <div class="admin-card">
+                <h3 class="admin-section-title">Nội dung trang sản phẩm</h3>
+                <p class="admin-field__hint" style="margin:0 0 16px;">Để trống sẽ dùng nội dung mặc định. Dán đường dẫn ảnh từ Thư viện ảnh.</p>
+
+                <h4 style="margin:0 0 8px;font:600 14px var(--font-body);">Câu chuyện</h4>
+                <div class="admin-field">
+                    <label>Tiêu đề</label>
+                    <input type="text" name="StoryTitle" value="@Model.StoryTitle" placeholder="Câu chuyện sản phẩm" />
+                </div>
+                <div class="admin-field">
+                    <label>Nội dung</label>
+                    <textarea name="StoryBody" rows="4">@Model.StoryBody</textarea>
+                </div>
+                <div class="admin-field">
+                    <label>Ảnh câu chuyện</label>
+                    <input type="text" name="StoryImageUrl" value="@Model.StoryImageUrl" placeholder="/images/pdp/story.jpg" />
+                </div>
+
+                <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Đặc điểm</h4>
+                <div class="admin-field">
+                    <label>Tiêu đề</label>
+                    <input type="text" name="FeatureTitle" value="@Model.FeatureTitle" placeholder="Đặc điểm" />
+                </div>
+                <div class="admin-field">
+                    <label>Nội dung (mỗi dòng một ý)</label>
+                    <textarea name="FeatureBody" rows="5">@Model.FeatureBody</textarea>
+                </div>
+                <div class="admin-field">
+                    <label>Ảnh đặc điểm</label>
+                    <input type="text" name="FeatureImageUrl" value="@Model.FeatureImageUrl" placeholder="/images/pdp/feature.jpg" />
+                </div>
+            </div>
         </div>
 
         <aside>

@@ -1,8 +1,9 @@
 @using Hoaii.Web.Models.Layout
 @using Hoaii.Web.Services
 @inject SiteSettingsService Settings
+@inject NavigationService Nav
 @{
-    var footer = LayoutData.Footer;
+    var footerColumns = Nav.FooterColumns;
 }
 
 <footer class="footer">
@@ -34,10 +35,10 @@
 
             @* SOCIAL is not a column of its own — Figma tucks it under "Chính sách pháp lý"
                (node 683:4413), so the footer is three link columns, not four. *@
-            @for (var i = 0; i < footer.Columns.Count; i++)
+            @for (var i = 0; i < footerColumns.Count; i++)
             {
-                var column = footer.Columns[i];
-                var isLast = i == footer.Columns.Count - 1;
+                var column = footerColumns[i];
+                var isLast = i == footerColumns.Count - 1;
                 <div class="footer-col @(isLast ? "footer-col--with-social" : "")">
                     <h3>@column.Title</h3>
                     <ul>
