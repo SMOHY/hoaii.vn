@@ -8,8 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hoaii.Web.Controllers;
 
-public class CheckoutController(CartService cart, HoaiiDbContext db) : Controller
+public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSettingsService settings) : Controller
 {
+    private CheckoutViewModel BuildViewModel(CheckoutFormModel form, Models.Cart.CartViewModel cartModel) => new()
+    {
+        Form = form,
+        Cart = cartModel,
+        InnerCityFee = settings.GetDecimal(SiteSettingKeys.ShippingInnerCity),
+        IntercityFee = settings.GetDecimal(SiteSettingKeys.ShippingIntercity),
+        FreeShipThreshold = settings.GetDecimal(SiteSettingKeys.FreeShipThreshold),
+    };
+
     public async Task<IActionResult> Index()
     {
         var cartModel = await cart.GetCartAsync();
@@ -18,11 +27,7 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
             return RedirectToAction("Index", "Cart");
         }
 
-        return View(new CheckoutViewModel
-        {
-            Form = new CheckoutFormModel(),
-            Cart = cartModel,
-        });
+        return View(BuildViewModel(new CheckoutFormModel(), cartModel));
     }
 
     [HttpPost]
@@ -37,11 +42,19 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
 
         if (!ModelState.IsValid)
         {
-            return View("Index", new CheckoutViewModel { Form = form, Cart = cartModel });
+            return View("Index", BuildViewModel(form, cartModel));
         }
 
         var shippingMethod = form.ShippingMethod == "Intercity" ? ShippingMethod.Intercity : ShippingMethod.InnerCity;
         var paymentMethod = form.PaymentMethod == "CashOnDelivery" ? PaymentMethod.CashOnDelivery : PaymentMethod.BankTransfer;
+
+        // Recompute the shipping fee server-side from admin config — never trust a posted amount.
+        var shippingFee = ShippingCalculator.Fee(
+            form.ShippingMethod, cartModel.Subtotal,
+            settings.GetDecimal(SiteSettingKeys.ShippingInnerCity),
+            settings.GetDecimal(SiteSettingKeys.ShippingIntercity),
+            settings.GetDecimal(SiteSettingKeys.FreeShipThreshold),
+            cartModel.FreeShipping);
 
         // Tie the order to the signed-in customer so it shows in their history even if they
         // later change the email on their account; guests still fall back to email matching.
@@ -67,12 +80,12 @@ public class CheckoutController(CartService cart, HoaiiDbContext db) : Controlle
             ShippingMethod = shippingMethod,
             PaymentMethod = paymentMethod,
             Subtotal = cartModel.Subtotal,
-            ShippingFee = 0,
+            ShippingFee = shippingFee,
             // Persist the discount and the code that produced it, so the total can be explained
             // after the fact — the voucher used to disappear the moment the order was placed.
             Discount = cartModel.Discount,
             VoucherCode = cartModel.AppliedVoucherCode,
-            Total = cartModel.Total,
+            Total = cartModel.Total + shippingFee,
             Status = OrderStatus.Pending,
             PaymentStatus = PaymentStatus.Unpaid,
             CreatedAt = DateTime.UtcNow,

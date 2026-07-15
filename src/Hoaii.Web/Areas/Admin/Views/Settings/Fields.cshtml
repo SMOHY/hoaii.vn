@@ -1,12 +1,17 @@
 @model IReadOnlyDictionary<string, string>
 @{
-    ViewData["Title"] = "Cài đặt chung";
-    var fields = ViewBag.Fields as IReadOnlyList<(string Key, string Label, string Default, bool Multiline)>;
+    ViewData["Title"] ??= "Cài đặt";
+    var fields = ViewBag.Fields as IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)>;
+    var action = ViewBag.FormAction as string ?? "/admin/cai-dat";
+    var intro = ViewBag.Intro as string;
 }
 
 <div class="admin-card">
-    <p style="color:var(--color-grey-500);margin:0 0 20px;">Thông tin liên hệ và mạng xã hội hiển thị khắp trang: thanh trên cùng, chân trang, popup Zalo, trang liên hệ.</p>
-    <form method="post" action="/admin/cai-dat" class="admin-form">
+    @if (!string.IsNullOrEmpty(intro))
+    {
+        <p style="color:var(--color-grey-500);margin:0 0 20px;">@intro</p>
+    }
+    <form method="post" action="@action" class="admin-form">
         @Html.AntiForgeryToken()
         @foreach (var f in fields!)
         {
@@ -23,7 +28,7 @@
             </div>
         }
         <div class="admin-form-actions">
-            <button type="submit" class="admin-btn admin-btn--primary">Lưu cài đặt</button>
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
         </div>
     </form>
 </div>

@@ -25,23 +25,44 @@ public static class SiteSettingKeys
     public const string InstagramUrl = "instagram_url";
     public const string TiktokUrl = "tiktok_url";
 
-    /// <summary>Ordered for the admin form; label shown next to each field.</summary>
-    public static readonly IReadOnlyList<(string Key, string Label, string Default, bool Multiline)> All =
+    // Shipping (group "shipping").
+    public const string ShippingInnerCity = "shipping_inner_city";
+    public const string ShippingIntercity = "shipping_intercity";
+    public const string FreeShipThreshold = "free_ship_threshold";
+
+    // Payment (group "payment").
+    public const string PayCodEnabled = "pay_cod_enabled";
+    public const string PayBankEnabled = "pay_bank_enabled";
+    public const string PayVnpayEnabled = "pay_vnpay_enabled";
+    public const string BankName = "pay_bank_name";
+    public const string BankAccountNumber = "pay_bank_account";
+    public const string BankAccountHolder = "pay_bank_holder";
+    public const string BankTransferNote = "pay_bank_note";
+
+    /// <summary>Ordered for the admin forms; label + which admin screen (group) each field belongs to.</summary>
+    public static readonly IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> All =
     [
-        (Hotline, "Hotline (thanh trên cùng)", "0941.686.682", false),
-        (AnnouncementText, "Dòng thông báo (thanh phụ)", "Hơn 100+ mẫu bánh và quà tặng độc đáo", false),
-        (CompanyName, "Tên công ty", "Công ty TNHH MTV Hoài", false),
-        (Address, "Địa chỉ", "945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội", false),
-        (TaxCode, "Mã số thuế", "0101287214", false),
-        (ContactPhone, "Số điện thoại liên hệ", "0335006783", false),
-        (ContactEmail, "Email liên hệ", "hoai@gmail.com", false),
-        (ZaloPhone, "Số Zalo", "0335006783", false),
-        (ZaloUrl, "Link Zalo", "https://zalo.me/0335006783", false),
-        (OpeningHours, "Giờ làm việc", "09:00-18:00 (T2 - T7)", false),
-        (FacebookUrl, "Link Facebook", "https://facebook.com", false),
-        (InstagramUrl, "Link Instagram", "https://instagram.com", false),
-        (TiktokUrl, "Link TikTok", "https://tiktok.com", false),
+        (Hotline, "Hotline (thanh trên cùng)", "0941.686.682", false, "contact"),
+        (AnnouncementText, "Dòng thông báo (thanh phụ)", "Hơn 100+ mẫu bánh và quà tặng độc đáo", false, "contact"),
+        (CompanyName, "Tên công ty", "Công ty TNHH MTV Hoài", false, "contact"),
+        (Address, "Địa chỉ", "945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội", false, "contact"),
+        (TaxCode, "Mã số thuế", "0101287214", false, "contact"),
+        (ContactPhone, "Số điện thoại liên hệ", "0335006783", false, "contact"),
+        (ContactEmail, "Email liên hệ", "hoai@gmail.com", false, "contact"),
+        (ZaloPhone, "Số Zalo", "0335006783", false, "contact"),
+        (ZaloUrl, "Link Zalo", "https://zalo.me/0335006783", false, "contact"),
+        (OpeningHours, "Giờ làm việc", "09:00-18:00 (T2 - T7)", false, "contact"),
+        (FacebookUrl, "Link Facebook", "https://facebook.com", false, "contact"),
+        (InstagramUrl, "Link Instagram", "https://instagram.com", false, "contact"),
+        (TiktokUrl, "Link TikTok", "https://tiktok.com", false, "contact"),
+
+        (ShippingInnerCity, "Phí giao nội thành (đ)", "0", false, "shipping"),
+        (ShippingIntercity, "Phí giao liên tỉnh (đ)", "0", false, "shipping"),
+        (FreeShipThreshold, "Miễn phí ship từ (đ, 0 = tắt)", "0", false, "shipping"),
     ];
+
+    public static IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> InGroup(string group) =>
+        All.Where(k => k.Group == group).ToList();
 }
 
 /// <summary>
@@ -70,12 +91,30 @@ public class SiteSettingsService(HoaiiDbContext db, IMemoryCache cache)
         return SiteSettingKeys.All.FirstOrDefault(k => k.Key == key).Default ?? "";
     }
 
-    public IReadOnlyDictionary<string, string> GetAllForEditing()
+    /// <summary>Value parsed as a VND amount; falls back to 0.</summary>
+    public decimal GetDecimal(string key) =>
+        decimal.TryParse(Get(key), System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture, out var d) ? d : 0m;
+
+    /// <summary>Value parsed as a boolean flag; "true"/"1" are true.</summary>
+    public bool GetBool(string key)
+    {
+        var v = Get(key).Trim().ToLowerInvariant();
+        return v is "true" or "1" or "on" or "yes";
+    }
+
+    public IReadOnlyDictionary<string, string> GetAllForEditing() =>
+        GetForEditing(SiteSettingKeys.All.Select(k => k.Key));
+
+    /// <summary>Current values (or defaults) for a specific set of keys — used by the group forms.</summary>
+    public IReadOnlyDictionary<string, string> GetForEditing(IEnumerable<string> keys)
     {
         var stored = Load();
-        return SiteSettingKeys.All.ToDictionary(
-            k => k.Key,
-            k => stored.TryGetValue(k.Key, out var v) ? v : k.Default);
+        return keys.ToDictionary(
+            key => key,
+            key => stored.TryGetValue(key, out var v)
+                ? v
+                : SiteSettingKeys.All.FirstOrDefault(k => k.Key == key).Default ?? "");
     }
 
     public async Task SaveAsync(IDictionary<string, string?> values)

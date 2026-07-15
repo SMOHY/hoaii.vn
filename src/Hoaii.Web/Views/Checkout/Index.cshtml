@@ -172,13 +172,16 @@
                     <span>Tổng : @cart.ItemCount mặt hàng</span>
                     <span>@cart.Subtotal.ToString("N0")</span>
                 </div>
-                <div class="checkout-totals__row">
+                <div class="checkout-totals__row"
+                     data-inner-fee="@Model.InnerCityFee" data-inter-fee="@Model.IntercityFee"
+                     data-free-threshold="@Model.FreeShipThreshold" data-free-ship="@(Model.Cart.FreeShipping ? "1" : "0")"
+                     data-subtotal="@Model.Cart.Subtotal">
                     <span>Vận chuyển</span>
-                    <span>Miễn phí</span>
+                    <span data-shipping-fee>@(Model.ShipFree ? "Miễn phí" : Model.ShippingFee.ToString("N0") + "đ")</span>
                 </div>
                 <div class="checkout-totals__row checkout-totals__row--grand">
                     <span>Tổng cộng</span>
-                    <span>@cart.Total.ToString("N0")đ</span>
+                    <span data-grand-total>@Model.GrandTotal.ToString("N0")đ</span>
                 </div>
                 @if (cart.Discount > 0)
                 {
@@ -194,6 +197,42 @@
 </div>
 
 <partial name="_VoucherModal" model="cart" />
+
+@* Recompute the shipping fee + grand total when the shipping method changes, matching the
+   server-side ShippingCalculator so the summary stays honest without a reload. *@
+<script>
+(function () {
+  var row = document.querySelector('[data-shipping-fee]')?.closest('[data-inner-fee]');
+  if (!row) return;
+  var feeEl = row.querySelector('[data-shipping-fee]');
+  var grandEl = document.querySelector('[data-grand-total]');
+  var inner = parseFloat(row.dataset.innerFee) || 0;
+  var inter = parseFloat(row.dataset.interFee) || 0;
+  var threshold = parseFloat(row.dataset.freeThreshold) || 0;
+  var freeShip = row.dataset.freeShip === '1';
+  var subtotal = parseFloat(row.dataset.subtotal) || 0;
+  var discountEl = subtotal; // grand = subtotal - discount + fee; compute discount from current grand
+  // Derive current discount so we can re-add fee: grandInit = subtotal - discount + feeInit.
+  var vnd = function (n) { return n.toLocaleString('vi-VN'); };
+  function feeFor(method) {
+    if (freeShip) return 0;
+    if (threshold > 0 && subtotal >= threshold) return 0;
+    return method === 'Intercity' ? inter : inner;
+  }
+  // discount = subtotal - (grandInit - feeInit)
+  var grandInit = parseFloat((grandEl.textContent || '0').replace(/[^\d]/g, '')) || 0;
+  var selected = document.querySelector('input[name="Form.ShippingMethod"]:checked');
+  var feeInit = feeFor(selected ? selected.value : 'InnerCity');
+  var discount = subtotal - (grandInit - feeInit);
+  document.querySelectorAll('input[name="Form.ShippingMethod"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      var fee = feeFor(r.value);
+      feeEl.textContent = fee === 0 ? 'Miễn phí' : vnd(fee) + 'đ';
+      grandEl.textContent = vnd(subtotal - discount + fee) + 'đ';
+    });
+  });
+})();
+</script>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />

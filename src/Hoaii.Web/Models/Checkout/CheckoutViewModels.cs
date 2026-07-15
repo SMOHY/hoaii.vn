@@ -7,7 +7,30 @@ public class CheckoutViewModel
 {
     public required CheckoutFormModel Form { get; init; }
     public required CartViewModel Cart { get; init; }
-    public decimal ShippingFee { get; init; } = 0; // "Miễn phí" per design-specs
+
+    // Shipping config (admin-managed). The view shows the fee for the selected method and lets
+    // JS switch between them; the server recomputes authoritatively on order placement.
+    public decimal InnerCityFee { get; init; }
+    public decimal IntercityFee { get; init; }
+    public decimal FreeShipThreshold { get; init; }
+
+    /// <summary>Fee for the currently selected method, after free-ship rules.</summary>
+    public decimal ShippingFee => ShippingCalculator.Fee(
+        Form.ShippingMethod, Cart.Subtotal, InnerCityFee, IntercityFee, FreeShipThreshold, Cart.FreeShipping);
+
+    public bool ShipFree => ShippingFee == 0m;
+    public decimal GrandTotal => Cart.Total + ShippingFee;
+}
+
+public static class ShippingCalculator
+{
+    public static decimal Fee(string? method, decimal subtotal, decimal innerFee, decimal interFee,
+        decimal freeThreshold, bool freeShipVoucher)
+    {
+        if (freeShipVoucher) return 0m;
+        if (freeThreshold > 0 && subtotal >= freeThreshold) return 0m;
+        return method == "Intercity" ? interFee : innerFee;
+    }
 }
 
 public class CheckoutFormModel
