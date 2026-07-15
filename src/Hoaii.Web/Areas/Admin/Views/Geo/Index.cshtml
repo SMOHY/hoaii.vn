@@ -1,0 +1,58 @@
+@model List<(int Id, string Name, int WardCount)>
+@{
+    ViewData["Title"] = "Địa giới hành chính";
+}
+
+<p style="color:var(--color-grey-500);margin:0 0 20px;">Tỉnh/thành và phường/xã cho sổ địa chỉ khách hàng. Dùng ô nhập hàng loạt để nạp bộ đầy đủ.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+    <div class="admin-card">
+        <div class="admin-toolbar" style="margin-bottom:12px;">
+            <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Tỉnh / Thành phố (@Model.Count)</h2>
+        </div>
+        <form method="post" action="/admin/dia-gioi/tinh/luu" class="admin-menu-row__form" style="margin-bottom:16px;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="0" />
+            <input type="text" name="name" placeholder="Tên tỉnh/thành mới" style="flex:1;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" />
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
+        </form>
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Tên</th><th class="num">Số phường/xã</th><th></th></tr></thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr><td colspan="3" style="color:var(--color-grey-500);text-align:center;padding:24px;">Chưa có tỉnh/thành.</td></tr>
+                    }
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td><a class="admin-row-link" href="/admin/dia-gioi/tinh/@p.Id">@p.Name</a></td>
+                            <td class="num">@p.WardCount</td>
+                            <td class="num">
+                                <form method="post" action="/admin/dia-gioi/tinh/@p.Id/xoa" data-confirm="Xóa &quot;@p.Name&quot; và toàn bộ phường/xã?" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2 style="font-family:var(--font-display);margin:0 0 8px;font-size:20px;">Nhập hàng loạt</h2>
+        <p class="admin-field__hint" style="margin:0 0 12px;">Mỗi dòng một mục theo dạng <code>Tỉnh | Phường</code> (hoặc chỉ <code>Tỉnh</code>). Trùng sẽ bỏ qua. Dán từ Excel/CSV được.</p>
+        <form method="post" action="/admin/dia-gioi/import" class="admin-form">
+            @Html.AntiForgeryToken()
+            <div class="admin-field">
+                <textarea name="data" rows="14" placeholder="Hà Nội | Phường Việt Hưng&#10;Hà Nội | Phường Hoàn Kiếm&#10;TP. Hồ Chí Minh | Phường Bến Thành"></textarea>
+            </div>
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Nhập dữ liệu</button>
+            </div>
+        </form>
+    </div>
+</div>

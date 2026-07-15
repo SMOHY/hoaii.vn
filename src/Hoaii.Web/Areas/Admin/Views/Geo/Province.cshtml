@@ -1,0 +1,50 @@
+@model Hoaii.Domain.Entities.Province
+@{
+    ViewData["Title"] = Model.Name;
+    var ph = "padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/dia-gioi">← Địa giới hành chính</a></div>
+
+<div class="admin-card" style="margin-bottom:24px;">
+    <form method="post" action="/admin/dia-gioi/tinh/luu" class="admin-menu-row__form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <label style="font-weight:600;">Tên tỉnh/thành</label>
+        <input type="text" name="name" value="@Model.Name" style="@ph;flex:1;" />
+        <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu tên</button>
+    </form>
+</div>
+
+<div class="admin-card">
+    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Phường / Xã (@Model.Wards.Count)</h2>
+
+    <form method="post" action="/admin/dia-gioi/phuong/luu" class="admin-menu-row__form" style="margin-bottom:16px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="0" />
+        <input type="hidden" name="provinceId" value="@Model.Id" />
+        <input type="text" name="name" placeholder="Tên phường/xã mới" style="@ph;flex:1;" />
+        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
+    </form>
+
+    @if (Model.Wards.Count == 0)
+    {
+        <p style="color:var(--color-grey-500);">Chưa có phường/xã. Thêm ở trên, hoặc dùng nhập hàng loạt ở trang địa giới.</p>
+    }
+    @foreach (var w in Model.Wards)
+    {
+        <div class="admin-menu-row">
+            <form method="post" action="/admin/dia-gioi/phuong/luu" class="admin-menu-row__form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@w.Id" />
+                <input type="hidden" name="provinceId" value="@Model.Id" />
+                <input type="text" name="name" value="@w.Name" style="@ph;flex:1;" />
+                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+            </form>
+            <form method="post" action="/admin/dia-gioi/phuong/@w.Id/xoa" data-confirm="Xóa phường/xã này?">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+            </form>
+        </div>
+    }
+</div>
