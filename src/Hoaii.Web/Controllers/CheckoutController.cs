@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hoaii.Web.Controllers;
 
-public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSettingsService settings) : Controller
+public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSettingsService settings, EmailSender email) : Controller
 {
     private CheckoutViewModel BuildViewModel(CheckoutFormModel form, Models.Cart.CartViewModel cartModel) => new()
     {
@@ -139,6 +139,27 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         await db.SaveChangesAsync();
 
         cart.Clear();
+
+        // Order confirmation email (log-mode until SMTP is configured — never blocks checkout).
+        try
+        {
+            var itemsHtml = string.Join("", order.Items.Select(i =>
+                $"<li>{System.Net.WebUtility.HtmlEncode(i.ProductName)}" +
+                (string.IsNullOrEmpty(i.VariantName) ? "" : $" ({System.Net.WebUtility.HtmlEncode(i.VariantName)})") +
+                $" × {i.Quantity} — {(i.UnitPrice * i.Quantity):N0}đ</li>"));
+            var body = $"""
+                <p>Cảm ơn bạn đã đặt hàng tại HOÀI!</p>
+                <p>Mã đơn hàng: <strong>{order.OrderNumber}</strong></p>
+                <ul>{itemsHtml}</ul>
+                <p>Tạm tính: {order.Subtotal:N0}đ<br/>
+                {(order.Discount > 0 ? $"Giảm giá: -{order.Discount:N0}đ<br/>" : "")}
+                Vận chuyển: {(order.ShippingFee > 0 ? $"{order.ShippingFee:N0}đ" : "Miễn phí")}<br/>
+                <strong>Tổng cộng: {order.Total:N0}đ</strong></p>
+                <p>Chúng tôi sẽ liên hệ để xác nhận và giao hàng sớm nhất.</p>
+                """;
+            await email.SendAsync(order.Email, $"Xác nhận đơn hàng {order.OrderNumber} — HOÀI", body);
+        }
+        catch { /* email must never break order placement */ }
 
         return RedirectToAction(nameof(Confirmation), new { orderNumber = order.OrderNumber });
     }

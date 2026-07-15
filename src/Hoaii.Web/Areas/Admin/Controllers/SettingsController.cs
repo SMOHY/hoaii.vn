@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hoaii.Web.Areas.Admin.Controllers;
 
-public class SettingsController(HoaiiDbContext db, SiteSettingsService settings, AdminAuthService auth)
+public class SettingsController(HoaiiDbContext db, SiteSettingsService settings, AdminAuthService auth, EmailSender emailSender)
     : BaseAdminController(db)
 {
     [HttpGet("/admin/cai-dat")]
@@ -72,5 +72,42 @@ public class SettingsController(HoaiiDbContext db, SiteSettingsService settings,
         await Db.SaveChangesAsync();
         Ok("Đã lưu cấu hình thanh toán.");
         return RedirectToAction(nameof(Payment));
+    }
+
+    [HttpGet("/admin/email")]
+    public IActionResult Email()
+    {
+        var keys = SiteSettingKeys.InGroup("email").Select(f => f.Key);
+        return View(settings.GetForEditing(keys));
+    }
+
+    [HttpPost("/admin/email")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveEmail(Dictionary<string, string?> settings_)
+    {
+        settings_[SiteSettingKeys.SmtpUseSsl] =
+            settings_.TryGetValue(SiteSettingKeys.SmtpUseSsl, out var v) && v == "true" ? "true" : "false";
+        await settings.SaveAsync(settings_.ToDictionary(kv => kv.Key, kv => kv.Value));
+        auth.Audit("Cập nhật email", nameof(SiteSetting));
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu cấu hình email.");
+        return RedirectToAction(nameof(Email));
+    }
+
+    [HttpPost("/admin/email/gui-thu")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendTest(string testEmail)
+    {
+        if (string.IsNullOrWhiteSpace(testEmail))
+        {
+            Fail("Nhập email để gửi thử.");
+            return RedirectToAction(nameof(Email));
+        }
+        var result = await emailSender.SendAsync(testEmail.Trim(), "Email thử từ HOÀI",
+            "<p>Đây là email thử. Nếu bạn nhận được, cấu hình SMTP đã hoạt động.</p>");
+        if (result.Delivered) Ok($"Đã gửi email thử tới {testEmail}.");
+        else if (result.Ok) Fail("SMTP chưa cấu hình — email chỉ được ghi vào log.");
+        else Fail($"Gửi thất bại: {result.Error}");
+        return RedirectToAction(nameof(Email));
     }
 }

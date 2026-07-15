@@ -27,6 +27,7 @@ builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<OrderWorkflowService>();
 builder.Services.AddScoped<SiteSettingsService>();
 builder.Services.AddScoped<NavigationService>();
+builder.Services.AddScoped<EmailSender>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

@@ -1,0 +1,74 @@
+@model IReadOnlyDictionary<string, string>
+@using Hoaii.Web.Services
+@{
+    ViewData["Title"] = "Email (SMTP)";
+    bool Ssl() => Model.TryGetValue(SiteSettingKeys.SmtpUseSsl, out var v) && (v == "true" || v == "1");
+    var configured = !string.IsNullOrWhiteSpace(Model[SiteSettingKeys.SmtpHost]);
+}
+
+<div class="admin-card" style="margin-bottom:24px;">
+    <p style="color:var(--color-grey-500);margin:0 0 4px;">Cấu hình tài khoản gửi email cho mã đăng nhập (OTP) và mail xác nhận đơn.</p>
+    <p style="margin:0;">
+        Trạng thái:
+        @if (configured)
+        {
+            <span class="admin-badge admin-badge--green">Đã cấu hình</span>
+        }
+        else
+        {
+            <span class="admin-badge admin-badge--amber">Chưa cấu hình — email đang ghi vào log</span>
+        }
+    </p>
+</div>
+
+<div class="admin-card" style="margin-bottom:24px;">
+    <form method="post" action="/admin/email" class="admin-form">
+        @Html.AntiForgeryToken()
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Máy chủ SMTP</label>
+                <input type="text" name="settings_[@SiteSettingKeys.SmtpHost]" value="@Model[SiteSettingKeys.SmtpHost]" placeholder="vd: smtp.gmail.com" />
+            </div>
+            <div class="admin-field">
+                <label>Cổng</label>
+                <input type="number" name="settings_[@SiteSettingKeys.SmtpPort]" value="@Model[SiteSettingKeys.SmtpPort]" placeholder="587" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Tài khoản (email đăng nhập)</label>
+                <input type="text" name="settings_[@SiteSettingKeys.SmtpUser]" value="@Model[SiteSettingKeys.SmtpUser]" autocomplete="off" />
+            </div>
+            <div class="admin-field">
+                <label>Mật khẩu / mật khẩu ứng dụng</label>
+                <input type="password" name="settings_[@SiteSettingKeys.SmtpPassword]" value="@Model[SiteSettingKeys.SmtpPassword]" autocomplete="new-password" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Email gửi đi (From)</label>
+                <input type="text" name="settings_[@SiteSettingKeys.SmtpFromEmail]" value="@Model[SiteSettingKeys.SmtpFromEmail]" placeholder="Để trống sẽ dùng tài khoản" />
+            </div>
+            <div class="admin-field">
+                <label>Tên hiển thị</label>
+                <input type="text" name="settings_[@SiteSettingKeys.SmtpFromName]" value="@Model[SiteSettingKeys.SmtpFromName]" />
+            </div>
+        </div>
+        <label class="admin-checkbox" style="margin-bottom:16px;">
+            <input type="checkbox" name="settings_[@SiteSettingKeys.SmtpUseSsl]" value="true" @(Ssl() ? "checked" : "") />
+            Dùng SSL/TLS (khuyến nghị)
+        </label>
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu cấu hình</button>
+        </div>
+    </form>
+</div>
+
+<div class="admin-card">
+    <h3 style="font-family:var(--font-display);font-size:18px;margin:0 0 12px;">Gửi email thử</h3>
+    <form method="post" action="/admin/email/gui-thu" class="admin-menu-row__form">
+        @Html.AntiForgeryToken()
+        <input type="email" name="testEmail" placeholder="email@nhan.com" required style="flex:1;padding:8px 10px;border:1px solid var(--color-grey-300);border-radius:4px;" />
+        <button type="submit" class="admin-btn admin-btn--secondary">Gửi thử</button>
+    </form>
+</div>

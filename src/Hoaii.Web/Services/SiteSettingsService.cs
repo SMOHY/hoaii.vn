@@ -39,6 +39,15 @@ public static class SiteSettingKeys
     public const string BankAccountHolder = "pay_bank_holder";
     public const string BankTransferNote = "pay_bank_note";
 
+    // Email / SMTP (group "email").
+    public const string SmtpHost = "smtp_host";
+    public const string SmtpPort = "smtp_port";
+    public const string SmtpUser = "smtp_user";
+    public const string SmtpPassword = "smtp_password";
+    public const string SmtpFromEmail = "smtp_from_email";
+    public const string SmtpFromName = "smtp_from_name";
+    public const string SmtpUseSsl = "smtp_use_ssl";
+
     /// <summary>Ordered for the admin forms; label + which admin screen (group) each field belongs to.</summary>
     public static readonly IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> All =
     [
@@ -67,6 +76,14 @@ public static class SiteSettingKeys
         (BankAccountNumber, "Số tài khoản", "", false, "payment"),
         (BankAccountHolder, "Chủ tài khoản", "", false, "payment"),
         (BankTransferNote, "Ghi chú chuyển khoản (cú pháp)", "", true, "payment"),
+
+        (SmtpHost, "Máy chủ SMTP", "", false, "email"),
+        (SmtpPort, "Cổng SMTP", "587", false, "email"),
+        (SmtpUser, "Tài khoản (email đăng nhập)", "", false, "email"),
+        (SmtpPassword, "Mật khẩu / mật khẩu ứng dụng", "", false, "email"),
+        (SmtpFromEmail, "Email gửi đi (From)", "", false, "email"),
+        (SmtpFromName, "Tên hiển thị người gửi", "HOÀI", false, "email"),
+        (SmtpUseSsl, "Dùng SSL/TLS", "true", false, "email"),
     ];
 
     public static IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> InGroup(string group) =>
