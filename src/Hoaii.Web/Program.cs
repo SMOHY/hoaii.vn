@@ -25,6 +25,7 @@ builder.Services.AddScoped<OtpService>();
 builder.Services.AddScoped<AdminAuthService>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<OrderWorkflowService>();
+builder.Services.AddScoped<SiteSettingsService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

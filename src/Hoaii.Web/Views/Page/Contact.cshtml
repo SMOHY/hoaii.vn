@@ -1,7 +1,14 @@
 @model Hoaii.Web.Models.Page.ContactFormModel
+@using Hoaii.Web.Services
+@inject SiteSettingsService Settings
 @{
     ViewData["Title"] = "Liên hệ";
     ViewData["HeroOverlay"] = true;
+    var contactEmail = Settings.Get(SiteSettingKeys.ContactEmail);
+    var contactPhone = Settings.Get(SiteSettingKeys.ContactPhone);
+    var contactAddress = Settings.Get(SiteSettingKeys.Address);
+    var facebookUrl = Settings.Get(SiteSettingKeys.FacebookUrl);
+    var telDigits = new string(contactPhone.Where(char.IsDigit).ToArray());
 }
 
 @* Hero sits on brand red with the nav overlaid (node 809:29894). Figma's breadcrumb
@@ -29,7 +36,7 @@
             @* Google Maps place card, overlaid top-left of the map (node 970:20952). *@
             <img class="contact-address__map-card" src="~/images/contact/map-card.png" alt="" loading="lazy" />
         </a>
-        <p class="contact-address__text">945 Ngô Gia Tự, P. Việt Hưng,<br />TP. Hà Nội</p>
+        <p class="contact-address__text">@contactAddress</p>
     </div>
 </section>
 
@@ -39,7 +46,7 @@
         <div class="contact-method-card">
             <h3>TRÒ CHUYỆN TRỰC TIẾP</h3>
             <p>Hãy truy cập facebook hoặc zalo của chúng tôi để nói chuyện trực tiếp với đội ngũ chăm sóc khách hàng về bất kỳ thắc mắc nào.</p>
-            <a href="https://facebook.com" target="_blank" rel="noopener" class="contact-method-card__link">Liên hệ facebook</a>
+            <a href="@facebookUrl" target="_blank" rel="noopener" class="contact-method-card__link">Liên hệ facebook</a>
         </div>
         <div class="contact-method-card">
             <h3>LIÊN QUAN ĐẾN ĐƠN HÀNG</h3>
@@ -49,12 +56,12 @@
         <div class="contact-method-card">
             <h3>YÊU CẦU BÁN BUÔN</h3>
             <p>Bạn muốn xem mẫu? Vui lòng gửi email cho chúng tôi</p>
-            <a href="mailto:hoai@gmail.com" class="contact-method-card__link">Hoai@gmail.com</a>
+            <a href="mailto:@contactEmail" class="contact-method-card__link">@contactEmail</a>
         </div>
         <div class="contact-method-card">
             <h3>ĐIỆN THOẠI</h3>
             <p>Hãy gửi cho chúng tôi một lời nhắn</p>
-            <a href="tel:0335006783" class="contact-method-card__link">033 500 6783</a>
+            <a href="tel:@telDigits" class="contact-method-card__link">@contactPhone</a>
         </div>
     </div>
 </section>

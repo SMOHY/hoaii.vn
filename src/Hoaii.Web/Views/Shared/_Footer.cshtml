@@ -1,4 +1,6 @@
 @using Hoaii.Web.Models.Layout
+@using Hoaii.Web.Services
+@inject SiteSettingsService Settings
 @{
     var footer = LayoutData.Footer;
 }
@@ -24,9 +26,9 @@
             <div class="footer-brand">
                 <img class="logo" src="/images/logo.svg" alt="Hoài" />
                 <div class="footer-brand-info">
-                    <span>Công ty TNHH MTV Hoài</span>
-                    <span>Địa chỉ : 945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội</span>
-                    <a href="https://masothue.com" target="_blank" rel="noopener">MST : 0101287214</a>
+                    <span>@Settings.Get(SiteSettingKeys.CompanyName)</span>
+                    <span>Địa chỉ : @Settings.Get(SiteSettingKeys.Address)</span>
+                    <a href="https://masothue.com" target="_blank" rel="noopener">MST : @Settings.Get(SiteSettingKeys.TaxCode)</a>
                 </div>
             </div>
 
@@ -47,13 +49,21 @@
 
                     @if (isLast)
                     {
+                        // URLs come from settings so the shop owner can point them at real
+                        // accounts; the icons stay fixed.
+                        var socials = new[]
+                        {
+                            ("Facebook", Settings.Get(SiteSettingKeys.FacebookUrl), "/images/icons/social-facebook.svg"),
+                            ("Instagram", Settings.Get(SiteSettingKeys.InstagramUrl), "/images/icons/social-instagram.svg"),
+                            ("TikTok", Settings.Get(SiteSettingKeys.TiktokUrl), "/images/icons/social-tiktok.svg"),
+                        };
                         <div class="footer-social">
                             <h3>SOCIAL</h3>
                             <div class="icons-row">
-                                @foreach (var social in footer.SocialLinks)
+                                @foreach (var (name, url, icon) in socials)
                                 {
-                                    <a class="icon-btn" href="@social.Url" target="_blank" rel="noopener" aria-label="@social.Name">
-                                        <img src="@social.IconPath" alt="@social.Name" width="24" height="24" />
+                                    <a class="icon-btn" href="@url" target="_blank" rel="noopener" aria-label="@name">
+                                        <img src="@icon" alt="@name" width="24" height="24" />
                                     </a>
                                 }
                             </div>

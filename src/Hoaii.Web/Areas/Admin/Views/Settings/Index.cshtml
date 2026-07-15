@@ -1,0 +1,29 @@
+@model IReadOnlyDictionary<string, string>
+@{
+    ViewData["Title"] = "Cài đặt chung";
+    var fields = ViewBag.Fields as IReadOnlyList<(string Key, string Label, string Default, bool Multiline)>;
+}
+
+<div class="admin-card">
+    <p style="color:var(--color-grey-500);margin:0 0 20px;">Thông tin liên hệ và mạng xã hội hiển thị khắp trang: thanh trên cùng, chân trang, popup Zalo, trang liên hệ.</p>
+    <form method="post" action="/admin/cai-dat" class="admin-form">
+        @Html.AntiForgeryToken()
+        @foreach (var f in fields!)
+        {
+            <div class="admin-field">
+                <label>@f.Label</label>
+                @if (f.Multiline)
+                {
+                    <textarea name="settings_[@f.Key]" rows="3">@Model[f.Key]</textarea>
+                }
+                else
+                {
+                    <input type="text" name="settings_[@f.Key]" value="@Model[f.Key]" />
+                }
+            </div>
+        }
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu cài đặt</button>
+        </div>
+    </form>
+</div>

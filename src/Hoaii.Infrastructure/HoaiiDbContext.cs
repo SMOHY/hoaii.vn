@@ -23,6 +23,9 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<OrderStatusHistory> OrderStatusHistories => Set<OrderStatusHistory>();
     public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
 
+    // CMS.
+    public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
@@ -180,6 +183,13 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
                 .WithMany()
                 .HasForeignKey(m => m.UploadedByAdminUserId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SiteSetting>(entity =>
+        {
+            entity.HasKey(s => s.Key);
+            entity.Property(s => s.Key).HasMaxLength(100);
+            entity.Property(s => s.Value).HasMaxLength(2000);
         });
 
         SeedCategories(modelBuilder);

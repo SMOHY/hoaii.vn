@@ -1,8 +1,12 @@
 @* Bulk-order Zalo contact popup — see design-specs/checkout-and-modals.md.
    Global partial rendered once in _Layout; opened from any [data-contact-popup-open] trigger
    (e.g. the "NHẬN ƯU ĐÃI MUA SỐ LƯỢNG LỚN" button on the Product Detail page). *@
+@using Hoaii.Web.Services
+@inject SiteSettingsService Settings
 @{
-    const string zaloPhone = "033 500 6783";
+    var zaloPhone = Settings.Get(SiteSettingKeys.ZaloPhone);
+    var zaloUrl = Settings.Get(SiteSettingKeys.ZaloUrl);
+    var openingHours = Settings.Get(SiteSettingKeys.OpeningHours);
 }
 <div class="modal-backdrop" data-contact-popup-backdrop></div>
 <div class="contact-popup" data-contact-popup aria-hidden="true">
@@ -23,7 +27,7 @@
                 <span class="contact-popup__info-line">@zaloPhone - Phản hồi trong 5-10 phút</span>
                 <span class="contact-popup__info-line">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M12 9v4l3 2" stroke="currentColor" stroke-width="1.5"/></svg>
-                    09:00-18:00 (T2 - T7)
+                    @openingHours
                 </span>
             </div>
         </div>
@@ -33,7 +37,7 @@
                 <img src="~/images/zalo-qr.png" alt="Mã QR Zalo — quét để chat với HOÀI" />
             </div>
             <div class="contact-popup__action-col">
-                <a href="https://zalo.me" target="_blank" rel="noopener" class="contact-popup__btn contact-popup__btn--primary">
+                <a href="@zaloUrl" target="_blank" rel="noopener" class="contact-popup__btn contact-popup__btn--primary">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v12H7l-3 3V4z" stroke="currentColor" stroke-width="1.5"/></svg>
                     <span>Mở zalo để chat</span>
                 </a>
