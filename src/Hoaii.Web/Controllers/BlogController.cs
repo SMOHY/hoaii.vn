@@ -9,7 +9,10 @@ public class BlogController(HoaiiDbContext db) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        var posts = await db.BlogPosts.OrderByDescending(p => p.PublishedAt).ToListAsync();
+        var posts = await db.BlogPosts
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.PublishedAt)
+            .ToListAsync();
 
         var featuredPost = posts.FirstOrDefault(p => p.IsFeatured) ?? posts.FirstOrDefault();
         var rest = posts.Where(p => p != featuredPost).ToList();
@@ -25,7 +28,7 @@ public class BlogController(HoaiiDbContext db) : Controller
 
     public async Task<IActionResult> Details(string slug)
     {
-        var post = await db.BlogPosts.FirstOrDefaultAsync(p => p.Slug == slug);
+        var post = await db.BlogPosts.FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished);
         if (post is null)
         {
             return NotFound();
@@ -36,8 +39,10 @@ public class BlogController(HoaiiDbContext db) : Controller
             Title = post.Title,
             Category = post.Category,
             DateText = post.PublishedAt.ToString("dd/MM/yyyy"),
+            Author = post.Author,
             ImageUrl = post.ImageUrl,
             Excerpt = post.Excerpt,
+            Content = post.Content,
         });
     }
 

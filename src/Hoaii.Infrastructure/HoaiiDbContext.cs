@@ -137,6 +137,8 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             entity.HasIndex(b => b.Slug).IsUnique();
             entity.Property(b => b.Title).HasMaxLength(300);
             entity.Property(b => b.Slug).HasMaxLength(300);
+            entity.Property(b => b.Category).HasMaxLength(100);
+            entity.Property(b => b.Author).HasMaxLength(150);
         });
 
         modelBuilder.Entity<AdminUser>(entity =>

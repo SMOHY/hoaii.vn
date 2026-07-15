@@ -1,14 +1,34 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Hoaii.Infrastructure;
 using Hoaii.Web.Models;
 using Hoaii.Web.Models.Home;
 
 namespace Hoaii.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController(HoaiiDbContext db) : Controller
 {
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        // The blog strip reads real published posts: the featured one first, then the three
+        // most recent. Empty DB → empty list and the home view hides the whole section.
+        var recent = await db.BlogPosts
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.IsFeatured)
+            .ThenByDescending(p => p.PublishedAt)
+            .Take(4)
+            .Select(p => new BlogPostViewModel
+            {
+                Category = p.Category,
+                Title = p.Title,
+                Excerpt = p.Excerpt,
+                Url = "/blog/" + p.Slug,
+                ImageUrl = p.ImageUrl ?? "/images/placeholders/blog-1.jpg",
+                IsFeatured = p.IsFeatured,
+            })
+            .ToListAsync();
+
         var model = new HomeIndexViewModel
         {
             // Only one hero image has been delivered so far. Adding a second entry here is all
@@ -95,13 +115,7 @@ public class HomeController : Controller
                 "pancake", "ecomdy", "king-power", "isofh", "onpoint", "everest",
                 "binh-minh-hp", "topcv", "saquila", "dht", "koni", "prime",
             ],
-            BlogPosts =
-            [
-                new() { IsFeatured = true, Category = "Đời sống", Title = "Gợi ý chọn quà tặng cho người thân yêu", Excerpt = "Lorem ipsum dolor sit amet consectetur. Eu id et commodo pharetra habitasse. Massa odio tincidunt consequat sed nulla sit.", Url = "/blog/goi-y-chon-qua-tang", ImageUrl = "/images/placeholders/blog-1.jpg" },
-                new() { Category = "Đời sống", Title = "Gợi ý chọn quà tặng cho người thân yêu", Excerpt = "Lorem ipsum dolor sit amet consectetur. Eu id et commodo pharetra habitasse.", Url = "/blog/bai-viet-2", ImageUrl = "/images/placeholders/blog-2.jpg" },
-                new() { Category = "Đời sống", Title = "Gợi ý chọn quà tặng cho người thân yêu", Excerpt = "Lorem ipsum dolor sit amet consectetur. Eu id et commodo pharetra habitasse.", Url = "/blog/bai-viet-3", ImageUrl = "/images/placeholders/blog-3.jpg" },
-                new() { Category = "Đời sống", Title = "Gợi ý chọn quà tặng cho người thân yêu", Excerpt = "Lorem ipsum dolor sit amet consectetur. Eu id et commodo pharetra habitasse.", Url = "/blog/bai-viet-4", ImageUrl = "/images/placeholders/blog-4.jpg" },
-            ],
+            BlogPosts = recent,
         };
 
         return View(model);

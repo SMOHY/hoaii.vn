@@ -1,0 +1,107 @@
+@model Hoaii.Domain.Entities.BlogPost
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm bài viết" : "Sửa bài viết";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/blog">← Bài viết</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/blog/luu" class="admin-form" data-blog-form>
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="admin-field">
+            <label>Tiêu đề</label>
+            <input type="text" name="title" value="@Model.Title" required autofocus />
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Slug</label>
+                <input type="text" name="slug" value="@Model.Slug" placeholder="Để trống sẽ tự sinh từ tiêu đề" />
+                <span class="admin-field__hint">Địa chỉ: /blog/&lt;slug&gt;</span>
+            </div>
+            <div class="admin-field">
+                <label>Chuyên mục</label>
+                <input type="text" name="category" value="@Model.Category" list="blog-categories" />
+                <datalist id="blog-categories">
+                    <option value="Đời sống"></option>
+                    <option value="Văn hóa"></option>
+                    <option value="Sản phẩm"></option>
+                    <option value="Khuyến mãi"></option>
+                </datalist>
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Tác giả</label>
+                <input type="text" name="author" value="@Model.Author" placeholder="VD: Đội ngũ HOÀI" />
+            </div>
+            <div class="admin-field">
+                <label>Ngày đăng</label>
+                <input type="date" name="publishedAt" value="@Model.PublishedAt.ToString("yyyy-MM-dd")" />
+            </div>
+        </div>
+
+        <div class="admin-field">
+            <label>Ảnh bìa</label>
+            <div style="display:flex;gap:16px;align-items:flex-start;">
+                <div class="admin-image-item__thumb" data-blog-image-preview
+                     style="width:160px;height:110px;border:1px solid var(--color-grey-300);border-radius:6px;@(string.IsNullOrEmpty(Model.ImageUrl) ? "" : $"background-image:url('{Model.ImageUrl}')")"></div>
+                <div style="flex:1;">
+                    <input type="text" name="imageUrl" value="@Model.ImageUrl" data-blog-image-url placeholder="/images/... hoặc chọn từ thư viện" style="margin-bottom:8px;" />
+                    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker>Chọn từ thư viện</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-field">
+            <label>Tóm tắt (hiển thị ở danh sách &amp; trang chủ)</label>
+            <textarea name="excerpt" rows="3">@Model.Excerpt</textarea>
+        </div>
+
+        <div class="admin-field">
+            <label>Nội dung bài viết</label>
+            <textarea name="content" rows="14" style="font:400 15px/1.6 var(--font-body);">@Model.Content</textarea>
+            <span class="admin-field__hint">Ngăn cách đoạn bằng một dòng trống.</span>
+        </div>
+
+        <div class="admin-form-row">
+            <label class="admin-checkbox">
+                <input type="checkbox" name="isFeatured" value="true" @(Model.IsFeatured ? "checked" : "") />
+                Bài nổi bật (chỉ một bài)
+            </label>
+            <label class="admin-checkbox">
+                <input type="checkbox" name="isPublished" value="true" @(isNew || Model.IsPublished ? "checked" : "") />
+                Đăng ngay (bỏ chọn để lưu nháp)
+            </label>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/blog">Hủy</a>
+        </div>
+    </form>
+</div>
+
+@* Image picker modal — reuses overlays.js (Escape / focus trap via the is-open class). *@
+<div class="modal-backdrop" data-picker-backdrop></div>
+<div class="voucher-modal" data-picker-modal data-image-picker aria-hidden="true">
+    <div class="voucher-modal__panel" style="max-width:720px;">
+        <div class="voucher-modal__header">
+            <h2>Chọn ảnh</h2>
+            <button type="button" class="voucher-modal__close" data-picker-close aria-label="Đóng">✕</button>
+        </div>
+        <form data-picker-upload enctype="multipart/form-data" style="margin:16px 0;">
+            <input type="file" name="files" accept="image/jpeg,image/png,image/webp,image/svg+xml" />
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Tải lên</button>
+        </form>
+        <div class="admin-picker-grid" data-picker-grid></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-blog.js" asp-append-version="true"></script>
+}

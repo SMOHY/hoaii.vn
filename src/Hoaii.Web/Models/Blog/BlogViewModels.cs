@@ -21,6 +21,8 @@ public class BlogPostDetailsViewModel
     public required string Title { get; init; }
     public required string Category { get; init; }
     public required string DateText { get; init; }
+    public string? Author { get; init; }
     public string? ImageUrl { get; init; }
     public string? Excerpt { get; init; }
+    public string? Content { get; init; }
 }
