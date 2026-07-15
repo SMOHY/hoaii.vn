@@ -59,6 +59,14 @@ public static class SiteSettingKeys
         (ShippingInnerCity, "Phí giao nội thành (đ)", "0", false, "shipping"),
         (ShippingIntercity, "Phí giao liên tỉnh (đ)", "0", false, "shipping"),
         (FreeShipThreshold, "Miễn phí ship từ (đ, 0 = tắt)", "0", false, "shipping"),
+
+        (PayCodEnabled, "Cho phép thanh toán khi nhận hàng (COD)", "true", false, "payment"),
+        (PayBankEnabled, "Cho phép chuyển khoản ngân hàng", "true", false, "payment"),
+        (PayVnpayEnabled, "Bật cổng VNPay", "false", false, "payment"),
+        (BankName, "Tên ngân hàng", "", false, "payment"),
+        (BankAccountNumber, "Số tài khoản", "", false, "payment"),
+        (BankAccountHolder, "Chủ tài khoản", "", false, "payment"),
+        (BankTransferNote, "Ghi chú chuyển khoản (cú pháp)", "", true, "payment"),
     ];
 
     public static IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> InGroup(string group) =>

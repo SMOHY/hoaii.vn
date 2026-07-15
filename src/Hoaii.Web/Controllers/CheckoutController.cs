@@ -17,6 +17,13 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         InnerCityFee = settings.GetDecimal(SiteSettingKeys.ShippingInnerCity),
         IntercityFee = settings.GetDecimal(SiteSettingKeys.ShippingIntercity),
         FreeShipThreshold = settings.GetDecimal(SiteSettingKeys.FreeShipThreshold),
+        CodEnabled = settings.GetBool(SiteSettingKeys.PayCodEnabled),
+        BankEnabled = settings.GetBool(SiteSettingKeys.PayBankEnabled),
+        VnpayEnabled = settings.GetBool(SiteSettingKeys.PayVnpayEnabled),
+        BankName = settings.Get(SiteSettingKeys.BankName),
+        BankAccountNumber = settings.Get(SiteSettingKeys.BankAccountNumber),
+        BankAccountHolder = settings.Get(SiteSettingKeys.BankAccountHolder),
+        BankTransferNote = settings.Get(SiteSettingKeys.BankTransferNote),
     };
 
     public async Task<IActionResult> Index()
@@ -46,7 +53,14 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         }
 
         var shippingMethod = form.ShippingMethod == "Intercity" ? ShippingMethod.Intercity : ShippingMethod.InnerCity;
-        var paymentMethod = form.PaymentMethod == "CashOnDelivery" ? PaymentMethod.CashOnDelivery : PaymentMethod.BankTransfer;
+
+        // Never accept a payment method the shop has switched off — fall back to whatever is on.
+        var codEnabled = settings.GetBool(SiteSettingKeys.PayCodEnabled);
+        var bankEnabled = settings.GetBool(SiteSettingKeys.PayBankEnabled);
+        var wantsCod = form.PaymentMethod == "CashOnDelivery";
+        if (wantsCod && !codEnabled) wantsCod = false;
+        else if (!wantsCod && !bankEnabled && codEnabled) wantsCod = true;
+        var paymentMethod = wantsCod ? PaymentMethod.CashOnDelivery : PaymentMethod.BankTransfer;
 
         // Recompute the shipping fee server-side from admin config — never trust a posted amount.
         var shippingFee = ShippingCalculator.Fee(

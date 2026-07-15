@@ -20,6 +20,18 @@ public class CheckoutViewModel
 
     public bool ShipFree => ShippingFee == 0m;
     public decimal GrandTotal => Cart.Total + ShippingFee;
+
+    // Payment config (admin-managed).
+    public bool CodEnabled { get; init; } = true;
+    public bool BankEnabled { get; init; } = true;
+    public bool VnpayEnabled { get; init; }
+    public string BankName { get; init; } = "";
+    public string BankAccountNumber { get; init; } = "";
+    public string BankAccountHolder { get; init; } = "";
+    public string BankTransferNote { get; init; } = "";
+
+    public bool HasBankInfo =>
+        !string.IsNullOrWhiteSpace(BankName) || !string.IsNullOrWhiteSpace(BankAccountNumber);
 }
 
 public static class ShippingCalculator

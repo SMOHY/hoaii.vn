@@ -137,3 +137,15 @@
 
   .form-field input { height: 48px; }
 }
+
+/* Bank-transfer details, shown under the payment options when that method is picked. */
+.checkout-bank-info {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-grey-200, #e5e0d8);
+  border-radius: 8px;
+  background: var(--color-brand-gold-bg, #faf6ef);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.checkout-bank-info p { margin: 0; }

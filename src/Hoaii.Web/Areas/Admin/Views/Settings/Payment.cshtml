@@ -1,0 +1,51 @@
+@model IReadOnlyDictionary<string, string>
+@using Hoaii.Web.Services
+@{
+    ViewData["Title"] = "Thanh toán";
+    bool Flag(string k) => Model.TryGetValue(k, out var v) && (v == "true" || v == "1");
+}
+
+<div class="admin-card">
+    <p style="color:var(--color-grey-500);margin:0 0 20px;">Bật/tắt phương thức thanh toán hiển thị ở bước đặt hàng và nhập thông tin chuyển khoản.</p>
+    <form method="post" action="/admin/thanh-toan" class="admin-form">
+        @Html.AntiForgeryToken()
+
+        <h3 style="font-family:var(--font-display);font-size:18px;margin:0 0 12px;">Phương thức</h3>
+        <label class="admin-checkbox" style="margin-bottom:10px;">
+            <input type="checkbox" name="settings_[@SiteSettingKeys.PayCodEnabled]" value="true" @(Flag(SiteSettingKeys.PayCodEnabled) ? "checked" : "") />
+            Thanh toán khi nhận hàng (COD)
+        </label>
+        <label class="admin-checkbox" style="margin-bottom:10px;">
+            <input type="checkbox" name="settings_[@SiteSettingKeys.PayBankEnabled]" value="true" @(Flag(SiteSettingKeys.PayBankEnabled) ? "checked" : "") />
+            Chuyển khoản ngân hàng
+        </label>
+        <label class="admin-checkbox" style="margin-bottom:20px;">
+            <input type="checkbox" name="settings_[@SiteSettingKeys.PayVnpayEnabled]" value="true" @(Flag(SiteSettingKeys.PayVnpayEnabled) ? "checked" : "") />
+            Cổng VNPay <span class="admin-field__hint" style="display:inline;">(sếp tích hợp sau — để tắt nếu chưa nối)</span>
+        </label>
+
+        <h3 style="font-family:var(--font-display);font-size:18px;margin:8px 0 12px;">Thông tin chuyển khoản</h3>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Ngân hàng</label>
+                <input type="text" name="settings_[@SiteSettingKeys.BankName]" value="@Model[SiteSettingKeys.BankName]" placeholder="VD: Vietcombank" />
+            </div>
+            <div class="admin-field">
+                <label>Số tài khoản</label>
+                <input type="text" name="settings_[@SiteSettingKeys.BankAccountNumber]" value="@Model[SiteSettingKeys.BankAccountNumber]" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Chủ tài khoản</label>
+            <input type="text" name="settings_[@SiteSettingKeys.BankAccountHolder]" value="@Model[SiteSettingKeys.BankAccountHolder]" />
+        </div>
+        <div class="admin-field">
+            <label>Ghi chú / cú pháp chuyển khoản</label>
+            <textarea name="settings_[@SiteSettingKeys.BankTransferNote]" rows="2" placeholder="VD: HOAI [số điện thoại]">@Model[SiteSettingKeys.BankTransferNote]</textarea>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+        </div>
+    </form>
+</div>

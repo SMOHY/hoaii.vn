@@ -3,6 +3,8 @@
     ViewData["Title"] = "Thanh toán";
     Layout = "_CheckoutLayout";
     var cart = Model.Cart;
+    // VNPay isn't wired yet; only show its label when the shop turns the gateway on.
+    var placeOrderLabel = Model.VnpayEnabled ? "Thanh toán với VN PAY" : "Hoàn tất đặt hàng";
 }
 
 <div class="checkout-page">
@@ -76,17 +78,34 @@
             <section class="checkout-section">
                 <h2>Phương thức thanh toán</h2>
                 <div class="option-group">
-                    <label class="option-row is-selected">
-                        <input type="radio" asp-for="Form.PaymentMethod" value="BankTransfer" checked />
-                        <span class="option-row__radio"></span>
-                        <span class="option-row__label">Chuyển khoản qua ngân hàng</span>
-                    </label>
-                    <label class="option-row">
-                        <input type="radio" asp-for="Form.PaymentMethod" value="CashOnDelivery" />
-                        <span class="option-row__radio"></span>
-                        <span class="option-row__label">Thanh toán khi giao hàng</span>
-                    </label>
+                    @{ var bankChecked = Model.BankEnabled; }
+                    @if (Model.BankEnabled)
+                    {
+                        <label class="option-row is-selected">
+                            <input type="radio" asp-for="Form.PaymentMethod" value="BankTransfer" checked />
+                            <span class="option-row__radio"></span>
+                            <span class="option-row__label">Chuyển khoản qua ngân hàng</span>
+                        </label>
+                    }
+                    @if (Model.CodEnabled)
+                    {
+                        <label class="option-row @(bankChecked ? "" : "is-selected")">
+                            <input type="radio" asp-for="Form.PaymentMethod" value="CashOnDelivery" checked="@(!bankChecked)" />
+                            <span class="option-row__radio"></span>
+                            <span class="option-row__label">Thanh toán khi giao hàng</span>
+                        </label>
+                    }
                 </div>
+                @if (Model.BankEnabled && Model.HasBankInfo)
+                {
+                    <div class="checkout-bank-info" data-bank-info style="@(bankChecked ? "" : "display:none;")">
+                        <p><strong>Thông tin chuyển khoản</strong></p>
+                        @if (!string.IsNullOrWhiteSpace(Model.BankName)) { <p>Ngân hàng: @Model.BankName</p> }
+                        @if (!string.IsNullOrWhiteSpace(Model.BankAccountNumber)) { <p>Số tài khoản: <strong>@Model.BankAccountNumber</strong></p> }
+                        @if (!string.IsNullOrWhiteSpace(Model.BankAccountHolder)) { <p>Chủ tài khoản: @Model.BankAccountHolder</p> }
+                        @if (!string.IsNullOrWhiteSpace(Model.BankTransferNote)) { <p>Nội dung: @Model.BankTransferNote</p> }
+                    </div>
+                }
             </section>
 
             <section class="checkout-section">
@@ -98,7 +117,7 @@
                 </div>
             </section>
 
-            <button type="submit" class="checkout-submit-mobile btn-checkout-primary">Thanh toán với VN PAY</button>
+            <button type="submit" class="checkout-submit-mobile btn-checkout-primary">@placeOrderLabel</button>
 
             <footer class="checkout-policy-strip">
                 <a href="/chinh-sach/giao-hang">Chính sách vận chuyển</a>
@@ -190,7 +209,7 @@
             </div>
 
             <button type="submit" form="checkout-form" class="btn-checkout-primary checkout-summary__cta">
-                Thanh toán với VN PAY
+                @placeOrderLabel
             </button>
         </div>
     </div>
@@ -231,6 +250,16 @@
       grandEl.textContent = vnd(subtotal - discount + fee) + 'đ';
     });
   });
+
+  // Show bank-transfer details only when that method is selected.
+  var bankInfo = document.querySelector('[data-bank-info]');
+  if (bankInfo) {
+    document.querySelectorAll('input[name="Form.PaymentMethod"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        bankInfo.style.display = r.value === 'BankTransfer' && r.checked ? '' : 'none';
+      });
+    });
+  }
 })();
 </script>
 

@@ -50,4 +50,27 @@ public class SettingsController(HoaiiDbContext db, SiteSettingsService settings,
         Ok("Đã lưu cấu hình vận chuyển.");
         return RedirectToAction(nameof(Shipping));
     }
+
+    [HttpGet("/admin/thanh-toan")]
+    public IActionResult Payment()
+    {
+        var keys = SiteSettingKeys.InGroup("payment").Select(f => f.Key);
+        return View(settings.GetForEditing(keys));
+    }
+
+    [HttpPost("/admin/thanh-toan")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SavePayment(Dictionary<string, string?> settings_)
+    {
+        // Unchecked checkboxes don't post — force the three flags to explicit true/false.
+        foreach (var flag in new[] { SiteSettingKeys.PayCodEnabled, SiteSettingKeys.PayBankEnabled, SiteSettingKeys.PayVnpayEnabled })
+        {
+            settings_[flag] = settings_.TryGetValue(flag, out var v) && v == "true" ? "true" : "false";
+        }
+        await settings.SaveAsync(settings_.ToDictionary(kv => kv.Key, kv => kv.Value));
+        auth.Audit("Cập nhật thanh toán", nameof(SiteSetting));
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu cấu hình thanh toán.");
+        return RedirectToAction(nameof(Payment));
+    }
 }
