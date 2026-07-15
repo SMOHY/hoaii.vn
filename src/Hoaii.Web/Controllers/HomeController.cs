@@ -31,90 +31,76 @@ public class HomeController(HoaiiDbContext db) : Controller
 
         var model = new HomeIndexViewModel
         {
-            // Only one hero image has been delivered so far. Adding a second entry here is all
-            // it takes to turn the arrows and dots back on — see HomeIndexViewModel.HeroSlides.
-            HeroSlides =
-            [
-                new()
+            HeroSlides = await db.HomeHeroSlides
+                .Where(h => h.IsActive).OrderBy(h => h.SortOrder).ThenBy(h => h.Id)
+                .Select(h => new HeroSlideViewModel
                 {
-                    ImageUrl = "/images/home/hero.jpg",
-                    Title = "TINH HOA VIỆT NAM",
-                    Subtitle = "Bộ sưu tập Quà tặng Trung Thu 2026",
-                    MobileTitle = "VIỆT NAM HOA THỊ",
-                    MobileSubtitle = "Concept tết mới nhất 2026",
-                },
-            ],
-            Benefits =
-            [
-                // Illustrated icons exported from Figma (nodes 1214:38763 / 38822 / 38847) —
-                // the old SVGs were plain line icons, not the drawn artwork.
-                new() { IconPath = "/images/icons/benefit-shipping.png", Title = "Giao hàng toàn quốc", Description = "Thay bạn kết nối những tri âm, đưa quà đến từng ô cửa", MobileLine1 = "Giao hàng", MobileLine2 = "toàn quốc" },
-                new() { IconPath = "/images/icons/benefit-quality.png", Title = "Cam kết chất lượng", Description = "Tận tâm trong từng sản phẩm, an tâm tuyệt đối", MobileLine1 = "Cam kết", MobileLine2 = "chất lượng" },
-                new() { IconPath = "/images/icons/benefit-discount.png", Title = "Chiết khấu lên tới 35%", Description = "Giải pháp ngân sách tối ưu cho đơn hàng doanh nghiệp", MobileLine1 = "Chiết khấu", MobileLine2 = "lên tới 35%" },
-            ],
-            FeaturedTiles =
-            [
-                // Row 1 — red "TINH HOA BẮC BỘ" card, left (node 1214:38738)
-                new() { IsCard = true, AccentColor = "red", TitleLine1 = "TINH HOA", TitleLine2 = "BẮC BỘ", LinkUrl = "/danh-muc/qua-tet" },
-                new() { ImageUrl = "/images/placeholders/featured-2.jpg" },
-                new() { ImageUrl = "/images/placeholders/featured-3.jpg", HideOnMobile = true },
-                // Row 2 — teal card, right (node 1214:38752)
-                new() { ImageUrl = "/images/placeholders/featured-4.jpg" },
-                new() { ImageUrl = "/images/placeholders/featured-5.jpg", HideOnMobile = true },
-                new() { IsCard = true, AccentColor = "teal", TitleLine1 = "THIÊN ĐIỂU", TitleLine2 = "LẠC HỒNG", EditionLabel = "(Phiên bản cao cấp)", LinkUrl = "/danh-muc/qua-tet" },
-                // Row 3 — yellow card, left (node 1417:39224)
-                new() { IsCard = true, AccentColor = "yellow", TitleLine1 = "THIÊN ĐIỂU", TitleLine2 = "LẠC HỒNG", EditionLabel = "(Phiên bản thường)", LinkUrl = "/danh-muc/qua-tet" },
-                new() { ImageUrl = "/images/placeholders/featured-6.jpg" },
-                new() { ImageUrl = "/images/placeholders/featured-7.jpg", HideOnMobile = true },
-            ],
-            CustomServiceTabs =
-            [
-                new()
+                    ImageUrl = h.ImageUrl,
+                    Title = h.Title,
+                    Subtitle = h.Subtitle,
+                    MobileTitle = h.MobileTitle,
+                    MobileSubtitle = h.MobileSubtitle,
+                })
+                .ToListAsync(),
+
+            Benefits = await db.HomeBenefits
+                .OrderBy(b => b.SortOrder).ThenBy(b => b.Id)
+                .Select(b => new BenefitViewModel
                 {
-                    Key = "in-khac",
-                    Label = "In khắc logo cá nhân",
-                    IconSvg = "engraving",
-                    PanelImageUrl = "/images/home/service-panel.jpg",
-                    Caption = "Cá nhân hóa sản phẩm bằng logo, tên riêng của bạn.",
-                    CaptionColorHex = "#F2F2F2",
-                    CtaUrl = "/dich-vu/in-khac",
-                },
-                new()
+                    IconPath = b.IconPath,
+                    Title = b.Title,
+                    Description = b.Description,
+                    MobileLine1 = b.MobileLine1,
+                    MobileLine2 = b.MobileLine2,
+                })
+                .ToListAsync(),
+
+            FeaturedTiles = await db.HomeFeaturedTiles
+                .OrderBy(t => t.SortOrder).ThenBy(t => t.Id)
+                .Select(t => new FeaturedTileViewModel
                 {
-                    Key = "goi-qua",
-                    Label = "Lựa chọn gói quà",
-                    IconSvg = "gift",
-                    PanelImageUrl = "/images/home/service-panel.jpg",
-                    Caption = "Tự do phối hợp gói quà theo sở thích và ngân sách",
-                    CaptionColorHex = "#F7E9EB",
-                    CtaUrl = "/dich-vu/lua-chon-goi-qua",
-                },
-                new()
+                    IsCard = t.IsCard,
+                    AccentColor = t.AccentColor,
+                    CollectionLabel = t.CollectionLabel,
+                    TitleLine1 = t.TitleLine1,
+                    TitleLine2 = t.TitleLine2,
+                    EditionLabel = t.EditionLabel,
+                    HideOnMobile = t.HideOnMobile,
+                    ImageUrl = t.ImageUrl,
+                    LinkUrl = t.LinkUrl,
+                })
+                .ToListAsync(),
+
+            CustomServiceTabs = await db.HomeServiceTabs
+                .OrderBy(s => s.SortOrder).ThenBy(s => s.Id)
+                .Select(s => new CustomServiceTabViewModel
                 {
-                    Key = "thiet-ke",
-                    Label = "Thiết kế ấn phẩm",
-                    IconSvg = "notepad-edit",
-                    PanelImageUrl = "/images/home/service-panel.jpg",
-                    Caption = "Ấn phẩm đi kèm được thiết kế riêng, độc bản",
-                    CaptionColorHex = "#F7E9EB",
-                    CtaUrl = "/dich-vu/thiet-ke",
-                },
-            ],
-            AboutCards =
-            [
-                new() { Caption = "Tính bản sắc", ImageOnTop = true, ImageUrl = "/images/home/about-ban-sac.jpg" },
-                new() { Caption = "Sự tinh tế", ImageOnTop = false, ImageUrl = "/images/home/about-tinh-te.jpg" },
-                new() { Caption = "Tư duy khởi sinh", ImageOnTop = true, ImageUrl = "/images/home/about-khoi-sinh.jpg" },
-                new() { Caption = "Sự Tiếp nối", ImageOnTop = false, ImageUrl = "/images/home/about-tiep-noi.jpg" },
-            ],
-            // The 24 logos Figma runs across the three marquee rows, in order (node 792:24979).
-            CustomerLogos =
-            [
-                "truong-thanh", "bondex", "nano-gold", "pro-group", "jaguar", "bee-mv",
-                "core5", "cystack", "hana-hp", "mb", "nature-hotel", "avalue",
-                "pancake", "ecomdy", "king-power", "isofh", "onpoint", "everest",
-                "binh-minh-hp", "topcv", "saquila", "dht", "koni", "prime",
-            ],
+                    Key = s.Key,
+                    Label = s.Label,
+                    IconSvg = s.IconSvg,
+                    PanelImageUrl = s.PanelImageUrl,
+                    Caption = s.Caption,
+                    CaptionColorHex = s.CaptionColorHex,
+                    CtaText = s.CtaText,
+                    CtaUrl = s.CtaUrl,
+                })
+                .ToListAsync(),
+
+            AboutCards = await db.HomeAboutCards
+                .OrderBy(a => a.SortOrder).ThenBy(a => a.Id)
+                .Select(a => new AboutCardViewModel
+                {
+                    Caption = a.Caption,
+                    ImageOnTop = a.ImageOnTop,
+                    ImageUrl = a.ImageUrl,
+                })
+                .ToListAsync(),
+
+            CustomerLogos = await db.HomeCustomerLogos
+                .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
+                .Select(l => l.LogoKey)
+                .ToListAsync(),
+
             BlogPosts = recent,
         };
 

@@ -27,6 +27,12 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
     public DbSet<PolicyPage> PolicyPages => Set<PolicyPage>();
     public DbSet<PolicyBlock> PolicyBlocks => Set<PolicyBlock>();
+    public DbSet<HomeHeroSlide> HomeHeroSlides => Set<HomeHeroSlide>();
+    public DbSet<HomeBenefit> HomeBenefits => Set<HomeBenefit>();
+    public DbSet<HomeFeaturedTile> HomeFeaturedTiles => Set<HomeFeaturedTile>();
+    public DbSet<HomeServiceTab> HomeServiceTabs => Set<HomeServiceTab>();
+    public DbSet<HomeAboutCard> HomeAboutCards => Set<HomeAboutCard>();
+    public DbSet<HomeCustomerLogo> HomeCustomerLogos => Set<HomeCustomerLogo>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

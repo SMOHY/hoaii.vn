@@ -244,6 +244,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<HoaiiDbContext>();
     await AdminAuthService.EnsureSeedAdminAsync(db, app.Configuration);
     await PolicyPageSeeder.EnsureSeedAsync(db);
+    await HomeContentSeeder.EnsureSeedAsync(db);
 }
 
 app.Run();
