@@ -45,8 +45,9 @@ public class SearchController(HoaiiDbContext db) : Controller
         var slugQuery = Slugify(query);
 
         var matches = await db.Products
-            .Where(p => p.Name.Contains(query)
-                        || (slugQuery.Length > 0 && p.Slug.Contains(slugQuery)))
+            .Where(p => p.IsActive
+                        && (p.Name.Contains(query)
+                            || (slugQuery.Length > 0 && p.Slug.Contains(slugQuery))))
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
@@ -67,7 +68,7 @@ public class SearchController(HoaiiDbContext db) : Controller
         // "Sản phẩm chọn lọc" fallback/cross-sell block — see design-specs/search-page.md.
         var matchedIds = matches.Select(p => p.Id).ToList();
         var featured = await db.Products
-            .Where(p => p.IsFeatured && !matchedIds.Contains(p.Id))
+            .Where(p => p.IsFeatured && p.IsActive && !matchedIds.Contains(p.Id))
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .Take(GroupPreviewSize)

@@ -124,7 +124,7 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
 
         var productIds = lines.Select(l => l.ProductId).Distinct().ToList();
         var products = await db.Products
-            .Where(p => productIds.Contains(p.Id))
+            .Where(p => productIds.Contains(p.Id) && p.IsActive)
             .Include(p => p.Variants)
             .ToDictionaryAsync(p => p.Id);
 
@@ -155,7 +155,7 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
 
         var productIds = lines.Select(l => l.ProductId).Distinct().ToList();
         var products = await db.Products
-            .Where(p => productIds.Contains(p.Id))
+            .Where(p => productIds.Contains(p.Id) && p.IsActive)
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .ToDictionaryAsync(p => p.Id);
@@ -165,7 +165,9 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         {
             if (!products.TryGetValue(line.ProductId, out var product))
             {
-                continue; // product removed/discontinued since it was added to the cart
+                // Removed, or hidden by the shop since it was added — either way it drops out of
+                // the cart instead of staying buyable.
+                continue;
             }
 
             var variant = line.VariantId is int variantId
@@ -224,7 +226,8 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
     private async Task<IReadOnlyList<CartAddOnViewModel>> GetAddOnSuggestionsAsync(
         List<int>? categoryIds, List<int>? excludeProductIds = null)
     {
-        var query = db.Products.Include(p => p.Images).AsQueryable();
+        // Never suggest something the shop has hidden.
+        var query = db.Products.Where(p => p.IsActive).Include(p => p.Images).AsQueryable();
 
         if (categoryIds is { Count: > 0 })
         {

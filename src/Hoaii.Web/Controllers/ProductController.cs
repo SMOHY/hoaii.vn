@@ -10,11 +10,13 @@ public class ProductController(HoaiiDbContext db) : Controller
 {
     public async Task<IActionResult> Details(string slug)
     {
+        // Hidden products are gone from the storefront entirely — the admin's "Đang bán" switch
+        // used to change nothing out here, so a hidden product stayed viewable and buyable.
         var product = await db.Products
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
-            .FirstOrDefaultAsync(p => p.Slug == slug);
+            .FirstOrDefaultAsync(p => p.Slug == slug && p.IsActive);
 
         if (product is null)
         {
@@ -22,7 +24,7 @@ public class ProductController(HoaiiDbContext db) : Controller
         }
 
         var related = await db.Products
-            .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
+            .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id && p.IsActive)
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .Take(4)
@@ -40,7 +42,7 @@ public class ProductController(HoaiiDbContext db) : Controller
             // Figma always draws three tiles here (node 826:20798). Featured siblings come
             // first; the rest of the category fills the row so it never renders half-empty.
             var collectionItems = await db.Products
-                .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
+                .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id && p.IsActive)
                 .OrderByDescending(p => p.IsFeatured)
                 .ThenBy(p => p.Id)
                 .Include(p => p.Images)

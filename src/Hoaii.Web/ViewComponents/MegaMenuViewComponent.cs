@@ -38,7 +38,7 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             }
 
             var products = await db.Products
-                .Where(p => p.CategoryId == category.Id)
+                .Where(p => p.CategoryId == category.Id && p.IsActive)
                 .OrderBy(p => p.Id)
                 .ToListAsync();
 
@@ -77,10 +77,10 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
         var productTypeCategories = await db.Categories
             .Where(c => c.Type == CategoryType.ProductType)
             .ToListAsync();
-        var featured = await db.Products.Where(p => p.IsFeatured).Take(4)
+        var featured = await db.Products.Where(p => p.IsFeatured && p.IsActive).Take(4)
             .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
             .ToListAsync();
-        var newest = await db.Products.Where(p => p.Badge == ProductBadge.New).Take(4)
+        var newest = await db.Products.Where(p => p.Badge == ProductBadge.New && p.IsActive).Take(4)
             .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
             .ToListAsync();
 

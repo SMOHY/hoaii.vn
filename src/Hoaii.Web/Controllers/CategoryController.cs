@@ -40,9 +40,10 @@ public class CategoryController(HoaiiDbContext db) : Controller
 
         var categoryName = category?.Name ?? "Sản phẩm chọn lọc";
 
+        // Hidden products never reach the storefront.
         var baseQuery = (isFeaturedView
-                ? db.Products.Where(p => p.IsFeatured)
-                : db.Products.Where(p => p.CategoryId == category!.Id))
+                ? db.Products.Where(p => p.IsFeatured && p.IsActive)
+                : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive))
             .Include(p => p.Images)
             .Include(p => p.Variants);
 
@@ -68,8 +69,8 @@ public class CategoryController(HoaiiDbContext db) : Controller
 
         // The hero carousel shows this view's own products, not a separate asset set.
         var heroSlides = await (isFeaturedView
-                ? db.Products.Where(p => p.IsFeatured && p.Images.Any())
-                : db.Products.Where(p => p.CategoryId == category!.Id && p.Images.Any()))
+                ? db.Products.Where(p => p.IsFeatured && p.IsActive && p.Images.Any())
+                : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive && p.Images.Any()))
             .Include(p => p.Images)
             .OrderBy(p => p.Id)
             .Take(6)
