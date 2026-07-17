@@ -15,6 +15,23 @@ public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvi
     private const int MaxDimension = 1920;
     private const long MaxBytes = 10 * 1024 * 1024;
 
+    /// <summary>WebRootPath is null when the host can't find a wwwroot next to the entry assembly
+    /// (e.g. the exe launched straight out of bin/), which used to make every upload throw a
+    /// NullReferenceException deep in Path.Combine. Fall back to the content root.</summary>
+    private string WebRoot
+    {
+        get
+        {
+            var root = env.WebRootPath;
+            if (string.IsNullOrEmpty(root))
+            {
+                root = Path.Combine(env.ContentRootPath, "wwwroot");
+            }
+            Directory.CreateDirectory(root);
+            return root;
+        }
+    }
+
     public sealed record UploadResult(bool Ok, MediaAsset? Asset, string? Error);
 
     /// <summary>Sniffs the leading bytes rather than trusting the extension or Content-Type.</summary>
@@ -64,7 +81,7 @@ public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvi
 
         var now = DateTime.UtcNow;
         var relDir = $"/uploads/{now:yyyy}/{now:MM}";
-        var absDir = Path.Combine(env.WebRootPath, "uploads", now.ToString("yyyy"), now.ToString("MM"));
+        var absDir = Path.Combine(WebRoot, "uploads", now.ToString("yyyy"), now.ToString("MM"));
         Directory.CreateDirectory(absDir);
 
         string url;
@@ -143,7 +160,7 @@ public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvi
             return false;
         }
 
-        var abs = Path.Combine(env.WebRootPath, asset.Url.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+        var abs = Path.Combine(WebRoot, asset.Url.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
         if (File.Exists(abs))
         {
             File.Delete(abs);
