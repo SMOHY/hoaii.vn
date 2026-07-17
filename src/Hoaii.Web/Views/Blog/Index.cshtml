@@ -1,11 +1,13 @@
 @model Hoaii.Web.Models.Blog.BlogIndexViewModel
+@using Hoaii.Web.Services
+@inject PageContentService PageC
 @{
     ViewData["Title"] = "Blog";
 }
 
 <div class="blog-hero">
     <p class="blog-breadcrumb"><span>Trang chủ/</span><span class="blog-breadcrumb__current">Blog</span></p>
-    <h1 class="blog-heading">HOÀI MÁCH BẠN</h1>
+    <h1 class="blog-heading">@PageC.Get(PageContentKeys.Shop, "blog_page_heading")</h1>
 </div>
 
 @if (Model.Featured is not null)

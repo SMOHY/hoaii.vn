@@ -1,4 +1,6 @@
 @model IReadOnlyList<Hoaii.Web.Models.Home.BlogPostViewModel>
+@using Hoaii.Web.Services
+@inject PageContentService Page
 @* Blog (HOÀI MÁCH BẠN) — see design-specs/home/04-blog-and-story.md *@
 @{
     var featured = Model.FirstOrDefault(p => p.IsFeatured) ?? Model[0];
@@ -7,8 +9,8 @@
 <section class="blog-section">
     @* Desktop node 1214:38914 vs mobile node 1062:12758 — different headings. *@
     <h2 class="blog-heading">
-        <span class="u-desktop-only">HOÀI KỂ BẠN NGHE</span>
-        <span class="u-mobile-only">HOÀI MÁCH BẠN</span>
+        <span class="u-desktop-only">@Page.Get(PageContentKeys.Home, "blog_heading_desktop")</span>
+        <span class="u-mobile-only">@Page.Get(PageContentKeys.Home, "blog_heading_mobile")</span>
     </h2>
 
     <div class="blog-cards blog-cards--desktop">

@@ -2,23 +2,24 @@
 @using Hoaii.Web.Services
 @inject SiteSettingsService Settings
 @inject NavigationService Nav
+@inject PageContentService PageC
 @{
     var footerColumns = Nav.FooterColumns;
 }
 
 <footer class="footer">
     <div class="footer-newsletter">
-        <h2>ĐĂNG KÝ VÀO DANH SÁCH</h2>
-        <p>Cập nhật sớm nhất thông tin sản phẩm mới và những đặc quyền giới hạn từ HOÀI!</p>
+        <h2>@PageC.Get(PageContentKeys.Footer, "newsletter_heading")</h2>
+        <p>@PageC.Get(PageContentKeys.Footer, "newsletter_text")</p>
         <form class="footer-signup" method="post" action="/newsletter/subscribe" data-async-form>
             @Html.AntiForgeryToken()
             <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-            <input type="email" name="email" placeholder="Nhập email của bạn" required />
-            <button type="submit">Gửi</button>
+            <input type="email" name="email" placeholder="@PageC.Get(PageContentKeys.Footer, "newsletter_placeholder")" required />
+            <button type="submit">@PageC.Get(PageContentKeys.Footer, "newsletter_button")</button>
         </form>
         @if (TempData["NewsletterSubscribed"] is not null)
         {
-            <p class="footer-signup__done" role="status">Cảm ơn bạn! Chúng tôi sẽ gửi tin mới nhất tới hộp thư của bạn.</p>
+            <p class="footer-signup__done" role="status">@PageC.Get(PageContentKeys.Footer, "newsletter_thanks")</p>
         }
     </div>
 

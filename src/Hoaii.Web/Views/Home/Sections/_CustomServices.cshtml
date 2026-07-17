@@ -1,12 +1,14 @@
 @model IReadOnlyList<Hoaii.Web.Models.Home.CustomServiceTabViewModel>
+@using Hoaii.Web.Services
+@inject PageContentService Page
 @* Dịch vụ theo yêu cầu — see design-specs/custom-services.md *@
 <section class="custom-services" data-component="custom-services">
     <div class="custom-services__inner">
         <div class="custom-services__col">
             <header class="custom-services__heading">
-                <p class="custom-services__eyebrow">Dịch vụ theo yêu cầu</p>
+                <p class="custom-services__eyebrow">@Page.Get(PageContentKeys.Home, "services_eyebrow")</p>
                 <h2 class="custom-services__title">
-                    CÁ NHÂN HÓA SẢN PHẨM<br />ĐỂ MANG DẤU ẤN CỦA RIÊNG BẠN
+                    @ContentText.Lines(Page.Get(PageContentKeys.Home, "services_title"))
                 </h2>
             </header>
 

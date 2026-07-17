@@ -1,6 +1,9 @@
 @using Hoaii.Domain.Entities
+@using Hoaii.Web.Services
 @{
     ViewData["Title"] = "Trang chủ";
+    var textFields = ViewBag.TextFields as IReadOnlyList<PageContentKeys.Field> ?? new List<PageContentKeys.Field>();
+    var textValues = ViewBag.TextValues as IReadOnlyDictionary<string, string>;
     var heroes = ViewBag.Heroes as List<HomeHeroSlide> ?? [];
     var benefits = ViewBag.Benefits as List<HomeBenefit> ?? [];
     var tiles = ViewBag.Tiles as List<HomeFeaturedTile> ?? [];
@@ -16,6 +19,35 @@
 }
 
 <p style="color:var(--color-grey-500);margin:0 0 24px;">Quản lý toàn bộ nội dung trang chủ. Mỗi mục hiển thị theo thứ tự bạn đặt.</p>
+
+@* ---------- Section headings / intros ---------- *@
+@if (textValues is not null)
+{
+    <div class="admin-card" style="margin-bottom:24px;">
+        <h2 style="font-family:var(--font-display);margin:0 0 4px;font-size:20px;">Tiêu đề &amp; mô tả các mục</h2>
+        <p class="admin-field__hint" style="margin:0 0 16px;">Chữ khung của từng mục trên trang chủ. Để trống sẽ dùng nội dung mặc định.</p>
+        <form method="post" action="/admin/trang-chu/chu-khung" class="admin-form">
+            @Html.AntiForgeryToken()
+            @foreach (var f in textFields)
+            {
+                <div class="admin-field">
+                    <label>@f.Label</label>
+                    @if (f.Kind == FieldKind.Multiline)
+                    {
+                        <textarea name="f[@f.Key]" rows="3">@textValues[f.Key]</textarea>
+                    }
+                    else
+                    {
+                        <input type="text" name="f[@f.Key]" value="@textValues[f.Key]" />
+                    }
+                </div>
+            }
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Lưu tiêu đề</button>
+            </div>
+        </form>
+    </div>
+}
 
 @* ---------- Hero ---------- *@
 <div class="admin-card" style="margin-bottom:24px;">

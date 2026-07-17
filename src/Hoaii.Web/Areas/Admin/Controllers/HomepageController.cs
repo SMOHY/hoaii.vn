@@ -1,5 +1,6 @@
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
+using Hoaii.Web.Services;
 using Hoaii.Web.Services.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,14 @@ namespace Hoaii.Web.Areas.Admin.Controllers;
 /// Edits the six homepage sections. One controller, one dashboard, a small edit form per section
 /// type. Customer logos are simple enough to manage inline on the dashboard.
 /// </summary>
-public class HomepageController(HoaiiDbContext db, AdminAuthService auth) : BaseAdminController(db)
+public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageContentService content) : BaseAdminController(db)
 {
     [HttpGet("/admin/trang-chu")]
     public async Task<IActionResult> Index()
     {
+        // Section headings/intros live in the reusable PageContent store.
+        ViewBag.TextFields = PageContentKeys.ForPage(PageContentKeys.Home);
+        ViewBag.TextValues = content.GetForEditing(PageContentKeys.Home);
         ViewBag.Heroes = await Db.HomeHeroSlides.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
         ViewBag.Benefits = await Db.HomeBenefits.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
         ViewBag.Tiles = await Db.HomeFeaturedTiles.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
@@ -22,6 +26,17 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth) : Base
         ViewBag.Abouts = await Db.HomeAboutCards.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
         ViewBag.Logos = await Db.HomeCustomerLogos.OrderBy(x => x.SortOrder).ThenBy(x => x.Id).ToListAsync();
         return View();
+    }
+
+    [HttpPost("/admin/trang-chu/chu-khung")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveText(Dictionary<string, string?> f)
+    {
+        await content.SaveAsync(PageContentKeys.Home, f.ToDictionary(kv => kv.Key, kv => kv.Value));
+        auth.Audit("Sửa chữ khung trang chủ", nameof(PageContent));
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu tiêu đề các mục.");
+        return RedirectToAction(nameof(Index));
     }
 
     // ---------- Hero ----------

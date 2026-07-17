@@ -32,6 +32,48 @@ public class PagesController(HoaiiDbContext db, PageContentService content, Admi
         return RedirectToAction(nameof(About));
     }
 
+    [HttpGet("/admin/trang/khac")]
+    public IActionResult Shop()
+    {
+        ViewBag.Fields = PageContentKeys.ForPage(PageContentKeys.Shop);
+        ViewBag.FormAction = "/admin/trang/khac";
+        ViewBag.Title = "Nội dung khác";
+        ViewBag.Note = "Chữ dùng chung ở trang Blog, trang sản phẩm và danh mục trống.";
+        return View("Fields", content.GetForEditing(PageContentKeys.Shop));
+    }
+
+    [HttpPost("/admin/trang/khac")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveShop(Dictionary<string, string?> f)
+    {
+        await content.SaveAsync(PageContentKeys.Shop, f.ToDictionary(kv => kv.Key, kv => kv.Value));
+        auth.Audit("Sửa nội dung khác", nameof(PageContent));
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu nội dung khác.");
+        return RedirectToAction(nameof(Shop));
+    }
+
+    [HttpGet("/admin/trang/lien-he")]
+    public IActionResult Contact()
+    {
+        ViewBag.Fields = PageContentKeys.ForPage(PageContentKeys.Contact);
+        ViewBag.FormAction = "/admin/trang/lien-he";
+        ViewBag.Title = "Trang Liên hệ";
+        ViewBag.Note = "Hotline, email, địa chỉ, số Zalo lấy từ Cài đặt chung — sửa ở mục đó.";
+        return View("Fields", content.GetForEditing(PageContentKeys.Contact));
+    }
+
+    [HttpPost("/admin/trang/lien-he")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveContact(Dictionary<string, string?> f)
+    {
+        await content.SaveAsync(PageContentKeys.Contact, f.ToDictionary(kv => kv.Key, kv => kv.Value));
+        auth.Audit("Sửa trang Liên hệ", nameof(PageContent));
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu trang Liên hệ.");
+        return RedirectToAction(nameof(Contact));
+    }
+
     [HttpGet("/admin/trang/hop-tac")]
     public async Task<IActionResult> Partners()
     {

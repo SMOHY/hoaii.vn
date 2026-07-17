@@ -9,6 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Razor's default encoder escapes every non-ASCII character, so Vietnamese text coming from the
+// DB rendered as "&#x1EF0;A CH&#x1ECC;N…" — correct in a browser but bloated and unreadable in
+// source. Allow the full Unicode range so it is emitted as-is.
+builder.Services.Configure<Microsoft.Extensions.WebEncoders.WebEncoderOptions>(options =>
+    options.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(
+        System.Text.Unicode.UnicodeRanges.All));
+
 builder.Services.AddDbContext<HoaiiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

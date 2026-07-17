@@ -1,6 +1,7 @@
 @model Hoaii.Web.Models.Page.ContactFormModel
 @using Hoaii.Web.Services
 @inject SiteSettingsService Settings
+@inject PageContentService PageC
 @{
     ViewData["Title"] = "Liên hệ";
     ViewData["HeroOverlay"] = true;
@@ -9,6 +10,7 @@
     var contactAddress = Settings.Get(SiteSettingKeys.Address);
     var facebookUrl = Settings.Get(SiteSettingKeys.FacebookUrl);
     var telDigits = new string(contactPhone.Where(char.IsDigit).ToArray());
+    string C(string k) => PageC.Get(PageContentKeys.Contact, k);
 }
 
 @* Hero sits on brand red with the nav overlaid (node 809:29894). Figma's breadcrumb
@@ -17,64 +19,64 @@
     <div class="contact-hero__inner">
         <div class="contact-hero__text">
             <p class="contact-breadcrumb"><a href="/">Trang chủ</a>/<span>Liên hệ</span></p>
-            <h1 class="contact-hero__title">LIÊN HỆ</h1>
+            <h1 class="contact-hero__title">@C("hero_title")</h1>
         </div>
         <div class="contact-hero__aside">
             <div class="contact-hero__img">
-                <img src="~/images/contact/hero.jpg" alt="Hộp quà HOÀI" />
+                <img src="@C("hero_image")" alt="Hộp quà HOÀI" />
             </div>
-            <p class="contact-hero__caption">Hãy liên hệ với chúng tôi</p>
+            <p class="contact-hero__caption">@C("hero_caption")</p>
         </div>
     </div>
 </section>
 
 <section class="contact-address">
-    <h2 class="contact-section__heading">Địa chỉ</h2>
+    <h2 class="contact-section__heading">@C("address_heading")</h2>
     <div class="contact-address__row">
-        <a class="contact-address__img" href="https://maps.google.com/?q=945+Ngô+Gia+Tự,+Việt+Hưng,+Hà+Nội" target="_blank" rel="noopener">
-            <img src="~/images/contact/map.jpg" alt="Bản đồ tới HOÀI" loading="lazy" />
+        <a class="contact-address__img" href="@C("map_url")" target="_blank" rel="noopener">
+            <img src="@C("map_image")" alt="Bản đồ tới HOÀI" loading="lazy" />
             @* Google Maps place card, overlaid top-left of the map (node 970:20952). *@
-            <img class="contact-address__map-card" src="~/images/contact/map-card.png" alt="" loading="lazy" />
+            <img class="contact-address__map-card" src="@C("map_card_image")" alt="" loading="lazy" />
         </a>
         <p class="contact-address__text">@contactAddress</p>
     </div>
 </section>
 
 <section class="contact-methods">
-    <h2 class="contact-section__heading">Liên hệ</h2>
+    <h2 class="contact-section__heading">@C("methods_heading")</h2>
     <div class="contact-methods__grid">
         <div class="contact-method-card">
-            <h3>TRÒ CHUYỆN TRỰC TIẾP</h3>
-            <p>Hãy truy cập facebook hoặc zalo của chúng tôi để nói chuyện trực tiếp với đội ngũ chăm sóc khách hàng về bất kỳ thắc mắc nào.</p>
-            <a href="@facebookUrl" target="_blank" rel="noopener" class="contact-method-card__link">Liên hệ facebook</a>
+            <h3>@C("method_1_title")</h3>
+            <p>@C("method_1_text")</p>
+            <a href="@facebookUrl" target="_blank" rel="noopener" class="contact-method-card__link">@C("method_1_link_label")</a>
         </div>
         <div class="contact-method-card">
-            <h3>LIÊN QUAN ĐẾN ĐƠN HÀNG</h3>
-            <p>Hãy truy cập facebook hoặc zalo của chúng tôi để nói chuyện trực tiếp với đội ngũ chăm sóc khách hàng về bất kỳ thắc mắc nào.</p>
-            <button type="button" class="contact-method-card__link" data-contact-popup-open>Trò chuyện trực tiếp</button>
+            <h3>@C("method_2_title")</h3>
+            <p>@C("method_2_text")</p>
+            <button type="button" class="contact-method-card__link" data-contact-popup-open>@C("method_2_link_label")</button>
         </div>
         <div class="contact-method-card">
-            <h3>YÊU CẦU BÁN BUÔN</h3>
-            <p>Bạn muốn xem mẫu? Vui lòng gửi email cho chúng tôi</p>
+            <h3>@C("method_3_title")</h3>
+            <p>@C("method_3_text")</p>
             <a href="mailto:@contactEmail" class="contact-method-card__link">@contactEmail</a>
         </div>
         <div class="contact-method-card">
-            <h3>ĐIỆN THOẠI</h3>
-            <p>Hãy gửi cho chúng tôi một lời nhắn</p>
+            <h3>@C("method_4_title")</h3>
+            <p>@C("method_4_text")</p>
             <a href="tel:@telDigits" class="contact-method-card__link">@contactPhone</a>
         </div>
     </div>
 </section>
 
 <section class="contact-form-section">
-    <h2 class="contact-section__heading">Hãy gửi email cho chúng tôi</h2>
+    <h2 class="contact-section__heading">@C("form_heading")</h2>
     <div class="contact-form-section__row">
-        <p class="contact-form-section__intro">Chúng tôi rất vui vì điều gì đó ở đây đã thu hút sự chú ý của bạn. Hãy liên hệ để chào hỏi, trao đổi về nhu cầu của bạn và cùng nhau tìm hiểu cách hợp tác nhé.</p>
+        <p class="contact-form-section__intro">@C("form_intro")</p>
         <form method="post" asp-action="Contact" class="contact-form">
             @Html.AntiForgeryToken()
             @if (TempData["ContactSubmitted"] is not null)
             {
-                <p class="contact-form__success">Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
+                <p class="contact-form__success">@C("form_success")</p>
             }
             @* Figma stacks every field full-width with the label as the field's own text (node 809:30314). *@
             <input type="text" asp-for="FirstName" class="contact-form__field" placeholder="Tên*" />

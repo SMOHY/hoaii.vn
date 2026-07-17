@@ -9,11 +9,13 @@ namespace Hoaii.Web.Areas.Admin.Controllers;
 
 /// <summary>Edits the header menus (main + sub) and the footer columns/links. Every write drops
 /// the NavigationService cache so the storefront updates immediately.</summary>
-public class MenuController(HoaiiDbContext db, AdminAuthService auth, NavigationService nav) : BaseAdminController(db)
+public class MenuController(HoaiiDbContext db, AdminAuthService auth, NavigationService nav, PageContentService content) : BaseAdminController(db)
 {
     [HttpGet("/admin/menu")]
     public async Task<IActionResult> Index()
     {
+        ViewBag.TextFields = PageContentKeys.ForPage(PageContentKeys.Footer);
+        ViewBag.TextValues = content.GetForEditing(PageContentKeys.Footer);
         ViewBag.Main = await Db.NavLinks.Where(l => l.Placement == NavPlacement.Main).OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToListAsync();
         ViewBag.Sub = await Db.NavLinks.Where(l => l.Placement == NavPlacement.Sub).OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToListAsync();
         ViewBag.Columns = await Db.FooterMenuColumns.Include(c => c.Links.OrderBy(l => l.SortOrder)).OrderBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
@@ -24,6 +26,17 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
     {
         nav.Invalidate();
         Ok(msg);
+    }
+
+    [HttpPost("/admin/menu/nhan-tin")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveNewsletter(Dictionary<string, string?> f)
+    {
+        await content.SaveAsync(PageContentKeys.Footer, f.ToDictionary(kv => kv.Key, kv => kv.Value));
+        auth.Audit("Sửa khối nhận tin", nameof(PageContent));
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu khối đăng ký nhận tin.");
+        return RedirectToAction(nameof(Index));
     }
 
     // ---------- Header links ----------

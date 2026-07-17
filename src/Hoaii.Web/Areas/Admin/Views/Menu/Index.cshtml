@@ -1,6 +1,9 @@
 @using Hoaii.Domain.Entities
+@using Hoaii.Web.Services
 @{
     ViewData["Title"] = "Menu điều hướng";
+    var textFields = ViewBag.TextFields as IReadOnlyList<PageContentKeys.Field> ?? new List<PageContentKeys.Field>();
+    var textValues = ViewBag.TextValues as IReadOnlyDictionary<string, string>;
     var main = ViewBag.Main as List<NavLink> ?? [];
     var sub = ViewBag.Sub as List<NavLink> ?? [];
     var columns = ViewBag.Columns as List<FooterMenuColumn> ?? [];
@@ -138,3 +141,32 @@
         </div>
     </div>
 </div>
+
+@* ---------- Footer newsletter block ---------- *@
+@if (textValues is not null)
+{
+    <div class="admin-card" style="margin-top:24px;">
+        <h2 style="font-family:var(--font-display);margin:0 0 4px;font-size:20px;">Khối đăng ký nhận tin (chân trang)</h2>
+        <p class="admin-field__hint" style="margin:0 0 16px;">Để trống sẽ dùng nội dung mặc định.</p>
+        <form method="post" action="/admin/menu/nhan-tin" class="admin-form">
+            @Html.AntiForgeryToken()
+            @foreach (var f in textFields)
+            {
+                <div class="admin-field">
+                    <label>@f.Label</label>
+                    @if (f.Kind == FieldKind.Multiline)
+                    {
+                        <textarea name="f[@f.Key]" rows="2">@textValues[f.Key]</textarea>
+                    }
+                    else
+                    {
+                        <input type="text" name="f[@f.Key]" value="@textValues[f.Key]" />
+                    }
+                </div>
+            }
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn--primary">Lưu khối nhận tin</button>
+            </div>
+        </form>
+    </div>
+}

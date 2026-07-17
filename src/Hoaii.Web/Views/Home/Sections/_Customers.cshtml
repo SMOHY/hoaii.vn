@@ -1,7 +1,9 @@
 @model IReadOnlyList<string>
+@using Hoaii.Web.Services
+@inject PageContentService Page
 @* Khách hàng — see design-specs/home/03-about-and-customers.md *@
 <section class="customers-section">
-    <h2 class="customers-heading">KHÁCH HÀNG CỦA CHÚNG TÔI</h2>
+    <h2 class="customers-heading">@Page.Get(PageContentKeys.Home, "customers_heading")</h2>
     <div class="customers-marquee">
         @for (var row = 0; row < 3; row++)
         {

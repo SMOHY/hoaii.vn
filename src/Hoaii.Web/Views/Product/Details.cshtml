@@ -1,4 +1,6 @@
 @model Hoaii.Web.Models.Product.ProductDetailsViewModel
+@using Hoaii.Web.Services
+@inject PageContentService PageC
 @{
     ViewData["Title"] = Model.Name;
     // Main gallery shot is a CSS background — name it so it starts downloading immediately.
@@ -38,7 +40,7 @@
         <div class="pdp-title-block">
             <h1 class="pdp-title">@Model.Name.ToUpperInvariant()</h1>
             <p class="pdp-price">@Model.Price.ToString("N0") VNĐ</p>
-            <p class="pdp-price-note">(Giá chưa bao gồm 8% VAT)</p>
+            <p class="pdp-price-note">@PageC.Get(PageContentKeys.Shop, "pdp_price_note")</p>
         </div>
 
         @* Figma keeps a colour picker in the file but ships it hidden (node 826:20630),
@@ -147,7 +149,7 @@
 @if (Model.RelatedProducts.Count > 0)
 {
     <section class="pdp-related">
-        <h2 class="pdp-related__title">SẢN PHẨM LIÊN QUAN</h2>
+        <h2 class="pdp-related__title">@PageC.Get(PageContentKeys.Shop, "pdp_related_heading")</h2>
         <div class="pdp-related__grid">
             @foreach (var item in Model.RelatedProducts)
             {

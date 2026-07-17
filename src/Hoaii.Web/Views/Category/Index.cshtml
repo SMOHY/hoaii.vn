@@ -1,4 +1,6 @@
 @model Hoaii.Web.Models.Category.CategoryPageViewModel
+@using Hoaii.Web.Services
+@inject PageContentService PageC
 @{
     ViewData["Title"] = Model.Title;
     ViewData["HeroOverlay"] = true;
@@ -109,8 +111,8 @@
     @if (Model.Products.Count == 0)
     {
         <div class="cat-empty">
-            <h2 class="cat-empty__title">SẢN PHẨM ĐANG ĐƯỢC CẬP NHẬT</h2>
-            <p class="cat-empty__text">Bạn có thể xem sản phẩm khác hoặc quay lại <a href="/">trang chủ</a></p>
+            <h2 class="cat-empty__title">@PageC.Get(PageContentKeys.Shop, "category_empty_title")</h2>
+            <p class="cat-empty__text">@PageC.Get(PageContentKeys.Shop, "category_empty_text") <a href="/">trang chủ</a></p>
             <img class="cat-empty__art" src="~/images/empty-state.png" alt="" loading="lazy" />
         </div>
     }

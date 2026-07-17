@@ -1,9 +1,11 @@
 @model IReadOnlyList<Hoaii.Web.Models.Home.AboutCardViewModel>
+@using Hoaii.Web.Services
+@inject PageContentService Page
 @* Về Hoài — see design-specs/home/03-about-and-customers.md *@
 <section class="about-section">
     <div class="about-heading">
-        <h2>VỀ HOÀI</h2>
-        <p class="about-subtitle">Khởi nguồn từ tình yêu dành cho di sản Việt Nam, HOÀI chọn hành trình gìn giữ và lan tỏa giá trị truyền thống thông qua những tặng phẩm văn hóa cao cấp. Bằng lăng kính của thế hệ trẻ, chúng tôi đưa nét đẹp xưa hòa cùng nhịp sống hôm nay, để ký ức, câu chuyện và tinh thần dân tộc được tiếp nối một cách mới mẻ, đầy cảm hứng qua ngôn ngữ thiết kế đương đại.</p>
+        <h2>@Page.Get(PageContentKeys.Home, "about_heading")</h2>
+        <p class="about-subtitle">@Page.Get(PageContentKeys.Home, "about_subtitle")</p>
     </div>
     <div class="about-cards">
         @foreach (var card in Model)
