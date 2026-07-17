@@ -14,7 +14,8 @@ ConnectionStrings__DefaultConnection='Server=(localdb)\MSSQLLocalDB;Database=Hoa
 dotnet run --project src/Hoaii.Web
 ```
 
-2. Chạy test (cần Node 18+; hai file dùng trình duyệt cần `npm i playwright`):
+2. Chạy test (cần Node 18+). Hai file cuối điều khiển trình duyệt thật nên cần Playwright —
+   nếu chưa có thì cài trong chính thư mục này: `cd tests/e2e && npm init -y && npm i playwright && npx playwright install chromium`
 
 ```bash
 node tests/e2e/storefront.test.js   # chức năng phía khách  (HTTP, nhanh)
