@@ -12,3 +12,6 @@ node_modules/
 
 # User-uploaded media (admin) — not source
 src/Hoaii.Web/wwwroot/uploads/
+
+# Build/publish output — contains appsettings.Production.json with the VPS DB password
+publish_out/
