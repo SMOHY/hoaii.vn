@@ -51,7 +51,7 @@ Full-bleed component, design frame width 1920px; inner content constrained to **
 - Height: 48px
 - Background: `#F2F2F2`
 - Inner row: width 1440px, height 24px, `display:flex; justify-content:space-between; align-items:center; padding: 0 10px` (wrapped in outer `padding:10px` container)
-- Left cluster: icon (24×24, "Variant3" badge icon) + gap 12px + text "Hơn 100+ mẫu bánh và quà tặng độc đáo" (Josefin Sans Regular 15px/24px, black, letter-spacing 0.4px)
+- Left cluster: icon (24×24, "Variant3" badge icon) + gap 12px + text "Đón đầu xu hướng quà tặng với những vật phẩm thiết kế mới nhất vừa ra mắt!" (Josefin Sans Regular 15px/24px, black, letter-spacing 0.4px) — this is a single site-wide CMS setting (`announcement_text`), so it renders identically on every page even though some older Figma frames (e.g. category-page nav instances) still show the prior copy "Hơn 100+ mẫu bánh và quà tặng độc đáo".
 - Right cluster: flex row, gap 40px, items: "Về chúng tôi", "Liên hệ", "Đại lý", "Blog" — same type style as above, black
 
 **Row 3 — Main nav bar**

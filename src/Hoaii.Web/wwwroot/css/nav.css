@@ -26,6 +26,7 @@ body.hero-overlay .nav-main-inner {
 body.hero-overlay .nav-m-main-inner {
   border-bottom-color: rgba(255, 255, 255, 0.3);
 }
+body.hero-overlay .nav-menu .item,
 body.hero-overlay .nav-menu .item span,
 body.hero-overlay .nav-lang,
 body.hero-overlay .nav-icons .icon-btn,
@@ -123,7 +124,7 @@ body.hero-overlay .nav-menu .item.is-open {
   font-weight: 700;
   font-size: 15px;
   line-height: 24px;
-  color: var(--color-black);
+  color: var(--color-grey-900); /* Figma node 923:16873: text-[#0f0f0f] */
   letter-spacing: 0.4px;
 }
 .nav-menu .chevron { width: 16px; height: 16px; }
@@ -136,6 +137,7 @@ body.hero-overlay .nav-menu .item.is-open {
   justify-content: center;
   background: none;
   border: none;
+  color: var(--color-grey-900); /* Figma node 923:16873 icon fill */
 }
 .nav-icons .icon-btn img { width: 18.67px; height: 18.67px; }
 .nav-cart-btn { position: relative; text-decoration: none; }
@@ -151,7 +153,7 @@ body.hero-overlay .nav-menu .item.is-open {
   font-weight: 700;
   font-size: 15px;
   line-height: 24px;
-  color: var(--color-black);
+  color: var(--color-grey-800); /* Figma node 923:16873: text-[#1c1c1c] */
   text-decoration: none;
 }
 .nav-lang .en { opacity: 0.5; }
@@ -182,7 +184,7 @@ body.hero-overlay .nav-menu .item.is-open {
 }
 .nav-m-main-inner {
   width: 100%;
-  border-bottom: 1.5px solid var(--color-grey-50);
+  border-bottom: 1.5px solid var(--color-grey-600); /* Figma node 1064:16140: border-[#5a5a5a] */
   padding: 4px 0;
   display: flex;
   align-items: center;

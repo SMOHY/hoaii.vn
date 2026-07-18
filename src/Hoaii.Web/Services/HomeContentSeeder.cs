@@ -50,9 +50,9 @@ public static class HomeContentSeeder
         if (!await db.HomeServiceTabs.AnyAsync())
         {
             db.HomeServiceTabs.AddRange(
-                new HomeServiceTab { Key = "in-khac", Label = "In khắc logo cá nhân", IconSvg = "engraving", PanelImageUrl = "/images/home/service-panel.jpg", Caption = "Cá nhân hóa sản phẩm bằng logo, tên riêng của bạn.", CaptionColorHex = "#F2F2F2", CtaUrl = "/lien-he", SortOrder = 0 },
-                new HomeServiceTab { Key = "goi-qua", Label = "Lựa chọn gói quà", IconSvg = "gift", PanelImageUrl = "/images/home/service-panel.jpg", Caption = "Tự do phối hợp gói quà theo sở thích và ngân sách", CaptionColorHex = "#F7E9EB", CtaUrl = "/lien-he", SortOrder = 1 },
-                new HomeServiceTab { Key = "thiet-ke", Label = "Thiết kế ấn phẩm", IconSvg = "notepad-edit", PanelImageUrl = "/images/home/service-panel.jpg", Caption = "Ấn phẩm đi kèm được thiết kế riêng, độc bản", CaptionColorHex = "#F7E9EB", CtaUrl = "/lien-he", SortOrder = 2 });
+                new HomeServiceTab { Key = "in-khac", Label = "In khắc logo cá nhân", IconSvg = "engraving", PanelImageUrl = "/images/home/service-in-khac.jpg", Caption = "Cá nhân hóa sản phẩm bằng logo, tên riêng của bạn.", CaptionColorHex = "#F2F2F2", CtaUrl = "/lien-he", SortOrder = 0 },
+                new HomeServiceTab { Key = "goi-qua", Label = "Lựa chọn gói quà", IconSvg = "gift", PanelImageUrl = "/images/home/service-goi-qua.jpg", Caption = "Tự do phối hợp gói quà theo sở thích và ngân sách", CaptionColorHex = "#F7E9EB", CtaUrl = "/lien-he", SortOrder = 1 },
+                new HomeServiceTab { Key = "thiet-ke", Label = "Thiết kế ấn phẩm", IconSvg = "notepad-edit", PanelImageUrl = "/images/home/service-thiet-ke.jpg", Caption = "Ấn phẩm đi kèm được thiết kế riêng, độc bản", CaptionColorHex = "#F7E9EB", CtaUrl = "/lien-he", SortOrder = 2 });
         }
 
         if (!await db.HomeAboutCards.AnyAsync())
