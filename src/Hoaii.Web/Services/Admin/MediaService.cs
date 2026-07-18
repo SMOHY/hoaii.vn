@@ -13,7 +13,8 @@ namespace Hoaii.Web.Services.Admin;
 public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvironment env)
 {
     private const int MaxDimension = 1920;
-    private const long MaxBytes = 10 * 1024 * 1024;
+    public const long MaxBytes = 5 * 1024 * 1024;
+    public const string MaxSizeLabel = "5MB";
 
     /// <summary>WebRootPath is null when the host can't find a wwwroot next to the entry assembly
     /// (e.g. the exe launched straight out of bin/), which used to make every upload throw a
@@ -58,7 +59,7 @@ public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvi
         }
         if (file.Length > MaxBytes)
         {
-            return new UploadResult(false, null, "File vượt quá 10MB.");
+            return new UploadResult(false, null, $"File vượt quá {MaxSizeLabel}.");
         }
 
         // Read the whole file into memory once (capped at 10MB) and work from the byte array.

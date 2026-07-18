@@ -73,6 +73,14 @@
   // Upload straight from the picker, then pick the first new image.
   modal.querySelector('[data-picker-upload]')?.addEventListener('submit', async function (e) {
     e.preventDefault();
+    // Instant feedback instead of a wasted round-trip; the server enforces the same 5MB cap.
+    var tooBig = [...e.target.querySelectorAll('input[type=file]')]
+      .flatMap(function (i) { return [...i.files]; })
+      .filter(function (f) { return f.size > 5 * 1024 * 1024; });
+    if (tooBig.length) {
+      window.hoaiiToast && window.hoaiiToast('Ảnh vượt quá 5MB: ' + tooBig.map(function (f) { return f.name; }).join(', '), 'error');
+      return;
+    }
     const fd = new FormData(e.target);
     fd.append('json', 'true');
     if (token) fd.append('__RequestVerificationToken', token);

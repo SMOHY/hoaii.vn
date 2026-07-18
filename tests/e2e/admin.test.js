@@ -236,6 +236,22 @@ async function admin() {
     check((data.errors || []).length > 0, 'có báo lỗi rõ ràng');
   });
 
+  await test('Upload ảnh: chặn file quá 5MB', async () => {
+    const s = await admin();
+    const t = await s.token('/admin/thu-vien-anh');
+    // 5.5MB — nằm giữa 5MB (giới hạn app) và 6MB (giới hạn request), để lấy thông báo thân thiện.
+    const buf = Buffer.alloc(Math.floor(5.5 * 1024 * 1024));
+    buf[0] = 0xFF; buf[1] = 0xD8; buf[2] = 0xFF; // JPEG magic — nhưng bị chặn theo cỡ trước khi giải mã
+    const fd = new FormData();
+    fd.append('files', new Blob([buf], { type: 'image/jpeg' }), 'big.jpg');
+    fd.append('json', 'true');
+    fd.append('__RequestVerificationToken', t);
+    const r = await s.post('/admin/thu-vien-anh/tai-len', fd, { headers: { 'x-requested-with': 'XMLHttpRequest' } });
+    const data = JSON.parse(r.body || '{}');
+    check((data.uploaded || []).length === 0, 'file quá cỡ không được nhận');
+    check((data.errors || []).some(e => e.includes('5MB')), 'báo lỗi "vượt quá 5MB"');
+  });
+
   // ---------- settings / shipping / payment ----------
   await test('Cài đặt: sửa hotline -> storefront đổi -> trả lại', async () => {
     const s = await admin();

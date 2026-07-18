@@ -23,4 +23,22 @@
       e.stopImmediatePropagation();
     }
   }, true);
+
+  // Block over-5MB uploads on plain (non-async) upload forms before they hit the wire, so the
+  // shop owner sees a clear message instead of the framework's bare "413 Payload Too Large" page.
+  // The JS pickers do their own check; this covers the standalone media library form.
+  var MAX = 5 * 1024 * 1024;
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form.matches || !form.matches('[data-media-upload]')) return;
+    var tooBig = [];
+    form.querySelectorAll('input[type=file]').forEach(function (input) {
+      Array.prototype.forEach.call(input.files, function (f) { if (f.size > MAX) tooBig.push(f.name); });
+    });
+    if (tooBig.length) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.alert('Ảnh vượt quá 5MB, không tải lên được:\n' + tooBig.join('\n'));
+    }
+  }, true);
 })();

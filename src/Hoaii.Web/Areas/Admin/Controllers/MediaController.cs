@@ -14,9 +14,11 @@ public class MediaController(HoaiiDbContext db, MediaService media) : BaseAdminC
         return View(assets);
     }
 
+    // A touch above MediaService.MaxBytes (5MB) so a slightly-oversized file still reaches the
+    // service and gets the friendly "vượt quá 5MB" message rather than a bare framework 413.
     [HttpPost("/admin/thu-vien-anh/tai-len")]
     [ValidateAntiForgeryToken]
-    [RequestSizeLimit(11 * 1024 * 1024)]
+    [RequestSizeLimit(6 * 1024 * 1024)]
     public async Task<IActionResult> Upload(List<IFormFile> files, bool json = false)
     {
         var uploaded = new List<object>();

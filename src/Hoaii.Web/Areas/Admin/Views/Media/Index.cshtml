@@ -5,11 +5,11 @@
 
 <div class="admin-card">
     <h2 class="admin-card__title">Tải ảnh lên</h2>
-    <form method="post" action="/admin/thu-vien-anh/tai-len" enctype="multipart/form-data" class="admin-form">
+    <form method="post" action="/admin/thu-vien-anh/tai-len" enctype="multipart/form-data" class="admin-form" data-media-upload>
         @Html.AntiForgeryToken()
         <div class="admin-field">
             <input type="file" name="files" accept="image/jpeg,image/png,image/webp,image/svg+xml" multiple required />
-            <span class="admin-field__hint">JPG, PNG, WEBP hoặc SVG. Ảnh lớn được tự động nén và giảm kích thước.</span>
+            <span class="admin-field__hint">JPG, PNG, WEBP hoặc SVG, tối đa 5MB mỗi ảnh. Ảnh lớn được tự động nén và giảm kích thước.</span>
         </div>
         <button type="submit" class="admin-btn admin-btn--primary">Tải lên</button>
     </form>
