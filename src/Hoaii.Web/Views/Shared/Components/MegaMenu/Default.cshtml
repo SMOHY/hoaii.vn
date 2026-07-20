@@ -5,8 +5,9 @@
     {
         @* No aria-hidden: the panels are hidden by display/visibility, which already takes them
            out of the accessibility tree, and a static aria-hidden would keep hiding the panel
-           from screen readers once it opens. *@
-        <div class="mega-menu" data-menu-panel="@panel.CategoryKey">
+           from screen readers once it opens. The id is the aria-controls target of the matching
+           nav trigger in _Nav.cshtml. *@
+        <div class="mega-menu" id="mega-menu-@panel.CategoryKey" data-menu-panel="@panel.CategoryKey">
             <div class="mega-menu__columns">
                 @foreach (var column in panel.Columns)
                 {

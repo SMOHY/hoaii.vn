@@ -44,7 +44,9 @@
                 @foreach (var item in mainMenu)
                 {
                     var menuKey = item.Url.Split('/').Last();
-                    <button type="button" class="item" data-menu-trigger="@menuKey" aria-expanded="false">
+                    @* aria-controls points at the panel the MegaMenu view component renders for
+                       this key, so screen readers can follow the trigger to the dropdown. *@
+                    <button type="button" class="item" data-menu-trigger="@menuKey" aria-expanded="false" aria-controls="mega-menu-@menuKey">
                         <span>@item.Label</span>
                         @if (item.HasDropdown)
                         {
