@@ -18,6 +18,9 @@ public class MegaMenuPanelViewModel
     public required IReadOnlyList<MegaMenuColumnViewModel> Columns { get; init; }
     public required string SeeAllUrl { get; init; }
 
+    /// <summary>Display name of the menu, used to label the panel's close button ("Đóng menu Quà tết").</summary>
+    public required string Title { get; init; }
+
     /// <summary>Product shot filling the right-hand half of the panel (node 923:17080).</summary>
     public string? ImageUrl { get; init; }
 }

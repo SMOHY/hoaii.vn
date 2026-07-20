@@ -343,18 +343,31 @@ body.hero-overlay .nav-menu .item.is-open {
   position: relative; width: 554px; flex-shrink: 0;
   background-color: var(--color-grey-100);
   background-size: cover; background-position: center; background-repeat: no-repeat;
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
   padding: 10px 10px 40px;
   overflow: hidden;
 }
-.mega-menu__see-all {
-  position: relative; z-index: 1;
-  background: rgba(0, 0, 0, 0.35); color: #fff; border-radius: var(--radius-sm); padding: 8px 20px;
-  font-family: var(--font-body); font-weight: 700; font-size: 15px; line-height: 24px;
-  letter-spacing: 0.4px; text-decoration: none; align-self: center;
-  backdrop-filter: blur(2px);
+/* Close row — Figma I923:17083;898:15125: full width, icon pinned right. The 10px sits on the
+   button rather than the row so the hit area is 48px instead of a bare 28px icon; the icon
+   lands in the same place either way. */
+.mega-menu__close-row { position: relative; z-index: 1; width: 100%; display: flex; justify-content: flex-end; }
+.mega-menu__close {
+  padding: 10px; background: none; border: none; cursor: pointer;
+  color: #fff; display: flex; line-height: 0;
 }
-.mega-menu__see-all:hover { background: rgba(0, 0, 0, 0.55); }
+.mega-menu__close svg { display: block; width: 28px; height: 28px; }
+/* Figma I923:17083;898:11722 — 52px tall, button bottom-aligned and centred. */
+.mega-menu__see-all-row {
+  position: relative; z-index: 1; width: 100%; height: 52px;
+  display: flex; align-items: flex-end; justify-content: center; padding: 10px;
+}
+.mega-menu__see-all {
+  background: rgba(0, 0, 0, 0.2); color: #fff; border-radius: var(--radius-sm); padding: 4px 16px;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px; line-height: 24px;
+  letter-spacing: 0.4px; text-decoration: none;
+}
+/* Figma has no hover state for this button; keep the existing darkening so it still reads as a control. */
+.mega-menu__see-all:hover { background: rgba(0, 0, 0, 0.35); }
 
 /* Active pill highlight — Figma's dropdown demo (923:17080) is built for the transparent/white-text
    nav variant (rgba(255,255,255,.2) highlight, reads well over a hero image); on the solid white
@@ -364,12 +377,10 @@ body.hero-overlay .nav-menu .item.is-open {
 
 /* Hover-to-reveal, pure CSS (no JS required) — the matching mega-menu panel opens while the
    trigger pill OR the panel itself is hovered/focused (so the mouse can travel down into the
-   dropdown without it closing). JS (site.js) only adds click support for touch/keyboard users. */
+   dropdown without it closing). JS (site.js) only adds click support for touch/keyboard users.
+   "Quà tết" is excluded: its Figma prototype (node 1287:56680) specifies ON_CLICK, so it is
+   driven by .is-open alone in the block below. */
 @media (min-width: 992px) {
-  .nav-desktop:has([data-menu-trigger="qua-tet"]:hover) [data-menu-panel="qua-tet"],
-  .nav-desktop:has([data-menu-panel="qua-tet"]:hover) [data-menu-panel="qua-tet"],
-  .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"] { display: flex; }
-
   .nav-desktop:has([data-menu-trigger="qua-trung-thu"]:hover) [data-menu-panel="qua-trung-thu"],
   .nav-desktop:has([data-menu-panel="qua-trung-thu"]:hover) [data-menu-panel="qua-trung-thu"],
   .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"] { display: flex; }
@@ -381,5 +392,41 @@ body.hero-overlay .nav-menu .item.is-open {
   .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"]:hover) [data-menu-panel="san-pham-chon-loc"],
   .nav-desktop:has([data-menu-panel="san-pham-chon-loc"]:hover) [data-menu-panel="san-pham-chon-loc"],
   .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] { display: flex; }
+}
+
+/* ---------- "Quà tết" dropdown — Figma node 1287:56680 ----------
+   Prototype: ON_CLICK, Smart Animate, Ease in and out, 0.8s. The only geometry that differs
+   between the closed and open states is the panel's height (0 → 403px), so that is the only
+   property animated — no fade, no scale, no bounce. `display` cannot be transitioned, so the
+   panel stays laid out and is clipped by the existing overflow:hidden rather than removed;
+   it is lifted out of the wrap's flex flow with position:absolute so a 0-height panel can
+   never push a sibling panel off-centre. "Ease in and out" = cubic-bezier(0.42, 0, 0.58, 1). */
+@media (min-width: 992px) {
+  .mega-menu-wrap [data-menu-panel="qua-tet"] {
+    display: flex;
+    position: absolute;
+    top: 16px; /* Figma: the nav wrapper's gap goes 8px → 16px while the menu is open */
+    left: 50%;
+    transform: translateX(-50%);
+    height: 0;
+    visibility: hidden;
+    transition: height 0.8s cubic-bezier(0.42, 0, 0.58, 1), visibility 0s linear 0.8s;
+  }
+  .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"] {
+    height: 403px;
+    visibility: visible;
+    transition: height 0.8s cubic-bezier(0.42, 0, 0.58, 1), visibility 0s;
+  }
+  /* Both halves hold their full height while the parent is clipped — without this they would
+     squash down to nothing instead of being revealed. */
+  .mega-menu-wrap [data-menu-panel="qua-tet"] > * { height: 403px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu-wrap [data-menu-panel="qua-tet"],
+  .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"] {
+    transition-duration: 0s;
+    transition-delay: 0s;
+  }
 }
 

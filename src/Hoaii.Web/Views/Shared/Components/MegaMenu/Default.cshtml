@@ -3,7 +3,10 @@
 <div class="mega-menu-wrap">
     @foreach (var panel in Model)
     {
-        <div class="mega-menu" data-menu-panel="@panel.CategoryKey" aria-hidden="true">
+        @* No aria-hidden: the panels are hidden by display/visibility, which already takes them
+           out of the accessibility tree, and a static aria-hidden would keep hiding the panel
+           from screen readers once it opens. *@
+        <div class="mega-menu" data-menu-panel="@panel.CategoryKey">
             <div class="mega-menu__columns">
                 @foreach (var column in panel.Columns)
                 {
@@ -22,11 +25,18 @@
                 }
             </div>
             @* background-image, not <img> — the global `img { height: auto }` reset stops
-               object-fit from filling the panel. *@
-            @* No close button: the panel opens on hover and closes when the pointer leaves,
-               which is how Figma draws it (node 923:17081). *@
+               object-fit from filling the panel (background-size: cover renders identically). *@
             <div class="mega-menu__visual" style="@(panel.ImageUrl is not null ? $"background-image:url('{panel.ImageUrl}')" : "")">
-                <a href="@panel.SeeAllUrl" class="mega-menu__see-all">Xem tất cả</a>
+                <div class="mega-menu__close-row">
+                    @* Xnix/Line/Cross (node 898:15129) — path exported from Figma at 28×28,
+                       recoloured with currentColor like the other Xnix icons in _Nav.cshtml. *@
+                    <button type="button" class="mega-menu__close" data-menu-close aria-label="Đóng menu @panel.Title">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M7.54608 19.2145C7.20437 19.5562 7.20437 20.1102 7.54608 20.4519C7.88779 20.7936 8.4418 20.7936 8.78351 20.4519L8.16479 19.8332L7.54608 19.2145ZM14.6168 14.6186C14.9586 14.2768 14.9586 13.7228 14.6168 13.3811C14.2751 13.0394 13.7211 13.0394 13.3794 13.3811L13.9981 13.9998L14.6168 14.6186ZM13.3794 13.3811C13.0377 13.7228 13.0377 14.2768 13.3794 14.6186C13.7211 14.9603 14.2751 14.9603 14.6168 14.6186L13.9981 13.9998L13.3794 13.3811ZM20.4502 8.78522C20.7919 8.44351 20.7919 7.88949 20.4502 7.54779C20.1085 7.20608 19.5545 7.20608 19.2127 7.54779L19.8315 8.1665L20.4502 8.78522ZM14.6168 13.3811C14.2751 13.0394 13.7211 13.0394 13.3794 13.3811C13.0377 13.7228 13.0377 14.2768 13.3794 14.6186L13.9981 13.9998L14.6168 13.3811ZM19.2127 20.4519C19.5545 20.7936 20.1085 20.7936 20.4502 20.4519C20.7919 20.1102 20.7919 19.5562 20.4502 19.2145L19.8315 19.8332L19.2127 20.4519ZM13.3794 14.6186C13.7211 14.9603 14.2751 14.9603 14.6168 14.6186C14.9586 14.2768 14.9586 13.7228 14.6168 13.3811L13.9981 13.9998L13.3794 14.6186ZM8.78351 7.54779C8.4418 7.20608 7.88779 7.20608 7.54608 7.54779C7.20437 7.88949 7.20437 8.44351 7.54608 8.78522L8.16479 8.1665L8.78351 7.54779ZM8.16479 19.8332L8.78351 20.4519L14.6168 14.6186L13.9981 13.9998L13.3794 13.3811L7.54608 19.2145L8.16479 19.8332ZM13.9981 13.9998L14.6168 14.6186L20.4502 8.78522L19.8315 8.1665L19.2127 7.54779L13.3794 13.3811L13.9981 13.9998ZM13.9981 13.9998L13.3794 14.6186L19.2127 20.4519L19.8315 19.8332L20.4502 19.2145L14.6168 13.3811L13.9981 13.9998ZM13.9981 13.9998L14.6168 13.3811L8.78351 7.54779L8.16479 8.1665L7.54608 8.78522L13.3794 14.6186L13.9981 13.9998Z" fill="currentColor"/></svg>
+                    </button>
+                </div>
+                <div class="mega-menu__see-all-row">
+                    <a href="@panel.SeeAllUrl" class="mega-menu__see-all">Xem tất cả</a>
+                </div>
             </div>
         </div>
     }

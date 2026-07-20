@@ -104,8 +104,9 @@
   });
 })();
 
-// Mega-menu click-to-toggle (progressive enhancement — CSS :hover already shows/hides the
-// panels with zero JS; this just adds a click affordance for touch/keyboard users).
+// Mega-menu open/close. "Quà tết" is click-only (its Figma prototype, node 1287:56680,
+// specifies ON_CLICK); the other three still reveal on :hover in CSS, so for those this is a
+// click affordance for touch/keyboard users. Only one panel can be open at a time either way.
 (function () {
   const triggers = document.querySelectorAll('[data-menu-trigger]');
 
@@ -125,12 +126,37 @@
       trigger.classList.toggle('is-open', willOpen);
       trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     });
+
+    // Reaching for one of the hover-driven menus has to dismiss a click-opened panel,
+    // otherwise both would be on screen at once. Figma only ever shows one dropdown.
+    trigger.addEventListener('mouseenter', function () {
+      if (!trigger.classList.contains('is-open')) {
+        closeAll();
+      }
+    });
+  });
+
+  // The cross inside a panel (Figma node 1287:56680). One listener per button, bound once
+  // at load — the panels are server-rendered and never replaced, so nothing accumulates.
+  document.querySelectorAll('[data-menu-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      closeAll();
+    });
   });
 
   document.addEventListener('click', function (e) {
     if (!e.target.closest('[data-mega-menu-nav]') && !e.target.closest('.mega-menu')) {
       closeAll();
     }
+  });
+
+  // Escape closes the open panel and hands focus back to the trigger that opened it.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    const open = document.querySelector('[data-menu-trigger].is-open');
+    if (!open) return;
+    closeAll();
+    open.focus();
   });
 })();
 

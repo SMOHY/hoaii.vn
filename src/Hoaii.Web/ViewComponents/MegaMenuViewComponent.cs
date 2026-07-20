@@ -61,6 +61,7 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             panels.Add(new MegaMenuPanelViewModel
             {
                 CategoryKey = slug,
+                Title = category.Name,
                 SeeAllUrl = $"/danh-muc/{slug}",
                 ImageUrl = panelImage,
                 Columns =
@@ -93,6 +94,7 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
         panels.Add(new MegaMenuPanelViewModel
         {
             CategoryKey = "san-pham-chon-loc",
+            Title = "Sản phẩm chọn lọc",
             SeeAllUrl = "/danh-muc/san-pham-chon-loc",
             ImageUrl = featuredImage,
             Columns =
