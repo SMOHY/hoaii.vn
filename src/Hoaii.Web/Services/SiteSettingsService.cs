@@ -52,7 +52,7 @@ public static class SiteSettingKeys
     public static readonly IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> All =
     [
         (Hotline, "Hotline (thanh trên cùng)", "0941.686.682", false, "contact"),
-        (AnnouncementText, "Dòng thông báo (thanh phụ)", "Hơn 100+ mẫu bánh và quà tặng độc đáo", false, "contact"),
+        (AnnouncementText, "Dòng thông báo (thanh phụ)", "Đón đầu xu hướng quà tặng với những vật phẩm thiết kế mới nhất vừa ra mắt!", false, "contact"),
         (CompanyName, "Tên công ty", "Công ty TNHH MTV Hoài", false, "contact"),
         (Address, "Địa chỉ", "945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội", false, "contact"),
         (TaxCode, "Mã số thuế", "0101287214", false, "contact"),

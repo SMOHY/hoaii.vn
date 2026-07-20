@@ -54,7 +54,7 @@ public static class PageContentKeys
         // ---------- Trang chủ: chữ khung của từng mục ----------
         new(Home, "featured_title", "Sản phẩm nổi bật — tiêu đề", "LỰA CHỌN HÀNG ĐẦU", FieldKind.Text),
         new(Home, "featured_subtitle", "Sản phẩm nổi bật — mô tả",
-            "Mỗi sản phẩm quà tặng trong bộ sưu tập của chúng tôi được chế tác công phu, tôn vinh từng chi tiết tinh xảo và lấy cảm hứng từ sự đa dạng của các truyền thống văn hóa.", FieldKind.Multiline),
+            "Mời bạn thưởng lãm những lựa chọn hàng đầu từ bộ sưu tập quà tặng thiết kế mới nhất. Tinh tế trong từng đường nét, độc bản trong từng câu chuyện.", FieldKind.Multiline),
         new(Home, "featured_card_eyebrow_desktop", "Nhãn thẻ (desktop)", "Phẩm quà", FieldKind.Text),
         new(Home, "featured_card_eyebrow_mobile", "Nhãn thẻ (mobile)", "Bộ sưu tập", FieldKind.Text),
         new(Home, "featured_card_cta_desktop", "Nút thẻ (desktop)", "Khám phá", FieldKind.Text),
