@@ -94,38 +94,35 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
         }
 
         // "Sản phẩm chọn lọc" has no literal Category row — it's a cross-category
-        // featured/new view, so its columns are sourced differently from the occasion panels above.
-        var productTypeCategories = await db.Categories
+        // featured view (CategoryController.FeaturedSlug), so its columns are sourced differently
+        // from the occasion panels above. Headings and order follow Figma node 908:15241:
+        // the product types, then best sellers, then the featured picks.
+        var productTypes = await db.Categories
             .Where(c => c.Type == CategoryType.ProductType)
+            .OrderBy(c => c.Id)
+            .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
             .ToListAsync();
-        var featured = await db.Products.Where(p => p.IsFeatured && p.IsActive).Take(4)
+        // No sales figures exist yet, so "best sellers" is the oldest live products — the same
+        // stand-in the occasion panels use.
+        var topSellers = await db.Products.Where(p => p.IsActive).OrderBy(p => p.Id).Take(4)
             .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
             .ToListAsync();
-        var newest = await db.Products.Where(p => p.Badge == ProductBadge.New && p.IsActive).Take(4)
+        var highlighted = await db.Products.Where(p => p.IsFeatured && p.IsActive).Take(4)
             .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
             .ToListAsync();
-
-        var featuredImage = await db.ProductImages
-            .Where(i => i.Product.IsFeatured)
-            .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
-            .Select(i => i.Url)
-            .FirstOrDefaultAsync();
 
         panels.Add(new MegaMenuPanelViewModel
         {
             CategoryKey = "san-pham-chon-loc",
             Title = "Sản phẩm chọn lọc",
             SeeAllUrl = "/danh-muc/san-pham-chon-loc",
-            ImageUrl = featuredImage,
+            // Grey panel with no photo, like the other three non-"Quà tết" variants (node 908:15260).
+            ImageUrl = null,
             Columns =
             [
-                new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = featured },
-                new MegaMenuColumnViewModel { Title = "Phiên bản giới hạn", Links = newest },
-                new MegaMenuColumnViewModel
-                {
-                    Title = "Theo bộ sưu tập",
-                    Links = productTypeCategories.Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" }).ToList(),
-                },
+                new MegaMenuColumnViewModel { Title = "Sản phẩm", Links = productTypes },
+                new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = topSellers },
+                new MegaMenuColumnViewModel { Title = "Nổi bật", Links = highlighted },
             ],
         });
 

@@ -104,10 +104,8 @@
   });
 })();
 
-// Mega-menu open/close. "Quà tết" (node 1287:56680) and "Quà trung thu" (node 1287:56777) are
-// click-only, as their Figma prototypes specify ON_CLICK; the remaining two still reveal on
-// :hover in CSS, so for those this is a click affordance for touch/keyboard users. Only one
-// panel is ever open, whichever way it was opened.
+// Mega-menu open/close. All four panels are click-only — every Figma prototype specifies
+// ON_CLICK (nodes 1287:56680, 56777, 56871, 56965) — and only one is ever open at a time.
 (function () {
   const triggers = document.querySelectorAll('[data-menu-trigger]');
 
@@ -117,10 +115,10 @@
 
   /**
    * @param instant Close without the open animation playing in reverse. Used when the user
-   *   moves straight to another menu: the panels are stacked in the same spot, so letting the
-   *   outgoing one animate shut would leave two dropdowns overlapping (and "Quà tết" closes
-   *   over 0.8s, far longer than "Quà trung thu" takes to open). Dismissing the menu outright
-   *   — cross, Escape, click outside — keeps the normal animated close.
+   *   switches straight to another menu: the panels are stacked in the same spot, so letting the
+   *   outgoing one animate shut would leave two dropdowns overlapping (and "Quà tết" closes over
+   *   0.8s, far longer than the other three take to open). Dismissing the menu outright — cross,
+   *   Escape, click outside — keeps the normal animated close.
    */
   function closeAll(instant) {
     triggers.forEach(function (t) {
@@ -145,14 +143,6 @@
       closeAll(willOpen); // opening a different menu replaces the current one outright
       trigger.classList.toggle('is-open', willOpen);
       trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-    });
-
-    // Reaching for one of the hover-driven menus has to dismiss a click-opened panel,
-    // otherwise both would be on screen at once. Figma only ever shows one dropdown.
-    trigger.addEventListener('mouseenter', function () {
-      if (!trigger.classList.contains('is-open')) {
-        closeAll(true);
-      }
     });
   });
 
