@@ -456,14 +456,18 @@
   z-index: 2;
   transition: width 3.6s ease, height 3.6s ease;
 }
+/* Grows to the same 240px side gutter the rest of the page uses (1440 of 1920), not edge to
+   edge; height follows the video's own 1.52 ratio so it stays uncropped. */
 .story-banner:hover .story-banner__video,
 .story-banner:focus-within .story-banner__video {
-  width: 100%;
-  height: 100%;
+  width: 75%;      /* 1440 / 1920 */
+  height: 87.8%;   /* 948 / 1080 — keeps the video's aspect at that width */
 }
-/* The still frame under it would peek out around the growing video. */
-.story-banner:hover .story-banner__accent,
-.story-banner:focus-within .story-banner__accent { opacity: 0; }
+/* The heading sits dead centre, so the growing video would cover it half-way and leave the
+   ends poking out. Fade it before the video reaches it. */
+.story-banner__title { transition: opacity 1.2s ease; }
+.story-banner:hover .story-banner__title,
+.story-banner:focus-within .story-banner__title { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .story-banner__video { transition: none; }
