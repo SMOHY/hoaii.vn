@@ -104,17 +104,37 @@
   });
 })();
 
-// Mega-menu open/close. "Quà tết" is click-only (its Figma prototype, node 1287:56680,
-// specifies ON_CLICK); the other three still reveal on :hover in CSS, so for those this is a
-// click affordance for touch/keyboard users. Only one panel can be open at a time either way.
+// Mega-menu open/close. "Quà tết" (node 1287:56680) and "Quà trung thu" (node 1287:56777) are
+// click-only, as their Figma prototypes specify ON_CLICK; the remaining two still reveal on
+// :hover in CSS, so for those this is a click affordance for touch/keyboard users. Only one
+// panel is ever open, whichever way it was opened.
 (function () {
   const triggers = document.querySelectorAll('[data-menu-trigger]');
 
-  function closeAll(except) {
+  function panelFor(trigger) {
+    return document.querySelector('[data-menu-panel="' + trigger.dataset.menuTrigger + '"]');
+  }
+
+  /**
+   * @param instant Close without the open animation playing in reverse. Used when the user
+   *   moves straight to another menu: the panels are stacked in the same spot, so letting the
+   *   outgoing one animate shut would leave two dropdowns overlapping (and "Quà tết" closes
+   *   over 0.8s, far longer than "Quà trung thu" takes to open). Dismissing the menu outright
+   *   — cross, Escape, click outside — keeps the normal animated close.
+   */
+  function closeAll(instant) {
     triggers.forEach(function (t) {
-      if (t !== except) {
-        t.classList.remove('is-open');
-        t.setAttribute('aria-expanded', 'false');
+      if (!t.classList.contains('is-open')) return;
+
+      const panel = instant ? panelFor(t) : null;
+      if (panel) panel.classList.add('is-closing-instantly');
+
+      t.classList.remove('is-open');
+      t.setAttribute('aria-expanded', 'false');
+
+      if (panel) {
+        void panel.offsetHeight; // commit the collapsed height while transitions are off
+        panel.classList.remove('is-closing-instantly');
       }
     });
   }
@@ -122,7 +142,7 @@
   triggers.forEach(function (trigger) {
     trigger.addEventListener('click', function () {
       const willOpen = !trigger.classList.contains('is-open');
-      closeAll();
+      closeAll(willOpen); // opening a different menu replaces the current one outright
       trigger.classList.toggle('is-open', willOpen);
       trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     });
@@ -131,13 +151,13 @@
     // otherwise both would be on screen at once. Figma only ever shows one dropdown.
     trigger.addEventListener('mouseenter', function () {
       if (!trigger.classList.contains('is-open')) {
-        closeAll();
+        closeAll(true);
       }
     });
   });
 
-  // The cross inside a panel (Figma node 1287:56680). One listener per button, bound once
-  // at load — the panels are server-rendered and never replaced, so nothing accumulates.
+  // The cross inside a panel. One listener per button, bound once at load — the panels are
+  // server-rendered and never replaced, so nothing accumulates.
   document.querySelectorAll('[data-menu-close]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       closeAll();

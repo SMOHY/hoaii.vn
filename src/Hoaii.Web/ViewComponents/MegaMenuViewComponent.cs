@@ -52,11 +52,16 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
                 .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
                 .ToList();
 
-            var panelImage = await db.ProductImages
-                .Where(i => i.Product.CategoryId == category.Id)
-                .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
-                .Select(i => i.Url)
-                .FirstOrDefaultAsync();
+            // Only "Quà tết" carries a photo. In Figma the other panels' right-hand half is a
+            // flat grey-100 fill with no image placed (nodes 908:15196 / 908:15228 / 908:15260),
+            // so filling it with an arbitrary product shot would not match the design.
+            var panelImage = slug == "qua-tet"
+                ? await db.ProductImages
+                    .Where(i => i.Product.CategoryId == category.Id)
+                    .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
+                    .Select(i => i.Url)
+                    .FirstOrDefaultAsync()
+                : null;
 
             panels.Add(new MegaMenuPanelViewModel
             {
