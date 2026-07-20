@@ -11,12 +11,14 @@
        larger of the two it used to show around the video's edges. *@
 
     @* The section is the hover target rather than the heading alone: once the video grows it
-       covers the heading, and a heading-only trigger would flip-flop under the cursor. *@
+       covers the heading, and a heading-only trigger would flip-flop under the cursor.
+       tabindex makes the reveal reachable by keyboard — focusin/out in home.js and the
+       :focus-within rule in home.css give it the same play+grow as hover. *@
     <video class="story-banner__video"
            src="/videos/home-story.mp4"
            poster="/images/home/home-story-poster.jpg"
-           muted loop playsinline preload="none"
-           aria-label="Câu chuyện trong từng sản phẩm"></video>
+           muted loop playsinline preload="none" tabindex="0"
+           aria-label="Xem video câu chuyện trong từng sản phẩm"></video>
 
     <h2 class="story-banner__title">
         <span class="story-banner__title--desktop">@Page.Get(PageContentKeys.Home, "story_banner_desktop")</span>

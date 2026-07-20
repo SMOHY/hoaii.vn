@@ -110,7 +110,7 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
         var highlighted = await db.Products.Where(p => p.IsFeatured && p.IsActive).Take(4)
             .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
             .ToListAsync();
-
+            
         panels.Add(new MegaMenuPanelViewModel
         {
             CategoryKey = "san-pham-chon-loc",

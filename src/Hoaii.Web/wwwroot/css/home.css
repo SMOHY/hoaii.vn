@@ -294,7 +294,11 @@
    (crop x=144 y=465 w=1857 of the 2048×3072 file), which landed within 0.7% of the
    percentages Figma reports. r3c2/r3c3 use Figma's own percentages converted to px. */
 .featured-tile.featured-tile--r2c2 img { width: 475px; left: -34.1px; top: -103.7px; }
-.featured-tile.featured-tile--r3c2 img { width: 604.2px; left: -163px; top: 0; }
+/* r3c2: Figma's own numbers (604×604 cover, -163, 0) and a pixel search of the source for the
+   rectangle that best matches Figma's render both bottom out around 24/255 — i.e. no rectangular
+   crop of this file does better, so the remaining gap is a source/render-level difference, not a
+   position error. Using the search optimum (width 576, offset -143/-90), the closest measured. */
+.featured-tile.featured-tile--r3c2 img { width: 576.2px; left: -142.7px; top: -90.5px; }
 .featured-tile.featured-tile--r3c3 img { width: 536px; left: -103.4px; top: 0; }
 .featured-card {
   border-radius: var(--radius-sm);
@@ -367,8 +371,12 @@
   .featured-card__cta-label { font-size: 16px; }
 }
 
-/* ---------- Dịch vụ theo yêu cầu (custom-services) ---------- */
-.custom-services { background: var(--color-brand-gold-bg); padding: 120px var(--page-gutter); }
+/* ---------- Dịch vụ theo yêu cầu (custom-services) ----------
+   The component (node 1234:40347) is padding 120 + content 676 + padding 120 = 916, but the
+   instance placed in the Home flow is 938 tall: measuring the render, the content is pinned to
+   the top at 120px and the extra 22px sits below, i.e. the bottom padding is 142px not 120.
+   Matching the instance so the beige ends exactly where the Story section begins. */
+.custom-services { background: var(--color-brand-gold-bg); padding: 120px var(--page-gutter) 142px; }
 .custom-services__inner { display: flex; gap: 80px; align-items: center; min-height: 676px; }
 .custom-services__col { flex: 1 1 0; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
 .custom-services__eyebrow { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-grey-500); margin: 0 0 8px; }
@@ -433,14 +441,6 @@
   justify-content: center;
   background: #fff;
   overflow: hidden;
-}
-.story-banner__accent {
-  position: absolute;
-  left: 43.2%;
-  top: 43.9%;
-  width: 13.5%;
-  height: 13.4%;
-  background: var(--color-grey-300) url('/images/home/story-banner.jpg') center / cover no-repeat;
 }
 /* Figma node 1530:39223: a 184×103 media frame dead-centre of the 1920×1080 section, sitting
    over the heading. Hovering the section grows it to fill the whole thing — behaviour given by
