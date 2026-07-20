@@ -1,7 +1,26 @@
 @model IReadOnlyList<Hoaii.Web.Models.Home.FeaturedTileViewModel>
 @using Hoaii.Web.Services
 @inject PageContentService Page
-@* Danh sách sản phẩm đặc biệt — see design-specs/home/02-featured-products.md *@
+@* Danh sách sản phẩm đặc biệt — see design-specs/home/02-featured-products.md
+
+   The six photos and their crops come from Figma node 1214:38736. Each slot uses a different
+   crop, and HomeFeaturedTiles has no crop columns, so the campaign artwork is configured here
+   rather than in the CMS — extending the model just for this would be a bigger change than the
+   section warrants. The DB still drives everything else (order, card copy, colours, links).
+   Sources: Excel "MEDIA TRUNG THU 2026", Drive folders LAYOUT LẺ 6B / CONCEPT hộp xanh /
+   hộp cam / Ảnh thiên điểu hộp mềm. See the step-8 report for the file-by-file mapping. *@
+@{
+    // Keyed by the tile's position in the 3×3 grid.
+    var artwork = new Dictionary<int, (string File, string Crop, string Alt)>
+    {
+        [1] = ("tinh-hoa-bac-bo-01", "cover", "Hộp quà Tinh Hoa Bắc Bộ"),
+        [2] = ("tinh-hoa-bac-bo-02", "cover", "Bộ sưu tập Tinh Hoa Bắc Bộ"),
+        [3] = ("thien-dieu-lux-01", "cover", "Hộp quà Thiên Điểu Lạc Hồng phiên bản cao cấp"),
+        [4] = ("thien-dieu-lux-02", "r2c2", "Chi tiết hộp quà Thiên Điểu Lạc Hồng cao cấp"),
+        [7] = ("thien-dieu-standard-01", "r3c2", "Hộp quà Thiên Điểu Lạc Hồng phiên bản thường"),
+        [8] = ("thien-dieu-standard-02", "r3c3", "Chi tiết hộp quà Thiên Điểu Lạc Hồng phiên bản thường"),
+    };
+}
 <section class="featured-section">
     <div class="featured-heading">
         <h2 class="featured-title">@Page.Get(PageContentKeys.Home, "featured_title")</h2>
@@ -9,8 +28,9 @@
     </div>
 
     <div class="featured-grid">
-        @foreach (var tile in Model)
+        @for (var i = 0; i < Model.Count; i++)
         {
+            var tile = Model[i];
             @if (tile.IsCard)
             {
                 @* Figma uses different copy per breakpoint: "Phẩm quà"/"Khám phá" on desktop,
@@ -35,14 +55,21 @@
                             <span class="u-desktop-only">@Page.Get(PageContentKeys.Home, "featured_card_cta_desktop")</span>
                             <span class="u-mobile-only">@Page.Get(PageContentKeys.Home, "featured_card_cta_mobile")</span>
                         </span>
-                        <svg class="featured-card__cta-icon" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true"><path d="M2 8.5h13M9 3l6 5.5-6 5.5" stroke="currentColor" stroke-width="1.5"/></svg>
+                        @* Xnix/Line/Arrow_Right at the 24px Figma draws (node 1214:38746). *@
+                        <svg class="featured-card__cta-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16M13.5 5.5 20 12l-6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </div>
                 </a>
             }
             else
             {
-                <a class="featured-tile @(tile.HideOnMobile ? "featured-tile--desktop-only" : "")"
-                   style="background-image:url('@tile.ImageUrl')" href="#" aria-label="Sản phẩm"></a>
+                var art = artwork.TryGetValue(i, out var a) ? a : (File: (string?)null, Crop: "cover", Alt: "Sản phẩm");
+                var src = art.File is null ? tile.ImageUrl : $"/images/home/featured/{art.File}.webp";
+                @* A real <img> rather than a background so the photo can be lazy-loaded and
+                   described; the crop lives in CSS so the stored file is never cropped. *@
+                <a class="featured-tile featured-tile--@art.Crop @(tile.HideOnMobile ? "featured-tile--desktop-only" : "")"
+                   href="@tile.LinkUrl">
+                    <img src="@src" alt="@art.Alt" width="428" height="536" loading="lazy" decoding="async" />
+                </a>
             }
         }
     </div>

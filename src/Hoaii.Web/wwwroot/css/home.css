@@ -255,11 +255,40 @@
 }
 .featured-tile {
   display: block;
+  position: relative;
   border-radius: var(--radius-sm);
   background-color: var(--color-grey-300);
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
 }
+.featured-tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+/* Three of the six photos are scaled and offset in Figma rather than plain cover
+   (nodes 1214:38750, 1417:39223, 1417:39222). Width and offset are Figma's, relative to the
+   428×536 card; height stays auto so the photo keeps its own aspect — pinning both axes
+   distorts it. The stored file is never cropped, the card just clips it. */
+.featured-tile--r2c2 img,
+.featured-tile--r3c2 img,
+.featured-tile--r3c3 img {
+  height: auto;      /* let the photo keep its own aspect; the card clips it */
+  right: auto;
+  bottom: auto;
+  /* The global `img { max-width: 100% }` reset otherwise clamps the scaled-up photo back to
+     the 428px card and silently cancels the crop. */
+  max-width: none;
+}
+/* r2c2 derived by searching the source photo for the rectangle that matches Figma's render
+   (crop x=144 y=465 w=1857 of the 2048×3072 file), which landed within 0.7% of the
+   percentages Figma reports. r3c2/r3c3 use Figma's own percentages converted to px. */
+.featured-tile.featured-tile--r2c2 img { width: 475px; left: -34.1px; top: -103.7px; }
+.featured-tile.featured-tile--r3c2 img { width: 604.2px; left: -163px; top: 0; }
+.featured-tile.featured-tile--r3c3 img { width: 536px; left: -103.4px; top: 0; }
 .featured-card {
   border-radius: var(--radius-sm);
   padding: 40px;
@@ -273,7 +302,7 @@
 .featured-card--gold { background: var(--color-brand-gold); }
 .featured-card--teal { background: #94B8BD; }
 /* Third card is a saturated yellow in Figma, not the muted brand gold (node 1417:39224). */
-.featured-card--yellow { background: #F0C319; }
+.featured-card--yellow { background: #F3C516; }
 .featured-card__top { display: flex; flex-direction: column; gap: 53px; }
 .featured-card__eyebrow {
   font-family: var(--font-body);
@@ -287,8 +316,9 @@
   font-weight: 500;
   font-size: 20px;
   line-height: 23px;
-  color: #1C1C1C;
-  margin-top: -40px; /* sits directly under the title, inside the 53px stack gap */
+  color: #292829;
+  /* Figma node 1610:39443 puts it 8px under the title, inside the 53px stack gap. */
+  margin-top: -45px;
 }
 .featured-card__title {
   font-family: var(--font-display);
