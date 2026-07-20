@@ -54,6 +54,11 @@
 
   /* Layout */
   --content-max-width: 1440px;
+  /* Side gutter for full-bleed sections. Figma is drawn at 1920 with a 240px gutter, which is
+     exactly (1920 - 1440) / 2 — so on wider monitors the gutter has to grow, or the content
+     stretches past the 1440px container the design is built on and everything reads oversized.
+     Below 1920 it stays at the 240px Figma specifies. */
+  --page-gutter: max(240px, (100% - 1440px) / 2);
   --mobile-max-width: 480px;
   --radius-sm: 4px;
   --radius-md: 8px;

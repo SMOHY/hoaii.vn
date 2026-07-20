@@ -70,7 +70,7 @@
 .footer-links-section {
   background: var(--color-brand-gold-bg);
   width: 100%;
-  padding: 80px 240px 120px;
+  padding: 80px var(--page-gutter) 120px;
   display: flex;
   justify-content: center;
 }
