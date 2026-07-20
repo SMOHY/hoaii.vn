@@ -51,6 +51,26 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             var otherOccasions = occasionCategories.Where(c => c.Slug != slug)
                 .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
                 .ToList();
+            var suggested = products.Where(p => p.IsFeatured).Take(4)
+                .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
+                .ToList();
+
+            // "Quà tặng theo dịp" gets its own headings and groupings in Figma (node 908:15209):
+            // a list of the sibling occasions, then curated picks, then best sellers — where the
+            // "Quà tết"/"Quà trung thu" panels (908:15175 / 908:15177) share one layout.
+            List<MegaMenuColumnViewModel> columns = slug == "qua-tang-theo-dip"
+                ?
+                [
+                    new MegaMenuColumnViewModel { Title = "Quà tặng", Links = otherOccasions },
+                    new MegaMenuColumnViewModel { Title = "Hoài gợi ý", Links = suggested },
+                    new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = bestSellers },
+                ]
+                :
+                [
+                    new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = bestSellers },
+                    new MegaMenuColumnViewModel { Title = "Phiên bản giới hạn", Links = limited },
+                    new MegaMenuColumnViewModel { Title = "Theo bộ sưu tập", Links = otherOccasions },
+                ];
 
             // Only "Quà tết" carries a photo. In Figma the other panels' right-hand half is a
             // flat grey-100 fill with no image placed (nodes 908:15196 / 908:15228 / 908:15260),
@@ -69,12 +89,7 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
                 Title = category.Name,
                 SeeAllUrl = $"/danh-muc/{slug}",
                 ImageUrl = panelImage,
-                Columns =
-                [
-                    new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = bestSellers },
-                    new MegaMenuColumnViewModel { Title = "Phiên bản giới hạn", Links = limited },
-                    new MegaMenuColumnViewModel { Title = "Theo bộ sưu tập", Links = otherOccasions },
-                ],
+                Columns = columns,
             });
         }
 

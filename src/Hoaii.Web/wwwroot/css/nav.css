@@ -380,21 +380,18 @@ body.hero-overlay .nav-menu .item.is-open {
 /* Hover-to-reveal, pure CSS (no JS required) — the matching mega-menu panel opens while the
    trigger pill OR the panel itself is hovered/focused (so the mouse can travel down into the
    dropdown without it closing). JS (site.js) only adds click support for touch/keyboard users.
-   "Quà tết" and "Quà trung thu" are excluded: their Figma prototypes (nodes 1287:56680 and
-   1287:56777) specify ON_CLICK, so they are driven by .is-open alone in the block below. */
+   Only "Sản phẩm chọn lọc" is still hover-driven; the other three have Figma prototypes
+   (nodes 1287:56680, 1287:56777, 1287:56871) specifying ON_CLICK, so they are driven by
+   .is-open alone in the block below. */
 @media (min-width: 992px) {
-  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"]:hover) [data-menu-panel="qua-tang-theo-dip"],
-  .nav-desktop:has([data-menu-panel="qua-tang-theo-dip"]:hover) [data-menu-panel="qua-tang-theo-dip"],
-  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"].is-open) [data-menu-panel="qua-tang-theo-dip"] { display: flex; }
-
   .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"]:hover) [data-menu-panel="san-pham-chon-loc"],
   .nav-desktop:has([data-menu-panel="san-pham-chon-loc"]:hover) [data-menu-panel="san-pham-chon-loc"],
   .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] { display: flex; }
 }
 
-/* ---------- Click-driven dropdowns ("Quà tết", "Quà trung thu") ----------
-   Both Figma prototypes use ON_CLICK + Smart Animate + Ease in and out, but with different
-   durations, so the mechanism is shared and only the duration varies per menu.
+/* ---------- Click-driven dropdowns ("Quà tết", "Quà trung thu", "Quà theo dịp") ----------
+   All three Figma prototypes use ON_CLICK + Smart Animate + Ease in and out, but "Quà tết"
+   runs longer, so the mechanism is shared and only the duration varies per menu.
 
    The only geometry that differs between the closed and open states is the panel's height
    (0 → 403px), so that is the only property animated — no fade, no scale, no bounce.
@@ -403,11 +400,13 @@ body.hero-overlay .nav-menu .item.is-open {
    position:absolute so a 0-height panel can never push a sibling panel off-centre.
    "Ease in and out" = cubic-bezier(0.42, 0, 0.58, 1). */
 @media (min-width: 992px) {
-  .mega-menu-wrap [data-menu-panel="qua-tet"] { --menu-duration: 0.8s; }       /* node 1287:56680 */
-  .mega-menu-wrap [data-menu-panel="qua-trung-thu"] { --menu-duration: 0.1s; } /* node 1287:56777 */
+  .mega-menu-wrap [data-menu-panel="qua-tet"] { --menu-duration: 0.8s; }           /* node 1287:56680 */
+  .mega-menu-wrap [data-menu-panel="qua-trung-thu"] { --menu-duration: 0.1s; }     /* node 1287:56777 */
+  .mega-menu-wrap [data-menu-panel="qua-tang-theo-dip"] { --menu-duration: 0.1s; } /* node 1287:56871 */
 
   .mega-menu-wrap [data-menu-panel="qua-tet"],
-  .mega-menu-wrap [data-menu-panel="qua-trung-thu"] {
+  .mega-menu-wrap [data-menu-panel="qua-trung-thu"],
+  .mega-menu-wrap [data-menu-panel="qua-tang-theo-dip"] {
     display: flex;
     position: absolute;
     top: 16px; /* Figma: the nav wrapper's gap goes 8px → 16px while a menu is open */
@@ -419,7 +418,8 @@ body.hero-overlay .nav-menu .item.is-open {
                 visibility 0s linear var(--menu-duration);
   }
   .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"],
-  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"] {
+  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"],
+  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"].is-open) [data-menu-panel="qua-tang-theo-dip"] {
     height: 403px;
     visibility: visible;
     transition: height var(--menu-duration) cubic-bezier(0.42, 0, 0.58, 1), visibility 0s;
@@ -427,7 +427,8 @@ body.hero-overlay .nav-menu .item.is-open {
   /* Both halves hold their full height while the parent is clipped — without this they would
      squash down to nothing instead of being revealed. */
   .mega-menu-wrap [data-menu-panel="qua-tet"] > *,
-  .mega-menu-wrap [data-menu-panel="qua-trung-thu"] > * { height: 403px; }
+  .mega-menu-wrap [data-menu-panel="qua-trung-thu"] > *,
+  .mega-menu-wrap [data-menu-panel="qua-tang-theo-dip"] > * { height: 403px; }
 
   /* Set by site.js for one frame while switching straight to another menu, so the outgoing
      panel disappears at once instead of animating shut underneath the incoming one. */
@@ -437,8 +438,10 @@ body.hero-overlay .nav-menu .item.is-open {
 @media (prefers-reduced-motion: reduce) {
   .mega-menu-wrap [data-menu-panel="qua-tet"],
   .mega-menu-wrap [data-menu-panel="qua-trung-thu"],
+  .mega-menu-wrap [data-menu-panel="qua-tang-theo-dip"],
   .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"],
-  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"] {
+  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"],
+  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"].is-open) [data-menu-panel="qua-tang-theo-dip"] {
     transition-duration: 0s;
     transition-delay: 0s;
   }
