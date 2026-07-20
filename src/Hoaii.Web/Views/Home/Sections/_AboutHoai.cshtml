@@ -8,17 +8,29 @@
         <p class="about-subtitle">@Page.Get(PageContentKeys.Home, "about_subtitle")</p>
     </div>
     <div class="about-cards">
+        @{
+            // Figma sets each caption on two lines (node 1214:38909): the last two words drop to
+            // line 2, the rest stay on line 1 — "Tính | bản sắc", "Tư duy | khởi sinh", etc.
+            Func<string, (string, string)> splitCaption = caption =>
+            {
+                var words = caption.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (words.Length <= 1) return (caption, "");
+                return (string.Join(' ', words[..^2].Length > 0 ? words[..^2] : words[..1]),
+                        string.Join(' ', words[..^2].Length > 0 ? words[^2..] : words[1..]));
+            };
+        }
         @foreach (var card in Model)
         {
+            var (line1, line2) = splitCaption(card.Caption);
             <div class="about-card @(card.ImageOnTop ? "about-card--img-top" : "about-card--img-bottom")">
                 @if (card.ImageOnTop)
                 {
                     <div class="about-card__img"><img src="@card.ImageUrl" alt="@card.Caption" loading="lazy" /></div>
-                    <div class="about-card__label about-card__label--to-gold"><span>@card.Caption</span></div>
+                    <div class="about-card__label about-card__label--to-gold"><span>@line1<br />@line2</span></div>
                 }
                 else
                 {
-                    <div class="about-card__label about-card__label--from-gold"><span>@card.Caption</span></div>
+                    <div class="about-card__label about-card__label--from-gold"><span>@line1<br />@line2</span></div>
                     <div class="about-card__img"><img src="@card.ImageUrl" alt="@card.Caption" loading="lazy" /></div>
                 }
             </div>

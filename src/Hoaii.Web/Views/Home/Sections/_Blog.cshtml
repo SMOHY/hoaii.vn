@@ -14,8 +14,10 @@
     </h2>
 
     <div class="blog-cards blog-cards--desktop">
-        <div class="blog-featured">
-            <div class="blog-featured__img" style="background-image:url('@featured.ImageUrl')"></div>
+        @* The featured post is a link too — before it was a bare div, so the biggest card on
+           the strip couldn't be clicked. *@
+        <a class="blog-featured" href="@featured.Url">
+            <div class="blog-featured__img" style="background-image:url('@featured.ImageUrl')" role="img" aria-label="@featured.Title"></div>
             <div class="blog-featured__text">
                 <div class="blog-card__meta">
                     <span class="blog-card__category">@featured.Category</span>
@@ -23,7 +25,7 @@
                 </div>
                 <p class="blog-card__excerpt">@featured.Excerpt</p>
             </div>
-        </div>
+        </a>
         <div class="blog-list">
             @foreach (var post in rest)
             {

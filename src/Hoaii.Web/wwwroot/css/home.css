@@ -501,16 +501,18 @@
 /* ---------- Về Hoài (About) ---------- */
 .about-section { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 120px 0; background: #fff; }
 .about-heading { display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; max-width: 1118px; margin: 0 auto; padding: 0 24px; }
-.about-heading h2 { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); }
-.about-subtitle { font-family: var(--font-body); font-size: 20px; line-height: 23px; font-weight: 500; color: var(--color-brand-gold-deep, #795F3D); }
+.about-heading h2 { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-red); } /* Figma node 1214:38907: VỀ HOÀI is red */
+.about-subtitle { font-family: var(--font-body); font-size: 20px; line-height: 23px; font-weight: 500; color: #473824; } /* Figma node 1214:38908 */
 .about-cards { display: flex; gap: 16px; align-items: center; justify-content: center; padding-inline: var(--page-gutter); width: 100%; margin: 0 auto; }
 .about-card { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; }
 .about-card__img { background: var(--color-grey-300); height: 480px; width: 100%; border-radius: 8px; overflow: hidden; }
 .about-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Card 1 photo uses Figma's explicit crop instead of plain cover (node I1214:38909;1051:20634). */
+.about-card:first-child .about-card__img img { width: 117.36%; height: 111.88%; object-fit: fill; max-width: none; margin: -5.84% 0 0 -8.8%; }
 .about-card__label { height: 208px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; }
-.about-card__label span { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-red); }
-.about-card__label--to-gold { background: linear-gradient(to bottom, #fff 0%, #FBEECD 100%); }
-.about-card__label--from-gold { background: linear-gradient(to bottom, #FBEECD 0%, #fff 100%); }
+.about-card__label span { font-family: var(--font-display); font-size: 48px; line-height: 60px; color: var(--color-brand-red); text-align: center; }
+.about-card__label--to-gold { background: linear-gradient(to bottom, #fff 0%, #E5D9CB 100%); }
+.about-card__label--from-gold { background: linear-gradient(to bottom, #E5D9CB 0%, #fff 100%); }
 
 @media (max-width: 767.98px) {
   .about-section { padding: 40px 0; gap: 16px; }
@@ -527,20 +529,28 @@
 }
 
 /* ---------- Khách hàng (Customers) ---------- */
+/* Figma node 1214:38910: 120 pad + 56 heading + 80 gap + 348 logo area + 120 pad = 724px. */
 .customers-section { width: 100%; padding: 120px 0; background: #fff; text-align: center; }
-.customers-heading { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); margin: 0 0 64px; }
+.customers-heading { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); margin: 0 0 80px; }
 .customers-marquee {
   display: flex; flex-direction: column; gap: 24px; overflow: hidden;
-  mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+  /* Figma fades ~171px each edge (nodes 1214:38912 overlays) — 171/1920 ≈ 8.9%. */
+  mask-image: linear-gradient(to right, transparent 0, #000 8.9%, #000 91.1%, transparent 100%);
 }
 .customers-track { display: flex; gap: 24px; width: max-content; animation: home-marquee 40s linear infinite; }
 .customers-row:nth-child(even) .customers-track { animation-direction: reverse; }
 .logo-card { width: 200px; height: 100px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.logo-card img { max-width: 140px; max-height: 64px; object-fit: contain; filter: grayscale(100%); opacity: .7; transition: filter .2s, opacity .2s; }
-.logo-card img:hover { filter: none; opacity: 1; }
+/* Figma shows the logos desaturated (node 1214:38912). Per-logo opacity varies 60–100% in the
+   design; we don't have that mapping so a single muted value stands in. */
+.logo-card img { max-width: 140px; max-height: 64px; object-fit: contain; filter: grayscale(100%); opacity: .7; }
 @keyframes home-marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+/* Marquee timing is a web implementation to reproduce Figma's scrolling track — not read from a
+   Prototype (MCP exposes no Reactions for this file). Reduced-motion stops it, logos stay shown. */
+@media (prefers-reduced-motion: reduce) {
+  .customers-track { animation: none; }
 }
 
 @media (max-width: 767.98px) {
@@ -563,9 +573,9 @@
 .blog-cards--desktop { display: flex; gap: 40px; align-items: flex-start; justify-content: center; width: 100%; }
 .blog-cards--mobile { display: none; }
 
-.blog-featured { flex: 1 1 0; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+.blog-featured { flex: 1 1 0; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; text-decoration: none; color: inherit; }
 .blog-featured__img { width: 100%; height: 340px; border-radius: 8px; background-color: rgba(0, 0, 0, 0.2); background-size: cover; background-position: center; }
-.blog-featured__text { display: flex; flex-direction: column; gap: 16px; }
+.blog-featured__text { display: flex; flex-direction: column; }
 
 .blog-list { flex: 1 1 0; display: flex; flex-direction: column; width: 100%; }
 .blog-list__row {
@@ -575,12 +585,17 @@
 /* 436px of copy, then the 240px thumbnail (node 1214:38925). */
 .blog-list__text { flex: 1 1 0; min-width: 0; }
 .blog-list__row:not(:last-child) { border-bottom: 1px solid var(--color-grey-100); }
-.blog-list__thumb { width: 240px; height: 140px; border-radius: 4px; background-color: rgba(0, 0, 0, 0.2); background-size: cover; background-position: center; flex-shrink: 0; }
+/* Figma node 1214:38930 darkens the thumbnails with a 20% black overlay. */
+.blog-list__thumb {
+  width: 240px; height: 140px; border-radius: 4px; background-color: var(--color-grey-100);
+  background-size: cover; background-position: center; flex-shrink: 0;
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.2);
+}
 
 .blog-card__meta { display: flex; flex-direction: column; gap: 8px; }
 .blog-card__category { font-family: var(--font-body); font-weight: 500; font-size: 16px; line-height: 20px; color: var(--color-brand-gold); }
 .blog-card__title { font-family: var(--font-body); font-weight: 500; font-size: 20px; line-height: 23px; color: var(--color-black); }
-.blog-card__excerpt { font-family: var(--font-body); font-size: 16px; line-height: 20px; color: #525252; margin-top: 8px; }
+.blog-card__excerpt { font-family: var(--font-body); font-size: 16px; line-height: 20px; color: #525252; margin-top: 16px; }
 
 @media (max-width: 767.98px) {
   .blog-section { gap: 8px; padding: 40px 16px; }

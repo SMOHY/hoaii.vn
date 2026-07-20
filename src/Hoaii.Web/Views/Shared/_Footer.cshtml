@@ -30,7 +30,7 @@
                 <div class="footer-brand-info">
                     <span>@Settings.Get(SiteSettingKeys.CompanyName)</span>
                     <span>Địa chỉ : @Settings.Get(SiteSettingKeys.Address)</span>
-                    <a href="https://masothue.com" target="_blank" rel="noopener">MST : @Settings.Get(SiteSettingKeys.TaxCode)</a>
+                    <a href="https://masothue.com/0101287214" target="_blank" rel="noopener noreferrer">MST : @Settings.Get(SiteSettingKeys.TaxCode)</a>
                 </div>
             </div>
 
@@ -64,14 +64,15 @@
                             <div class="icons-row">
                                 @foreach (var (name, url, icon) in socials)
                                 {
-                                    <a class="icon-btn" href="@url" target="_blank" rel="noopener" aria-label="@name">
+                                    <a class="icon-btn" href="@url" target="_blank" rel="noopener noreferrer" aria-label="@name">
                                         <img src="@icon" alt="@name" width="24" height="24" />
                                     </a>
                                 }
                             </div>
-                            <div class="footer-badge">
-                                <img src="/images/bo-cong-thuong-badge.svg" alt="Đã thông báo Bộ Công Thương" />
-                            </div>
+                            @* Official "Đã thông báo Bộ Công Thương" badge (Figma node 683:4434). *@
+                            <a class="footer-badge" href="http://online.gov.vn/" target="_blank" rel="noopener noreferrer" aria-label="Đã thông báo Bộ Công Thương">
+                                <img src="/images/bo-cong-thuong-badge.png" alt="Đã thông báo Bộ Công Thương" width="106" height="40" />
+                            </a>
                         </div>
                     }
                 </div>
