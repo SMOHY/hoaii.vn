@@ -45,13 +45,17 @@
             </div>
         }
 
-        <h1 class="home-hero__title">
-            <span class="u-desktop-only" data-hero-title>@Model[0].Title</span>
-            <span class="u-mobile-only" data-hero-mobile-title>@Model[0].MobileTitle</span>
-        </h1>
-        <p class="home-hero__subtitle">
-            <span class="u-desktop-only" data-hero-subtitle>@Model[0].Subtitle</span>
-            <span class="u-mobile-only" data-hero-mobile-subtitle>@Model[0].MobileSubtitle</span>
-        </p>
+        @* Figma node 1214:38725 groups the two lines so they sit 8px apart, while the group
+           itself keeps the 20px gap from the dots above. *@
+        <div class="home-hero__text">
+            <h1 class="home-hero__title">
+                <span class="u-desktop-only" data-hero-title>@Model[0].Title</span>
+                <span class="u-mobile-only" data-hero-mobile-title>@Model[0].MobileTitle</span>
+            </h1>
+            <p class="home-hero__subtitle">
+                <span class="u-desktop-only" data-hero-subtitle>@Model[0].Subtitle</span>
+                <span class="u-mobile-only" data-hero-mobile-subtitle>@Model[0].MobileSubtitle</span>
+            </p>
+        </div>
     </div>
 </section>

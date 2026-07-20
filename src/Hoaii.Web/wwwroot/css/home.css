@@ -65,35 +65,44 @@
     var(--color-brand-red) 100%
   );
 }
+/* Figma node 1214:38720 is a 75x12 row: an active dot of 12px, three 8px dots, 13px apart. */
 .home-hero__dots {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 13px;
+  height: 12px;
 }
-/* The dot Figma draws is 6px; the button around it is 44px so it can actually be tapped. */
 .home-hero__dots .dot {
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.home-hero__dots .dot::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  transition: width .2s ease, height .2s ease, background .2s ease;
-}
-.home-hero__dots .dot--active::before {
+  position: relative;
   width: 8px;
   height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: width .2s ease, height .2s ease, background .2s ease;
+}
+/* The dot itself has to stay 8px or the row would no longer be the 12px Figma draws, so the
+   tap target is grown with a transparent overlay instead of by padding the button. */
+.home-hero__dots .dot::after {
+  content: "";
+  position: absolute;
+  inset: -18px;
+}
+.home-hero__dots .dot--active {
+  width: 12px;
+  height: 12px;
   background: #fff;
+}
+
+/* Title + subtitle group — node 1214:38725. */
+.home-hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
 }
 .home-hero__title {
   font-family: var(--font-display);
