@@ -52,3 +52,28 @@
   root.querySelector('[data-hero-next]')?.addEventListener('click', function () { show(index + 1); });
   dots.forEach(function (dot, i) { dot.addEventListener('click', function () { show(i); }); });
 })();
+
+// Story banner video — plays only while the section is hovered/focused, so a 1.6MB file is
+// never fetched for visitors who scroll past. The grow-to-fill motion itself lives in CSS.
+(function () {
+  const banner = document.querySelector('[data-story-banner]');
+  const video = banner?.querySelector('.story-banner__video');
+  if (!banner || !video) return;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function start() {
+    if (reduced.matches) return;
+    // preload="none" means the first hover has to fetch before it can play.
+    video.play().catch(function () { /* autoplay blocked — the poster stays up */ });
+  }
+  function stop() {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  banner.addEventListener('mouseenter', start);
+  banner.addEventListener('mouseleave', stop);
+  banner.addEventListener('focusin', start);
+  banner.addEventListener('focusout', stop);
+})();

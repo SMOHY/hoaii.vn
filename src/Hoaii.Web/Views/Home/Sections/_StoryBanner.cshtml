@@ -1,8 +1,22 @@
 @using Hoaii.Web.Services
 @inject PageContentService Page
-@* Câu chuyện trong từng sản phẩm — see design-specs/home/04-blog-and-story.md *@
-<section class="story-banner">
+@* Câu chuyện trong từng sản phẩm — see design-specs/home/04-blog-and-story.md
+
+   Figma node 1214:38902 is 1920×1080 with a 184×103 media frame (node 1530:39223) centred
+   over the heading. The video file and the "grow to fill the section on hover" behaviour were
+   given by the client — the MCP connection returns no Prototype/Reactions for this file, so
+   none of the motion below is read from Figma. *@
+<section class="story-banner" data-story-banner>
     <div class="story-banner__accent"></div>
+
+    @* The section is the hover target rather than the heading alone: once the video grows it
+       covers the heading, and a heading-only trigger would flip-flop under the cursor. *@
+    <video class="story-banner__video"
+           src="/videos/home-story.mp4"
+           poster="/images/home/home-story-poster.jpg"
+           muted loop playsinline preload="none"
+           aria-label="Câu chuyện trong từng sản phẩm"></video>
+
     <h2 class="story-banner__title">
         <span class="story-banner__title--desktop">@Page.Get(PageContentKeys.Home, "story_banner_desktop")</span>
         <span class="story-banner__title--mobile">
