@@ -454,7 +454,7 @@
   height: 9.537%;  /* 103 / 1080 */
   object-fit: cover;
   z-index: 2;
-  transition: width 1.2s ease, height 1.2s ease;
+  transition: width 3.6s ease, height 3.6s ease;
 }
 .story-banner:hover .story-banner__video,
 .story-banner:focus-within .story-banner__video {
