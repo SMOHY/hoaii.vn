@@ -392,19 +392,38 @@
 .custom-services__tab {
   display: flex; align-items: center; gap: 24px; padding: 16px; width: 100%;
   border-radius: 40px; background: #fff; border: none; cursor: pointer; text-align: left;
+  transition: background .2s ease;
 }
+.custom-services__tab:not(.is-active):hover { background: var(--color-grey-50); }
 .custom-services__tab.is-active { background: var(--color-brand-red); }
 .custom-services__tab-icon {
   display: flex; align-items: center; justify-content: center;
   width: 68px; height: 68px; border-radius: 50%; background: var(--color-grey-50); color: var(--color-grey-500); flex-shrink: 0;
+  transition: background .2s ease, color .2s ease;
 }
+.custom-services__tab:not(.is-active):hover .custom-services__tab-icon { background: #fff; color: var(--color-brand-red); }
 .custom-services__tab.is-active .custom-services__tab-icon { background: #BF4E5D; color: #fff; }
-.custom-services__tab-label { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-grey-400); }
+.custom-services__tab-label { font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-grey-400); transition: color .2s ease; }
+.custom-services__tab:not(.is-active):hover .custom-services__tab-label { color: var(--color-grey-500); }
 .custom-services__tab.is-active .custom-services__tab-label { color: var(--color-brand-red-tint); }
 
 .custom-services__panel { flex: 1 1 0; min-height: 676px; border-radius: 16px; overflow: hidden; position: relative; background: #C4C4C4; }
-.custom-services__panel-item { position: absolute; inset: 0; display: none; }
-.custom-services__panel-item.is-active { display: block; }
+/* Duration matches the Figma prototype's own reactions, read from the file rather than guessed:
+   a manual tab click is a deliberate 0.5s ease-out crossfade (nodes 1234:40206/40207 "Frame 606/
+   607"); the 4s auto-advance timer uses a snappier 0.1s ease-out (same nodes' AFTER_TIMEOUT
+   reaction). JS sets --cs-fade-duration to the value for whichever caused the switch. */
+.custom-services {
+  --cs-fade-duration: .5s;
+}
+.custom-services__panel-item {
+  position: absolute; inset: 0; opacity: 0; visibility: hidden;
+  transition: opacity var(--cs-fade-duration) ease-out, visibility 0s linear var(--cs-fade-duration);
+}
+.custom-services__panel-item.is-active { opacity: 1; visibility: visible; transition: opacity var(--cs-fade-duration) ease-out, visibility 0s linear 0s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-services__tab, .custom-services__tab-icon, .custom-services__tab-label, .custom-services__panel-item { transition: none; }
+}
 .custom-services__panel-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
 .custom-services__panel-overlay {
   position: absolute; left: 0; right: 0; bottom: 0;
@@ -559,8 +578,18 @@
 .customers-row:nth-child(even) .customers-track { animation-direction: reverse; }
 .logo-card { width: 200px; height: 100px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 /* Figma shows the logos desaturated (node 1214:38912). Per-logo opacity varies 60–100% in the
-   design; we don't have that mapping so a single muted value stands in. */
-.logo-card img { max-width: 140px; max-height: 64px; object-fit: contain; filter: grayscale(100%); opacity: .7; }
+   design; we don't have that mapping so a single muted value stands in. Every logo also has an
+   explicit ON_HOVER reaction to a full-colour "state=Hover" variant (0.3s ease-out) — confirmed
+   by reading the file's prototype reactions, not guessed. */
+.logo-card img {
+  max-width: 140px; max-height: 64px; object-fit: contain;
+  filter: grayscale(100%); opacity: .7;
+  transition: filter .3s ease-out, opacity .3s ease-out;
+}
+.logo-card:hover img { filter: grayscale(0%); opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .logo-card img { transition: none; }
+}
 @keyframes home-marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }

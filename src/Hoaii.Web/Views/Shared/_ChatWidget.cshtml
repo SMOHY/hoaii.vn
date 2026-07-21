@@ -5,16 +5,17 @@
 }
 <div class="chat-widget is-collapsed" data-chat-widget>
     <button class="bubble bubble--phone" type="button" aria-label="Gọi điện" onclick="location.href='tel:@telDigits'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z" fill="currentColor"/></svg>
+        <img src="/images/icons/chat-phone.png" alt="" width="36" height="36" />
     </button>
     <a class="bubble bubble--zalo" href="@Settings.Get(SiteSettingKeys.ZaloUrl)" target="_blank" rel="noopener" aria-label="Zalo">
-        <img src="/images/icons/zalo.svg" alt="Zalo" width="36" height="36" />
+        <img src="/images/icons/chat-zalo.png" alt="Zalo" width="36" height="36" />
     </a>
     <a class="bubble bubble--messenger" href="https://m.me" target="_blank" rel="noopener" aria-label="Messenger">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C6.5 2 2 6.1 2 11.2c0 2.9 1.4 5.5 3.7 7.2V22l3.4-1.9c.9.3 1.9.4 2.9.4 5.5 0 10-4.1 10-9.3S17.5 2 12 2z" fill="currentColor"/></svg>
+        <img src="/images/icons/chat-messenger.png" alt="Messenger" width="36" height="36" />
     </a>
     <button class="toggle" type="button" aria-label="Mở/đóng liên hệ nhanh">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v12H7l-3 3V4z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        <img class="toggle__icon-open" src="/images/icons/chat-toggle-collapsed.png" alt="" width="64" height="64" />
+        <svg class="toggle__icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
 </div>
 <button class="back-to-top" type="button" aria-label="Lên đầu trang" data-back-to-top hidden>

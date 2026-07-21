@@ -60,7 +60,7 @@
                 @* Icon geometry exported from Figma (Seach 908:16487, user 908:16488,
                    Shop 908:16489) — a ~18.7px vector centred in a 32px box. Strokes use
                    currentColor so the nav's light/dark variants keep recolouring them. *@
-                <button class="icon-btn" type="button" aria-label="Tìm kiếm" onclick="location.href='/tim-kiem'">
+                <button class="icon-btn" type="button" aria-label="Tìm kiếm" data-search-trigger aria-expanded="false">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M6.66663 14.3534C6.66666 10.6862 9.25724 7.5297 12.854 6.81441C16.4508 6.09912 20.0519 8.02423 21.4551 11.4124C22.8582 14.8005 21.6725 18.708 18.6231 20.7451C15.5738 22.7822 11.5101 22.3815 8.91729 19.788C7.47618 18.3465 6.66661 16.3917 6.66663 14.3534Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M22.0386 22.0391L25.3332 25.3337" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -86,6 +86,17 @@
         </div>
     </div>
     @await Component.InvokeAsync("MegaMenu")
+    @* Search flyout — Figma node 940:19274 ("Nav desktop", Property 1=Search): hovering/clicking
+       the search icon reveals a full-width bar under the nav instead of routing straight to
+       /tim-kiem. The input still submits a normal GET to that page. *@
+    <div class="search-flyout-wrap" data-search-flyout hidden>
+        <form class="search-flyout" action="/tim-kiem" method="get" role="search">
+            <input class="search-flyout__input" type="text" name="q" placeholder="Tìm kiếm một sản phẩm" autocomplete="off" data-search-input />
+            <button type="button" class="search-flyout__close" aria-label="Đóng tìm kiếm" data-search-close>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+        </form>
+    </div>
 </header>
 
 <header class="nav-mobile">

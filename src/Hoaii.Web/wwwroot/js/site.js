@@ -104,10 +104,14 @@
   });
 })();
 
-// Mega-menu open/close. All four panels are click-only — every Figma prototype specifies
-// ON_CLICK (nodes 1287:56680, 56777, 56871, 56965) — and only one is ever open at a time.
+// Mega-menu open/close. Figma's own reactions (nodes 1287:56680, 56777, 56871, 56965) fire on
+// BOTH ON_CLICK and ON_HOVER, so real mouse users can open a panel just by hovering the trigger;
+// click still works too (touch, keyboard, and mouse users who'd rather not rely on hover). Only
+// one panel is ever open at a time.
 (function () {
   const triggers = document.querySelectorAll('[data-menu-trigger]');
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let closeTimer = null;
 
   function panelFor(trigger) {
     return document.querySelector('[data-menu-panel="' + trigger.dataset.menuTrigger + '"]');
@@ -137,14 +141,47 @@
     });
   }
 
+  function open(trigger, instant) {
+    if (trigger.classList.contains('is-open')) return;
+    closeAll(instant);
+    trigger.classList.add('is-open');
+    trigger.setAttribute('aria-expanded', 'true');
+    document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'mega-menu' }));
+  }
+
+  // The search flyout sits at the same spot under the nav — close this one out if that opens.
+  document.addEventListener('nav-flyout:open', function (e) {
+    if (e.detail !== 'mega-menu') closeAll();
+  });
+
   triggers.forEach(function (trigger) {
     trigger.addEventListener('click', function () {
       const willOpen = !trigger.classList.contains('is-open');
       closeAll(willOpen); // opening a different menu replaces the current one outright
       trigger.classList.toggle('is-open', willOpen);
       trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      if (willOpen) document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'mega-menu' }));
     });
   });
+
+  if (canHover) {
+    // A gap of real pixels separates the nav row from the dropdown panel below it, so leaving the
+    // trigger to cross that gap into the panel must not read as "left the menu" — hence the short
+    // grace delay before actually closing, cancelled if the pointer lands on either piece.
+    function cancelClose() { clearTimeout(closeTimer); }
+    function scheduleClose() { cancelClose(); closeTimer = setTimeout(function () { closeAll(); }, 150); }
+
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener('mouseenter', function () { cancelClose(); open(trigger, true); });
+      trigger.addEventListener('mouseleave', scheduleClose);
+
+      const panel = panelFor(trigger);
+      if (panel) {
+        panel.addEventListener('mouseenter', cancelClose);
+        panel.addEventListener('mouseleave', scheduleClose);
+      }
+    });
+  }
 
   // The cross inside a panel. One listener per button, bound once at load — the panels are
   // server-rendered and never replaced, so nothing accumulates.
@@ -163,10 +200,63 @@
   // Escape closes the open panel and hands focus back to the trigger that opened it.
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
-    const open = document.querySelector('[data-menu-trigger].is-open');
-    if (!open) return;
+    const openTrigger = document.querySelector('[data-menu-trigger].is-open');
+    if (!openTrigger) return;
     closeAll();
-    open.focus();
+    openTrigger.focus();
+  });
+})();
+
+// Search flyout — Figma node 940:19274: hover or click the search icon to reveal a full-width
+// bar under the nav (see nav.css .search-flyout-wrap) instead of jumping straight to /tim-kiem.
+(function () {
+  const trigger = document.querySelector('[data-search-trigger]');
+  const wrap = document.querySelector('[data-search-flyout]');
+  const input = wrap?.querySelector('[data-search-input]');
+  const closeBtn = wrap?.querySelector('[data-search-close]');
+  if (!trigger || !wrap) return;
+
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let closeTimer = null;
+
+  function open() {
+    wrap.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+    input?.focus();
+    document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'search' }));
+  }
+  function close() {
+    wrap.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+  function cancelClose() { clearTimeout(closeTimer); }
+  function scheduleClose() { cancelClose(); closeTimer = setTimeout(close, 150); }
+
+  // A mega-menu opening at the same spot under the nav should close this one out.
+  document.addEventListener('nav-flyout:open', function (e) {
+    if (e.detail !== 'search' && !wrap.hidden) close();
+  });
+
+  trigger.addEventListener('click', function () {
+    if (wrap.hidden) open(); else close();
+  });
+
+  if (canHover) {
+    trigger.addEventListener('mouseenter', function () { cancelClose(); open(); });
+    trigger.addEventListener('mouseleave', scheduleClose);
+    wrap.addEventListener('mouseenter', cancelClose);
+    wrap.addEventListener('mouseleave', scheduleClose);
+  }
+
+  closeBtn?.addEventListener('click', close);
+
+  document.addEventListener('click', function (e) {
+    if (wrap.hidden) return;
+    if (!e.target.closest('[data-search-flyout]') && !e.target.closest('[data-search-trigger]')) close();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !wrap.hidden) { close(); trigger.focus(); }
   });
 })();
 
