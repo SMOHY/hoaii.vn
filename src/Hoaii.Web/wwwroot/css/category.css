@@ -110,7 +110,10 @@
    produces exactly 1440 at 1920 — and keeping the override meant that at any narrower window the
    box stayed 1440 wide with no gutter at all and the breadcrumb sat against the viewport edge.
    Only the vertical rhythm belongs here. */
-.cat-content { padding-block: 40px 80px; }
+/* Đáy 120: 7 trên 8 trang danh mục trong Figma dùng số này (chỉ riêng Quà tết vẽ 80, nhiều khả
+   năng là sót của designer chứ không phải chủ ý — không có gì phân biệt trang đó với Quà trung
+   thu, vốn cũng dùng hero carousel nhưng vẫn để 120). */
+.cat-content { padding-block: 40px 120px; }
 .cat-breadcrumb {
   font-family: var(--font-body);
   font-size: 16px;
