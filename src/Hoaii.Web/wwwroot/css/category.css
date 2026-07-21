@@ -347,3 +347,14 @@
   .promo-banner__title { font: 400 13px/16px var(--font-body); }
   .promo-banner__cta { align-self: flex-end; padding: 8px 12px; font: 500 16px/20px var(--font-body); }
 }
+
+/* Semantic breadcrumb (was a single <p> string). */
+.cat-breadcrumb ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px; }
+.cat-breadcrumb li + li::before { content: "/"; margin-right: 4px; }
+.cat-breadcrumb a { color: inherit; text-decoration: none; }
+
+/* Variant names replace the invented colour swatches — see _ProductCard comment. */
+.product-card__variants { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.product-card__variants li { font-family: var(--font-body); font-size: 14px; line-height: 18px; color: var(--color-grey-600); }
+
+.filter-menu__group { font-weight: 600; opacity: .65; padding-top: 6px; }

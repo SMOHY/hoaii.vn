@@ -25,7 +25,17 @@ public class CategoryController(HoaiiDbContext db) : Controller
         ("ten-az", "Tên: A-Z"),
     ];
 
-    public async Task<IActionResult> Index(string slug, int page = 1, string? sort = null)
+    /// <summary>Price bands for the Bộ lọc panel. Key goes in the querystring; Min/Max are VND.
+    /// Max is null for the open-ended top band — decimal.MaxValue overflows SQL Server's decimal.</summary>
+    public static readonly IReadOnlyList<(string Key, string Label, decimal Min, decimal? Max)> PriceFilters =
+    [
+        ("duoi-500", "Dưới 500.000đ", 0m, 500_000m),
+        ("500-1000", "500.000đ – 1.000.000đ", 500_000m, 1_000_000m),
+        ("tren-1000", "Trên 1.000.000đ", 1_000_000m, null),
+    ];
+
+    public async Task<IActionResult> Index(string slug, int page = 1, string? sort = null,
+                                           string? price = null, bool inStock = false)
     {
         var isFeaturedView = slug == FeaturedSlug;
 
@@ -41,13 +51,29 @@ public class CategoryController(HoaiiDbContext db) : Controller
         var categoryName = category?.Name ?? "Sản phẩm chọn lọc";
 
         // Hidden products never reach the storefront.
-        var baseQuery = (isFeaturedView
+        IQueryable<Domain.Entities.Product> baseQuery = (isFeaturedView
                 ? db.Products.Where(p => p.IsFeatured && p.IsActive)
                 : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive))
             .Include(p => p.Images)
             .Include(p => p.Variants);
 
         sort = SortOptions.Any(o => o.Key == sort) ? sort : SortOptions[0].Key;
+
+        // Filtering happens before sorting and paging so the count and the pager stay honest.
+        price = PriceFilters.Any(f => f.Key == price) ? price : "";
+        if (price.Length > 0)
+        {
+            var band = PriceFilters.First(f => f.Key == price);
+            baseQuery = baseQuery.Where(p => p.Price >= band.Min);
+            if (band.Max is { } max)
+            {
+                baseQuery = baseQuery.Where(p => p.Price < max);
+            }
+        }
+        if (inStock)
+        {
+            baseQuery = baseQuery.Where(p => p.Badge != Domain.Entities.ProductBadge.OutOfStock);
+        }
 
         var query = sort switch
         {
@@ -99,6 +125,8 @@ public class CategoryController(HoaiiDbContext db) : Controller
             TotalPages = totalPages,
             Slug = slug,
             Sort = sort,
+            PriceFilter = price,
+            InStockOnly = inStock,
             TotalProducts = totalProducts,
             HeroEyebrow = heroEyebrow,
             HeroSlides = heroSlides,

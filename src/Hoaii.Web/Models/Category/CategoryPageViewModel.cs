@@ -4,6 +4,15 @@ public class CategoryPageViewModel
 {
     public required string Title { get; init; }
     public required string BreadcrumbLabel { get; init; }
+
+    /// <summary>Price band the shopper picked, or "" for all. See CategoryController.PriceFilters.</summary>
+    public string PriceFilter { get; init; } = "";
+
+    /// <summary>True when "còn hàng" is ticked.</summary>
+    public bool InStockOnly { get; init; }
+
+    /// <summary>How many filters are active — shown on the Bộ lọc button.</summary>
+    public int ActiveFilterCount => (PriceFilter.Length > 0 ? 1 : 0) + (InStockOnly ? 1 : 0);
     public required string Description { get; init; }
     public required IReadOnlyList<ProductCardViewModel> Products { get; init; }
     public int CurrentPage { get; init; } = 1;
@@ -47,6 +56,10 @@ public class ProductCardViewModel
     public required string BadgeLabel { get; init; } // "" | "Hàng mới" | "-20%" | "Hết hàng"
     public required string BadgeVariant { get; init; } // "new" | "sale" | "out-of-stock" | ""
     public int VariantCount { get; init; }
+
+    /// <summary>Real variant names from the DB. ProductVariant has no colour column, so the
+    /// card lists names instead of inventing swatch colours.</summary>
+    public IReadOnlyList<string> VariantNames { get; init; } = [];
     public string CardVariant { get; init; } = "grid"; // "grid" | "collection" | "related"
 }
 

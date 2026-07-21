@@ -27,6 +27,7 @@ public static class ProductCardMapper
             BadgeLabel = label,
             BadgeVariant = badgeVariant,
             VariantCount = p.Variants.Count,
+            VariantNames = p.Variants.Select(v => v.Name).ToList(),
             CardVariant = cardVariant,
         };
     }
