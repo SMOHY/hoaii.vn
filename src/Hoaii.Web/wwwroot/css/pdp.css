@@ -13,7 +13,7 @@
 .pdp-main {
   display: flex;
   justify-content: center;
-  gap: 84px;
+  gap: 80px; /* Figma Frame 379 gap 80 — trước để 84 */
   padding: 40px 24px 80px;
   background: #fff;
   flex-wrap: wrap;
@@ -27,8 +27,11 @@
 /* Figma pins each thumbnail at 100x100 and marks it shrink-0 (node 826:15686). Without that the
    flex row squeezed them to ~72px as soon as a product had more than the five the mock draws, so
    the strip changed size per product. Now the size is fixed and the row scrolls instead. */
+/* Figma cố định dải này 564 rộng (5 ô 100 + 4 khoảng 16), căn giữa dưới ảnh 646. Trước đây nó
+   nới theo số ảnh — sản phẩm 8 ảnh cho ra dải 912, rộng hơn cả ảnh chính. Giữ 564 và cho cuộn. */
 .pdp-gallery__thumbs {
   display: flex; gap: 16px; overflow-x: auto;
+  width: 564px; max-width: 100%; align-self: center;
   scrollbar-width: none; scroll-snap-type: x proximity;
 }
 .pdp-gallery__thumbs::-webkit-scrollbar { display: none; }

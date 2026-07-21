@@ -22,7 +22,9 @@
   text-decoration: none; align-self: flex-start;
 }
 
-.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 40px var(--page-gutter) 80px; }
+/* Figma: Frame 595 pad 0 240px chứa các hàng cách nhau 40, và khối cha có 40 trên/dưới —
+   đáy là 40 chứ không phải 80. */
+.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 40px var(--page-gutter); }
 .blog-card {
   display: flex; flex-direction: column; gap: 24px; padding: 8px 0; border-bottom: 1px solid var(--color-grey-100);
   text-decoration: none; color: inherit;

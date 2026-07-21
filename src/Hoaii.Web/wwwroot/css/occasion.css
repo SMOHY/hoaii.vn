@@ -63,8 +63,10 @@
 .occ-chooser__item.is-active .occ-chooser__thumb--empty { background: var(--color-grey-500); }
 .occ-chooser__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+/* 92px là chiều cao ô mô tả trong Figma; giữ nguyên kể cả khi trống để ba cột bằng nhau và
+   section cao đúng 636 (120 + 476 + 40). */
 .occ-chooser__desc {
-  max-width: 453px; margin-top: -8px;
+  max-width: 453px; margin-top: -8px; min-height: 92px;
   font: 300 16px/18px var(--font-body); color: var(--color-black);
 }
 

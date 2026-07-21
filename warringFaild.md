@@ -151,6 +151,35 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   `Category.BannerImageUrl` để gán ảnh trong admin là hiện ngay. Cần khách cung cấp 8 ảnh banner.
 - **Cần người dùng xác nhận:** có
 
+### WF-044 — Ô nhập của form "Yêu cầu mua sỉ" khác cấu trúc Figma
+
+- **Khu vực:** `/hop-tac`
+- **Desktop/Mobile:** desktop
+- **Figma node:** `Frame 121`–`Frame 126` trong file `css all layer hợp tác`
+- **Mô tả:** Figma vẽ mỗi ô nhập là **một dòng cao 45.4px**, chữ gợi ý nằm bên trong. Web dùng
+  kiểu **nhãn nhỏ ở trên, ô nhập ở dưới**, cao 60px. Vì thế cột form cao 548 thay vì 598 và cả
+  khối "Yêu cầu mua sỉ" cao 892 thay vì 902.
+- **Nguyên nhân:** khác cấu trúc, không phải sai số đo.
+- **Mức độ:** `minor`
+- **Đã thử:** không đổi markup form ngay trước bàn giao — kiểu nhãn-trên giữ được nhãn khi người
+  dùng đã gõ, còn kiểu một dòng thì nhãn biến mất, nên đây không hẳn là thụt lùi.
+- **Cách xử lý đề xuất:** nếu khách muốn đúng Figma tuyệt đối thì đổi sang input một dòng với
+  `placeholder`, đồng thời thêm `aria-label` để không mất nhãn cho trình đọc màn hình.
+- **Cần người dùng xác nhận:** có
+
+### WF-045 — Chưa có bản thiết kế cho khung chat nổi
+
+- **Khu vực:** widget chat góc phải mọi trang
+- **Desktop/Mobile:** cả hai
+- **Figma node:** chưa có
+- **Mô tả:** người dùng báo khung chat "chưa giống Figma". Bộ 15 file `css all layer` không chứa
+  layer nào của widget này — chỉ có popup Zalo "Mua số lượng lớn" (đã dựng ở B19).
+- **Mức độ:** `minor`
+- **Đã thử:** tìm theo từ khoá chat / zalo / messenger / bubble trong cả 15 file; chỉ khớp popup
+  Zalo.
+- **Cách xử lý đề xuất:** cần node Figma hoặc file CSS của widget thì mới đối chiếu được.
+- **Cần người dùng xác nhận:** có
+
 ### WF-039 — Form admin escape lại nội dung mỗi lần lưu ⚠️
 
 - **Khu vực:** admin → Chính sách (và có thể mọi form admin lưu text)

@@ -53,10 +53,11 @@
                     <img src="@item.ImageUrl" alt="" loading="lazy" />
                 }
             </span>
-            @if (item.Description.Length > 0)
-            {
-                <span class="occ-chooser__desc">@item.Description</span>
-            }
+            @* Rendered even when empty. Figma gives all three columns the same 92px description
+               slot (only the active one has copy), which is what keeps the row even and the
+               section 636 tall. Dropping the element on the two quiet columns made them 56px
+               shorter than the design. *@
+            <span class="occ-chooser__desc">@item.Description</span>
         </a>
     }
 </nav>
