@@ -3,6 +3,7 @@
 @inject PageContentService PageC
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["MetaDescription"] = Model.Description;
     ViewData["HeroOverlay"] = true;
     ViewData["PreloadImage"] = Model.HeroSlides.FirstOrDefault()?.ImageUrl;
 }
@@ -51,7 +52,9 @@
                 </div>
             </div>
         }
-        <h1 class="cat-hero__title" data-cat-title>@(Model.HeroSlides.FirstOrDefault()?.Name.ToUpperInvariant() ?? Model.Title.ToUpperInvariant())</h1>
+        @* Not an <h1>: this caption swaps to whichever product the carousel is on, so it would make
+           the page heading change as you click. The category heading below is the real h1. *@
+        <p class="cat-hero__title" data-cat-title>@(Model.HeroSlides.FirstOrDefault()?.Name.ToUpperInvariant() ?? Model.Title.ToUpperInvariant())</p>
     </div>
 
     @if (hasSlides)
@@ -72,7 +75,7 @@
 
     <div class="filter-bar">
         <div class="filter-bar__heading">
-            <h2 class="filter-bar__title">Tất cả @Model.Title.ToLowerInvariant()</h2>
+            <h1 class="filter-bar__title">Tất cả @Model.Title.ToLowerInvariant()</h1>
             <p class="filter-bar__desc">@Model.Description</p>
         </div>
         @{
@@ -90,11 +93,11 @@
             <span class="filter-bar__sort-label">Sắp xếp theo</span>
 
             <div class="filter-menu" data-filter-menu>
-                <button type="button" class="filter-bar__dropdown" data-filter-toggle aria-expanded="false" aria-haspopup="true">
+                <button type="button" class="filter-bar__dropdown" data-filter-toggle aria-expanded="false" aria-haspopup="true" aria-controls="sort-panel">
                     <span>@activeSort.Label</span>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5"/></svg>
                 </button>
-                <ul class="filter-menu__panel" data-filter-panel>
+                <ul class="filter-menu__panel" id="sort-panel" data-filter-panel>
                     @foreach (var option in sortOptions)
                     {
                         <li>
@@ -115,11 +118,11 @@
                     + (stock ? "&inStock=true" : "");
             }
             <div class="filter-menu" data-filter-menu>
-                <button type="button" class="filter-bar__filter-btn" data-filter-toggle aria-expanded="false" aria-haspopup="true">
+                <button type="button" class="filter-bar__filter-btn" data-filter-toggle aria-expanded="false" aria-haspopup="true" aria-controls="filter-panel">
                     <span>Bộ lọc@(Model.ActiveFilterCount > 0 ? $" ({Model.ActiveFilterCount})" : "")</span>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.5"/></svg>
                 </button>
-                <ul class="filter-menu__panel filter-menu__panel--right" data-filter-panel>
+                <ul class="filter-menu__panel filter-menu__panel--right" id="filter-panel" data-filter-panel>
                     <li class="filter-menu__group">Khoảng giá</li>
                     @foreach (var band in priceFilters)
                     {

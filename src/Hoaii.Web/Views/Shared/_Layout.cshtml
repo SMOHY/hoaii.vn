@@ -4,6 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Hoài</title>
+    @* Follows the ViewData["Title"] convention: a page sets these when it has real copy for
+       them. The canonical deliberately drops sort/filter so those combinations don't read as
+       separate pages; `page` is kept because each page really is different content. *@
+    @if (ViewData["MetaDescription"] is string metaDescription && metaDescription.Length > 0)
+    {
+        <meta name="description" content="@metaDescription" />
+    }
+    @{
+        var canonicalPage = Context.Request.Query["page"].ToString();
+        var canonicalPath = Context.Request.Path.ToString();
+        var canonical = $"{Context.Request.Scheme}://{Context.Request.Host}{canonicalPath}"
+            + (canonicalPage.Length > 0 && canonicalPage != "1" ? $"?page={canonicalPage}" : "");
+    }
+    <link rel="canonical" href="@canonical" />
     @* Preload the two faces used above the fold — body text (Medium) and the display serif
        every heading is set in. Without this the page paints in a fallback and reflows. *@
     <link rel="preload" href="/fonts/Josefin Sans/JosefinSans-Medium.woff2" as="font" type="font/woff2" crossorigin />

@@ -7,7 +7,7 @@
     // no swatches (node 826:20692).
     var isCollection = Model.CardVariant == "collection";
 }
-<div class="product-card product-card--@Model.CardVariant @(isOutOfStock ? "product-card--out-of-stock" : "")">
+<article class="product-card product-card--@Model.CardVariant @(isOutOfStock ? "product-card--out-of-stock" : "")">
     <div class="product-card__image" style="@(Model.ImageUrl is not null ? $"background-image:url('{Model.ImageUrl}')" : "")">
         <a class="product-card__image-link" href="/san-pham/@Model.Slug" aria-label="@Model.Name"></a>
         @* Figma keeps the "Hàng mới" / "-20%" badges in the component but ships them hidden
@@ -24,7 +24,9 @@
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="productId" value="@Model.Id" />
                 <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
-                <button type="submit" aria-label="Thêm vào giỏ">
+                @* Naming the product matters on a listing: every card otherwise announces the
+                   same "Thêm vào giỏ" with no way to tell which one is focused. *@
+                <button type="submit" aria-label="Thêm @Model.Name vào giỏ">
                     <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 6v16M6 14h16" stroke="currentColor" stroke-width="2"/></svg>
                     <span class="cta-label">Thêm vào giỏ</span>
                 </button>
@@ -58,4 +60,4 @@
             }
         }
     </div>
-</div>
+</article>
