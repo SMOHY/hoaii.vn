@@ -8,6 +8,26 @@ Quy ước mức độ: `blocker` · `major` · `minor` · `data` · `asset` · 
 Lỗi build tạm thời đã sửa ngay trong phiên thì không ghi ở đây — chỉ ghi những gì thực sự còn
 lại, hoặc đã audit rõ và cần người khác quyết.
 
+---
+
+## ⚠️ Việc cần bên mình làm (không thể sửa bằng code)
+
+Bốn việc dưới đây là **thiếu dữ liệu hoặc thiếu asset**, không phải lỗi lập trình. Không mục nào
+được tự bịa nội dung để lấp chỗ trống.
+
+| # | Việc | Ảnh hưởng | Làm ở đâu | Chi tiết |
+|---|---|---|---|---|
+| 1 | Gán sản phẩm cho 5 danh mục dịp (Valentine, 8-3, Giáng sinh, Người ấy, Bố mẹ) — cả 5 đang **0 sản phẩm** | 10 ô card trên 2 trang landing để trống | Admin → Sản phẩm → đổi Danh mục | [WF-011](#wf-011--năm-danh-mục-dịp-không-có-sản-phẩm-nào-️-quan-trọng-nhất) |
+| 2 | Nhập Thành phần / Câu chuyện / Kích thước cho sản phẩm — **44/45 đang trống** | Mọi trang chi tiết hiện chung một đoạn mặc định | Admin → Sản phẩm | [WF-030](#wf-030--4445-sản-phẩm-chưa-có-thành-phần-câu-chuyện-và-kích-thước-️) |
+| 3 | Cung cấp ảnh: 8 banner hero, 5 ảnh cover, 3 ảnh chooser — **trong Figma đều là khối xám trống** | Các khu vực đó render khối màu như thiết kế vẽ | Admin → gán vào `BannerImageUrl` / `CoverImageUrl` | [WF-020](#wf-020--cả-tám-banner-hero-trong-figma-đều-trống-ảnh), [WF-012](#wf-012--ảnh-cover-và-ảnh-campaign-của-hai-trang-landing-chưa-tồn-tại-trong-figma) |
+| 4 | Xác nhận 2 điểm cố ý lệch Figma: H1 trang Quà tặng cá nhân, và đích của cột "Quà tặng doanh nghiệp" | Cả hai đổi lại bằng một dòng code | — | [WF-013](#wf-013--trang-quà-tặng-cá-nhân-trong-figma-vẫn-để-tiêu-đề-quà-tặng-theo-dịp), [WF-014](#wf-014--không-có-danh-mục-quà-tặng-doanh-nghiệp) |
+
+Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageShare vá lỗ hổng
+([WF-007](#wf-007--sixlabors-imagesharp-315-có-lỗ-hổng-bảo-mật-đã-công-bố)) và tách
+`ProductVariant` thành thuộc tính size/màu ([WF-035](#wf-035--popup-chọn-biến-thể-figma-có-size--color-db-chỉ-có-một-tên-đã-xử-lý)).
+
+---
+
 ## Chưa xử lý
 
 ### WF-011 — Năm danh mục dịp không có sản phẩm nào ⚠️ QUAN TRỌNG NHẤT

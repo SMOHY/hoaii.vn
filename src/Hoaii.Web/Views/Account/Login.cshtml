@@ -5,6 +5,9 @@
     var returnUrl = ViewData["ReturnUrl"] as string;
 }
 
+@* Figma's auth card starts straight at the social buttons, so the page heading is hidden. *@
+<h1 class="visually-hidden">Đăng nhập</h1>
+
 <div class="auth-card">
     <button type="button" class="btn-sso-google" disabled title="Tính năng đang phát triển">
         <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.52 12.27c0-.82-.07-1.6-.2-2.36H12v4.47h6.47c-.28 1.5-1.13 2.78-2.4 3.63v3h3.87c2.27-2.09 3.58-5.17 3.58-8.74z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.94-2.9l-3.87-3c-1.07.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.1C3.25 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29A7.2 7.2 0 014.9 12c0-.8.14-1.57.37-2.29v-3.1H1.27A12 12 0 000 12c0 1.94.46 3.77 1.27 5.39l4-3.1z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.61l4 3.1C6.22 6.86 8.87 4.75 12 4.75z"/></svg>

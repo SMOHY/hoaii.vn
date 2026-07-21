@@ -202,3 +202,10 @@
 @media (prefers-reduced-motion: reduce) {
   .addon-sheet, .addon-sheet__panel { transition: none; }
 }
+
+/* Breadcrumb is a real list now, so the separator comes from CSS rather than a "/" in the markup. */
+.cart-breadcrumb ol { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.cart-breadcrumb li + li::before { content: "/"; margin-right: 4px; }
+.cart-breadcrumb a { color: inherit; text-decoration: none; }
+.cart-breadcrumb a:hover { text-decoration: underline; }
+.cart-breadcrumb li[aria-current] { color: var(--color-grey-500); }
