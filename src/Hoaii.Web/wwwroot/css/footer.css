@@ -178,7 +178,18 @@
   .footer-brand img.logo { width: 60px; height: 60px; }
   .footer-brand-info { font-weight: 400; font-size: 13px; line-height: 16px; gap: 4px; }
 
+  /* The desktop column widths (155/244/238) and the auto margin that pushes them right are
+     desktop-only — stacked on a phone each column takes the full width. */
+  .footer-links-row > .footer-col:nth-of-type(1),
+  .footer-links-row > .footer-col:nth-of-type(2),
+  .footer-links-row > .footer-col:nth-of-type(3) { width: 100%; margin-left: 0; }
+
   .footer-col { gap: 8px; }
   .footer-col h3 { font-size: 16px; line-height: 20px; }
   .footer-col a { font-weight: 400; font-size: 13px; line-height: 16px; }
+  /* Figma stacks the mobile links tightly (node 1062:12789); the desktop 16px gap left them
+     almost twice as far apart as the design. */
+  .footer-col ul { gap: 8px; }
+  .footer-social { gap: 12px; }
+  .footer-social .icon-btn { width: 40px; height: 40px; }
 }

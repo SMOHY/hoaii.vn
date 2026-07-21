@@ -197,7 +197,9 @@
   .benefit-col { gap: 16px; }
   .benefit-icon { width: 40px; height: 40px; }
   .benefit-text--desktop { display: none; }
-  .benefit-text--mobile { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  /* Figma node 1062:12663 draws the caption as one 32px two-line block, so the two lines sit
+     directly on top of each other rather than being spaced apart. */
+  .benefit-text--mobile { display: flex; flex-direction: column; align-items: center; gap: 0; }
   .benefit-label {
     font-family: var(--font-body);
     font-weight: 400;
@@ -363,6 +365,10 @@
   .featured-title { font-size: 20px; line-height: 32px; }
   .featured-subtitle { display: none; }
   .featured-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; gap: 4px; padding: 0; }
+  /* Grid items default to min-width:auto, so on a 360px phone the card copy refused to shrink
+     and pushed the grid past the viewport. */
+  .featured-tile, .featured-card { min-width: 0; }
+  .featured-card__eyebrow, .featured-card__title, .featured-card__cta-label { min-width: 0; overflow-wrap: anywhere; }
   .featured-tile { aspect-ratio: 197 / 240; }
   .featured-tile--desktop-only { display: none; }  /* mobile grid is 2×3, not 3×3 */
   .featured-card { aspect-ratio: 197 / 240; padding: 16px; }
@@ -511,6 +517,9 @@
 .about-card:first-child .about-card__img img { width: 117.36%; height: 111.88%; object-fit: fill; max-width: none; margin: -5.84% 0 0 -8.8%; }
 .about-card__label { height: 208px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; }
 .about-card__label span { font-family: var(--font-display); font-size: 48px; line-height: 60px; color: var(--color-brand-red); text-align: center; }
+/* Desktop breaks the caption over two lines (node 1214:38909); mobile keeps it on one, so the
+   two halves are separate spans that switch between block and inline. */
+.about-card__line { display: block; }
 .about-card__label--to-gold { background: linear-gradient(to bottom, #fff 0%, #E5D9CB 100%); }
 .about-card__label--from-gold { background: linear-gradient(to bottom, #E5D9CB 0%, #fff 100%); }
 
@@ -520,17 +529,26 @@
   .about-heading h2 { font-size: 20px; line-height: 30px; }
   .about-subtitle { font-size: 13px; line-height: 16px; font-weight: 400; }
 
-  /* Two-by-two on mobile (node 1068:20273), not a single column. */
-  .about-cards { display: grid; grid-template-columns: repeat(2, 1fr); padding-inline: 16px; gap: 8px; }
-  .about-card { height: auto; }
-  .about-card__img { height: 190px; }
-  .about-card__label { height: 96px; padding-block: 8px; }
-  .about-card__label span { font-size: 24px; line-height: 30px; }
+  /* Two-by-two on mobile (node 1068:20273), not a single column. Figma's row is 292.5px tall at
+     430px wide; expressed as a ratio so the cards keep their proportions on narrower phones. */
+  .about-cards { display: grid; grid-template-columns: repeat(2, 1fr); padding-inline: 16px; gap: 16px; }
+  .about-card { height: auto; aspect-ratio: 191 / 292.5; }
+  /* The photo takes whatever the caption leaves, instead of a fixed height. */
+  .about-card__img { height: auto; flex: 1 1 auto; min-height: 0; }
+  .about-card__label { height: auto; flex: none; padding: 8px; }
+  /* Mobile caption is Josefin Medium on one line — not the 48px display face desktop uses. */
+  .about-card__label span {
+    font-family: var(--font-body); font-weight: 500; font-size: 16px; line-height: 20px;
+  }
+  .about-card__line { display: inline; }
+  .about-card:first-child .about-card__img img { width: 100%; height: 100%; object-fit: cover; margin: 0; }
 }
 
 /* ---------- Khách hàng (Customers) ---------- */
 /* Figma node 1214:38910: 120 pad + 56 heading + 80 gap + 348 logo area + 120 pad = 724px. */
-.customers-section { width: 100%; padding: 120px 0; background: #fff; text-align: center; }
+/* The marquee track is far wider than the page; the section clips it as well as .customers-marquee
+   so a narrow phone can never end up with a horizontal scrollbar. */
+.customers-section { width: 100%; padding: 120px 0; background: #fff; text-align: center; overflow: hidden; }
 .customers-heading { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-black); margin: 0 0 80px; }
 .customers-marquee {
   display: flex; flex-direction: column; gap: 24px; overflow: hidden;
@@ -555,15 +573,15 @@
 
 @media (max-width: 767.98px) {
   .customers-section { padding: 40px 0; }
-  .customers-heading { font-size: 20px; line-height: 30px; margin: 0 0 24px; padding: 0 16px; }
+  .customers-heading { font-size: 20px; line-height: 30px; margin: 0 0 16px; padding: 0 16px; }
 
   /* Figma keeps the horizontal marquee on mobile (node 1062:12756 — a 1324px-wide
      track bleeding past the 430px frame), just at a smaller scale. Laying the cards
      out as a grid instead stacked all 108 of them into a 3200px column. */
   .customers-marquee { gap: 8px; }
   .customers-track { gap: 8px; animation-duration: 28s; }
-  .logo-card { width: 120px; height: 64px; }
-  .logo-card img { max-width: 92px; max-height: 40px; }
+  .logo-card { width: 132px; height: 66px; }
+  .logo-card img { max-width: 108px; max-height: 46px; }
 }
 
 /* ---------- Blog (HOÀI MÁCH BẠN) ---------- */

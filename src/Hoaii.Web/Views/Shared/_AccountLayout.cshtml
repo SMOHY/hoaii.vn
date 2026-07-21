@@ -1,5 +1,6 @@
-@* Account pages run on the same stripped-back chrome as checkout — logo plus an avatar,
-   no nav and no footer (Figma node 848:20065). *@
+@* Account pages run on stripped-back chrome — logo plus an avatar, no nav (Figma node
+   848:20065). Figma draws these screens without a footer, but the shop wants the same footer
+   on every customer-facing page, so the shared _Footer partial is rendered here too. *@
 @{
     var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
                 ?? User.Identity?.Name
@@ -21,6 +22,7 @@
     <link rel="stylesheet" href="~/css/nav.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/modals.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     @* Last, so the touch-target sizes win over the page stylesheets without !important. *@
     <link rel="stylesheet" href="~/css/touch.css" asp-append-version="true" />
@@ -39,6 +41,9 @@
     <main id="main" tabindex="-1">
         @RenderBody()
     </main>
+
+    @* Same shared footer as the rest of the storefront. *@
+    <partial name="_Footer" />
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/overlays.js" asp-append-version="true"></script>

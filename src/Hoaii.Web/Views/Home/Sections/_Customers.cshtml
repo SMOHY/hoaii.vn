@@ -7,6 +7,12 @@
     <div class="customers-marquee">
         @for (var row = 0; row < 3; row++)
         {
+            @* Each row starts a third of the way further into the list. Without this all three
+               tracks held the same brands in the same order, so rows 1 and 3 — which scroll the
+               same way — showed an identical line-up. Figma gives every row its own brands
+               (node 1062:12756 / 1214:38912). *@
+            var offset = Model.Count > 0 ? row * (Model.Count / 3) : 0;
+            var rowLogos = Model.Skip(offset).Concat(Model.Take(offset)).ToList();
             <div class="customers-row">
                 <div class="customers-track">
                     @* Render the logo list twice back-to-back for a seamless marquee loop.
@@ -14,10 +20,10 @@
                        otherwise only start fetching as they slide into view and pop in. *@
                     @for (var pass = 0; pass < 2; pass++)
                     {
-                        @foreach (var logo in Model)
+                        @foreach (var logo in rowLogos)
                         {
                             <div class="logo-card">
-                                <img src="/images/customers/@(logo).png" alt="@logo" decoding="async" />
+                                <img src="/images/customers/@(logo).png" alt="" decoding="async" />
                             </div>
                         }
                     }

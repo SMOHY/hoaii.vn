@@ -26,11 +26,11 @@
                 @if (card.ImageOnTop)
                 {
                     <div class="about-card__img"><img src="@card.ImageUrl" alt="@card.Caption" loading="lazy" /></div>
-                    <div class="about-card__label about-card__label--to-gold"><span>@line1<br />@line2</span></div>
+                    <div class="about-card__label about-card__label--to-gold"><span><span class="about-card__line">@line1</span> <span class="about-card__line">@line2</span></span></div>
                 }
                 else
                 {
-                    <div class="about-card__label about-card__label--from-gold"><span>@line1<br />@line2</span></div>
+                    <div class="about-card__label about-card__label--from-gold"><span><span class="about-card__line">@line1</span> <span class="about-card__line">@line2</span></span></div>
                     <div class="about-card__img"><img src="@card.ImageUrl" alt="@card.Caption" loading="lazy" /></div>
                 }
             </div>
