@@ -298,6 +298,27 @@ lại, hoặc đã audit rõ và cần người khác quyết.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
 
+### WF-035 — Popup chọn biến thể: Figma có Size + Color, DB chỉ có một tên (đã xử lý)
+
+- **Khu vực:** mini cart, popup "Thêm sản phẩm lẻ"
+- **Figma node:** `970:20686`
+- **Mô tả:** Figma vẽ hai ô chọn riêng "Size" (40cm) và "Color" (Navy). `ProductVariant` chỉ có
+  cột `Name` — ví dụ "4 Bánh", "Hộp 4 túi / màu vàng" — và không có cột màu.
+- **Xử lý:** popup liệt kê đúng các biến thể **có thật**, một trường "Loại". Dựng hai dropdown
+  Size/Color rời sẽ cho phép chọn tổ hợp cửa hàng không bán được.
+- **Cách xử lý triệt để:** tách `ProductVariant` thành các thuộc tính (size, màu, …) rồi mới dựng
+  đúng hai ô như Figma. Đây là thay đổi schema, không làm sát ngày bàn giao.
+- **Cần người dùng xác nhận:** có
+
+### WF-036 — Chưa có popup chọn biến thể cho sản phẩm gợi ý (đã thêm)
+
+- **Khu vực:** mini cart, khối "HOÀN CHỈNH VỚI"
+- **Mô tả:** nút "Thêm" trước đây post thẳng, nên sản phẩm nhiều biến thể bị thêm vào giỏ mà khách
+  không được chọn loại nào — Figma vẽ hẳn một popup cho việc này.
+- **Xử lý:** thêm bottom sheet trượt lên đè drawer (node `970:20686`). Sản phẩm chỉ có một biến thể
+  hoặc không có thì giữ nguyên form thường, vẫn chạy khi tắt JS. Đổi biến thể thì giá cập nhật theo
+  `PriceModifier` thật. Escape đóng sheet nhưng giữ drawer mở.
+
 ### WF-031 — Kích thước hộp bịa giống nhau cho cả 45 sản phẩm (đã sửa)
 
 - **Khu vực:** `/san-pham/{slug}`, khối "Đặc điểm"

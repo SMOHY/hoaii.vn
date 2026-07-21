@@ -1,0 +1,58 @@
+@model IReadOnlyList<Hoaii.Web.Models.Cart.CartAddOnViewModel>
+@* Bottom sheet for picking a variant before an upsell goes into the cart (node 970:20686).
+   Figma draws separate "Size" and "Color" fields, but ProductVariant stores one name and has no
+   colour column, so the sheet lists the variants that actually exist. Inventing two dropdowns
+   would mean showing combinations the shop cannot sell. See WF-035.
+
+   One sheet is rendered per suggestion that needs a choice; only the triggered one opens. *@
+@foreach (var addOn in Model.Where(a => a.NeedsVariantChoice))
+{
+    <div class="addon-sheet" data-addon-sheet="@addOn.ProductId" aria-hidden="true" role="dialog"
+         aria-modal="true" aria-label="Chọn loại @addOn.Name">
+        <form class="addon-sheet__panel" method="post" action="/gio-hang/them">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="productId" value="@addOn.ProductId" />
+            <input type="hidden" name="returnUrl" value="/gio-hang" />
+
+            <button type="button" class="addon-sheet__close" data-addon-sheet-close aria-label="Đóng">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+
+            <div class="addon-sheet__product">
+                <span class="addon-sheet__thumb" style="@(addOn.ThumbnailUrl is not null ? $"background-image:url('{addOn.ThumbnailUrl}')" : "")"></span>
+                <span class="addon-sheet__text">
+                    <span class="addon-sheet__name">@addOn.Name</span>
+                    <span class="addon-sheet__variant" data-addon-sheet-summary>@addOn.Variants[0].Name</span>
+                </span>
+                <span class="addon-sheet__price" data-addon-sheet-price>@addOn.Variants[0].Price.ToString("N0")đ</span>
+            </div>
+
+            <fieldset class="addon-sheet__field">
+                <legend>Loại</legend>
+                @foreach (var variant in addOn.Variants)
+                {
+                    <label class="addon-sheet__option">
+                        <input type="radio" name="variantId" value="@variant.Id"
+                               data-variant-name="@variant.Name" data-variant-price="@variant.Price.ToString("N0")đ"
+                               checked="@(variant.Id == addOn.Variants[0].Id)" />
+                        <span>@variant.Name</span>
+                    </label>
+                }
+            </fieldset>
+
+            <div class="addon-sheet__actions">
+                <div class="addon-sheet__qty">
+                    <button type="button" data-addon-qty="-1" aria-label="Giảm số lượng">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </button>
+                    <span data-addon-qty-value>1</span>
+                    <button type="button" data-addon-qty="1" aria-label="Tăng số lượng">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </button>
+                    <input type="hidden" name="quantity" value="1" data-addon-qty-input />
+                </div>
+                <button type="submit" class="addon-sheet__submit">Thêm vào giỏ</button>
+            </div>
+        </form>
+    </div>
+}

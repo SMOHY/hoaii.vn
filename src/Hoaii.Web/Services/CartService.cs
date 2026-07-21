@@ -227,7 +227,10 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         List<int>? categoryIds, List<int>? excludeProductIds = null)
     {
         // Never suggest something the shop has hidden.
-        var query = db.Products.Where(p => p.IsActive).Include(p => p.Images).AsQueryable();
+        var query = db.Products.Where(p => p.IsActive)
+            .Include(p => p.Images)
+            .Include(p => p.Variants)
+            .AsQueryable();
 
         if (categoryIds is { Count: > 0 })
         {
@@ -248,6 +251,10 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
             ThumbnailUrl = p.Images.OrderBy(i => i.SortOrder).FirstOrDefault()?.Url,
             Name = p.Name,
             Price = p.Price,
+            Variants = p.Variants
+                .OrderBy(v => v.Id)
+                .Select(v => new CartAddOnVariant(v.Id, v.Name, p.Price + v.PriceModifier))
+                .ToList(),
         }).ToList();
     }
 }

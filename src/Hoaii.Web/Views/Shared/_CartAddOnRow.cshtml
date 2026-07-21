@@ -8,10 +8,21 @@
             <span class="addon-row__price">@Model.Price.ToString("N0")đ</span>
         </div>
     </a>
-    <form method="post" action="/gio-hang/them">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="productId" value="@Model.ProductId" />
-        <input type="hidden" name="returnUrl" value="/gio-hang" />
-        <button type="submit" class="addon-row__add">Thêm</button>
-    </form>
+    @* A product with more than one variant cannot be added blind — Figma opens a sheet to pick
+       one first (node 970:20686). With one option or none there is nothing to choose, so the
+       button stays a plain submit and keeps working without JS. *@
+    @if (Model.NeedsVariantChoice)
+    {
+        <button type="button" class="addon-row__add" data-addon-pick="@Model.ProductId"
+                aria-haspopup="dialog">Thêm</button>
+    }
+    else
+    {
+        <form method="post" action="/gio-hang/them">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="productId" value="@Model.ProductId" />
+            <input type="hidden" name="returnUrl" value="/gio-hang" />
+            <button type="submit" class="addon-row__add">Thêm</button>
+        </form>
+    }
 </div>

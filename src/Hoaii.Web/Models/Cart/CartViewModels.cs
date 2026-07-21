@@ -22,7 +22,17 @@ public class CartAddOnViewModel
     public string? ThumbnailUrl { get; init; }
     public required string Name { get; init; }
     public required decimal Price { get; init; }
+
+    /// <summary>Real variant names. Figma draws separate "Size" and "Color" fields in the picker
+    /// (node 970:20686), but ProductVariant stores one name and no colour column, so the sheet
+    /// offers the names that actually exist rather than two invented dropdowns.</summary>
+    public IReadOnlyList<CartAddOnVariant> Variants { get; init; } = [];
+
+    /// <summary>With one option or none there is nothing to choose, so "Thêm" adds straight away.</summary>
+    public bool NeedsVariantChoice => Variants.Count > 1;
 }
+
+public record CartAddOnVariant(int Id, string Name, decimal Price);
 
 public class CartViewModel
 {

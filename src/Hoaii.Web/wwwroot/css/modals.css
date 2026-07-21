@@ -115,8 +115,11 @@ input.is-invalid, textarea.is-invalid { border-color: var(--color-brand-red) !im
 .contact-popup__avatar {
   width: 40px; height: 40px; border-radius: 50%; background: var(--color-grey-50);
   border: 1.111px solid var(--color-grey-500); display: flex; align-items: center; justify-content: center;
-  font: 700 16px var(--font-body); color: var(--color-brand-red);
+  overflow: hidden;
 }
+/* Figma crops the mark so it bleeds past the circle rather than sitting inside it
+   (node 1239:41038: 179.76% wide at -40.48% left). */
+.contact-popup__avatar img { width: 180%; max-width: none; height: auto; }
 .contact-popup__title { font: 500 24px/32px var(--font-body); color: #000; margin: 0; }
 .contact-popup__close { background: none; border: none; color: #1C1C1C; cursor: pointer; padding: 0; }
 .contact-popup__body-copy { font: 500 16px/20px var(--font-body); color: var(--color-grey-500); margin: 0; }
