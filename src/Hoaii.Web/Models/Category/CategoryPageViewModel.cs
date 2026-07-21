@@ -74,11 +74,28 @@ public class ProductCardViewModel
     public string CardVariant { get; init; } = "grid"; // "grid" | "collection" | "related"
 }
 
-public class PromoBannerViewModel
+public partial class PromoBannerViewModel
 {
     public required string Eyebrow { get; init; }
     public required string Title { get; init; }
     public required string CtaText { get; init; }
     public required string CtaUrl { get; init; }
     public string? ImageUrl { get; init; }
+
+    /// <summary>Hex background from the category; null keeps the stylesheet default. This value
+    /// is written into a style attribute, so anything that is not a plain hex colour is dropped —
+    /// an admin-entered string like "red;background-image:url(…)" would otherwise be injected
+    /// straight into the page's CSS.</summary>
+    public string? Background
+    {
+        get => _background;
+        init => _background = value is not null && HexColour().IsMatch(value) ? value : null;
+    }
+    private readonly string? _background;
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")]
+    private static partial System.Text.RegularExpressions.Regex HexColour();
+
+    /// <summary>True renders the wide layout (840 image) instead of the 760 one.</summary>
+    public bool Wide { get; init; }
 }

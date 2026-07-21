@@ -159,6 +159,8 @@ public class CategoryController(HoaiiDbContext db) : Controller
                 CtaText = category?.PromoCtaText is { Length: > 0 } pct ? pct : "Mua ngay",
                 CtaUrl = category?.PromoCtaUrl is { Length: > 0 } pcu ? pcu : "/danh-muc/qua-tet",
                 ImageUrl = category?.PromoImageUrl is { Length: > 0 } pi ? pi : "/images/category/promo-artist.jpg",
+                Background = category?.PromoBackground,
+                Wide = category?.PromoWide ?? false,
             },
         };
 

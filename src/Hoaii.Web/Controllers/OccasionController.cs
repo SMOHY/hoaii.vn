@@ -163,6 +163,9 @@ public class OccasionController(HoaiiDbContext db) : Controller
                 CtaText = "Mua ngay",
                 CtaUrl = "/danh-muc/qua-tet",
                 ImageUrl = "/images/category/promo-artist.jpg",
+                // Figma đặt nền hồng #E4C0D3 cho dải campaign của trang landing, khác hẳn các
+                // trang danh mục (layer "sản phẩm nổi bật/giới hạn", file css all layer).
+                Background = "#E4C0D3",
             },
         };
 

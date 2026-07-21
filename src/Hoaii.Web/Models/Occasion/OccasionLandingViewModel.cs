@@ -69,11 +69,24 @@ public class CompactProductViewModel
     public bool IsOutOfStock { get; init; }
 }
 
-public class OccasionCampaignViewModel
+public partial class OccasionCampaignViewModel
 {
     public required string Eyebrow { get; init; }
     public required string Body { get; init; }
     public required string CtaText { get; init; }
     public required string CtaUrl { get; init; }
     public string? ImageUrl { get; init; }
+
+    /// <summary>Hex background — the campaign band is a different colour on every page in Figma.
+    /// Validated the same way as the category one: anything that is not a plain hex is dropped
+    /// rather than written into the page's style attribute.</summary>
+    public string? Background
+    {
+        get => _background;
+        init => _background = value is not null && HexColour().IsMatch(value) ? value : null;
+    }
+    private readonly string? _background;
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")]
+    private static partial System.Text.RegularExpressions.Regex HexColour();
 }

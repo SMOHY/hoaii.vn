@@ -127,10 +127,8 @@
 .occ-card--out-of-stock .occ-card__image { opacity: 0.6; }
 
 /* ---------- Campaign band (node 771:15461) ----------
-   Wider image column than the category-page banner: 840 instead of 760, text capped at 600. */
-.promo-banner--occasion { padding: 80px; gap: 80px; }
-.promo-banner--occasion .promo-banner__text { max-width: 600px; margin-left: 160px; }
-.promo-banner--occasion .promo-banner__image { flex: 0 0 840px; }
+   Bố cục trùng khít với bản rộng của trang danh mục (khung chữ 840 thụt 240, ảnh 840, lề 80),
+   nên dùng chung .promo-banner--wide trong category.css thay vì định nghĩa lại ở đây. */
 
 /* ---------- Mobile (nodes 1068:30572 / 1068:31857) ---------- */
 @media (max-width: 767.98px) {
@@ -177,9 +175,6 @@
   .occ-section__more { align-self: center; font: 500 16px/20px var(--font-body); }
   .occ-section__more svg { display: none; }
 
-  .promo-banner--occasion { padding: 0 0 24px; }
-  .promo-banner--occasion .promo-banner__text { max-width: none; margin-left: 0; }
-  .promo-banner--occasion .promo-banner__image { flex: none; height: 340px; }
 }
 
 /* Between the mobile breakpoint and a full 1920 the hero's fixed 617px column and the sections'
@@ -193,10 +188,4 @@
   .occ-chooser__thumb { height: min(320px, 22vw); }
 }
 
-/* Dải campaign: ảnh cố định 840px tràn ra ngoài cửa sổ ở mọi độ rộng dưới ~1200. Cho nó co lại
-   thay vì giữ nguyên — Figma chỉ vẽ 1920 nên khoảng giữa là phần mình phải tự lo. */
-@media (max-width: 1279.98px) {
-  .promo-banner--occasion { padding: 60px var(--page-gutter); gap: 40px; }
-  .promo-banner--occasion .promo-banner__text { max-width: 100%; margin-left: 0; }
-  .promo-banner--occasion .promo-banner__image { flex: 1 1 0; min-width: 0; }
 }

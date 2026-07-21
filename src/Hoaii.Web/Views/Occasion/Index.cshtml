@@ -69,7 +69,8 @@
 </div>
 
 @* Same campaign band as the category pages but a wider image column (node 771:15461). *@
-<section class="promo-banner promo-banner--occasion">
+<section class="promo-banner promo-banner--wide"
+         style="@(Model.Campaign.Background is { Length: > 0 } bg ? $"--promo-bg:{bg}" : "")">
     <div class="promo-banner__text">
         <p class="promo-banner__eyebrow">@Model.Campaign.Eyebrow</p>
         <p class="promo-banner__title">@Model.Campaign.Body</p>

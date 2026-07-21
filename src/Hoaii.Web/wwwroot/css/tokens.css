@@ -3,16 +3,24 @@
   See /design-specs/ at the repo root for full pixel-level specs per page.
 */
 :root {
-  /* Brand */
+  /* Brand — tên biến lấy đúng từ bộ Variables của Figma (node 1827:36317 / 1287:55275). */
   --color-brand-red: #AF2234;       /* red-500 / primary CTA, nav announcement */
   --color-brand-red-dark: #9F1F2F;  /* red-600 / hover */
+  --color-brand-red-mid: #60131D;   /* red-800 */
   --color-brand-red-deep: #410C13;  /* red-900 / buttons, headings on dark */
-  --color-brand-red-light: #BF4E5D; /* red-400 */
-  --color-brand-red-tint: #F7E9EB;  /* red-50 */
-  --color-brand-gold: #AA8656;      /* yellow-500 / tan accent */
   --color-brand-gold-tint: #BB9E78; /* yellow-400 */
+  --color-brand-gold-sand: #C6AE8E; /* yellow-300 */
+  --color-brand-gold-mid: #9B7A4E;  /* yellow-600 */
   --color-brand-gold-deep: #5E4A2F; /* yellow-800 / footer link text */
+  --color-brand-gold-pale: #E5D9CB; /* yellow-100 / thanh tiêu đề mini cart */
   --color-brand-gold-bg: #F7F3EE;   /* yellow-50 / footer section bg */
+
+  /* Hai màu dưới đây KHÔNG có trong bộ Variables của Figma nhưng có thật trong bản vẽ:
+     #AA8656 là nền dải campaign, #F7E9EB là nền nút phụ trên trang chi tiết sản phẩm.
+     Giữ lại nhưng ghi rõ để sau này không nhầm là token chính thức. */
+  --color-brand-gold: #AA8656;      /* nền dải campaign — không phải token Figma */
+  --color-brand-red-tint: #F7E9EB;  /* nền nút phụ — không phải token Figma */
+  --color-brand-red-light: #BF4E5D; /* chỉ dùng trong admin — không phải token Figma */
 
   /* Grey scale */
   --color-grey-50: #F2F2F2;
@@ -46,11 +54,17 @@
   --text-subtitle-size: 20px;
   --text-subtitle-line: 23px;
 
-  /* Desktop heading scale */
-  --heading-4-size: 24px;
-  --heading-4-line: 32px;
-  --heading-2-size: 48px;
-  --heading-2-line: 56px;
+  /* Thang tiêu đề — đủ 4 bậc cho cả hai khung, đúng bộ Variables của Figma.
+     H1 và H2 chạy LC Sac, H3 và H4 chạy Josefin Sans. */
+  --heading-1-size: 70px;  --heading-1-line: 80px;  /* LC Sac Regular */
+  --heading-2-size: 48px;  --heading-2-line: 60px;  /* LC Sac Regular — trước ghi nhầm 56 */
+  --heading-3-size: 32px;  --heading-3-line: 40px;  /* Josefin Medium */
+  --heading-4-size: 24px;  --heading-4-line: 32px;  /* Josefin SemiBold */
+
+  --heading-1-size-mb: 28px;  --heading-1-line-mb: 36px;  /* LC Sac Regular */
+  --heading-2-size-mb: 20px;  --heading-2-line-mb: 26px;  /* LC Sac Regular */
+  --heading-3-size-mb: 24px;  --heading-3-line-mb: 32px;  /* Josefin Medium */
+  --heading-4-size-mb: 20px;  --heading-4-line-mb: 28px;  /* Josefin Bold */
 
   /* Layout */
   --content-max-width: 1440px;
