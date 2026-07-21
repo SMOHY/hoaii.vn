@@ -101,16 +101,18 @@
                 <img class="pdp-story__motif" src="~/images/pdp/pattern.png" alt="" loading="lazy" />
             </div>
         </div>
-        <div class="pdp-story__row2">
-            @{
-                // Figma renders the first line as a lead-in and the dimensions under it as a
-                // bulleted list (node 826:13881).
-                var featureLines = Model.FeatureBody.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            }
-            <div class="text">
-                <h2>@Model.FeatureTitle</h2>
-                @if (featureLines.Length > 0)
-                {
+        @{
+            // Figma renders the first line as a lead-in and the dimensions under it as a
+            // bulleted list (node 826:13881).
+            var featureLines = Model.FeatureBody.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        }
+        @* The whole row goes when there are no measurements — an "Đặc điểm" heading over nothing
+           reads as a loading failure. *@
+        @if (featureLines.Length > 0)
+        {
+            <div class="pdp-story__row2">
+                <div class="text">
+                    <h2>@Model.FeatureTitle</h2>
                     <div class="pdp-feature-body">
                         <p>@featureLines[0]</p>
                         @if (featureLines.Length > 1)
@@ -123,10 +125,10 @@
                             </ul>
                         }
                     </div>
-                }
+                </div>
+                <div class="image" style="@(Model.FeatureImageUrl is not null ? $"background-image:url('{Model.FeatureImageUrl}')" : "")"></div>
             </div>
-            <div class="image" style="@(Model.FeatureImageUrl is not null ? $"background-image:url('{Model.FeatureImageUrl}')" : "")"></div>
-        </div>
+        }
     </div>
 </section>
 

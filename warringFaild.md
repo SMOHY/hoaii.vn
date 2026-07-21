@@ -96,6 +96,25 @@ lại, hoặc đã audit rõ và cần người khác quyết.
 - **Cách xử lý đề xuất:** nâng tiêu đề hiện có của mỗi trang lên thành `<h1>`.
 - **Cần người dùng xác nhận:** không
 
+### WF-030 — 44/45 sản phẩm chưa có Thành phần, Câu chuyện và Kích thước ⚠️
+
+- **Khu vực:** `/san-pham/{slug}` — mọi trang chi tiết
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `826:13864` (thành phần), `826:13879` (câu chuyện), `826:13881` (kích thước)
+- **Mô tả:** ba cột `Description`, `StoryBody`, `FeatureBody` được thêm ở đợt CMS nhưng **chưa ai
+  nhập**: 0/45 sản phẩm đang bán có dữ liệu. Mọi trang chi tiết vì thế hiện chung một đoạn mặc định.
+- **Nguyên nhân:** thiếu nội dung, không phải lỗi code.
+- **Bằng chứng:** `SELECT COUNT(*) … WHERE IsActive=1` → 45; số có `Description` / `StoryBody` /
+  `FeatureBody` đều bằng 0 trước bước này.
+- **Mức độ:** `data`
+- **Đã thử:** Figma chỉ dựng trang chi tiết cho đúng một sản phẩm (Tinh Hoa Bắc Bộ), nên chỉ sản
+  phẩm đó có nội dung chính thức để nhập — đã nhập trong
+  `db/scripts/2026-07-21-product-detail-copy.sql`. 44 sản phẩm còn lại không có nguồn nội dung nào
+  và không được bịa.
+- **Cách xử lý đề xuất:** nhập trong admin → Sản phẩm → từng sản phẩm. Ưu tiên Thành phần vì đó là
+  thông tin khách thật sự cần trước khi mua.
+- **Cần người dùng xác nhận:** có
+
 ### WF-020 — Cả tám banner hero trong Figma đều trống ảnh
 
 - **Khu vực:** 8 trang listing của B16
@@ -278,6 +297,38 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   Tường" đeo ảnh ngũ quả. Hai hộp Tinh Hoa Bắc Bộ còn đeo `/images/placeholders/featured-*.jpg`.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
+
+### WF-031 — Kích thước hộp bịa giống nhau cho cả 45 sản phẩm (đã sửa)
+
+- **Khu vực:** `/san-pham/{slug}`, khối "Đặc điểm"
+- **Mô tả:** `ProductController` hard-code `"KÍCH THƯỚC: Hộp cứng 48x15.7x6cm…"` làm giá trị mặc
+  định, nên mọi sản phẩm — kể cả hộp trà, tượng gốm, chai rượu — đều in cùng bộ số đo của một hộp
+  quà Tết. Đây là thông tin sai sự thật, khách đọc để quyết định mua và để tính vận chuyển.
+- **Xử lý:** bỏ giá trị mặc định; số đo giờ là dữ liệu. Không có dữ liệu thì **ẩn cả khối** — một
+  tiêu đề "Đặc điểm" trống trông như lỗi tải. Số đo thật của Tinh Hoa Bắc Bộ nhập từ node
+  `826:13881`.
+
+### WF-032 — Dải thumbnail bị bóp méo khi sản phẩm có nhiều hơn 5 ảnh (đã sửa)
+
+- **Khu vực:** `/san-pham/{slug}`, gallery
+- **Mô tả:** Figma cố định thumbnail 100×100 và đánh dấu `shrink-0` (node `826:15686`), nhưng CSS
+  thiếu `flex: none` nên với sản phẩm 8 ảnh chúng co còn ~72px — kích thước dải đổi theo từng sản
+  phẩm. Ngoài ra thiếu hẳn lớp phủ đen 50% mà Figma dùng để làm mờ các ảnh chưa chọn.
+- **Xử lý:** cố định 100×100, cho dải cuộn ngang khi tràn, thêm lớp phủ `rgba(0,0,0,.5)` tắt ở ảnh
+  đang chọn, và thêm `focus-visible` cho thao tác bàn phím.
+
+### WF-033 — Nền section "Câu chuyện sản phẩm" sai màu (đã sửa)
+
+- **Khu vực:** `/san-pham/{slug}`
+- **Mô tả:** Figma đặt dải này trên nền be `#F7F3EE` (node `826:20691`) — đó là thứ tách nó khỏi
+  khối sản phẩm trắng phía trên — nhưng CSS để `#fff`.
+- **Xử lý:** đổi sang `var(--color-brand-gold-bg)`. Đã lấy mẫu pixel cả hai bên để xác nhận.
+
+### WF-034 — Figma gõ nhầm "THÀN PHẦN" (đã tránh)
+
+- **Khu vực:** `/san-pham/{slug}`
+- **Mô tả:** node `826:13863` ghi "THÀN PHẦN :" thiếu chữ H.
+- **Xử lý:** web hiện đúng "THÀNH PHẦN :", không chép lỗi.
 
 ### WF-024 — Minh họa "không có kết quả" là hình vẽ tay không đúng Figma (đã sửa)
 

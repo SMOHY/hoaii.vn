@@ -24,12 +24,27 @@
   width: 646px; max-width: 100%; height: 708px;
   border-radius: 8px; background-color: var(--color-grey-300); background-size: cover; background-position: center;
 }
-.pdp-gallery__thumbs { display: flex; gap: 16px; }
+/* Figma pins each thumbnail at 100x100 and marks it shrink-0 (node 826:15686). Without that the
+   flex row squeezed them to ~72px as soon as a product had more than the five the mock draws, so
+   the strip changed size per product. Now the size is fixed and the row scrolls instead. */
+.pdp-gallery__thumbs {
+  display: flex; gap: 16px; overflow-x: auto;
+  scrollbar-width: none; scroll-snap-type: x proximity;
+}
+.pdp-gallery__thumbs::-webkit-scrollbar { display: none; }
 .pdp-gallery__thumb {
+  position: relative; flex: none; scroll-snap-align: start;
   width: 100px; height: 100px; border-radius: var(--radius-sm); border: none; cursor: pointer;
   background-color: #DCDCDC; background-size: cover; background-position: center;
 }
-.pdp-gallery__thumb.active { background-color: #9B9B9B; }
+/* Figma dims every thumbnail except the one on show with a 50% black wash — that, not a border,
+   is how the selected frame reads. */
+.pdp-gallery__thumb::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: rgba(0, 0, 0, 0.5); transition: opacity 0.2s ease;
+}
+.pdp-gallery__thumb.active::after { opacity: 0; }
+.pdp-gallery__thumb:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
 .pdp-dots { display: none; align-items: center; justify-content: center; gap: 8px; }
 
 /* Each block sets its own top margin: Figma's rhythm here is 48 / 40 / 24 / 36,
@@ -102,7 +117,9 @@
 }
 
 /* ---------- Product Story ---------- */
-.pdp-story { background: #fff; padding: 80px 0; }
+/* Figma sets this band on the brand cream, not white (node 826:20691) — it is what separates the
+   story from the white product block above it. */
+.pdp-story { background: var(--color-brand-gold-bg); padding: 80px 0; }
 /* 1920 wide with a 240px gutter leaves the 1440px band Figma lays this out in; capping
    the box at 1440 instead would squeeze the copy column down to 960. */
 .pdp-story__container { max-width: 1920px; margin: 0 auto; padding: 0 240px; }
