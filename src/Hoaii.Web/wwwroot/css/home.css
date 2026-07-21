@@ -2,9 +2,21 @@
 /* The body.hero-overlay nav rules live in nav.css — Contact needs them too. */
 
 /* ---------- Hero ---------- */
+/* Figma's hero is 1920x1080 and the photograph is 1920x1080 too, so at the design width `cover`
+   crops nothing. Pinning the height at 1080 while the width follows the window broke that: at
+   1600 the box became 1.48:1 against a 1.78:1 image, so `cover` scaled the photo up to fill the
+   height and cut ~320px off each side — the banner read as zoomed in and clipped.
+   Holding the ratio instead means the framing is identical at every width. min-height keeps it
+   from collapsing on short windows. */
 .home-hero {
   position: relative;
-  min-height: 1080px; /* node 1214:38715 */
+  /* 56.25vw is the 16:9 height, so the framing is identical at every width up to 1920. Past that
+     it caps at the design's 1080 — a 1440px-tall hero on a 2560 monitor would push everything
+     else off screen. `aspect-ratio` cannot do this: paired with max-height it shrinks the width
+     too, so the hero stopped filling the window on wide monitors. */
+  height: 56.25vw; /* node 1214:38715 — 1920x1080 */
+  min-height: 640px;
+  max-height: 1080px;
   background: var(--color-grey-500);
   display: flex;
   flex-direction: column;
@@ -221,16 +233,16 @@
 
 /* ---------- Sản phẩm nổi bật (Featured Products) ---------- */
 /* 120 pad + 122 heading + 40 gap + 1640 grid + 120 pad = 2042px (node 1214:38732) */
-/* Had `padding: 120px 0` — no horizontal gutter at all, so below 1920 the tiles ran to within
-   64px of the viewport edge while every other section held its 240. The children were carrying
-   `padding: 0 24px` to compensate, which is why it looked right at exactly 1920 and nowhere else. */
+/* Figma really does set `padding: 120px 0` here — the section is full-bleed and it is the grid
+   inside that is pinned to 1316px and centred. The gutter belongs on the grid, not the section;
+   putting it on the section made the tiles narrower than the design at every width. */
 .featured-section {
   background: var(--color-brand-gold-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  padding: 120px var(--page-gutter);
+  padding: 120px 0;
 }
 .featured-heading {
   display: flex;
@@ -256,14 +268,15 @@
 }
 
 /* Figma: 3 tiles of 428×536 with 16px gaps -> 1316px wide, 1640px tall. */
+/* Figma pins this at 1316 wide with 16px gaps (frame "Hình ảnh"), so each tile lands on 428.
+   The 24px padding made the box 1364 and squeezed the tiles to 420. The gutter subtraction keeps
+   it off the viewport edge once the window drops below 1316 + two gutters. */
 .featured-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 536px;
   gap: 16px;
-  width: 100%;
-  max-width: 1364px; /* 1316 + 2×24 padding */
-  padding: 0 24px;
+  width: min(1316px, 100% - 2 * var(--page-gutter));
 }
 .featured-tile {
   display: block;
@@ -527,8 +540,9 @@
 }
 
 /* ---------- Về Hoài (About) ---------- */
-/* Same missing gutter as .featured-section above. */
-.about-section { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 120px var(--page-gutter); background: #fff; }
+/* Also `padding: 120px 0` in Figma — the 240 gutter sits on .about-cards below, not here.
+   Doubling it up shrank the card row by 480px. */
+.about-section { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 120px 0; background: #fff; }
 .about-heading { display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; max-width: 1118px; margin: 0 auto; padding: 0 24px; }
 .about-heading h2 { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-red); } /* Figma node 1214:38907: VỀ HOÀI is red */
 .about-subtitle { font-family: var(--font-body); font-size: 20px; line-height: 23px; font-weight: 500; color: #473824; } /* Figma node 1214:38908 */

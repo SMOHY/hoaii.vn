@@ -192,3 +192,32 @@ main {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
 }
+
+/* ---------- Dải tablet 768–1279 ----------
+   Figma chỉ vẽ 1920 và 430, nên khoảng giữa chạy CSS desktop với hàng loạt chiều rộng px cứng
+   (ảnh campaign 840, cột hero liên hệ 617, dải thumbnail 912…) và tràn ngang. Đây là vệ sinh
+   flex chứ không phải thiết kế lại: một flex item mặc định không co xuống dưới nội dung của nó,
+   nên phải cho phép co và chặn không vượt khung cha. */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .promo-banner__image,
+  .promo-banner--occasion .promo-banner__image {
+    flex: 0 1 840px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .contact-hero__inner,
+  .contact-hero__aside,
+  .contact-hero__img,
+  .pdp-story__text,
+  .pdp-story__image,
+  .occ-section__body {
+    max-width: 100%;
+    min-width: 0;
+  }
+  /* Dải thumbnail đã tự cuộn ngang; chỉ cần cha đừng để nó đẩy trang ra. */
+  .pdp-gallery { overflow: hidden; }
+}
+
+/* Chốt chặn cuối: không khối nào được đẩy trang rộng hơn cửa sổ, ở bất kỳ độ rộng nào.
+   Không dùng để che lỗi bố cục — các lỗi thật đã sửa ở đúng chỗ phía trên. */
+body { overflow-x: clip; }

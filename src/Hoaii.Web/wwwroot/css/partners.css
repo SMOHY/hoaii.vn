@@ -117,3 +117,17 @@
   .wholesale__form { order: 1; }
   .wholesale__submit { align-self: flex-end; }
 }
+
+/* Khối "Yêu cầu mua sỉ": ảnh 707 + khoảng cách 120 + form 613 = đúng 1440, vừa khít ở 1920 và
+   tràn ở mọi độ rộng nhỏ hơn. Dưới 1600 cho hai cột co lại theo tỉ lệ; dưới 1280 xếp dọc hẳn.
+   Chỉ đụng .wholesale__panel — .wholesale__row là hàng ô nhập bên trong form, không liên quan. */
+@media (max-width: 1919.98px) {
+  .wholesale__panel { gap: 48px; }
+  .wholesale__image { flex: 1 1 0; min-width: 0; }
+  .wholesale__form { flex: 1 1 0; min-width: 0; }
+}
+@media (max-width: 1279.98px) {
+  .wholesale__panel { flex-direction: column; gap: 24px; }
+  .wholesale__image, .wholesale__form { flex: none; width: 100%; }
+  .wholesale__image { height: 380px; }
+}

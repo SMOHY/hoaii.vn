@@ -183,3 +183,20 @@
   .contact-form { width: 100%; }
   .contact-form__submit { align-self: flex-end; }
 }
+
+/* Hai chỗ giữ chiều rộng cứng: cột ảnh hero 617px, và đoạn giới thiệu 766px cạnh form. Đoạn 766
+   có flex-shrink:0 nên khi cửa sổ hẹp nó không nhường chỗ, đẩy hẳn form ra ngoài màn hình
+   (form còn đúng 0px). Cùng cách xử lý như bản mobile, chỉ áp sớm hơn. */
+@media (max-width: 1279.98px) {
+  .contact-hero__inner { flex-direction: column; gap: 24px; padding-inline: var(--page-gutter); }
+  .contact-hero__aside, .contact-hero__img { width: 100%; max-width: 100%; flex: none; }
+  .contact-form-section__row { flex-direction: column; gap: 24px; }
+  .contact-form-section__intro { width: 100%; flex-shrink: 1; }
+  .contact-form { width: 100%; }
+  .contact-address__img, .contact-address__text { max-width: 100%; }
+}
+
+/* Địa chỉ là một chuỗi dài không có chỗ ngắt tự nhiên nên tràn ra ngoài khung ở cửa sổ hẹp.
+   Không đặt trong media query: dòng này chỉ được phép ngắt khi thật sự cần, và cho phép ngắt ở
+   mọi độ rộng thì ở màn rộng nó vẫn nằm một dòng như thiết kế. */
+.contact-address__text { max-width: 100%; overflow-wrap: anywhere; }

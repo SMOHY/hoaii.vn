@@ -192,3 +192,11 @@
   .occ-section__cover { height: min(659px, 46vw); }
   .occ-chooser__thumb { height: min(320px, 22vw); }
 }
+
+/* Dải campaign: ảnh cố định 840px tràn ra ngoài cửa sổ ở mọi độ rộng dưới ~1200. Cho nó co lại
+   thay vì giữ nguyên — Figma chỉ vẽ 1920 nên khoảng giữa là phần mình phải tự lo. */
+@media (max-width: 1279.98px) {
+  .promo-banner--occasion { padding: 60px var(--page-gutter); gap: 40px; }
+  .promo-banner--occasion .promo-banner__text { max-width: 100%; margin-left: 0; }
+  .promo-banner--occasion .promo-banner__image { flex: 1 1 0; min-width: 0; }
+}

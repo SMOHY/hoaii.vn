@@ -179,3 +179,11 @@
     gap: 8px;
   }
 }
+
+/* Ảnh hero 694px cứng cạnh phần chú thích: dưới 1024 xếp dọc để không tràn. */
+@media (max-width: 1023.98px) {
+  .about-page-hero__media { flex-direction: column; gap: 24px; }
+  .about-page-hero__img { width: 100%; max-width: 100%; flex: none; height: 360px; }
+  .about-page-hero__story { flex-direction: column; gap: 24px; }
+  .about-page-hero__story-text { width: 100%; }
+}

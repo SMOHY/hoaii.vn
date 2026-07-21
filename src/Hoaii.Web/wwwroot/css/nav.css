@@ -63,9 +63,13 @@ body.hero-overlay .nav-menu .item.is-open {
   justify-content: center;
   padding: 0 10px; /* Figma node 908:16465 */
 }
+/* Figma sets a flat `padding: 0 240px` on both nav rows (Frame 16 and Frame 26), not a centred
+   1440 box. Centring only lands on 240 at exactly 1920: the gutter then falls straight to 0 at
+   1440, so the logo sat against the window edge while every section below it still held its
+   margin. The token is 240 at 1920 and stays proportional below. */
 .nav-subbar-inner {
   width: 100%;
-  max-width: var(--content-max-width);
+  padding: 0 var(--page-gutter);
   height: 24px;
   display: flex;
   align-items: center;
@@ -105,7 +109,7 @@ body.hero-overlay .nav-menu .item.is-open {
 }
 .nav-main-inner {
   width: 100%;
-  max-width: var(--content-max-width);
+  padding: 0 var(--page-gutter);
   display: flex;
   align-items: center;
   justify-content: space-between;
