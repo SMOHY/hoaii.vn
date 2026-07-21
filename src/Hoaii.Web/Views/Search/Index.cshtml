@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Tìm kiếm";
     var hasQuery = !string.IsNullOrEmpty(Model.Query);
+    var hasResults = hasQuery && Model.TotalResultCount > 0;
 }
 
 <div class="search-header">
@@ -13,30 +14,41 @@
         <input type="text" name="q" value="@Model.Query" placeholder="Tìm sản phẩm, danh mục..." autofocus />
     </form>
 
+    @* The count sits above the heading in both states (nodes 988:21329 and 988:23680). The
+       heading itself only belongs here when there is something to show — with no results the
+       page's h1 is "KHÔNG CÓ KẾT QUẢ" below, and two h1s would be worse than none. *@
     @if (hasQuery)
     {
         <p class="search-header__count">@Model.TotalResultCount kết quả</p>
-        <h1 class="search-header__title">KẾT QUẢ TÌM KIẾM CHO "@Model.Query.ToUpperInvariant()"</h1>
+    }
+    @if (hasResults)
+    {
+        <h1 class="search-header__title">KẾT QUẢ TÌM KIẾM CHO “@Model.Query.ToUpperInvariant()”</h1>
     }
 </div>
 
 @if (!hasQuery)
 {
+    @* Landing on /tim-kiem with nothing typed is not the same as searching and finding nothing,
+       so it does not claim "0 kết quả" and no query runs. *@
     <div class="empty-state">
+        <h1 class="empty-state__title">TÌM KIẾM</h1>
         <p class="empty-state__subtext">Nhập từ khóa để tìm sản phẩm bạn cần.</p>
+        <img class="empty-state__illustration" src="~/images/search/no-results.svg"
+             width="197" height="191" alt="" />
     </div>
 }
 else if (Model.TotalResultCount == 0)
 {
+    @* Node 1028:12593. The heading is this page's h1 in the empty state — the "kết quả tìm kiếm
+       cho…" one above only renders when there is something to show. *@
     <div class="empty-state">
-        <p class="empty-state__count">0 kết quả</p>
-        <h2 class="empty-state__title">KHÔNG CÓ KẾT QUẢ</h2>
+        @* No count line here: the header above already prints "0 kết quả" (node 988:23680), and
+           Figma shows it once. *@
+        <h1 class="empty-state__title">KHÔNG CÓ KẾT QUẢ</h1>
         <p class="empty-state__subtext">Vui lòng thử lại từ khóa khác hoặc quay lại <a href="/">trang chủ</a></p>
-        <svg class="empty-state__illustration" width="197" height="191" viewBox="0 0 197 191" fill="none" aria-hidden="true">
-            <path d="M20 40h30l25 120h120l25-80H70" stroke="#7A7A7A" stroke-width="3" stroke-linejoin="round"/>
-            <circle cx="95" cy="175" r="10" stroke="#7A7A7A" stroke-width="3"/>
-            <circle cx="165" cy="175" r="10" stroke="#7A7A7A" stroke-width="3"/>
-        </svg>
+        <img class="empty-state__illustration" src="~/images/search/no-results.svg"
+             width="197" height="191" alt="" />
     </div>
 }
 else

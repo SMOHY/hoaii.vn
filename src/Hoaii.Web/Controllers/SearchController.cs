@@ -44,17 +44,25 @@ public class SearchController(HoaiiDbContext db) : Controller
 
         var slugQuery = Slugify(query);
 
+        // Matching the description and the category name too means "trà" finds the tea products
+        // and "bánh trung thu" finds the boxes whose name says only "Hộp bánh …". Filtering stays
+        // in SQL — nothing is pulled into memory before the Where.
         var matches = await db.Products
             .Where(p => p.IsActive
                         && (p.Name.Contains(query)
+                            || (p.Description != null && p.Description.Contains(query))
+                            || p.Category.Name.Contains(query)
                             || (slugQuery.Length > 0 && p.Slug.Contains(slugQuery))))
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .ToListAsync();
 
+        // Figma orders the groups Quà tết, Quà trung thu, Quà theo dịp (node 988:22473 onwards) —
+        // that is the merchandiser's category order, not a count ranking.
         var groups = matches
             .GroupBy(p => p.Category)
+            .OrderBy(g => g.Key.SortOrder).ThenBy(g => g.Key.Name)
             .Select(g => new SearchGroupViewModel
             {
                 CategoryName = g.Key.Name,
@@ -62,7 +70,6 @@ public class SearchController(HoaiiDbContext db) : Controller
                 Products = g.Take(GroupPreviewSize).Select(p => ProductCardMapper.Map(p)).ToList(),
                 ShowMoreUrl = $"/danh-muc/{g.Key.Slug}",
             })
-            .OrderByDescending(g => g.TotalCount)
             .ToList();
 
         // "Sản phẩm chọn lọc" fallback/cross-sell block — see design-specs/search-page.md.
@@ -81,7 +88,9 @@ public class SearchController(HoaiiDbContext db) : Controller
                 CategoryName = "Sản phẩm chọn lọc",
                 TotalCount = featured.Count,
                 Products = featured.Select(p => ProductCardMapper.Map(p)).ToList(),
-                ShowMoreUrl = "/",
+                // Was "/" — the block is a cross-sell of the featured products, so "Xem thêm"
+                // belongs on the featured listing, not the home page.
+                ShowMoreUrl = "/danh-muc/san-pham-chon-loc",
                 IsFallback = true,
             });
         }

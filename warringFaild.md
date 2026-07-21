@@ -125,6 +125,21 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   `db/scripts/2026-07-21-eight-listing-pages.sql`.
 - **Cần người dùng xác nhận:** không
 
+### WF-029 — Nút tìm kiếm trên nav không có ô nhập
+
+- **Khu vực:** `Views/Shared/_Nav.cshtml`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `988:21321` (trang search desktop) — không vẽ ô nhập nào trên chính trang này
+- **Mô tả:** icon kính lúp trên nav chỉ `location.href='/tim-kiem'`, không mở ô nhập hay drawer.
+  Figma cũng không vẽ ô nhập trên trang kết quả, nghĩa là ô nhập phải nằm ở một drawer/popup của
+  nav mà file thiết kế chưa ghép vào luồng này.
+- **Mức độ:** `minor`
+- **Đã thử:** dò `_Nav.cshtml` và `overlays.js` — không có search drawer nào.
+- **Cách xử lý đề xuất:** trang `/tim-kiem` đang tự render một ô nhập, nếu không thì không có
+  đường nào gõ từ khóa. Đây là điểm lệch Figma có chủ đích và đã ghi chú trong Razor. Search
+  drawer nhiều khả năng thuộc phạm vi B19 (popup/drawer) — sẽ xử lý ở bước đó.
+- **Cần người dùng xác nhận:** không
+
 ### WF-001 — Thanh phân trang: Figma vẽ mâu thuẫn giữa hai danh mục
 
 - **Khu vực:** template danh mục (`Views/Category/Index.cshtml`)
@@ -263,6 +278,43 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   Tường" đeo ảnh ngũ quả. Hai hộp Tinh Hoa Bắc Bộ còn đeo `/images/placeholders/featured-*.jpg`.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
+
+### WF-024 — Minh họa "không có kết quả" là hình vẽ tay không đúng Figma (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** trạng thái rỗng đang dùng một `<svg>` viết tay hình xe đẩy hàng, trong khi Figma là
+  hình line-art màu vàng đồng vẽ hộp quà và bình hoa (node `1028:12551`).
+- **Xử lý:** tải bản vector thật từ Figma về `/images/search/no-results.svg` (23 KB, đã kiểm tra
+  không chứa `<script>`), dùng 197px trên desktop và 140px trên mobile đúng như hai node.
+
+### WF-025 — Trang tìm kiếm hiện "0 kết quả" hai lần (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** khi không có kết quả, dòng đếm được render cả ở header lẫn trong khối empty state.
+- **Xử lý:** giữ một dòng ở header đúng như node `988:23680`.
+
+### WF-026 — Hai thẻ H1 khi tìm không ra kết quả (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** "KẾT QUẢ TÌM KIẾM CHO …" và "KHÔNG CÓ KẾT QUẢ" cùng là `h1` và cùng render. Trang
+  `/tim-kiem` không từ khóa thì lại không có `h1` nào.
+- **Xử lý:** heading kết quả chỉ render khi thật sự có kết quả; empty state mang `h1`; trang chưa
+  nhập từ khóa có `h1` riêng "TÌM KIẾM" và không chạy query, không tự nhận "0 kết quả".
+
+### WF-027 — Link "Xem thêm" của nhóm Sản phẩm chọn lọc trỏ về trang chủ (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** `ShowMoreUrl` của nhóm gợi ý chéo đặt là `/`.
+- **Xử lý:** trỏ `/danh-muc/san-pham-chon-loc`.
+
+### WF-028 — Tìm kiếm chỉ khớp tên và slug (đã mở rộng)
+
+- **Khu vực:** `SearchController`
+- **Mô tả:** không khớp mô tả và tên danh mục, nên gõ "trà" không ra sản phẩm nào có chữ trà trong
+  phần mô tả.
+- **Xử lý:** thêm `Description` và `Category.Name` vào điều kiện, vẫn nằm trong SQL. Thứ tự nhóm
+  đổi từ "nhiều kết quả trước" sang thứ tự danh mục, đúng như Figma xếp Quà tết → Trung thu →
+  Theo dịp. Đã kiểm tra XSS: `?q=<script>alert(1)</script>` không chạy, không sinh thẻ script nào.
 
 ### WF-022 — Tên danh mục "Trà" lưu dưới dạng HTML entity (đã sửa)
 

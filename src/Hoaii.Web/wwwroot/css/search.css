@@ -42,3 +42,10 @@
   .empty-state__title { font-size: 20px; line-height: 56px; color: #000; }
   .empty-state__subtext { font: 400 13px/16px var(--font-body); }
 }
+
+/* The no-results illustration is drawn smaller on mobile — 140x135.6 rather than the desktop
+   197x190.9 (nodes 1142:24042 and 1028:12551). The SVG scales, so only the box changes. */
+.empty-state__illustration { width: 197px; height: auto; }
+@media (max-width: 767.98px) {
+  .empty-state__illustration { width: 140px; margin-top: 20px; }
+}
