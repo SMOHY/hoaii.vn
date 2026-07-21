@@ -221,13 +221,16 @@
 
 /* ---------- Sản phẩm nổi bật (Featured Products) ---------- */
 /* 120 pad + 122 heading + 40 gap + 1640 grid + 120 pad = 2042px (node 1214:38732) */
+/* Had `padding: 120px 0` — no horizontal gutter at all, so below 1920 the tiles ran to within
+   64px of the viewport edge while every other section held its 240. The children were carrying
+   `padding: 0 24px` to compensate, which is why it looked right at exactly 1920 and nowhere else. */
 .featured-section {
   background: var(--color-brand-gold-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  padding: 120px 0;
+  padding: 120px var(--page-gutter);
 }
 .featured-heading {
   display: flex;
@@ -524,7 +527,8 @@
 }
 
 /* ---------- Về Hoài (About) ---------- */
-.about-section { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 120px 0; background: #fff; }
+/* Same missing gutter as .featured-section above. */
+.about-section { display: flex; flex-direction: column; align-items: center; gap: 48px; padding: 120px var(--page-gutter); background: #fff; }
 .about-heading { display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; max-width: 1118px; margin: 0 auto; padding: 0 24px; }
 .about-heading h2 { font-family: var(--font-display); font-size: 48px; line-height: 56px; color: var(--color-brand-red); } /* Figma node 1214:38907: VỀ HOÀI is red */
 .about-subtitle { font-family: var(--font-body); font-size: 20px; line-height: 23px; font-weight: 500; color: #473824; } /* Figma node 1214:38908 */

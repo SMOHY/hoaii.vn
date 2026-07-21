@@ -1,7 +1,7 @@
 /* Product Detail Page — see design-specs/product-detail.md */
 
 .pdp-breadcrumb {
-  padding: 32px 240px 0;
+  padding: 32px var(--page-gutter) 0;
   font: 500 16px/20px var(--font-body);
   color: #1C1C1C;
 }
@@ -122,7 +122,7 @@
 .pdp-story { background: var(--color-brand-gold-bg); padding: 80px 0; }
 /* 1920 wide with a 240px gutter leaves the 1440px band Figma lays this out in; capping
    the box at 1440 instead would squeeze the copy column down to 960. */
-.pdp-story__container { max-width: 1920px; margin: 0 auto; padding: 0 240px; }
+.pdp-story__container { max-width: 1920px; margin: 0 auto; padding: 0 var(--page-gutter); }
 .pdp-story__row1 { display: flex; gap: 120px; align-items: flex-start; }
 .pdp-story__image {
   width: 599px; height: 561px; border-radius: 8px; flex-shrink: 0;
@@ -159,7 +159,7 @@
 }
 
 /* ---------- Collection Cross-sell ---------- */
-.pdp-collection { background: var(--color-brand-red-tint); padding: 80px 240px; }
+.pdp-collection { background: var(--color-brand-red-tint); padding: 80px var(--page-gutter); }
 .pdp-collection__header { text-align: center; max-width: 577px; margin: 0 auto 40px; display: flex; flex-direction: column; gap: 16px; }
 .pdp-collection__eyebrow { font: 500 20px/23px var(--font-body); margin: 0; }
 .pdp-collection__title { font: 400 48px/56px var(--font-display); margin: 0; }
@@ -174,7 +174,7 @@
 }
 
 /* ---------- Related Products ---------- */
-.pdp-related { background: #fff; padding: 80px 240px; }
+.pdp-related { background: #fff; padding: 80px var(--page-gutter); }
 .pdp-related__title { text-align: center; font: 400 48px/56px var(--font-display); margin: 0 0 40px; }
 .pdp-related__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 

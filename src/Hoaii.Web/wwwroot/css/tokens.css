@@ -57,8 +57,12 @@
   /* Side gutter for full-bleed sections. Figma is drawn at 1920 with a 240px gutter, which is
      exactly (1920 - 1440) / 2 — so on wider monitors the gutter has to grow, or the content
      stretches past the 1440px container the design is built on and everything reads oversized.
-     Below 1920 it stays at the 240px Figma specifies. */
-  --page-gutter: max(240px, (100% - 1440px) / 2);
+
+     Below 1920 the gutter tracks the viewport instead of staying pinned at 240. Holding 240 on a
+     1280 laptop spent 37% of the window on empty margin and squeezed the product tiles to 251px.
+     12.5vw is exactly 240 at 1920, so this changes nothing at or above the design width — only
+     narrower windows relax. */
+  --page-gutter: max(min(240px, 12.5vw), (100% - 1440px) / 2);
   --mobile-max-width: 480px;
   --radius-sm: 4px;
   --radius-md: 8px;

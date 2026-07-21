@@ -120,11 +120,14 @@ button {
   cursor: pointer;
 }
 
+/* The storefront had three competing gutter systems: this class at 24px, a hard-coded 240px in
+   fourteen stylesheets, and the --page-gutter token. Sections built on this one drifted to the
+   viewport edge as the window narrowed while their neighbours held 240, which is what made the
+   inconsistency visible. They all use the token now. */
 .container {
   width: 100%;
-  max-width: var(--content-max-width);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--page-gutter);
 }
 
 @media (max-width: 767.98px) {

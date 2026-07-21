@@ -3,7 +3,7 @@
 
 /* Figma's y=200 for the breadcrumb is measured from the top of the frame, which includes
    the 168px nav — the nav is in the flow here, so only 32px of it is padding. */
-.policy-page { padding: 32px 240px 80px; }
+.policy-page { padding: 32px var(--page-gutter) 80px; }
 .policy-breadcrumb { font: 500 16px/20px var(--font-body); color: #0F0F0F; margin: 0; }
 .policy-title {
   font-family: var(--font-display);

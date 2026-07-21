@@ -9,7 +9,7 @@
 /* ---------- Section tabs (node 778:24899) ---------- */
 .about-tabs {
   background: var(--about-dark);
-  padding: 0 240px;
+  padding: 0 var(--page-gutter);
   height: 80px;
   display: flex;
   align-items: center;
@@ -39,7 +39,7 @@
 .about-page-hero {
   background: var(--about-dark);
   color: var(--color-grey-50);
-  padding: 120px 240px;
+  padding: 120px var(--page-gutter);
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -96,7 +96,7 @@
 .about-foundation {
   background: var(--color-brand-gold);
   color: var(--color-grey-50);
-  padding: 120px 240px;
+  padding: 120px var(--page-gutter);
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -119,7 +119,7 @@
 /* ---------- Đội ngũ (node 792:24975) ---------- */
 .about-team {
   background: var(--color-brand-gold-bg);
-  padding: 120px 240px;
+  padding: 120px var(--page-gutter);
   display: flex;
   flex-direction: column;
   gap: 24px;

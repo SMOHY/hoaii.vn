@@ -1,8 +1,8 @@
 /* Cart page + Mini-cart — see design-specs/cart-and-minicart.md */
 
-.cart-breadcrumb { padding: 32px 240px 0; font: 500 16px/20px var(--font-body); color: #1C1C1C; }
+.cart-breadcrumb { padding: 32px var(--page-gutter) 0; font: 500 16px/20px var(--font-body); color: #1C1C1C; }
 
-.cart-page { display: flex; justify-content: center; padding: 40px 240px 80px; }
+.cart-page { display: flex; justify-content: center; padding: 40px var(--page-gutter) 80px; }
 .cart-panel {
   width: 750px; max-width: 100%; border: 1px solid var(--color-grey-300); border-radius: 8px;
   overflow: hidden; display: flex; flex-direction: column; background: #fff;

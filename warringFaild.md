@@ -371,6 +371,36 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
 
+### WF-042 — Ba hệ thống lề ngang chạy song song trên storefront (đã hợp nhất)
+
+- **Khu vực:** toàn bộ storefront
+- **Mô tả:** người dùng báo "content gần sát mép viewport, không còn container 1440px" ở section
+  Lựa chọn hàng đầu và nhiều trang khác. Đo thật thì thấy ba cách đặt lề cùng tồn tại:
+  token `--page-gutter` (6 file), `padding: 0 240px` gõ cứng (14 file, 36 chỗ), và
+  `.container { padding: 0 24px }` — một hệ hoàn toàn khác. Section nào dựng trên `.container`
+  thì trôi ra sát mép khi cửa sổ hẹp lại trong khi section bên cạnh vẫn giữ 240, nên nhìn ra ngay.
+- **Nguyên nhân cụ thể:**
+  - `.featured-section` và `.about-section` để `padding: 120px 0` — **lề ngang bằng 0**. Các con
+    của nó gánh `padding: 0 24px` để bù, nên chỉ đúng ở đúng 1920 và sai ở mọi độ rộng khác.
+  - `.cat-content` đè `padding: 40px 0` + `max-width: 1440px` để né `padding: 24px` cũ của
+    `.container`; hệ quả là ở cửa sổ hẹp hộp vẫn rộng 1440 mà không còn lề nào, breadcrumb dính mép.
+- **Xử lý:** hợp nhất về một token duy nhất. `.container` dùng `--page-gutter`, 36 chỗ gõ cứng
+  240px đổi sang token, hai section thiếu lề được trả lại lề, và bỏ override `.cat-content`.
+  Sửa ở tầng chung, không vá từng trang.
+- **Kiểm chứng:** script đo mép trái của **chữ** trong từng section trên 13 trang × 3 độ rộng
+  (1920/1440/1280). Trước khi sửa có 20 chỗ tràn lề; sau khi sửa chỉ còn các trường hợp đúng thiết
+  kế (tiêu đề căn giữa tràn viền, marquee logo).
+
+### WF-043 — Lề 240px cố định bóp nội dung trên laptop (đã sửa)
+
+- **Khu vực:** toàn bộ storefront, từ 1280 đến dưới 1920
+- **Mô tả:** token cũ `max(240px, (100% - 1440px) / 2)` giữ nguyên lề 240 ở mọi cửa sổ hẹp hơn
+  1920, nên ở laptop 1280 có tới 37% bề ngang là lề trống và card sản phẩm co còn 251px.
+- **Xử lý:** đổi thành `max(min(240px, 12.5vw), (100% - 1440px) / 2)`. 12.5vw đúng bằng 240 ở
+  1920, nên **ở và trên độ rộng thiết kế không đổi một pixel nào**; chỉ cửa sổ hẹp hơn mới giãn ra.
+  Đo lại: 2560 → lề 560 / nội dung 1440 / card 464 (y như cũ); 1920 → 240 / 1440 / 464 (khớp
+  Figma); 1440 → 180 / 1080 / 344; 1280 → 160 / 960 / 304.
+
 ### WF-038 — Trang chính sách đổi trả bị test tự động ghi đè (đã khôi phục)
 
 - **Khu vực:** `/chinh-sach/trao-doi`

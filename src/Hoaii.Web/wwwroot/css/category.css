@@ -104,9 +104,13 @@
 }
 
 /* ---------- Content container ----------
-   Figma runs a 240px gutter each side of 1920 -> 1440px of content, so the tiles land
-   at 464px. The .container padding was eating 48px and squashing them to 448px. */
-.cat-content { padding: 40px 0 80px; max-width: 1440px; }
+   Figma runs a 240px gutter each side of 1920 -> 1440px of content, so the tiles land at 464px.
+   This used to zero the horizontal padding and cap the box at 1440 to escape .container's old
+   flat 24px, which squashed the tiles to 448. .container carries --page-gutter now, so it already
+   produces exactly 1440 at 1920 — and keeping the override meant that at any narrower window the
+   box stayed 1440 wide with no gutter at all and the breadcrumb sat against the viewport edge.
+   Only the vertical rhythm belongs here. */
+.cat-content { padding-block: 40px 80px; }
 .cat-breadcrumb {
   font-family: var(--font-body);
   font-size: 16px;
@@ -323,7 +327,7 @@
 
 /* ---------- Artist collaboration banner (node 1519:34045) ---------- */
 .promo-banner {
-  display: flex; gap: 80px; padding: 80px 240px; background: var(--color-brand-gold); align-items: center;
+  display: flex; gap: 80px; padding: 80px var(--page-gutter); background: var(--color-brand-gold); align-items: center;
 }
 .promo-banner__text { flex: 1 1 0; min-width: 0; max-width: 680px; display: flex; flex-direction: column; gap: 24px; }
 .promo-banner__eyebrow { font: 500 20px/23px var(--font-body); color: var(--color-grey-50); margin: 0; }

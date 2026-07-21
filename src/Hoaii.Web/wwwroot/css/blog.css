@@ -1,11 +1,11 @@
 /* Blog listing — see design-specs/blog-listing.md */
 
 .blog-hero { display: flex; flex-direction: column; gap: 32px; padding-top: 40px; }
-.blog-breadcrumb { padding: 0 240px; font: 500 16px/20px var(--font-body); color: #1C1C1C; margin: 0; }
+.blog-breadcrumb { padding: 0 var(--page-gutter); font: 500 16px/20px var(--font-body); color: #1C1C1C; margin: 0; }
 .blog-breadcrumb__current { color: var(--color-grey-500); }
 .blog-heading { text-align: center; font: 400 48px/56px var(--font-display); color: #000; margin: 0; }
 
-.blog-featured { display: flex; gap: 24px; padding: 40px 240px; border-bottom: 1px solid var(--color-grey-100); }
+.blog-featured { display: flex; gap: 24px; padding: 40px var(--page-gutter); border-bottom: 1px solid var(--color-grey-100); }
 .blog-featured__img {
   flex: 1; height: 486px; border-radius: 4px; background-color: rgba(0, 0, 0, 0.2);
   background-size: cover; background-position: center;
@@ -22,7 +22,7 @@
   text-decoration: none; align-self: flex-start;
 }
 
-.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 40px 240px 80px; }
+.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 40px var(--page-gutter) 80px; }
 .blog-card {
   display: flex; flex-direction: column; gap: 24px; padding: 8px 0; border-bottom: 1px solid var(--color-grey-100);
   text-decoration: none; color: inherit;

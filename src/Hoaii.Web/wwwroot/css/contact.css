@@ -13,7 +13,7 @@
   display: flex;
   align-items: stretch;
   gap: 40px;
-  padding: 200px 240px 0;
+  padding: 200px var(--page-gutter) 0;
 }
 .contact-hero__text {
   flex: 1 1 0;
@@ -57,7 +57,7 @@
 
 .contact-address,
 .contact-methods,
-.contact-form-section { background: #fff; padding-inline: 240px; }
+.contact-form-section { background: #fff; padding-inline: var(--page-gutter); }
 
 .contact-address {
   display: flex;
