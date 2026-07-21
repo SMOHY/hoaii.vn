@@ -44,7 +44,10 @@
   flex-direction: column;
   gap: 40px;
 }
+/* Now a <p> rather than an <h1> (the copy is a 200-character manifesto, not a title), so the
+   browser's default heading margins no longer apply — set them here. */
 .about-page-hero__headline {
+  margin: 0;
   font-family: var(--font-display);
   font-size: 40px;
   line-height: 60px;

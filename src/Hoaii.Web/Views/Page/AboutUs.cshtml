@@ -17,11 +17,16 @@
 </nav>
 
 <section class="about-page-hero" id="khoi-dau">
-    @* Figma runs different headlines per breakpoint: desktop 955:18592, mobile 1068:33689. *@
-    <h1 class="about-page-hero__headline">
+    @* The headline is a two-sentence manifesto over 200 characters long. It reads as the page's
+       title visually, but as an h1 it is unusable — a screen reader announces the whole paragraph
+       as the page name, and search engines get no usable title. So the real h1 is a short hidden
+       one and the manifesto stays a paragraph at exactly the same size.
+       Figma runs different copy per breakpoint: desktop 955:18592, mobile 1068:33689. *@
+    <h1 class="visually-hidden">Về HOÀI</h1>
+    <p class="about-page-hero__headline">
         <span class="u-desktop-only">@T("hero_headline_desktop")</span>
         <span class="u-mobile-only">@T("hero_headline_mobile")</span>
-    </h1>
+    </p>
 
     <div class="about-page-hero__media">
         <div class="about-page-hero__img">

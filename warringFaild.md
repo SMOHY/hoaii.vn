@@ -151,6 +151,41 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   `Category.BannerImageUrl` để gán ảnh trong admin là hiện ngay. Cần khách cung cấp 8 ảnh banner.
 - **Cần người dùng xác nhận:** có
 
+### WF-039 — Form admin escape lại nội dung mỗi lần lưu ⚠️
+
+- **Khu vực:** admin → Chính sách (và có thể mọi form admin lưu text)
+- **Desktop/Mobile:** không liên quan
+- **Figma node:** —
+- **Mô tả:** tiêu đề trang `/chinh-sach/trao-doi` lưu trong DB là
+  `CHÍNH SÁCH ĐỔI TRẢ &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp; HOÀN TÁC` — dấu `&`
+  bị escape chồng **13 lớp**. Mỗi lần lưu lại escape thêm một lớp, nên đếm số lớp là biết trang đã
+  bị lưu đè bao nhiêu lần.
+- **Nguyên nhân:** giá trị được HTML-encode khi lưu, trong khi Razor vốn đã encode khi hiển thị.
+  Encode hai lần.
+- **Bằng chứng:** đã quét `PolicyPages`, `PolicyBlocks`, `PageContents` — chỉ dòng này bị, nhưng
+  đó là vì các trang khác chưa ai sửa qua form.
+- **Mức độ:** `major` — mọi nội dung sửa qua admin sau này đều dính, và lỗi tích luỹ.
+- **Đã thử:** đã sửa dữ liệu. **Chưa sửa nguyên nhân trong form admin** vì cần rà toàn bộ luồng
+  lưu của khu admin, không nên làm sát ngày bàn giao.
+- **Cách xử lý đề xuất:** tìm chỗ gọi `HtmlEncode`/`AntiXss` khi lưu trong admin và bỏ đi — Razor
+  đã escape ở đầu ra. Sau khi sửa, kiểm tra bằng cách lưu một trang chính sách hai lần rồi xem dấu
+  `&` có nhân lên không.
+- **Cần người dùng xác nhận:** có
+
+### WF-040 — Cả 7 bài blog đều chưa có nội dung
+
+- **Khu vực:** `/blog/{slug}`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** —
+- **Mô tả:** cột `BlogPosts.Content` thêm ở đợt CMS nhưng **0/7 bài có nội dung**. Trang chi tiết
+  vì thế chỉ hiện đoạn tóm tắt 100–174 ký tự.
+- **Nguyên nhân:** thiếu nội dung.
+- **Bằng chứng:** `SELECT LEN(ISNULL(Content,'')) FROM BlogPosts` → tất cả bằng 0.
+- **Mức độ:** `data`
+- **Đã thử:** không viết bài thay. Trang đã fallback sang `Excerpt` nên không vỡ, chỉ ngắn.
+- **Cách xử lý đề xuất:** viết nội dung trong admin → Blog. Bài `id=22` còn đang `IsPublished = 0`.
+- **Cần người dùng xác nhận:** có
+
 ### WF-037 — Figma vẽ phương thức "Credit card" và nút "Thanh toán với VN PAY"
 
 - **Khu vực:** `/thanh-toan`
@@ -335,6 +370,25 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   Tường" đeo ảnh ngũ quả. Hai hộp Tinh Hoa Bắc Bộ còn đeo `/images/placeholders/featured-*.jpg`.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
+
+### WF-038 — Trang chính sách đổi trả bị test tự động ghi đè (đã khôi phục)
+
+- **Khu vực:** `/chinh-sach/trao-doi`
+- **Mô tả:** trang chỉ còn đúng một khối nội dung ghi `AUTOTEST CHINH SACH` — 19 ký tự, trong khi
+  ba trang chính sách còn lại có 9–13 khối và 1.300–1.900 ký tự. Một lần chạy test tự động đã lưu
+  đè lên nội dung thật qua form admin.
+- **Xử lý:** lấy lại nguyên văn từ commit `7a5fb75` (lúc chính sách còn nằm trong `PageController`
+  trước khi chuyển vào DB) và khôi phục 16 khối / 2.132 ký tự. Xem
+  `db/scripts/2026-07-21-restore-policy-trao-doi.sql`.
+- **Lưu ý:** nguyên nhân gốc — form admin cho phép test ghi đè trang thật — vẫn còn. Xem WF-039.
+
+### WF-041 — H1 trang Về chúng tôi dài hơn 200 ký tự (đã sửa)
+
+- **Khu vực:** `/ve-chung-toi`
+- **Mô tả:** cả đoạn tuyên ngôn hai câu nằm trong thẻ `h1`, nên trình đọc màn hình đọc nguyên đoạn
+  văn làm tên trang và công cụ tìm kiếm không lấy được tiêu đề dùng được.
+- **Xử lý:** đoạn tuyên ngôn thành `<p>` giữ nguyên cỡ chữ và vị trí; `h1` thật là một dòng ngắn
+  ẩn đi. Không đổi gì về mặt nhìn.
 
 ### WF-035 — Popup chọn biến thể: Figma có Size + Color, DB chỉ có một tên (đã xử lý)
 
