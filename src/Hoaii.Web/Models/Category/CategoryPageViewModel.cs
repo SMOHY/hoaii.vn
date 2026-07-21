@@ -33,6 +33,9 @@ public class CategoryPageViewModel
 
     /// <summary>Eyebrow above the hero carousel, e.g. "Quà tết đặc sắc".</summary>
     public required string HeroEyebrow { get; init; }
+
+    /// <summary>Kicker between the pager arrows, e.g. "Bộ quà 6 hộp". Empty hides the line.</summary>
+    public string HeroKicker { get; init; } = "";
 }
 
 public class HeroSlideViewModel
@@ -40,9 +43,6 @@ public class HeroSlideViewModel
     public required string ImageUrl { get; init; }
     public required string Name { get; init; }
     public required string Slug { get; init; }
-
-    /// <summary>Caption under the carousel, e.g. "Bộ quà 6 hộp".</summary>
-    public string Caption { get; init; } = "Bộ quà 6 hộp";
 }
 
 public class ProductCardViewModel

@@ -119,6 +119,10 @@ public class CategoryController(HoaiiDbContext db) : Controller
         var heroEyebrow = category?.HeroEyebrow is { Length: > 0 } he
             ? he : $"{categoryName} đặc sắc";
 
+        // No sensible default: the line names what is inside a set, which only the merchandiser
+        // knows. Blank hides it rather than guessing a box count.
+        var heroKicker = category?.HeroKicker ?? "";
+
         var model = new CategoryPageViewModel
         {
             Title = categoryName,
@@ -133,6 +137,7 @@ public class CategoryController(HoaiiDbContext db) : Controller
             InStockOnly = inStock,
             TotalProducts = totalProducts,
             HeroEyebrow = heroEyebrow,
+            HeroKicker = heroKicker,
             HeroSlides = heroSlides,
             Promo = new PromoBannerViewModel
             {

@@ -40,7 +40,10 @@
                Figma ships it as a second pager at opacity 0. *@
             <div class="cat-hero__meta">
                 <span class="cat-hero__meta-spacer" aria-hidden="true"></span>
-                <p class="cat-hero__kicker">Bộ quà 6 hộp</p>
+                @* Per-category copy: Quà tết says "Bộ quà 6 hộp", Quà trung thu "Bộ quà 4 hộp
+                   bánh" (nodes 1519:34009 and 758:11395). Blank leaves the middle column empty
+                   rather than printing a box count nobody has confirmed. *@
+                <p class="cat-hero__kicker">@Model.HeroKicker</p>
                 <div class="cat-hero__pager">
                     <button type="button" class="cat-hero__arrow" data-cat-prev aria-label="Sản phẩm trước">
                         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 15l-5-5 5-5" stroke="currentColor" stroke-width="1.5"/></svg>
