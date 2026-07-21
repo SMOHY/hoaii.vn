@@ -7,9 +7,10 @@ namespace Hoaii.Web.Controllers;
 
 public class CategoryController(HoaiiDbContext db) : Controller
 {
-    // Figma lays the grid out as 3 columns x 2 rows and then pages (node 1519:34031).
-    // At 9 a category with 6-9 products never showed the pager at all.
-    private const int PageSize = 6;
+    // Figma's grid is 3 columns x 3 rows (node 722:25541, frames 235/236/237) and it ships the
+    // pager hidden, because the 7 Quà tết products fit on one page. At 6 they spilled onto a
+    // second page and the pager appeared, which the design never shows.
+    private const int PageSize = 9;
 
     /// <summary>Nav and footer both link here, but it is a cross-category view of the
     /// featured products rather than a category row of its own.</summary>
@@ -81,7 +82,10 @@ public class CategoryController(HoaiiDbContext db) : Controller
             "gia-tang" => baseQuery.OrderBy(p => p.Price).ThenBy(p => p.Id),
             "gia-giam" => baseQuery.OrderByDescending(p => p.Price).ThenBy(p => p.Id),
             "ten-az" => baseQuery.OrderBy(p => p.Name).ThenBy(p => p.Id),
-            _ => baseQuery.OrderByDescending(p => p.IsFeatured).ThenBy(p => p.Id),
+            // SortOrder is the merchandiser's running order — Quà tết uses it to hold the exact
+            // sequence Figma lays out. Everywhere else it is still 0, so those categories keep
+            // falling through to featured-then-id as before.
+            _ => baseQuery.OrderBy(p => p.SortOrder).ThenByDescending(p => p.IsFeatured).ThenBy(p => p.Id),
         };
 
         var totalProducts = await query.CountAsync();
@@ -98,7 +102,7 @@ public class CategoryController(HoaiiDbContext db) : Controller
                 ? db.Products.Where(p => p.IsFeatured && p.IsActive && p.Images.Any())
                 : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive && p.Images.Any()))
             .Include(p => p.Images)
-            .OrderBy(p => p.Id)
+            .OrderBy(p => p.SortOrder).ThenBy(p => p.Id)
             .Take(6)
             .Select(p => new HeroSlideViewModel
             {
