@@ -15,7 +15,7 @@ public static class NavigationSeeder
             db.NavLinks.AddRange(
                 new NavLink { Placement = NavPlacement.Main, Label = "Quà tết", Url = "/danh-muc/qua-tet", HasDropdown = true, SortOrder = 0 },
                 new NavLink { Placement = NavPlacement.Main, Label = "Quà trung thu", Url = "/danh-muc/qua-trung-thu", HasDropdown = true, SortOrder = 1 },
-                new NavLink { Placement = NavPlacement.Main, Label = "Quà theo dịp", Url = "/danh-muc/qua-tang-theo-dip", HasDropdown = true, SortOrder = 2 },
+                new NavLink { Placement = NavPlacement.Main, Label = "Quà theo dịp", Url = "/qua-theo-dip", HasDropdown = true, SortOrder = 2 },
                 new NavLink { Placement = NavPlacement.Main, Label = "Sản phẩm chọn lọc", Url = "/danh-muc/san-pham-chon-loc", HasDropdown = true, SortOrder = 3 },
                 new NavLink { Placement = NavPlacement.Sub, Label = "Về chúng tôi", Url = "/ve-chung-toi", SortOrder = 0 },
                 new NavLink { Placement = NavPlacement.Sub, Label = "Liên hệ", Url = "/lien-he", SortOrder = 1 },
@@ -33,7 +33,7 @@ public static class NavigationSeeder
                     [
                         new() { Label = "Quà tết", Url = "/danh-muc/qua-tet", SortOrder = 0 },
                         new() { Label = "Quà trung thu", Url = "/danh-muc/qua-trung-thu", SortOrder = 1 },
-                        new() { Label = "Quà theo dịp", Url = "/danh-muc/qua-tang-theo-dip", SortOrder = 2 },
+                        new() { Label = "Quà theo dịp", Url = "/qua-theo-dip", SortOrder = 2 },
                         new() { Label = "Sản phẩm chọn lọc", Url = "/danh-muc/san-pham-chon-loc", SortOrder = 3 },
                         new() { Label = "Câu chuyện", Url = "/blog", SortOrder = 4 },
                         new() { Label = "Đối tác", Url = "/hop-tac", SortOrder = 5 },

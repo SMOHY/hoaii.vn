@@ -29,5 +29,10 @@ public class Category
     public string? PromoCtaUrl { get; set; }
     public string? PromoImageUrl { get; set; }
 
+    /// <summary>Wide cover shown beside the category's block on the "Quà theo dịp" landing pages
+    /// (node 769:15371). Figma has no photograph placed there yet, so null renders the flat tone
+    /// the design draws instead of a broken image.</summary>
+    public string? CoverImageUrl { get; set; }
+
     public ICollection<Product> Products { get; set; } = [];
 }

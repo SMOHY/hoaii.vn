@@ -1,0 +1,23 @@
+@model Hoaii.Web.Models.Occasion.CompactProductViewModel
+@* Small two-up card used inside an occasion section (node 769:15309). Deliberately not
+   _ProductCard: Figma ships the badge row and the swatch row hidden here, and there is no
+   compare-at price. The add-to-cart tray is the same component the grid card uses. *@
+<article class="occ-card @(Model.IsOutOfStock ? "occ-card--out-of-stock" : "")">
+    <div class="occ-card__image" style="@(Model.ImageUrl is not null ? $"background-image:url('{Model.ImageUrl}')" : "")">
+        <a class="occ-card__image-link" href="/san-pham/@Model.Slug" aria-label="@Model.Name"></a>
+        @if (!Model.IsOutOfStock)
+        {
+            <form method="post" action="/gio-hang/them" class="occ-card__add">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                <button type="submit" aria-label="Thêm @Model.Name vào giỏ">
+                    <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 6v16M6 14h16" stroke="currentColor" stroke-width="2"/></svg>
+                    <span class="cta-label">Thêm vào giỏ</span>
+                </button>
+            </form>
+        }
+    </div>
+    <a class="occ-card__name" href="/san-pham/@Model.Slug">@Model.Name</a>
+    <p class="occ-card__price">@Model.Price.ToString("N0")</p>
+</article>

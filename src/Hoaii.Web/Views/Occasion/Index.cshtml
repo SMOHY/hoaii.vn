@@ -1,0 +1,89 @@
+@model Hoaii.Web.Models.Occasion.OccasionLandingViewModel
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["MetaDescription"] = Model.MetaDescription;
+    ViewData["HeroOverlay"] = true;
+    ViewData["PreloadImage"] = Model.HeroImageUrl;
+}
+
+@* Olive hero: breadcrumb top-left, photo filling the right column, display heading across the
+   full width, subtitle tucked under the photo (node 1068:30408). *@
+<section class="occ-hero">
+    <div class="occ-hero__inner">
+        <nav class="occ-hero__crumbs" aria-label="Breadcrumb">
+            <ol>
+                <li><a href="/">Trang chủ</a></li>
+                @foreach (var crumb in Model.Breadcrumb)
+                {
+                    <li @(crumb.Url is null ? "aria-current=page" : "")>
+                        @if (crumb.Url is not null)
+                        {
+                            <a href="@crumb.Url">@crumb.Label</a>
+                        }
+                        else
+                        {
+                            @crumb.Label
+                        }
+                    </li>
+                }
+            </ol>
+        </nav>
+
+        <div class="occ-hero__media">
+            <img src="@Model.HeroImageUrl" alt="" fetchpriority="high" />
+        </div>
+
+        <h1 class="occ-hero__heading">@Model.HeroHeading</h1>
+        <p class="occ-hero__subtitle">@Model.HeroSubtitle</p>
+    </div>
+</section>
+
+@* Three top-level gift routes. Figma greys the two inactive columns and darkens the active one
+   (node 769:15244) — that is the whole visual language of the state, so it carries aria-current
+   as well or the distinction is colour-only. *@
+<nav class="occ-chooser" aria-label="Nhóm quà tặng">
+    @foreach (var item in Model.Chooser)
+    {
+        <a class="occ-chooser__item @(item.IsActive ? "is-active" : "")" href="@item.Url"
+           @(item.IsActive ? "aria-current=page" : "")>
+            <span class="occ-chooser__title">@item.Title</span>
+            <span class="occ-chooser__thumb @(item.ImageUrl is null ? "occ-chooser__thumb--empty" : "")">
+                @if (item.ImageUrl is not null)
+                {
+                    <img src="@item.ImageUrl" alt="" loading="lazy" />
+                }
+            </span>
+            @if (item.Description.Length > 0)
+            {
+                <span class="occ-chooser__desc">@item.Description</span>
+            }
+        </a>
+    }
+</nav>
+
+<div class="occ-sections">
+    @foreach (var section in Model.Sections)
+    {
+        <partial name="_OccasionSection" model="section" />
+    }
+</div>
+
+@* Same campaign band as the category pages but a wider image column (node 771:15461). *@
+<section class="promo-banner promo-banner--occasion">
+    <div class="promo-banner__text">
+        <p class="promo-banner__eyebrow">@Model.Campaign.Eyebrow</p>
+        <p class="promo-banner__title">@Model.Campaign.Body</p>
+        <a href="@Model.Campaign.CtaUrl" class="promo-banner__cta">@Model.Campaign.CtaText</a>
+    </div>
+    @if (Model.Campaign.ImageUrl is not null)
+    {
+        <div class="promo-banner__image">
+            <img src="@Model.Campaign.ImageUrl" alt="@Model.Campaign.Eyebrow" loading="lazy" />
+        </div>
+    }
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/occasion.css" asp-append-version="true" />
+}

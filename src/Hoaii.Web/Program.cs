@@ -95,6 +95,20 @@ app.MapControllerRoute(
     defaults: new { controller = "Category", action = "Index" })
     .WithStaticAssets();
 
+// The "Quà theo dịp" landing pages. These sit at the top level rather than under danh-muc/
+// because they are not category grids — OccasionController owns the list of valid routes.
+app.MapControllerRoute(
+    name: "occasion-landing",
+    pattern: "qua-theo-dip",
+    defaults: new { controller = "Occasion", action = "Index", route = "qua-theo-dip" })
+    .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "occasion-personal",
+    pattern: "qua-tang-ca-nhan",
+    defaults: new { controller = "Occasion", action = "Index", route = "qua-tang-ca-nhan" })
+    .WithStaticAssets();
+
 app.MapControllerRoute(
     name: "product",
     pattern: "san-pham/{slug}",

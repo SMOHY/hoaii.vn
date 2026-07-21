@@ -10,6 +10,92 @@ lại, hoặc đã audit rõ và cần người khác quyết.
 
 ## Chưa xử lý
 
+### WF-011 — Năm danh mục dịp không có sản phẩm nào ⚠️ QUAN TRỌNG NHẤT
+
+- **Khu vực:** `/qua-theo-dip` và `/qua-tang-ca-nhan`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `769:15367`, `769:15396`, `771:21276`, `1068:31937`, `1068:31996`
+- **Mô tả:** Figma vẽ mỗi section có 2 card sản phẩm. Trong DB, cả năm danh mục
+  `ngay-le-tinh-yeu`, `ngay-quoc-te-phu-nu`, `qua-giang-sinh`, `qua-tang-nguoi-ay`,
+  `qua-tang-bo-me` đều có **0 sản phẩm**. Nên cả 10 vị trí card đều trống.
+- **Nguyên nhân:** chưa ai gán sản phẩm vào các danh mục này. Không phải lỗi code.
+- **Bằng chứng:** `SELECT c.Slug, COUNT(p.Id) FROM Categories c LEFT JOIN Products p ON p.CategoryId
+  = c.Id GROUP BY c.Slug` — cả năm trả 0.
+- **Mức độ:** `data` / chặn hình thức bàn giao
+- **Đã thử:** không seed sản phẩm giả, không bật sản phẩm ẩn của danh mục khác, không đổi
+  CategoryId của sản phẩm sẵn có — cả ba đều là bịa dữ liệu và B15 cấm rõ.
+- **Cách xử lý đề xuất:** vào admin → Sản phẩm → chọn sản phẩm → đổi Danh mục sang dịp tương ứng.
+  Mỗi dịp chỉ cần 2 sản phẩm là trang đầy đủ như Figma. Trang tự cập nhật ngay, không phải deploy.
+  Sáu sản phẩm "Set quà Tri Ân / Khai Trương / Sinh Nhật / Cưới Hỏi / Doanh Nghiệp / Tân Gia" đang
+  nằm trong `qua-tang-theo-dip` và đều đang ẩn — có thể là nguồn để phân bổ.
+- **Cần người dùng xác nhận:** có
+
+### WF-012 — Ảnh cover và ảnh campaign của hai trang landing chưa tồn tại trong Figma
+
+- **Khu vực:** `/qua-theo-dip`, `/qua-tang-ca-nhan`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `769:15371`, `769:15447`, `771:21327`, `769:15181`, `769:15205`, `769:15226`,
+  `771:15468`
+- **Mô tả:** ngoài **một** ảnh hero, toàn bộ phần còn lại của hai trang trong Figma là khối màu
+  đặc, không có ảnh nào được đặt vào: 5 khối cover là `#DCDCDC`, 3 ô chooser là `#7A7A7A` (đang
+  chọn) / `#F2F2F2` (không chọn), ô ảnh card là `#F2F2F2`.
+- **Nguyên nhân:** thiết kế chưa hoàn thiện phần ảnh, không phải lỗi tải asset.
+- **Bằng chứng:** `get_design_context` node `769:15244` trả `bg-[#7a7a7a]` / `bg-[#f2f2f2]` chứ
+  không có fill ảnh nào; node `769:15389` trả `bg-[#dcdcdc]` cho khối cover.
+- **Mức độ:** `asset`
+- **Đã thử:** `download_assets` trên node cha và node lá — chỉ trả về ảnh hero.
+- **Cách xử lý đề xuất:** đã render đúng các khối màu Figma vẽ, và thêm cột `Category.CoverImageUrl`
+  để khi có ảnh thật thì gán trong admin là hiện ngay. Cần khách cung cấp 5 ảnh cover
+  (Valentine, 8-3, Giáng sinh, Người ấy, Bố mẹ) + 3 ảnh chooser.
+- **Cần người dùng xác nhận:** có
+
+### WF-013 — Trang "Quà tặng cá nhân" trong Figma vẫn để tiêu đề "QUÀ TẶNG THEO DỊP"
+
+- **Khu vực:** `/qua-tang-ca-nhan`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `1068:29891`
+- **Mô tả:** hero của trang con dùng lại nguyên tiêu đề của trang tổng, chỉ đổi mỗi subtitle thành
+  "Trao gửi yêu thương tới người thân". Trong khi tab đang chọn ở chooser là "Quà tặng cá nhân" và
+  breadcrumb cũng kết thúc bằng "Quà tặng cá nhân".
+- **Nguyên nhân:** nhân bản frame trang tổng, chưa sửa tiêu đề.
+- **Bằng chứng:** cả hai frame `769:12176` và `778:22062` cùng có text "QUÀ TẶNG THEO DỊP".
+- **Mức độ:** `minor`
+- **Đã thử:** đối chiếu breadcrumb, chooser active và route.
+- **Cách xử lý đề xuất:** đang render "QUÀ TẶNG CÁ NHÂN" — hai trang khác URL mà cùng một H1 thì
+  vừa khó hiểu cho người dùng vừa hỏng SEO. Muốn quay lại đúng Figma thì sửa một dòng:
+  `OccasionController.Pages` → `HeroHeading: "QUÀ TẶNG THEO DỊP"`.
+- **Cần người dùng xác nhận:** có
+
+### WF-014 — Không có danh mục "Quà tặng doanh nghiệp"
+
+- **Khu vực:** chooser của cả hai trang landing
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `769:15223`
+- **Mô tả:** chooser có 3 cột, nhưng DB không hề có danh mục quà doanh nghiệp và cũng chưa có
+  trang nào cho nhóm này.
+- **Nguyên nhân:** thiếu dữ liệu.
+- **Bằng chứng:** bảng `Categories` không có dòng nào khớp.
+- **Mức độ:** `data`
+- **Đã thử:** không tạo route chết và không dùng `href="#"` (B15 cấm cả hai).
+- **Cách xử lý đề xuất:** cột thứ ba đang trỏ `/hop-tac` — trang hợp tác/đại lý có thật, là đích
+  gần nghĩa nhất hiện có. Khi có danh mục thật thì đổi một dòng trong
+  `OccasionController.ChooserRoutes`.
+- **Cần người dùng xác nhận:** có
+
+### WF-015 — Ba trang có sẵn thiếu thẻ H1
+
+- **Khu vực:** `/gio-hang`, `/hop-tac`, `/tai-khoan/dang-nhap`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** —
+- **Mô tả:** ba trang này render không có `<h1>` nào.
+- **Nguyên nhân:** có từ trước, không liên quan B14/B15.
+- **Bằng chứng:** script regression 16 route × 2 breakpoint, chỉ ba trang này báo `h1=0`.
+- **Mức độ:** `minor`
+- **Đã thử:** chưa sửa — nằm ngoài phạm vi hai bước này, và đụng vào trang giỏ hàng/đăng nhập ngay
+  trước ngày bàn giao là rủi ro không đáng.
+- **Cách xử lý đề xuất:** nâng tiêu đề hiện có của mỗi trang lên thành `<h1>`.
+- **Cần người dùng xác nhận:** không
+
 ### WF-001 — Thanh phân trang: Figma vẽ mâu thuẫn giữa hai danh mục
 
 - **Khu vực:** template danh mục (`Views/Category/Index.cshtml`)
@@ -148,6 +234,30 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   Tường" đeo ảnh ngũ quả. Hai hộp Tinh Hoa Bắc Bộ còn đeo `/images/placeholders/featured-*.jpg`.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
+
+### WF-016 — Copy 5 section landing đều là placeholder về Tết (đã sửa)
+
+- **Khu vực:** `/qua-theo-dip`, `/qua-tang-ca-nhan`
+- **Mô tả:** bản desktop của cả năm section dán chung một đoạn về "Tết Nguyên Đán là dịp lễ sum vầy
+  lớn nhất Việt Nam…" — sai ngữ cảnh với Valentine, 8-3, Giáng sinh, Người ấy và Bố mẹ.
+- **Xử lý:** frame mobile có copy thật cho từng dịp (nodes `1068:31791`, `1068:31715`,
+  `1068:31578`, `1068:31934`, `1068:31993`); đã đưa vào `Category.Description`.
+  Xem `db/scripts/2026-07-21-occasion-landing-copy.sql`.
+
+### WF-017 — Lorem Ipsum ở campaign hai trang landing (đã sửa)
+
+- **Khu vực:** `/qua-theo-dip`, `/qua-tang-ca-nhan`
+- **Mô tả:** node `771:15465` để nguyên Lorem Ipsum.
+- **Xử lý:** dùng đoạn giới thiệu hợp tác với họa sĩ Lương Bình — nội dung campaign có thật duy
+  nhất của site — thay vì ship tiếng Latin.
+
+### WF-018 — Hai lỗi chính tả trong Figma (đã sửa)
+
+- **Khu vực:** `/qua-theo-dip`
+- **Mô tả:** node `771:21273` ghi "Qùa giáng sinh" (sai dấu); node `769:15245` ghi
+  "Ngày lễ tình yêu- valentine" (thiếu khoảng trắng, sai hoa/thường).
+- **Xử lý:** hiển thị "Quà giáng sinh" và "Ngày lễ tình yêu" — dạng sạch mà chính frame mobile
+  Figma đang dùng.
 
 ### WF-010 — Kicker hero bị hard-code trong Razor (đã sửa)
 

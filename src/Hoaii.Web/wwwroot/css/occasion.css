@@ -1,0 +1,194 @@
+/* "Quà theo dịp" landing pages — nodes 769:12176 (umbrella) and 778:22062 (per-recipient).
+   Both pages render from this one stylesheet; nothing here is page-specific. */
+
+/* ---------- Hero (node 1068:30408) ----------
+   1920x1080 with the shared nav overlaying the top 168px. Figma stacks four rows 10px apart:
+   breadcrumb at y184, photo at y214 (h704), heading at y928 (h70), subtitle at y1008 (h32).
+   The photo and the subtitle share a 617px right-hand column; the heading spans the full width. */
+.occ-hero {
+  background: #808549;
+  padding: 168px 0 40px;
+}
+.occ-hero__inner {
+  display: grid;
+  grid-template-columns: 1fr 617px;
+  row-gap: 10px;
+  padding: 16px var(--page-gutter) 0;
+}
+.occ-hero__crumbs { grid-column: 1 / -1; }
+.occ-hero__crumbs ol {
+  display: flex; gap: 4px; margin: 0; padding: 0; list-style: none;
+  font: 300 16px/20px var(--font-body); color: var(--color-grey-50);
+}
+.occ-hero__crumbs li + li::before { content: "/"; margin-right: 4px; }
+.occ-hero__crumbs a { color: inherit; text-decoration: none; }
+.occ-hero__crumbs a:hover { text-decoration: underline; }
+
+.occ-hero__media {
+  grid-column: 2; height: 704px; border-radius: 8px; overflow: hidden;
+}
+.occ-hero__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.occ-hero__heading {
+  grid-column: 1 / -1; margin: 0;
+  font: 400 70px/70px var(--font-display); color: var(--color-grey-50);
+}
+.occ-hero__subtitle {
+  grid-column: 2; margin: 0;
+  font: 300 24px/32px var(--font-body); color: var(--color-grey-50); text-align: center;
+}
+
+/* ---------- Three-way chooser (node 769:15244) ----------
+   Figma has no photograph in any of the three tiles yet: the active one is a flat grey-500 block
+   with a black title, the other two grey-50 with grey-400 titles. Rendering those tones is the
+   design — borrowing an unrelated product shot would not be. */
+.occ-chooser {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 120px var(--page-gutter) 40px; background: #fff;
+}
+.occ-chooser__item {
+  flex: 1 1 0; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  text-decoration: none;
+}
+.occ-chooser__title {
+  font: 500 32px/40px var(--font-body); color: var(--color-grey-400); text-align: center;
+}
+.occ-chooser__item.is-active .occ-chooser__title { color: var(--color-black); }
+
+.occ-chooser__thumb {
+  width: 100%; height: 320px; border-radius: 4px; overflow: hidden;
+  background: var(--color-grey-50); display: block;
+}
+.occ-chooser__item.is-active .occ-chooser__thumb--empty { background: var(--color-grey-500); }
+.occ-chooser__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.occ-chooser__desc {
+  max-width: 453px; margin-top: -8px;
+  font: 300 16px/18px var(--font-body); color: var(--color-black);
+}
+
+/* ---------- Feature sections (nodes 769:15389 / 769:15390 / 771:21270) ----------
+   Sections sit in a narrower column than the chooser: x362 w1196 inside 1920. */
+.occ-sections {
+  display: flex; flex-direction: column; gap: 106px;
+  padding: 40px max(362px, (100% - 1196px) / 2); background: #fff;
+}
+.occ-section { display: flex; gap: 40px; align-items: center; }
+/* Figma alternates the cover side down the page; only this order flips. */
+.occ-section--cover-left { flex-direction: row-reverse; }
+
+.occ-section__body {
+  flex: 0 0 571px; min-width: 0; height: 659px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.occ-section__intro { display: flex; flex-direction: column; gap: 16px; }
+.occ-section__title { margin: 0; font: 600 24px/32px var(--font-body); color: var(--color-black); }
+.occ-section__desc { margin: 0; font: 300 16px/18px var(--font-body); color: var(--color-black); }
+
+.occ-section__bottom { display: flex; flex-direction: column; gap: 40px; }
+.occ-section__products { display: flex; gap: 28px; }
+.occ-section__products > * { flex: 1 1 0; min-width: 0; }
+
+.occ-section__more {
+  display: inline-flex; align-items: center; gap: 16px; align-self: flex-start;
+  font: 600 24px/32px var(--font-body); color: var(--color-grey-800); text-decoration: none;
+}
+.occ-section__more svg { width: 24px; height: 24px; flex: none; }
+.occ-section__more:hover span { text-decoration: underline; }
+
+.occ-section__cover {
+  flex: 1 1 0; min-width: 0; height: 659px; border-radius: 8px; overflow: hidden;
+}
+.occ-section__cover--empty { background: var(--color-grey-200); }
+.occ-section__cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- Compact product card (node 769:15309) ---------- */
+.occ-card { display: flex; flex-direction: column; gap: 20px; }
+.occ-card__image {
+  position: relative; height: 284px; border-radius: 2px; overflow: hidden;
+  background: var(--color-grey-50) center / cover no-repeat;
+}
+.occ-card__image-link { position: absolute; inset: 0; }
+.occ-card__name {
+  font: 500 20px/23px var(--font-body); color: var(--color-grey-800); text-decoration: none;
+}
+.occ-card__name:hover { text-decoration: underline; }
+.occ-card__price { margin: -12px 0 0; font: 500 16px/20px var(--font-body); color: var(--color-text-default); }
+
+/* Same quick-add tray as the grid card, at the smaller scale Figma uses here. */
+.occ-card__add { position: absolute; right: 12px; bottom: 12px; }
+.occ-card__add button {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px;
+  border: 0; border-radius: 2px; background: var(--color-brand-red-deep);
+  color: var(--color-grey-50); font: 500 10px/14px var(--font-body); cursor: pointer;
+}
+.occ-card__add svg { width: 14px; height: 14px; }
+.occ-card--out-of-stock .occ-card__image { opacity: 0.6; }
+
+/* ---------- Campaign band (node 771:15461) ----------
+   Wider image column than the category-page banner: 840 instead of 760, text capped at 600. */
+.promo-banner--occasion { padding: 80px; gap: 80px; }
+.promo-banner--occasion .promo-banner__text { max-width: 600px; margin-left: 160px; }
+.promo-banner--occasion .promo-banner__image { flex: 0 0 840px; }
+
+/* ---------- Mobile (nodes 1068:30572 / 1068:31857) ---------- */
+@media (max-width: 767.98px) {
+  /* Hero 430x800 under a 92px nav: photo 398x544, then the heading block. */
+  .occ-hero { padding: 92px 0 24px; }
+  .occ-hero__inner { grid-template-columns: 1fr; row-gap: 12px; padding: 8px 16px 0; }
+  .occ-hero__media { grid-column: 1; height: 544px; }
+  .occ-hero__crumbs ol { font: 300 12px/16px var(--font-body); }
+  .occ-hero__heading { font: 400 32px/36px var(--font-display); }
+  .occ-hero__subtitle { grid-column: 1; font: 300 16px/20px var(--font-body); text-align: left; }
+
+  /* Three columns of 122px stay side by side — never stacked, never scrolling
+     (node 1068:30598). Descriptions are hidden at this size in Figma. */
+  .occ-chooser { padding: 40px 16px 24px; gap: 16px; }
+  .occ-chooser__item { gap: 8px; }
+  /* Figma fixes the heading block at 40px (node 1068:30598). Without that, "Quà tặng doanh
+     nghiệp" wraps to two lines and pushes its thumbnail below the other two. */
+  .occ-chooser__title {
+    font: 500 14px/20px var(--font-body);
+    min-height: 40px; display: flex; align-items: center; justify-content: center;
+  }
+  .occ-chooser__thumb { height: 108px; }
+  .occ-chooser__desc { display: none; }
+
+  .occ-sections { padding: 24px 16px; gap: 40px; }
+  /* Cover moves above the copy, so the alternating desktop order must not survive here. */
+  .occ-section, .occ-section--cover-left { flex-direction: column; gap: 16px; align-items: stretch; }
+  .occ-section__body { flex: none; height: auto; gap: 16px; }
+  .occ-section__intro { order: 1; }
+  .occ-section__bottom { order: 2; gap: 24px; }
+  .occ-section__cover { order: -1; height: 465px; flex: none; }
+  .occ-section__title { font: 600 20px/28px var(--font-body); }
+
+  /* Figma's track is wider than the column (node 1068:31792), so the row scrolls sideways.
+     The card keeps a fixed width or flex would shrink both to fit and defeat the scroll. */
+  .occ-section__products {
+    gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none; margin-right: -16px; padding-right: 16px;
+  }
+  .occ-section__products::-webkit-scrollbar { display: none; }
+  .occ-section__products > * { flex: 0 0 277.5px; scroll-snap-align: start; }
+
+  /* Centred, and the arrow comes off — Figma hides it at this size (node 1068:31839). */
+  .occ-section__more { align-self: center; font: 500 16px/20px var(--font-body); }
+  .occ-section__more svg { display: none; }
+
+  .promo-banner--occasion { padding: 0 0 24px; }
+  .promo-banner--occasion .promo-banner__text { max-width: none; margin-left: 0; }
+  .promo-banner--occasion .promo-banner__image { flex: none; height: 340px; }
+}
+
+/* Between the mobile breakpoint and a full 1920 the hero's fixed 617px column and the sections'
+   571px body would overflow, so both become proportional. */
+@media (min-width: 768px) and (max-width: 1599.98px) {
+  .occ-hero__inner { grid-template-columns: 1fr minmax(0, 43%); }
+  .occ-hero__media { height: min(704px, 45vw); }
+  .occ-hero__heading { font-size: clamp(40px, 4.6vw, 70px); line-height: 1; }
+  .occ-section__body { flex: 0 0 48%; height: auto; gap: 40px; }
+  .occ-section__cover { height: min(659px, 46vw); }
+  .occ-chooser__thumb { height: min(320px, 22vw); }
+}

@@ -10,7 +10,7 @@ public static class LayoutData
     [
         new() { Label = "Quà tết", Url = "/danh-muc/qua-tet", HasDropdown = true },
         new() { Label = "Quà trung thu", Url = "/danh-muc/qua-trung-thu", HasDropdown = true },
-        new() { Label = "Quà theo dịp", Url = "/danh-muc/qua-tang-theo-dip", HasDropdown = true },
+        new() { Label = "Quà theo dịp", Url = "/qua-theo-dip", HasDropdown = true },
         new() { Label = "Sản phẩm chọn lọc", Url = "/danh-muc/san-pham-chon-loc", HasDropdown = true },
     ];
 
@@ -33,7 +33,7 @@ public static class LayoutData
                 [
                     new() { Label = "Quà tết", Url = "/danh-muc/qua-tet" },
                     new() { Label = "Quà trung thu", Url = "/danh-muc/qua-trung-thu" },
-                    new() { Label = "Quà theo dịp", Url = "/danh-muc/qua-tang-theo-dip" },
+                    new() { Label = "Quà theo dịp", Url = "/qua-theo-dip" },
                     new() { Label = "Sản phẩm chọn lọc", Url = "/danh-muc/san-pham-chon-loc" },
                     new() { Label = "Câu chuyện", Url = "/blog" },
                     new() { Label = "Đối tác", Url = "/hop-tac" },

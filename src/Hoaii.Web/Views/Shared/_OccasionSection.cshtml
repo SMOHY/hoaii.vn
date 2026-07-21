@@ -1,0 +1,43 @@
+@model Hoaii.Web.Models.Occasion.OccasionSectionViewModel
+@* One feature block: copy and products on one side, a tall cover on the other (nodes 769:15389 /
+   769:15390 / 771:21270). The three sections differ only in which side the cover sits, so they
+   share this markup and swap it with a modifier class rather than being written out three times. *@
+<section class="occ-section @(Model.CoverOnLeft ? "occ-section--cover-left" : "")">
+    <div class="occ-section__body">
+        <div class="occ-section__intro">
+            <h2 class="occ-section__title">@Model.Title</h2>
+            @if (Model.Description.Length > 0)
+            {
+                <p class="occ-section__desc">@Model.Description</p>
+            }
+        </div>
+
+        <div class="occ-section__bottom">
+            @* The row scrolls on mobile (Figma's track is wider than the column, node 1068:31792)
+               and simply fits on desktop. tabindex makes a scrolling region reachable by keyboard;
+               without products there is nothing to scroll, so the attributes come off. *@
+            @if (Model.Products.Count > 0)
+            {
+                <div class="occ-section__products" role="group" aria-label="Sản phẩm @Model.Title" tabindex="0">
+                    @foreach (var product in Model.Products)
+                    {
+                        <partial name="_CompactProductCard" model="product" />
+                    }
+                </div>
+            }
+            <a class="occ-section__more" href="@Model.ViewAllUrl">
+                <span>Xem tất cả</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.5"/></svg>
+            </a>
+        </div>
+    </div>
+
+    @* Figma draws a flat grey-200 block here — no photograph has been placed yet. Rendering the
+       same block keeps the layout honest instead of borrowing an unrelated product shot. *@
+    <div class="occ-section__cover @(Model.CoverImageUrl is null ? "occ-section__cover--empty" : "")">
+        @if (Model.CoverImageUrl is not null)
+        {
+            <img src="@Model.CoverImageUrl" alt="@Model.Title" loading="lazy" />
+        }
+    </div>
+</section>
