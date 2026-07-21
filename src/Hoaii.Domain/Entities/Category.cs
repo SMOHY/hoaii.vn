@@ -6,6 +6,16 @@ public enum CategoryType
     Occasion,    // Quà tết, Quà trung thu, Quà theo dịp, ...
 }
 
+/// <summary>How a category page opens. Figma draws two: the coverflow of products used by Quà tết
+/// and Quà trung thu, and a plain wide banner with the name across it used by the other eight
+/// listings (e.g. node 1269:39703).</summary>
+public enum CategoryHeroStyle
+{
+    /// <summary>Default so existing categories keep the hero they already render.</summary>
+    Carousel = 0,
+    Banner = 1,
+}
+
 public class Category
 {
     public int Id { get; set; }
@@ -33,6 +43,19 @@ public class Category
     /// (node 769:15371). Figma has no photograph placed there yet, so null renders the flat tone
     /// the design draws instead of a broken image.</summary>
     public string? CoverImageUrl { get; set; }
+
+    public CategoryHeroStyle HeroStyle { get; set; }
+
+    /// <summary>Wide image behind the banner hero (node 1269:39703). Figma leaves every one of the
+    /// eight banners empty, so null renders the flat block the design draws.</summary>
+    public string? BannerImageUrl { get; set; }
+
+    /// <summary>Middle breadcrumb crumb — Figma shows three levels on the occasion listings
+    /// (node 1269:39709). Null means the category hangs off the home page directly. Stored as a
+    /// label/URL pair rather than a category id because the parent is a landing page
+    /// ("Quà theo dịp"), which is not a Category row.</summary>
+    public string? ParentLabel { get; set; }
+    public string? ParentUrl { get; set; }
 
     public ICollection<Product> Products { get; set; } = [];
 }

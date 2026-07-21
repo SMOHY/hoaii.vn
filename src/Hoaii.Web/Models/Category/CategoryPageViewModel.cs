@@ -36,7 +36,18 @@ public class CategoryPageViewModel
 
     /// <summary>Kicker between the pager arrows, e.g. "Bộ quà 6 hộp". Empty hides the line.</summary>
     public string HeroKicker { get; init; } = "";
+
+    /// <summary>Carousel of products, or a wide banner with the name across it.</summary>
+    public Hoaii.Domain.Entities.CategoryHeroStyle HeroStyle { get; init; }
+
+    /// <summary>Backdrop for the banner hero. Null renders the flat block Figma draws.</summary>
+    public string? BannerImageUrl { get; init; }
+
+    /// <summary>Crumb between "Trang chủ" and this category, when it sits under a landing page.</summary>
+    public BreadcrumbCrumb? Parent { get; init; }
 }
+
+public record BreadcrumbCrumb(string Label, string Url);
 
 public class HeroSlideViewModel
 {

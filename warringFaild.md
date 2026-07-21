@@ -96,6 +96,35 @@ lại, hoặc đã audit rõ và cần người khác quyết.
 - **Cách xử lý đề xuất:** nâng tiêu đề hiện có của mỗi trang lên thành `<h1>`.
 - **Cần người dùng xác nhận:** không
 
+### WF-020 — Cả tám banner hero trong Figma đều trống ảnh
+
+- **Khu vực:** 8 trang listing của B16
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `1269:39703`, `1269:40154`, `1269:40599`, `1269:41044`, `1151:31798`,
+  `1151:32245`, `1151:32692`, `1151:34927`
+- **Mô tả:** hero của tám trang là khối 1440×600 màu `#D6D6D6` với tên danh mục màu `#AF2234` đè
+  lên, không có ảnh nào phía sau.
+- **Nguyên nhân:** thiết kế chưa đặt ảnh, không phải lỗi tải asset.
+- **Bằng chứng:** `download_assets` node `1151:31798` trả `rawImages: []`, export chỉ 7.8 KB.
+- **Mức độ:** `asset`
+- **Đã thử:** gọi trên node banner, node cha và node ảnh.
+- **Cách xử lý đề xuất:** đang render đúng khối màu Figma vẽ, và thêm cột
+  `Category.BannerImageUrl` để gán ảnh trong admin là hiện ngay. Cần khách cung cấp 8 ảnh banner.
+- **Cần người dùng xác nhận:** có
+
+### WF-021 — Figma không có trang listing cho Valentine
+
+- **Khu vực:** `/danh-muc/ngay-le-tinh-yeu`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** —
+- **Mô tả:** B16 liệt kê tám trang, không có Valentine, trong khi hai trang cùng nhóm (Phụ nữ,
+  Giáng sinh) đều có và đều tới được từ nút "Xem tất cả" của trang landing.
+- **Mức độ:** `minor`
+- **Cách xử lý đề xuất:** đã cho Valentine dùng cùng hero banner với hai trang anh em — để nó
+  dùng carousel rỗng thì lệch hẳn khi bấm qua lại. Đổi lại chỉ cần bỏ `'ngay-le-tinh-yeu'` khỏi
+  `db/scripts/2026-07-21-eight-listing-pages.sql`.
+- **Cần người dùng xác nhận:** không
+
 ### WF-001 — Thanh phân trang: Figma vẽ mâu thuẫn giữa hai danh mục
 
 - **Khu vực:** template danh mục (`Views/Category/Index.cshtml`)
@@ -234,6 +263,33 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   Tường" đeo ảnh ngũ quả. Hai hộp Tinh Hoa Bắc Bộ còn đeo `/images/placeholders/featured-*.jpg`.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
+
+### WF-022 — Tên danh mục "Trà" lưu dưới dạng HTML entity (đã sửa)
+
+- **Khu vực:** `/danh-muc/tra`, và mọi nơi hiện tên danh mục
+- **Mô tả:** `Categories.Name` của danh mục Trà chứa chuỗi ký tự `Tr&#xE0;` chứ không phải `Trà`.
+  Razor escape chuỗi đó đúng như mọi text khác, nên banner hiện "TR&#XE0;", tiêu đề hiện
+  "Tất cả tr&#xe0;", breadcrumb và thẻ `<title>` cũng vậy. Lỗi encode kép từ lần import nào đó.
+- **Xử lý:** đã quét toàn bộ `Categories`, `Products`, `ProductVariants` và các cột `Description` —
+  chỉ duy nhất dòng này bị. Sửa trong `db/scripts/2026-07-21-eight-listing-pages.sql`.
+
+### WF-019 — Sản phẩm Khăn / Tượng gốm / Rượu đang ẩn (đã bật)
+
+- **Khu vực:** `/danh-muc/khan`, `/danh-muc/tuong-gom`, `/danh-muc/ruou`
+- **Mô tả:** mỗi danh mục có 6 sản phẩm thật, giá thật, nhưng `IsActive = 0` nên cả ba trang ra
+  trạng thái rỗng trong khi Figma vẽ đầy sản phẩm.
+- **Xử lý:** đã bật, cùng lý do như WF-002. Hoàn tác:
+  `UPDATE p SET p.IsActive = 0 FROM Products p JOIN Categories c ON c.Id = p.CategoryId
+   WHERE c.Slug IN ('khan','tuong-gom','ruou');`
+- **Cần người dùng xác nhận:** có
+
+### WF-023 — Breadcrumb desktop của trang Phụ nữ ghi sai nhánh cuối (đã tránh)
+
+- **Khu vực:** `/danh-muc/ngay-quoc-te-phu-nu`
+- **Mô tả:** node desktop `1269:39709` ghi "Trang chủ/Quà theo dịp/**Ngày lễ tình yêu**" trên trang
+  Ngày Quốc tế Phụ nữ — copy-paste sót. Node mobile `1265:31321` ghi đúng.
+- **Xử lý:** breadcrumb sinh từ dữ liệu (`Category.ParentLabel` + tên danh mục) nên tự đúng; không
+  chép lỗi này.
 
 ### WF-016 — Copy 5 section landing đều là placeholder về Tết (đã sửa)
 

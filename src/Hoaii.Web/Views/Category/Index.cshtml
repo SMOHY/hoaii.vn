@@ -5,14 +5,29 @@
     ViewData["Title"] = Model.Title;
     ViewData["MetaDescription"] = Model.Description;
     ViewData["HeroOverlay"] = true;
-    ViewData["PreloadImage"] = Model.HeroSlides.FirstOrDefault()?.ImageUrl;
-}
-
-@* Red hero with a coverflow carousel of the category's products (node 1519:33993).
-   With no products the carousel and its pager collapse, leaving a compact title band. *@
-@{
+    ViewData["PreloadImage"] = Model.BannerImageUrl ?? Model.HeroSlides.FirstOrDefault()?.ImageUrl;
     var hasSlides = Model.HeroSlides.Count > 0;
 }
+
+@if (Model.HeroStyle == Hoaii.Domain.Entities.CategoryHeroStyle.Banner)
+{
+    @* Eight of the ten listings open on a wide banner instead of the carousel: a 1440x600 block
+       with the category name sitting near its bottom-left (node 1269:39703). Figma has not placed
+       a photograph behind any of them, so a null image renders the flat block it draws. *@
+    <section class="cat-banner">
+        <div class="cat-banner__inner @(Model.BannerImageUrl is null ? "cat-banner__inner--empty" : "")">
+            @if (Model.BannerImageUrl is not null)
+            {
+                <img src="@Model.BannerImageUrl" alt="" fetchpriority="high" />
+            }
+            <p class="cat-banner__title">@Model.Title.ToUpperInvariant()</p>
+        </div>
+    </section>
+}
+else
+{
+@* Red hero with a coverflow carousel of the category's products (node 1519:33993).
+   With no products the carousel and its pager collapse, leaving a compact title band. *@
 <section class="cat-hero @(hasSlides ? "" : "cat-hero--bare")" data-cat-carousel>
     <p class="cat-hero__eyebrow">@Model.HeroEyebrow</p>
 
@@ -65,6 +80,7 @@
         <p class="cat-hero__scroll-hint">Cuộn xuống để xem tất cả sản phẩm</p>
     }
 </section>
+}
 
 <div class="container cat-content">
     @* Real breadcrumb rather than one "Trang chủ/Quà tết" string, so the first crumb is a link
@@ -72,6 +88,12 @@
     <nav class="cat-breadcrumb" aria-label="Breadcrumb">
         <ol>
             <li><a href="/">Trang chủ</a></li>
+            @* Occasion listings sit under a landing page, so Figma shows three levels
+               (node 1269:39709). Categories without a parent keep two. *@
+            @if (Model.Parent is not null)
+            {
+                <li><a href="@Model.Parent.Url">@Model.Parent.Label</a></li>
+            }
             <li aria-current="page">@Model.Title</li>
         </ol>
     </nav>

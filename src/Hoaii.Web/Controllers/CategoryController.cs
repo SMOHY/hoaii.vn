@@ -97,20 +97,27 @@ public class CategoryController(HoaiiDbContext db) : Controller
             .Take(PageSize)
             .ToListAsync();
 
+        // The banner hero has no carousel, so skip the extra query for the eight pages that use it.
+        var heroStyle = category?.HeroStyle ?? Domain.Entities.CategoryHeroStyle.Carousel;
+
         // The hero carousel shows this view's own products, not a separate asset set.
-        var heroSlides = await (isFeaturedView
-                ? db.Products.Where(p => p.IsFeatured && p.IsActive && p.Images.Any())
-                : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive && p.Images.Any()))
-            .Include(p => p.Images)
-            .OrderBy(p => p.SortOrder).ThenBy(p => p.Id)
-            .Take(6)
-            .Select(p => new HeroSlideViewModel
-            {
-                ImageUrl = p.Images.OrderBy(i => i.SortOrder).First().Url,
-                Name = p.Name,
-                Slug = p.Slug,
-            })
-            .ToListAsync();
+        var heroSlides = new List<HeroSlideViewModel>();
+        if (heroStyle != Domain.Entities.CategoryHeroStyle.Banner)
+        {
+            heroSlides = await (isFeaturedView
+                    ? db.Products.Where(p => p.IsFeatured && p.IsActive && p.Images.Any())
+                    : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive && p.Images.Any()))
+                .Include(p => p.Images)
+                .OrderBy(p => p.SortOrder).ThenBy(p => p.Id)
+                .Take(6)
+                .Select(p => new HeroSlideViewModel
+                {
+                    ImageUrl = p.Images.OrderBy(i => i.SortOrder).First().Url,
+                    Name = p.Name,
+                    Slug = p.Slug,
+                })
+                .ToListAsync();
+        }
 
         // Per-category CMS copy overrides these defaults; the cross-category "featured" view has no
         // Category row, so it always uses the defaults.
@@ -138,6 +145,11 @@ public class CategoryController(HoaiiDbContext db) : Controller
             TotalProducts = totalProducts,
             HeroEyebrow = heroEyebrow,
             HeroKicker = heroKicker,
+            HeroStyle = heroStyle,
+            BannerImageUrl = category?.BannerImageUrl,
+            Parent = category is { ParentLabel: { Length: > 0 } pl, ParentUrl: { Length: > 0 } pu }
+                ? new BreadcrumbCrumb(pl, pu)
+                : null,
             HeroSlides = heroSlides,
             Promo = new PromoBannerViewModel
             {
