@@ -205,7 +205,7 @@
 }
 
 @media (max-width: 767.98px) {
-  .benefits { padding: 40px 16px; gap: 8px; }
+  .benefits { padding: 40px 16px; gap: 16px; } /* Figma mobile: 16, không phải 8 */
   .benefit-col { gap: 16px; }
   .benefit-icon { width: 40px; height: 40px; }
   .benefit-text--desktop { display: none; }
@@ -377,10 +377,20 @@
 
 @media (max-width: 767.98px) {
   .featured-section { gap: 16px; padding: 40px 16px; }
-  .featured-heading { gap: 4px; }
+  /* Cha là flex column căn giữa, nên hai khối này co lại bằng bề rộng nội dung — tiêu đề tụt
+     còn 221px thay vì trải hết 398. Figma cho cả hai rộng đúng 398. */
+  .featured-heading { gap: 4px; width: 100%; max-width: none; padding: 0; }
   .featured-title { font-size: 20px; line-height: 32px; }
   .featured-subtitle { display: none; }
-  .featured-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; gap: 4px; padding: 0; }
+  /* width phải trả về 100%: công thức min(1316px, 100% - 2×gutter) của bản desktop trừ gutter
+     thêm một lần nữa lên trên padding 16px của section, làm lưới còn 291 thay vì 398.
+     Figma mobile: 2 cột, hàng cao 240, khoảng cách 4 (frame "Hình ảnh" 398×728). */
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 240px;
+    gap: 4px;
+    width: 100%;
+  }
   /* Grid items default to min-width:auto, so on a 360px phone the card copy refused to shrink
      and pushed the grid past the viewport. */
   .featured-tile, .featured-card { min-width: 0; }
