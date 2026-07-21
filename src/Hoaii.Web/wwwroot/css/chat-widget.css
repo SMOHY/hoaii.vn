@@ -1,11 +1,16 @@
 /* Chat widget — see design-specs/shared-layout.md for full spec */
 
+/* Positions/icons read straight from the Figma component's expanded state (node 1154:28894,
+   "Chat box desktop" property1=Variant2) — the toggle button never actually moves between
+   collapsed and expanded; only the 3 bubbles fan out up-and-left from it. Container is sized to
+   the toggle alone (64x64, matching the collapsed variant) and the bubbles are allowed to render
+   outside those bounds when expanded. */
 .chat-widget {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 148px;
-  height: 179px;
+  width: 64px;
+  height: 64px;
   z-index: 1000;
 }
 
@@ -25,9 +30,9 @@
 }
 .chat-widget .bubble img { width: 36px; height: 36px; }
 
-.chat-widget .bubble--phone { left: 72px; top: 2.5px; }
-.chat-widget .bubble--zalo { left: 3px; top: 40.5px; }
-.chat-widget .bubble--messenger { left: 12px; top: 114.5px; }
+.chat-widget .bubble--phone { left: 0px; top: -71.5px; }
+.chat-widget .bubble--zalo { left: -69px; top: -33.5px; }
+.chat-widget .bubble--messenger { left: -60px; top: 40.5px; }
 
 .chat-widget .toggle {
   position: absolute;
@@ -41,23 +46,24 @@
   align-items: center;
   justify-content: center;
   padding: 6.667px;
-  left: 72px;
-  top: 74.5px;
-  transition: left 0.25s ease, top 0.25s ease;
+  left: 2px;
+  top: 2.5px;
 }
 .chat-widget .toggle img { width: 46.667px; height: 46.667px; }
+/* Figma's toggle button swaps to an explicit "đóng" (close) icon once the bubbles are open —
+   not just the same chat icon left sitting there. */
+.chat-widget .toggle__icon-close { display: none; }
+.chat-widget:not(.is-collapsed) .toggle__icon-open { display: none; }
+.chat-widget:not(.is-collapsed) .toggle__icon-close { display: block; }
 
-/* Collapsed (closed) state */
-.chat-widget.is-collapsed { width: 69px; height: 65px; }
+/* Collapsed (closed) state — all 3 bubbles stack exactly on the toggle's own spot, invisible. */
 .chat-widget.is-collapsed .toggle {
-  left: 4px;
-  top: 2.5px;
   border: 1.667px solid var(--color-grey-300);
 }
 .chat-widget.is-collapsed .bubble--phone,
 .chat-widget.is-collapsed .bubble--zalo,
 .chat-widget.is-collapsed .bubble--messenger {
-  left: 4px;
+  left: 2px;
   top: 2.5px;
   opacity: 0;
   pointer-events: none;

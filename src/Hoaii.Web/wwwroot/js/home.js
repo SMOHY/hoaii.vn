@@ -1,22 +1,58 @@
 // Custom services tab switcher — see design-specs/custom-services.md
+// Auto-advance timing (4s per tab, looping In khắc -> Lựa chọn gói quà -> Thiết kế -> ...)
+// is read straight from the Figma prototype's AFTER_TIMEOUT reactions on nodes 1234:40239/
+// 40241/40290, not something invented here. Paused on hover/focus so it doesn't fight a
+// visitor mid-read, and stopped for prefers-reduced-motion.
 (function () {
+  var AUTO_ADVANCE_MS = 4000;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
   document.querySelectorAll('[data-component="custom-services"]').forEach(function (root) {
-    var tabs = root.querySelectorAll('.custom-services__tab');
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('.custom-services__tab'));
     var panels = root.querySelectorAll('.custom-services__panel-item');
+    var timer = null;
+
+    // Figma's own reactions use two different crossfade speeds for the same swap: 0.5s ease-out
+    // when a person clicks a tab, 0.1s ease-out for the unattended auto-advance — set as a CSS
+    // var so .custom-services__panel-item's transition picks up whichever one applies.
+    function activate(tab, fadeMs) {
+      root.style.setProperty('--cs-fade-duration', (fadeMs / 1000) + 's');
+      var key = tab.getAttribute('data-tab');
+      tabs.forEach(function (t) {
+        t.classList.toggle('is-active', t === tab);
+        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      });
+      panels.forEach(function (p) {
+        p.classList.toggle('is-active', p.getAttribute('data-panel') === key);
+      });
+    }
+
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function startAuto() {
+      if (reduced.matches || tabs.length < 2) return;
+      stopAuto();
+      timer = setInterval(function () {
+        var current = tabs.findIndex(function (t) { return t.classList.contains('is-active'); });
+        activate(tabs[(current + 1) % tabs.length], 100);
+      }, AUTO_ADVANCE_MS);
+    }
 
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
-        var key = tab.getAttribute('data-tab');
-
-        tabs.forEach(function (t) {
-          t.classList.toggle('is-active', t === tab);
-          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-        });
-        panels.forEach(function (p) {
-          p.classList.toggle('is-active', p.getAttribute('data-panel') === key);
-        });
+        activate(tab, 500);
+        startAuto(); // manual pick restarts the 4s window instead of jumping mid-cycle
       });
     });
+
+    root.addEventListener('mouseenter', stopAuto);
+    root.addEventListener('mouseleave', startAuto);
+    root.addEventListener('focusin', stopAuto);
+    root.addEventListener('focusout', startAuto);
+
+    startAuto();
   });
 })();
 
