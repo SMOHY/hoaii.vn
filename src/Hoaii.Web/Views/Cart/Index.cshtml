@@ -3,9 +3,19 @@
     ViewData["Title"] = "Giỏ hàng";
 }
 
-<div class="cart-breadcrumb">
-    <span>Trang chủ/</span><span class="cart-breadcrumb__current">Giỏ hàng</span>
-</div>
+@* Was a single "Trang chủ/Giỏ hàng" string with no link and no landmark. Figma draws the same
+   line (node 1154:36001); this renders it as a real trail so the first crumb works and assistive
+   tech can announce where the page sits. *@
+<nav class="cart-breadcrumb" aria-label="Breadcrumb">
+    <ol>
+        <li><a href="/">Trang chủ</a></li>
+        <li aria-current="page">Giỏ hàng</li>
+    </ol>
+</nav>
+
+@* The page had no h1 at all. Figma leads with the breadcrumb and goes straight to the panel, so
+   the heading is visually hidden rather than invented into the design. *@
+<h1 class="visually-hidden">Giỏ hàng</h1>
 
 <div class="cart-page" data-cart-region="cart-page">
     @if (Model.Items.Count == 0)

@@ -137,3 +137,75 @@
 @media (max-width: 480px) {
   .minicart { width: 100vw; }
 }
+
+/* ---------- Upsell variant sheet (node 970:20686) ----------
+   Slides up over the mini-cart, dimming it, with the close button straddling the top edge. */
+.addon-sheet {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: flex-end;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.addon-sheet.is-open { opacity: 1; pointer-events: auto; }
+
+.addon-sheet__panel {
+  position: relative; width: 100%;
+  display: flex; flex-direction: column; gap: 20px;
+  padding: 40px 20px 20px; background: #fff; border-radius: 8px 8px 0 0;
+  transform: translateY(12px); transition: transform 0.2s ease;
+}
+.addon-sheet.is-open .addon-sheet__panel { transform: translateY(0); }
+
+/* Centred on the panel's top edge, half in and half out, exactly as Figma draws it. */
+.addon-sheet__close {
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
+  background: #fff; color: var(--color-grey-800);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.addon-sheet__close svg { width: 22px; height: 22px; }
+
+.addon-sheet__product { display: flex; align-items: center; gap: 12px; }
+.addon-sheet__thumb {
+  flex: none; width: 44px; height: 48px; border-radius: 4px;
+  background: var(--color-grey-50) center / cover no-repeat;
+}
+.addon-sheet__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.addon-sheet__name { font: 500 20px/23px var(--font-body); color: #000; }
+.addon-sheet__variant { font: 400 13px/16px var(--font-body); color: var(--color-grey-500); }
+.addon-sheet__price { font: 400 13px/16px var(--font-body); color: #000; white-space: nowrap; }
+
+.addon-sheet__field { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.addon-sheet__field legend { padding: 0; font: 500 16px/20px var(--font-body); color: #000; }
+.addon-sheet__option {
+  display: block; padding: 14px 16px; border: 1px solid var(--color-grey-200); border-radius: 8px;
+  font: 400 16px/20px var(--font-body); color: #000; cursor: pointer;
+}
+.addon-sheet__option:has(input:checked) { border-color: var(--color-brand-red-deep); }
+.addon-sheet__option input { position: absolute; opacity: 0; width: 0; height: 0; }
+.addon-sheet__option:has(input:focus-visible) { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
+
+.addon-sheet__actions { display: flex; align-items: center; gap: 16px; }
+.addon-sheet__qty { display: flex; align-items: center; gap: 4px; }
+.addon-sheet__qty button {
+  width: 40px; height: 40px; border: 1.25px solid var(--color-grey-200); border-radius: 5px;
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.addon-sheet__qty button svg { width: 18px; height: 18px; }
+.addon-sheet__qty > span { min-width: 32px; text-align: center; font: 500 16px/20px var(--font-body); }
+.addon-sheet__submit {
+  flex: 1; padding: 18px 24px; border: none; border-radius: 8px; cursor: pointer;
+  background: var(--color-brand-red-deep); color: #fff; font: 500 20px/23px var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .addon-sheet, .addon-sheet__panel { transition: none; }
+}
+
+/* Breadcrumb is a real list now, so the separator comes from CSS rather than a "/" in the markup. */
+.cart-breadcrumb ol { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.cart-breadcrumb li + li::before { content: "/"; margin-right: 4px; }
+.cart-breadcrumb a { color: inherit; text-decoration: none; }
+.cart-breadcrumb a:hover { text-decoration: underline; }
+.cart-breadcrumb li[aria-current] { color: var(--color-grey-500); }

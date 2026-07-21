@@ -8,6 +8,26 @@ Quy ước mức độ: `blocker` · `major` · `minor` · `data` · `asset` · 
 Lỗi build tạm thời đã sửa ngay trong phiên thì không ghi ở đây — chỉ ghi những gì thực sự còn
 lại, hoặc đã audit rõ và cần người khác quyết.
 
+---
+
+## ⚠️ Việc cần bên mình làm (không thể sửa bằng code)
+
+Bốn việc dưới đây là **thiếu dữ liệu hoặc thiếu asset**, không phải lỗi lập trình. Không mục nào
+được tự bịa nội dung để lấp chỗ trống.
+
+| # | Việc | Ảnh hưởng | Làm ở đâu | Chi tiết |
+|---|---|---|---|---|
+| 1 | Gán sản phẩm cho 5 danh mục dịp (Valentine, 8-3, Giáng sinh, Người ấy, Bố mẹ) — cả 5 đang **0 sản phẩm** | 10 ô card trên 2 trang landing để trống | Admin → Sản phẩm → đổi Danh mục | [WF-011](#wf-011--năm-danh-mục-dịp-không-có-sản-phẩm-nào-️-quan-trọng-nhất) |
+| 2 | Nhập Thành phần / Câu chuyện / Kích thước cho sản phẩm — **44/45 đang trống** | Mọi trang chi tiết hiện chung một đoạn mặc định | Admin → Sản phẩm | [WF-030](#wf-030--4445-sản-phẩm-chưa-có-thành-phần-câu-chuyện-và-kích-thước-️) |
+| 3 | Cung cấp ảnh: 8 banner hero, 5 ảnh cover, 3 ảnh chooser — **trong Figma đều là khối xám trống** | Các khu vực đó render khối màu như thiết kế vẽ | Admin → gán vào `BannerImageUrl` / `CoverImageUrl` | [WF-020](#wf-020--cả-tám-banner-hero-trong-figma-đều-trống-ảnh), [WF-012](#wf-012--ảnh-cover-và-ảnh-campaign-của-hai-trang-landing-chưa-tồn-tại-trong-figma) |
+| 4 | Xác nhận 2 điểm cố ý lệch Figma: H1 trang Quà tặng cá nhân, và đích của cột "Quà tặng doanh nghiệp" | Cả hai đổi lại bằng một dòng code | — | [WF-013](#wf-013--trang-quà-tặng-cá-nhân-trong-figma-vẫn-để-tiêu-đề-quà-tặng-theo-dịp), [WF-014](#wf-014--không-có-danh-mục-quà-tặng-doanh-nghiệp) |
+
+Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageShare vá lỗ hổng
+([WF-007](#wf-007--sixlabors-imagesharp-315-có-lỗ-hổng-bảo-mật-đã-công-bố)) và tách
+`ProductVariant` thành thuộc tính size/màu ([WF-035](#wf-035--popup-chọn-biến-thể-figma-có-size--color-db-chỉ-có-một-tên-đã-xử-lý)).
+
+---
+
 ## Chưa xử lý
 
 ### WF-011 — Năm danh mục dịp không có sản phẩm nào ⚠️ QUAN TRỌNG NHẤT
@@ -96,6 +116,25 @@ lại, hoặc đã audit rõ và cần người khác quyết.
 - **Cách xử lý đề xuất:** nâng tiêu đề hiện có của mỗi trang lên thành `<h1>`.
 - **Cần người dùng xác nhận:** không
 
+### WF-030 — 44/45 sản phẩm chưa có Thành phần, Câu chuyện và Kích thước ⚠️
+
+- **Khu vực:** `/san-pham/{slug}` — mọi trang chi tiết
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `826:13864` (thành phần), `826:13879` (câu chuyện), `826:13881` (kích thước)
+- **Mô tả:** ba cột `Description`, `StoryBody`, `FeatureBody` được thêm ở đợt CMS nhưng **chưa ai
+  nhập**: 0/45 sản phẩm đang bán có dữ liệu. Mọi trang chi tiết vì thế hiện chung một đoạn mặc định.
+- **Nguyên nhân:** thiếu nội dung, không phải lỗi code.
+- **Bằng chứng:** `SELECT COUNT(*) … WHERE IsActive=1` → 45; số có `Description` / `StoryBody` /
+  `FeatureBody` đều bằng 0 trước bước này.
+- **Mức độ:** `data`
+- **Đã thử:** Figma chỉ dựng trang chi tiết cho đúng một sản phẩm (Tinh Hoa Bắc Bộ), nên chỉ sản
+  phẩm đó có nội dung chính thức để nhập — đã nhập trong
+  `db/scripts/2026-07-21-product-detail-copy.sql`. 44 sản phẩm còn lại không có nguồn nội dung nào
+  và không được bịa.
+- **Cách xử lý đề xuất:** nhập trong admin → Sản phẩm → từng sản phẩm. Ưu tiên Thành phần vì đó là
+  thông tin khách thật sự cần trước khi mua.
+- **Cần người dùng xác nhận:** có
+
 ### WF-020 — Cả tám banner hero trong Figma đều trống ảnh
 
 - **Khu vực:** 8 trang listing của B16
@@ -112,6 +151,24 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   `Category.BannerImageUrl` để gán ảnh trong admin là hiện ngay. Cần khách cung cấp 8 ảnh banner.
 - **Cần người dùng xác nhận:** có
 
+### WF-037 — Figma vẽ phương thức "Credit card" và nút "Thanh toán với VN PAY"
+
+- **Khu vực:** `/thanh-toan`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `887:15475`, component set `1680:39838`
+- **Mô tả:** Figma liệt kê hai phương thức "Chuyển khoản qua ngân hàng" và "Credit card" (kèm logo
+  VISA/Mastercard), nút chính ghi "Thanh toán với VN PAY". Web hiện hai phương thức thật là chuyển
+  khoản và thanh toán khi giao hàng, nút ghi "Hoàn tất đặt hàng".
+- **Nguyên nhân:** **chưa có tích hợp cổng thanh toán nào.** Không có VNPay, không có xử lý thẻ.
+- **Bằng chứng:** không có gateway, không có callback, không có bảng giao dịch trong solution.
+- **Mức độ:** `blocker` cho việc thanh toán online
+- **Đã thử:** không thêm nút "Thanh toán với VN PAY" chỉ để giống ảnh. Một nút thanh toán bấm vào
+  không làm gì — hoặc tệ hơn là làm sai — trên trang có tiền thật là thứ không được phép ship.
+  Nhãn nút đã được gate sẵn sau cờ `VnpayEnabled`: bật cờ lên là nút đổi chữ, nên phần giao diện
+  đã sẵn sàng chờ tích hợp.
+- **Cách xử lý đề xuất:** quyết định tích hợp VNPay thật hay bỏ hẳn hai mục này khỏi thiết kế.
+- **Cần người dùng xác nhận:** có — đây là câu hỏi còn treo từ kế hoạch admin.
+
 ### WF-021 — Figma không có trang listing cho Valentine
 
 - **Khu vực:** `/danh-muc/ngay-le-tinh-yeu`
@@ -123,6 +180,21 @@ lại, hoặc đã audit rõ và cần người khác quyết.
 - **Cách xử lý đề xuất:** đã cho Valentine dùng cùng hero banner với hai trang anh em — để nó
   dùng carousel rỗng thì lệch hẳn khi bấm qua lại. Đổi lại chỉ cần bỏ `'ngay-le-tinh-yeu'` khỏi
   `db/scripts/2026-07-21-eight-listing-pages.sql`.
+- **Cần người dùng xác nhận:** không
+
+### WF-029 — Nút tìm kiếm trên nav không có ô nhập
+
+- **Khu vực:** `Views/Shared/_Nav.cshtml`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `988:21321` (trang search desktop) — không vẽ ô nhập nào trên chính trang này
+- **Mô tả:** icon kính lúp trên nav chỉ `location.href='/tim-kiem'`, không mở ô nhập hay drawer.
+  Figma cũng không vẽ ô nhập trên trang kết quả, nghĩa là ô nhập phải nằm ở một drawer/popup của
+  nav mà file thiết kế chưa ghép vào luồng này.
+- **Mức độ:** `minor`
+- **Đã thử:** dò `_Nav.cshtml` và `overlays.js` — không có search drawer nào.
+- **Cách xử lý đề xuất:** trang `/tim-kiem` đang tự render một ô nhập, nếu không thì không có
+  đường nào gõ từ khóa. Đây là điểm lệch Figma có chủ đích và đã ghi chú trong Razor. Search
+  drawer nhiều khả năng thuộc phạm vi B19 (popup/drawer) — sẽ xử lý ở bước đó.
 - **Cần người dùng xác nhận:** không
 
 ### WF-001 — Thanh phân trang: Figma vẽ mâu thuẫn giữa hai danh mục
@@ -263,6 +335,96 @@ lại, hoặc đã audit rõ và cần người khác quyết.
   Tường" đeo ảnh ngũ quả. Hai hộp Tinh Hoa Bắc Bộ còn đeo `/images/placeholders/featured-*.jpg`.
 - **Xử lý:** tải ảnh gốc từ fill của từng card Figma, gán lại đúng.
   Xem `db/scripts/2026-07-21-qua-trung-thu-figma-sync.sql`.
+
+### WF-035 — Popup chọn biến thể: Figma có Size + Color, DB chỉ có một tên (đã xử lý)
+
+- **Khu vực:** mini cart, popup "Thêm sản phẩm lẻ"
+- **Figma node:** `970:20686`
+- **Mô tả:** Figma vẽ hai ô chọn riêng "Size" (40cm) và "Color" (Navy). `ProductVariant` chỉ có
+  cột `Name` — ví dụ "4 Bánh", "Hộp 4 túi / màu vàng" — và không có cột màu.
+- **Xử lý:** popup liệt kê đúng các biến thể **có thật**, một trường "Loại". Dựng hai dropdown
+  Size/Color rời sẽ cho phép chọn tổ hợp cửa hàng không bán được.
+- **Cách xử lý triệt để:** tách `ProductVariant` thành các thuộc tính (size, màu, …) rồi mới dựng
+  đúng hai ô như Figma. Đây là thay đổi schema, không làm sát ngày bàn giao.
+- **Cần người dùng xác nhận:** có
+
+### WF-036 — Chưa có popup chọn biến thể cho sản phẩm gợi ý (đã thêm)
+
+- **Khu vực:** mini cart, khối "HOÀN CHỈNH VỚI"
+- **Mô tả:** nút "Thêm" trước đây post thẳng, nên sản phẩm nhiều biến thể bị thêm vào giỏ mà khách
+  không được chọn loại nào — Figma vẽ hẳn một popup cho việc này.
+- **Xử lý:** thêm bottom sheet trượt lên đè drawer (node `970:20686`). Sản phẩm chỉ có một biến thể
+  hoặc không có thì giữ nguyên form thường, vẫn chạy khi tắt JS. Đổi biến thể thì giá cập nhật theo
+  `PriceModifier` thật. Escape đóng sheet nhưng giữ drawer mở.
+
+### WF-031 — Kích thước hộp bịa giống nhau cho cả 45 sản phẩm (đã sửa)
+
+- **Khu vực:** `/san-pham/{slug}`, khối "Đặc điểm"
+- **Mô tả:** `ProductController` hard-code `"KÍCH THƯỚC: Hộp cứng 48x15.7x6cm…"` làm giá trị mặc
+  định, nên mọi sản phẩm — kể cả hộp trà, tượng gốm, chai rượu — đều in cùng bộ số đo của một hộp
+  quà Tết. Đây là thông tin sai sự thật, khách đọc để quyết định mua và để tính vận chuyển.
+- **Xử lý:** bỏ giá trị mặc định; số đo giờ là dữ liệu. Không có dữ liệu thì **ẩn cả khối** — một
+  tiêu đề "Đặc điểm" trống trông như lỗi tải. Số đo thật của Tinh Hoa Bắc Bộ nhập từ node
+  `826:13881`.
+
+### WF-032 — Dải thumbnail bị bóp méo khi sản phẩm có nhiều hơn 5 ảnh (đã sửa)
+
+- **Khu vực:** `/san-pham/{slug}`, gallery
+- **Mô tả:** Figma cố định thumbnail 100×100 và đánh dấu `shrink-0` (node `826:15686`), nhưng CSS
+  thiếu `flex: none` nên với sản phẩm 8 ảnh chúng co còn ~72px — kích thước dải đổi theo từng sản
+  phẩm. Ngoài ra thiếu hẳn lớp phủ đen 50% mà Figma dùng để làm mờ các ảnh chưa chọn.
+- **Xử lý:** cố định 100×100, cho dải cuộn ngang khi tràn, thêm lớp phủ `rgba(0,0,0,.5)` tắt ở ảnh
+  đang chọn, và thêm `focus-visible` cho thao tác bàn phím.
+
+### WF-033 — Nền section "Câu chuyện sản phẩm" sai màu (đã sửa)
+
+- **Khu vực:** `/san-pham/{slug}`
+- **Mô tả:** Figma đặt dải này trên nền be `#F7F3EE` (node `826:20691`) — đó là thứ tách nó khỏi
+  khối sản phẩm trắng phía trên — nhưng CSS để `#fff`.
+- **Xử lý:** đổi sang `var(--color-brand-gold-bg)`. Đã lấy mẫu pixel cả hai bên để xác nhận.
+
+### WF-034 — Figma gõ nhầm "THÀN PHẦN" (đã tránh)
+
+- **Khu vực:** `/san-pham/{slug}`
+- **Mô tả:** node `826:13863` ghi "THÀN PHẦN :" thiếu chữ H.
+- **Xử lý:** web hiện đúng "THÀNH PHẦN :", không chép lỗi.
+
+### WF-024 — Minh họa "không có kết quả" là hình vẽ tay không đúng Figma (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** trạng thái rỗng đang dùng một `<svg>` viết tay hình xe đẩy hàng, trong khi Figma là
+  hình line-art màu vàng đồng vẽ hộp quà và bình hoa (node `1028:12551`).
+- **Xử lý:** tải bản vector thật từ Figma về `/images/search/no-results.svg` (23 KB, đã kiểm tra
+  không chứa `<script>`), dùng 197px trên desktop và 140px trên mobile đúng như hai node.
+
+### WF-025 — Trang tìm kiếm hiện "0 kết quả" hai lần (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** khi không có kết quả, dòng đếm được render cả ở header lẫn trong khối empty state.
+- **Xử lý:** giữ một dòng ở header đúng như node `988:23680`.
+
+### WF-026 — Hai thẻ H1 khi tìm không ra kết quả (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** "KẾT QUẢ TÌM KIẾM CHO …" và "KHÔNG CÓ KẾT QUẢ" cùng là `h1` và cùng render. Trang
+  `/tim-kiem` không từ khóa thì lại không có `h1` nào.
+- **Xử lý:** heading kết quả chỉ render khi thật sự có kết quả; empty state mang `h1`; trang chưa
+  nhập từ khóa có `h1` riêng "TÌM KIẾM" và không chạy query, không tự nhận "0 kết quả".
+
+### WF-027 — Link "Xem thêm" của nhóm Sản phẩm chọn lọc trỏ về trang chủ (đã sửa)
+
+- **Khu vực:** `/tim-kiem`
+- **Mô tả:** `ShowMoreUrl` của nhóm gợi ý chéo đặt là `/`.
+- **Xử lý:** trỏ `/danh-muc/san-pham-chon-loc`.
+
+### WF-028 — Tìm kiếm chỉ khớp tên và slug (đã mở rộng)
+
+- **Khu vực:** `SearchController`
+- **Mô tả:** không khớp mô tả và tên danh mục, nên gõ "trà" không ra sản phẩm nào có chữ trà trong
+  phần mô tả.
+- **Xử lý:** thêm `Description` và `Category.Name` vào điều kiện, vẫn nằm trong SQL. Thứ tự nhóm
+  đổi từ "nhiều kết quả trước" sang thứ tự danh mục, đúng như Figma xếp Quà tết → Trung thu →
+  Theo dịp. Đã kiểm tra XSS: `?q=<script>alert(1)</script>` không chạy, không sinh thẻ script nào.
 
 ### WF-022 — Tên danh mục "Trà" lưu dưới dạng HTML entity (đã sửa)
 

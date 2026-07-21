@@ -79,8 +79,11 @@ public class ProductController(HoaiiDbContext db) : Controller
                 : $"{product.Name} được HOÀI chế tác tỉ mỉ, gói ghém tinh thần văn hóa Việt trong từng chi tiết — từ nguyên liệu chọn lọc đến bao bì thủ công, mang đến một món quà trọn vẹn ý nghĩa.",
             StoryImageUrl = product.StoryImageUrl is { Length: > 0 } si ? si : "/images/pdp/story.jpg",
             FeatureTitle = product.FeatureTitle is { Length: > 0 } ft ? ft : "Đặc điểm",
-            FeatureBody = product.FeatureBody is { Length: > 0 } fb ? fb
-                : "KÍCH THƯỚC:\nHộp cứng: 48x15.7x6cm\nHộp con: 9.5x9.5x5cm\nQuai xách: 38x15.7x6.2cm\nTúi đựng: 49x17x7cm",
+            // No fallback here on purpose. This block holds the box dimensions, and the old
+            // default printed one product's measurements on all 45 — a shopper reading
+            // "Hộp cứng: 48x15.7x6cm" on a product that is nothing like that size is being told
+            // something false. Empty hides the block until someone enters the real numbers.
+            FeatureBody = product.FeatureBody ?? "",
             FeatureImageUrl = product.FeatureImageUrl is { Length: > 0 } fi ? fi : "/images/pdp/feature.jpg",
             Collection = collection,
             RelatedProducts = related.Select(p => ProductCardMapper.Map(p, "related")).ToList(),
