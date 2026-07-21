@@ -7,6 +7,10 @@
     var placeOrderLabel = Model.VnpayEnabled ? "Thanh toán với VN PAY" : "Hoàn tất đặt hàng";
 }
 
+@* The checkout shell shows only a logo and a cart icon (node 887:15476), so the page heading is
+   hidden — the visible headings start at "Liên hệ", which is an h2. *@
+<h1 class="visually-hidden">Thanh toán đơn hàng</h1>
+
 <div class="checkout-page">
     <div class="checkout-col checkout-col--form">
         <form method="post" action="/thanh-toan/dat-hang" id="checkout-form" class="checkout-form">

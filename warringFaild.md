@@ -151,6 +151,24 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   `Category.BannerImageUrl` để gán ảnh trong admin là hiện ngay. Cần khách cung cấp 8 ảnh banner.
 - **Cần người dùng xác nhận:** có
 
+### WF-037 — Figma vẽ phương thức "Credit card" và nút "Thanh toán với VN PAY"
+
+- **Khu vực:** `/thanh-toan`
+- **Desktop/Mobile:** cả hai
+- **Figma node:** `887:15475`, component set `1680:39838`
+- **Mô tả:** Figma liệt kê hai phương thức "Chuyển khoản qua ngân hàng" và "Credit card" (kèm logo
+  VISA/Mastercard), nút chính ghi "Thanh toán với VN PAY". Web hiện hai phương thức thật là chuyển
+  khoản và thanh toán khi giao hàng, nút ghi "Hoàn tất đặt hàng".
+- **Nguyên nhân:** **chưa có tích hợp cổng thanh toán nào.** Không có VNPay, không có xử lý thẻ.
+- **Bằng chứng:** không có gateway, không có callback, không có bảng giao dịch trong solution.
+- **Mức độ:** `blocker` cho việc thanh toán online
+- **Đã thử:** không thêm nút "Thanh toán với VN PAY" chỉ để giống ảnh. Một nút thanh toán bấm vào
+  không làm gì — hoặc tệ hơn là làm sai — trên trang có tiền thật là thứ không được phép ship.
+  Nhãn nút đã được gate sẵn sau cờ `VnpayEnabled`: bật cờ lên là nút đổi chữ, nên phần giao diện
+  đã sẵn sàng chờ tích hợp.
+- **Cách xử lý đề xuất:** quyết định tích hợp VNPay thật hay bỏ hẳn hai mục này khỏi thiết kế.
+- **Cần người dùng xác nhận:** có — đây là câu hỏi còn treo từ kế hoạch admin.
+
 ### WF-021 — Figma không có trang listing cho Valentine
 
 - **Khu vực:** `/danh-muc/ngay-le-tinh-yeu`
