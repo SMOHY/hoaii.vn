@@ -18,6 +18,10 @@
             + (canonicalPage.Length > 0 && canonicalPage != "1" ? $"?page={canonicalPage}" : "");
     }
     <link rel="canonical" href="@canonical" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     @* Preload the two faces used above the fold — body text (Medium) and the display serif
        every heading is set in. Without this the page paints in a fallback and reflows. *@
     <link rel="preload" href="/fonts/Josefin Sans/JosefinSans-Medium.woff2" as="font" type="font/woff2" crossorigin />
