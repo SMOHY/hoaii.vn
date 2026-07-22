@@ -100,6 +100,41 @@
                         </label>
                     }
                 </div>
+
+                @* Thẻ quốc tế (node 1680:39838).
+
+                   Figma vẽ bốn ô Số thẻ / Ngày hết hạn / Mã bảo mật / Tên trên thẻ ngay trên trang
+                   này. Chúng được dựng đúng hình nhưng KHÔNG thu dữ liệu: không có thuộc tính
+                   `name` nên không bao giờ được gửi lên server, và luôn `disabled`.
+
+                   Lý do không phải thẩm mỹ mà là an toàn: nhận số thẻ và mã CVV thô trên máy chủ
+                   của mình đẩy cửa hàng vào mức tuân thủ PCI-DSS cao nhất, và bản thân VNPay cũng
+                   không nhận luồng đó — đúng chuẩn là chuyển hướng sang trang thanh toán của họ.
+                   Khi có thông tin tích hợp thật, bật cờ pay_vnpay_enabled trong admin: nút chính
+                   đổi nhãn thành "Thanh toán với VN PAY" và đơn được tạo ở trạng thái chờ thanh
+                   toán trước khi chuyển hướng. Xem WF-037. *@
+                <div class="pay-card @(Model.VnpayEnabled ? "" : "pay-card--off")">
+                    <div class="pay-card__head">
+                        <span class="option-row__radio" aria-hidden="true"></span>
+                        <span class="pay-card__label">Credit card</span>
+                        <span class="pay-card__brands">
+                            <img src="~/images/payment/visa.png" alt="Visa" width="49" height="16" />
+                            <img src="~/images/payment/mastercard.png" alt="Mastercard" width="29" height="16" />
+                        </span>
+                    </div>
+                    <div class="pay-card__fields">
+                        <input class="pay-card__input" placeholder="Số thẻ *" disabled aria-hidden="true" />
+                        <div class="pay-card__row">
+                            <input class="pay-card__input" placeholder="Ngày hết hạn *" disabled aria-hidden="true" />
+                            <input class="pay-card__input" placeholder="Mã bảo mật *" disabled aria-hidden="true" />
+                        </div>
+                        <input class="pay-card__input" placeholder="Tên trên thẻ *" disabled aria-hidden="true" />
+                    </div>
+                    <p class="pay-card__note">
+                        Thanh toán thẻ sẽ mở khi cổng thanh toán được kết nối. Hiện tại vui lòng chọn
+                        chuyển khoản hoặc thanh toán khi nhận hàng.
+                    </p>
+                </div>
                 @if (Model.BankEnabled && Model.HasBankInfo)
                 {
                     <div class="checkout-bank-info" data-bank-info style="@(bankChecked ? "" : "display:none;")">

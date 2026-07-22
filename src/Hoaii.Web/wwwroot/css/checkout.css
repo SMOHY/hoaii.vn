@@ -149,3 +149,68 @@
   line-height: 1.7;
 }
 .checkout-bank-info p { margin: 0; }
+
+/* ---------- Thẻ quốc tế (node 1680:39838) ----------
+   Dựng đúng hình Figma nhưng các ô là vỏ trưng bày: không có `name`, luôn disabled, nên không
+   một ký tự nào của thẻ rời khỏi trình duyệt. Xem chú thích trong Views/Checkout/Index.cshtml. */
+.pay-card {
+  width: 100%;
+  border: 1.5px solid var(--color-grey-900);
+  border-radius: 0 0 8px 8px;
+  border-top: 0;
+  margin-top: -4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pay-card__head {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+}
+.pay-card__label {
+  flex: 1;
+  font: 500 16px/20px var(--font-body);
+  color: var(--color-grey-600); /* Figma: mục chưa chọn là grey-600 */
+}
+.pay-card__brands { display: flex; align-items: center; gap: 6.4px; }
+.pay-card__brands img { height: 16px; width: auto; display: block; }
+
+.pay-card__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+.pay-card__row { display: flex; gap: 8px; }
+.pay-card__row .pay-card__input { flex: 1 1 0; min-width: 0; }
+.pay-card__input {
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--color-grey-300);
+  border-radius: 8px;
+  background: #fff;
+  font: 300 16px/18px var(--font-body);
+  color: var(--color-black);
+  width: 100%;
+}
+/* Ô đang tắt vẫn phải đọc được, không làm mờ tới mức không nhìn ra chữ. */
+.pay-card__input:disabled { color: var(--color-grey-500); cursor: not-allowed; }
+.pay-card__input::placeholder { color: var(--color-black); }
+.pay-card__input:disabled::placeholder { color: var(--color-grey-500); }
+
+.pay-card__note {
+  margin: 0;
+  padding: 0 16px 16px;
+  font: 400 13px/18px var(--font-body);
+  color: var(--color-grey-600);
+}
+/* Khi cổng chưa bật thì cả khối mờ đi để không ai tưởng là chọn được. */
+.pay-card--off { opacity: .55; }
+.pay-card--off .pay-card__note { color: var(--color-brand-red); opacity: 1; }
+
+@media (max-width: 767.98px) {
+  .pay-card__row { flex-direction: column; }
+}

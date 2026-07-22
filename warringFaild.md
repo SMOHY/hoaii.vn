@@ -312,6 +312,38 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 
 ## Đã xử lý trong phiên
 
+### WF-037 — Thẻ quốc tế: dựng giao diện, KHÔNG thu dữ liệu thẻ (đã xử lý)
+
+- **Khu vực:** `/thanh-toan`
+- **Figma node:** `1680:39838`
+- **Mô tả:** Figma vẽ mục "Credit card" kèm logo VISA/Mastercard, và khi chọn thì mở bốn ô
+  **Số thẻ · Ngày hết hạn · Mã bảo mật · Tên trên thẻ** ngay trên trang của mình.
+- **Vì sao không dựng thành form thật:** nhận số thẻ và CVV thô trên máy chủ của cửa hàng đẩy
+  toàn bộ hệ thống vào mức tuân thủ PCI-DSS cao nhất (SAQ D) — gần như không doanh nghiệp nhỏ nào
+  đáp ứng nổi. Bản thân VNPay cũng không nhận luồng đó: đúng chuẩn là chuyển hướng sang trang
+  thanh toán của họ, thẻ không bao giờ đi qua máy chủ mình. Và khi chưa nối cổng nào thì khách gõ
+  thẻ vào chỉ là mất dữ liệu thẻ mà không thanh toán được gì.
+- **Đã làm:** dựng đúng hình Figma — bốn ô, đúng kích thước, đúng logo — nhưng các ô **không có
+  thuộc tính `name`** nên không bao giờ được gửi lên server, và luôn `disabled`. Đã kiểm: form
+  gửi đi không chứa trường nào liên quan tới thẻ. Khối mờ đi kèm ghi chú khi cổng chưa bật.
+- **Khi có VNPay thật:** bật cờ `pay_vnpay_enabled` trong admin. Nút chính đã sẵn đổi nhãn thành
+  "Thanh toán với VN PAY". Phần còn lại cần làm: tạo đơn ở trạng thái chờ thanh toán, ký tham số,
+  chuyển hướng sang VNPay, và xử lý callback xác nhận. **Không được** đánh dấu đơn là đã thanh
+  toán trước khi có callback hợp lệ.
+- **Cần người dùng xác nhận:** có — cung cấp thông tin tích hợp VNPay thì mới nối được.
+
+### WF-044 — Ô nhập form mua sỉ (đã sửa theo Figma)
+
+- **Khu vực:** `/hop-tac`
+- **Mô tả:** Figma vẽ mỗi ô là một dòng cao 45.4 với chữ gợi ý bên trong; web dùng kiểu nhãn nhỏ ở
+  trên, ô nhập ở dưới, cao 60. Ngoài ra Figma để **Tên và Họ mỗi ô một dòng riêng**, chỉ Điện
+  thoại và Mã bưu điện mới chia đôi một hàng — web gộp Tên/Họ.
+- **Xử lý:** đổi sang một dòng 45px, tách Tên/Họ, khoảng cách 11 như Figma. Nhãn **không bị bỏ** mà
+  chuyển sang `.visually-hidden`: form chỉ có chữ gợi ý thì khi người dùng gõ xong không còn gì cho
+  biết ô đó là gì, cả với người dùng thường lẫn trình đọc màn hình.
+- **Còn lệch:** cột form cao 579 so với 598 của Figma (3%), do khối "Loại yêu cầu" và khoảng cách
+  trước nút Gửi. Không đáng đánh đổi thêm thay đổi cấu trúc.
+
 ### WF-020 / WF-012 — 24 khe ảnh trống đã lấp bằng ảnh tạm
 
 - **Khu vực:** 9 banner hero trang listing, 5 ảnh cover, 6 ô chooser, 10 card sản phẩm dịp
