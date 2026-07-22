@@ -19,7 +19,7 @@ Bốn việc dưới đây là **thiếu dữ liệu hoặc thiếu asset**, kh�
 |---|---|---|---|---|
 | 1 | ~~Gán sản phẩm cho 5 danh mục dịp~~ — **đã lấp bằng 10 sản phẩm tạm** (slug tam-*), thay bằng hàng thật khi có | Hai trang landing đã đầy đủ như Figma | Admin → Sản phẩm | [WF-011](#wf-011--năm-danh-mục-dịp-không-có-sản-phẩm-nào-️-quan-trọng-nhất) |
 | 2 | Nhập Thành phần / Câu chuyện / Kích thước cho sản phẩm — **44/45 đang trống** | Mọi trang chi tiết hiện chung một đoạn mặc định | Admin → Sản phẩm | [WF-030](#wf-030--4445-sản-phẩm-chưa-có-thành-phần-câu-chuyện-và-kích-thước-️) |
-| 3 | Cung cấp ảnh: 8 banner hero, 5 ảnh cover, 3 ảnh chooser — **trong Figma đều là khối xám trống** | Các khu vực đó render khối màu như thiết kế vẽ | Admin → gán vào `BannerImageUrl` / `CoverImageUrl` | [WF-020](#wf-020--cả-tám-banner-hero-trong-figma-đều-trống-ảnh), [WF-012](#wf-012--ảnh-cover-và-ảnh-campaign-của-hai-trang-landing-chưa-tồn-tại-trong-figma) |
+| 3 | ~~Cung cấp ảnh~~ — **đã lấp 24 khe bằng ảnh tạm nằm trong repo**, thay bằng ảnh thật khi có | Các trang đã đầy đủ như Figma | Admin → Danh mục → Ảnh banner / Ảnh cover |
 | 4 | Xác nhận 2 điểm cố ý lệch Figma: H1 trang Quà tặng cá nhân, và đích của cột "Quà tặng doanh nghiệp" | Cả hai đổi lại bằng một dòng code | — | [WF-013](#wf-013--trang-quà-tặng-cá-nhân-trong-figma-vẫn-để-tiêu-đề-quà-tặng-theo-dịp), [WF-014](#wf-014--không-có-danh-mục-quà-tặng-doanh-nghiệp) |
 
 Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageShare vá lỗ hổng
@@ -31,24 +31,6 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 ## Chưa xử lý
 
 
-### WF-012 — Ảnh cover và ảnh campaign của hai trang landing chưa tồn tại trong Figma
-
-- **Khu vực:** `/qua-theo-dip`, `/qua-tang-ca-nhan`
-- **Desktop/Mobile:** cả hai
-- **Figma node:** `769:15371`, `769:15447`, `771:21327`, `769:15181`, `769:15205`, `769:15226`,
-  `771:15468`
-- **Mô tả:** ngoài **một** ảnh hero, toàn bộ phần còn lại của hai trang trong Figma là khối màu
-  đặc, không có ảnh nào được đặt vào: 5 khối cover là `#DCDCDC`, 3 ô chooser là `#7A7A7A` (đang
-  chọn) / `#F2F2F2` (không chọn), ô ảnh card là `#F2F2F2`.
-- **Nguyên nhân:** thiết kế chưa hoàn thiện phần ảnh, không phải lỗi tải asset.
-- **Bằng chứng:** `get_design_context` node `769:15244` trả `bg-[#7a7a7a]` / `bg-[#f2f2f2]` chứ
-  không có fill ảnh nào; node `769:15389` trả `bg-[#dcdcdc]` cho khối cover.
-- **Mức độ:** `asset`
-- **Đã thử:** `download_assets` trên node cha và node lá — chỉ trả về ảnh hero.
-- **Cách xử lý đề xuất:** đã render đúng các khối màu Figma vẽ, và thêm cột `Category.CoverImageUrl`
-  để khi có ảnh thật thì gán trong admin là hiện ngay. Cần khách cung cấp 5 ảnh cover
-  (Valentine, 8-3, Giáng sinh, Người ấy, Bố mẹ) + 3 ảnh chooser.
-- **Cần người dùng xác nhận:** có
 
 ### WF-013 — Trang "Quà tặng cá nhân" trong Figma vẫn để tiêu đề "QUÀ TẶNG THEO DỊP"
 
@@ -103,21 +85,6 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   thông tin khách thật sự cần trước khi mua.
 - **Cần người dùng xác nhận:** có
 
-### WF-020 — Cả tám banner hero trong Figma đều trống ảnh
-
-- **Khu vực:** 8 trang listing của B16
-- **Desktop/Mobile:** cả hai
-- **Figma node:** `1269:39703`, `1269:40154`, `1269:40599`, `1269:41044`, `1151:31798`,
-  `1151:32245`, `1151:32692`, `1151:34927`
-- **Mô tả:** hero của tám trang là khối 1440×600 màu `#D6D6D6` với tên danh mục màu `#AF2234` đè
-  lên, không có ảnh nào phía sau.
-- **Nguyên nhân:** thiết kế chưa đặt ảnh, không phải lỗi tải asset.
-- **Bằng chứng:** `download_assets` node `1151:31798` trả `rawImages: []`, export chỉ 7.8 KB.
-- **Mức độ:** `asset`
-- **Đã thử:** gọi trên node banner, node cha và node ảnh.
-- **Cách xử lý đề xuất:** đang render đúng khối màu Figma vẽ, và thêm cột
-  `Category.BannerImageUrl` để gán ảnh trong admin là hiện ngay. Cần khách cung cấp 8 ảnh banner.
-- **Cần người dùng xác nhận:** có
 
 ### WF-044 — Ô nhập của form "Yêu cầu mua sỉ" khác cấu trúc Figma
 
@@ -344,6 +311,18 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Cần người dùng xác nhận:** có
 
 ## Đã xử lý trong phiên
+
+### WF-020 / WF-012 — 24 khe ảnh trống đã lấp bằng ảnh tạm
+
+- **Khu vực:** 9 banner hero trang listing, 5 ảnh cover, 6 ô chooser, 10 card sản phẩm dịp
+- **Mô tả:** Figma vẽ toàn bộ những chỗ này là khối màu đặc, không đặt ảnh nào. Bộ ảnh khách gửi
+  (MEDIA TRUNG THU 2026) chỉ có ảnh Trung thu.
+- **Xử lý:** người dùng đồng ý dùng ảnh tạm cho kịp bàn giao. Gán ảnh có sẵn trong repo qua
+  `db/scripts/2026-07-22-seed-category-images.sql` và ba ảnh chooser trong `OccasionController`.
+- **⚠️ Chỉ dùng ảnh trong `/images/...`, không dùng `/uploads/...`** — thư mục uploads nằm trong
+  .gitignore nên bản deploy từ checkout sạch sẽ 404 toàn bộ. Lần gán đầu trỏ vào uploads, đã sửa.
+- **Thay ảnh thật:** Admin → Danh mục → Ảnh banner / Ảnh cover. Ba ảnh chooser sửa trong
+  `OccasionController.ChooserRoutes`; để rỗng thì quay lại đúng khối màu Figma vẽ.
 
 ### WF-046 — Bốn dropdown trên nav đều không mở được khi bấm (đã sửa)
 

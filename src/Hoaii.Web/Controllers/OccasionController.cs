@@ -29,13 +29,16 @@ public class OccasionController(HoaiiDbContext db) : Controller
         IReadOnlyList<SectionDef> Sections);
 
     /// <summary>The three routes in the chooser (node 769:15244). Order matches Figma.</summary>
-    private static readonly (string Title, string Route)[] ChooserRoutes =
+    /// <summary>Figma để trống ảnh cả ba ô chọn (chỉ là khối màu đặc — WF-012). Ba ảnh dưới đây là
+    /// ảnh tạm lấy từ kho ảnh sẵn có trong repo, để trang nhìn đủ như thiết kế cho tới khi khách
+    /// gửi ảnh thật. Đổi ở đây, hoặc để rỗng thì quay lại đúng khối màu Figma vẽ.</summary>
+    private static readonly (string Title, string Route, string Thumb)[] ChooserRoutes =
     [
-        ("Quà tặng theo dịp", "/qua-theo-dip"),
-        ("Quà tặng cá nhân", "/qua-tang-ca-nhan"),
+        ("Quà tặng theo dịp", "/qua-theo-dip", "/images/products/tet/ma-dao-thanh-cong.jpg"),
+        ("Quà tặng cá nhân", "/qua-tang-ca-nhan", "/images/products/tet/viet-nam-hoa-thi.jpg"),
         // No corporate-gift category exists yet, so this points at the real partnership page
         // rather than inventing a route that would 404. See WF-014.
-        ("Quà tặng doanh nghiệp", "/hop-tac"),
+        ("Quà tặng doanh nghiệp", "/hop-tac", "/images/category/promo-artist.jpg"),
     ];
 
     /// <summary>Only the active chooser column carries copy in Figma; the other two ship it hidden.</summary>
@@ -135,6 +138,7 @@ public class OccasionController(HoaiiDbContext db) : Controller
         {
             Title = c.Title,
             Url = c.Route,
+            ImageUrl = c.Thumb is { Length: > 0 } t ? t : null,
             IsActive = c.Route == activeRoute,
             Description = c.Route == activeRoute && !page.IsChildPage ? UmbrellaChooserCopy : "",
         }).ToList();
