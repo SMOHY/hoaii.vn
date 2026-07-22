@@ -8,8 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hoaii.Web.Areas.Admin.Controllers;
 
-public class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : BaseAdminController(db)
+public partial class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : BaseAdminController(db)
 {
+    [System.Text.RegularExpressions.GeneratedRegex(@"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")]
+    private static partial System.Text.RegularExpressions.Regex HexColour();
+
     [HttpGet("/admin/danh-muc")]
     public async Task<IActionResult> Index()
     {
@@ -85,11 +88,16 @@ public class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : Ba
     {
         public string? Description { get; set; }
         public string? HeroEyebrow { get; set; }
+        public string? HeroKicker { get; set; }
+        public string? BannerImageUrl { get; set; }
+        public string? CoverImageUrl { get; set; }
         public string? PromoEyebrow { get; set; }
         public string? PromoTitle { get; set; }
         public string? PromoCtaText { get; set; }
         public string? PromoCtaUrl { get; set; }
         public string? PromoImageUrl { get; set; }
+        public string? PromoBackground { get; set; }
+        public bool PromoWide { get; set; }
     }
 
     private static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
@@ -98,11 +106,19 @@ public class CategoriesController(HoaiiDbContext db, AdminAuthService auth) : Ba
     {
         c.Description = Clean(cms.Description);
         c.HeroEyebrow = Clean(cms.HeroEyebrow);
+        c.HeroKicker = Clean(cms.HeroKicker);
+        c.BannerImageUrl = Clean(cms.BannerImageUrl);
+        c.CoverImageUrl = Clean(cms.CoverImageUrl);
         c.PromoEyebrow = Clean(cms.PromoEyebrow);
         c.PromoTitle = Clean(cms.PromoTitle);
         c.PromoCtaText = Clean(cms.PromoCtaText);
         c.PromoCtaUrl = Clean(cms.PromoCtaUrl);
         c.PromoImageUrl = Clean(cms.PromoImageUrl);
+        // Chỉ nhận mã hex. Giá trị này được ghi thẳng vào thuộc tính style của dải campaign, nên
+        // một chuỗi kiểu "red;background-image:url(...)" sẽ chèn được CSS lạ vào trang.
+        var bg = Clean(cms.PromoBackground);
+        c.PromoBackground = bg is not null && HexColour().IsMatch(bg) ? bg : null;
+        c.PromoWide = cms.PromoWide;
     }
 
     [HttpPost("/admin/danh-muc/{id:int}/xoa")]

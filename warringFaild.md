@@ -115,26 +115,6 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Cách xử lý đề xuất:** cần node Figma hoặc file CSS của widget thì mới đối chiếu được.
 - **Cần người dùng xác nhận:** có
 
-### WF-039 — Form admin escape lại nội dung mỗi lần lưu ⚠️
-
-- **Khu vực:** admin → Chính sách (và có thể mọi form admin lưu text)
-- **Desktop/Mobile:** không liên quan
-- **Figma node:** —
-- **Mô tả:** tiêu đề trang `/chinh-sach/trao-doi` lưu trong DB là
-  `CHÍNH SÁCH ĐỔI TRẢ &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp; HOÀN TÁC` — dấu `&`
-  bị escape chồng **13 lớp**. Mỗi lần lưu lại escape thêm một lớp, nên đếm số lớp là biết trang đã
-  bị lưu đè bao nhiêu lần.
-- **Nguyên nhân:** giá trị được HTML-encode khi lưu, trong khi Razor vốn đã encode khi hiển thị.
-  Encode hai lần.
-- **Bằng chứng:** đã quét `PolicyPages`, `PolicyBlocks`, `PageContents` — chỉ dòng này bị, nhưng
-  đó là vì các trang khác chưa ai sửa qua form.
-- **Mức độ:** `major` — mọi nội dung sửa qua admin sau này đều dính, và lỗi tích luỹ.
-- **Đã thử:** đã sửa dữ liệu. **Chưa sửa nguyên nhân trong form admin** vì cần rà toàn bộ luồng
-  lưu của khu admin, không nên làm sát ngày bàn giao.
-- **Cách xử lý đề xuất:** tìm chỗ gọi `HtmlEncode`/`AntiXss` khi lưu trong admin và bỏ đi — Razor
-  đã escape ở đầu ra. Sau khi sửa, kiểm tra bằng cách lưu một trang chính sách hai lần rồi xem dấu
-  `&` có nhân lên không.
-- **Cần người dùng xác nhận:** có
 
 ### WF-040 — Cả 7 bài blog đều chưa có nội dung
 
@@ -311,6 +291,33 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Cần người dùng xác nhận:** có
 
 ## Đã xử lý trong phiên
+
+### WF-039 — Escape chồng khi lưu qua admin (đã kiểm chứng là hết)
+
+- **Khu vực:** admin → Chính sách và mọi form admin lưu text
+- **Mô tả cũ:** tiêu đề trang `/chinh-sach/trao-doi` từng bị escape chồng 13 lớp, mỗi lần lưu thêm
+  một lớp.
+- **Kiểm chứng:** lưu liên tiếp 3 lần một tiêu đề chứa `& < > "` qua đúng form admin — giá trị giữ
+  nguyên từng ký tự cả 3 lần. Quét lại `PolicyPages`, `PolicyBlocks`: không còn dòng nào chứa
+  `&amp;` hay `&lt;`. Nguyên nhân trong luồng lưu đã không còn.
+- **Ghi chú:** `ContentText.Lines` escape ở **đầu ra** chứ không phải khi lưu — đó là chỗ đúng và
+  phải giữ nguyên.
+
+### WF-046 — 5 cột thêm hôm qua không có trong form admin (đã sửa)
+
+- **Khu vực:** admin → Danh mục
+- **Mô tả:** `HeroKicker`, `BannerImageUrl`, `CoverImageUrl`, `PromoBackground`, `PromoWide` được
+  thêm vào `Category` khi làm giao diện nhưng **không hề xuất hiện trong form admin**, nên khách
+  không sửa được — kể cả hai trường ảnh mà tài liệu bàn giao đã hướng dẫn "thay trong admin".
+- **Xử lý:** thêm đủ 5 trường vào form và vào `CategoryCms`. Ô màu nền chỉ nhận mã hex; đã thử
+  chèn `red;background-image:url(...)` và giá trị bị loại bỏ đúng như mong đợi.
+
+### WF-047 — Trang Báo cáo tràn ngang (đã sửa)
+
+- **Khu vực:** `/admin/bao-cao`
+- **Mô tả:** ba bảng trong trang không được bọc `.admin-table-wrap` như các trang admin khác, nên
+  đẩy trang rộng thêm 14px.
+- **Xử lý:** bọc lại; bảng tự cuộn ngang trong thẻ thay vì đẩy cả trang.
 
 ### WF-037 — Thẻ quốc tế: dựng giao diện, KHÔNG thu dữ liệu thẻ (đã xử lý)
 
