@@ -72,8 +72,11 @@ public class ProductController(HoaiiDbContext db) : Controller
             BoxOptions = product.Variants
                 .Select(v => new BoxOptionViewModel { Id = v.Id, Label = v.Name })
                 .ToList(),
-            Ingredients = product.Description
-                ?? "Thông tin thành phần sẽ được cập nhật chi tiết theo từng sản phẩm.",
+            // Cùng lý do với FeatureBody bên dưới: trước đây chỗ này in ra "Thông tin thành phần
+            // sẽ được cập nhật…", tức là khoe với khách rằng trang chưa làm xong. Tệ hơn, nhãn
+            // "THÀNH PHẦN" vốn không áp dụng cho khăn, tượng gốm hay chai rượu. Để trống thì khối
+            // tự ẩn, trang gọn gàng, và không ai bịa thành phần cho đồ ăn được.
+            Ingredients = product.Description ?? "",
             StoryTitle = product.StoryTitle is { Length: > 0 } st ? st : "Câu chuyện sản phẩm",
             StoryBody = product.StoryBody is { Length: > 0 } sb ? sb
                 : $"{product.Name} được HOÀI chế tác tỉ mỉ, gói ghém tinh thần văn hóa Việt trong từng chi tiết — từ nguyên liệu chọn lọc đến bao bì thủ công, mang đến một món quà trọn vẹn ý nghĩa.",

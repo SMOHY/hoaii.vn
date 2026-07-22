@@ -83,10 +83,16 @@
             <button type="button" class="pdp-cta-secondary" data-contact-popup-open>NHẬN ƯU ĐÃI MUA SỐ LƯỢNG LỚN</button>
         </div>
 
-        <div class="pdp-ingredients">
-            <p class="pdp-ingredients__label">THÀNH PHẦN :</p>
-            <p class="pdp-ingredients__body">@Model.Ingredients</p>
-        </div>
+        @* Ẩn cả khối khi chưa có thành phần: một tiêu đề "THÀNH PHẦN" đứng trơ với dòng "sẽ được
+           cập nhật" nói thẳng với khách rằng trang chưa xong. Figma gõ nhầm "THÀN PHẦN"
+           (node 826:13863); web giữ đúng chính tả. *@
+        @if (Model.Ingredients is { Length: > 0 })
+        {
+            <div class="pdp-ingredients">
+                <p class="pdp-ingredients__label">THÀNH PHẦN :</p>
+                <p class="pdp-ingredients__body">@Model.Ingredients</p>
+            </div>
+        }
     </div>
 </section>
 

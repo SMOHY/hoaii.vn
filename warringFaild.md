@@ -292,6 +292,27 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 
 ## Đã xử lý trong phiên
 
+### WF-049 — Điền nội dung tạm để bàn giao không còn khoảng trống (đã làm)
+
+- **Khu vực:** trang chi tiết sản phẩm, trang chi tiết blog
+- **Yêu cầu:** khách muốn thấy giao diện đầy đủ khi bàn giao, không có chỗ nào báo thiếu.
+- **Đã làm:**
+  - Bỏ dòng "Thông tin thành phần sẽ được cập nhật…" — khối **THÀNH PHẦN nay tự ẩn khi trống**,
+    giống khối kích thước. Trang gọn, không còn tự thú là chưa xong.
+  - **Câu chuyện** và **Đặc điểm**: điền cho 61/61 sản phẩm đang bán, viết theo **nhóm danh mục**
+    (trà / khăn / gốm / rượu / quà tặng), dùng lại tinh thần trang Về chúng tôi.
+  - **Blog**: viết nội dung nháp cho cả 7 bài, bám đúng phần tóm tắt đã có sẵn; bật nốt bài đang ẩn.
+- **⚠️ Vẫn KHÔNG bịa hai thứ:**
+  - **Thành phần** (59 sản phẩm): danh sách thành phần sai với đồ ăn được là chuyện dị ứng và an
+    toàn thực phẩm, không phải chuyện giao diện. Khối tự ẩn nên trang vẫn đẹp.
+  - **Số đo cụ thể**: khách đọc để tính vận chuyển. Phần "Đặc điểm" chỉ mô tả chất liệu và cách
+    hoàn thiện, không kèm con số nào.
+- **Tìm lại để thay:**
+  - `SELECT Id, Name FROM Products WHERE FeatureBody LIKE N'%(Nội dung tạm)%';`
+  - `SELECT Id, Title FROM BlogPosts WHERE Content LIKE N'%(Nội dung đang được biên tập.)%';`
+- **Cần người dùng xác nhận:** có — nội dung này là bản nháp, bộ phận nội dung phải viết lại trước
+  khi chạy quảng bá.
+
 ### WF-048 — Không sửa được sản phẩm nào trong admin ⚠️ (đã sửa)
 
 - **Khu vực:** admin → Sản phẩm, admin → Voucher
