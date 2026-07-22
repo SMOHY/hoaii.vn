@@ -228,6 +228,7 @@
   function close() {
     wrap.hidden = true;
     trigger.setAttribute('aria-expanded', 'false');
+    pinned = false;
   }
   function cancelClose() { clearTimeout(closeTimer); }
   function scheduleClose() { cancelClose(); closeTimer = setTimeout(close, 150); }
@@ -237,15 +238,22 @@
     if (e.detail !== 'search' && !wrap.hidden) close();
   });
 
+  // Trên máy có chuột, con trỏ luôn đi qua icon trước khi bấm, nên hover đã mở sẵn ô tìm kiếm
+  // và cú click ngay sau đó lại đóng nó — bấm vào kính lúp thành ra không mở được gì.
+  // Click giờ luôn mở và ghim lại; muốn đóng thì bấm nút X, Escape, hoặc bấm ra ngoài.
+  let pinned = false;
+
   trigger.addEventListener('click', function () {
-    if (wrap.hidden) open(); else close();
+    cancelClose();
+    pinned = true;
+    open();
   });
 
   if (canHover) {
     trigger.addEventListener('mouseenter', function () { cancelClose(); open(); });
-    trigger.addEventListener('mouseleave', scheduleClose);
+    trigger.addEventListener('mouseleave', function () { if (!pinned) scheduleClose(); });
     wrap.addEventListener('mouseenter', cancelClose);
-    wrap.addEventListener('mouseleave', scheduleClose);
+    wrap.addEventListener('mouseleave', function () { if (!pinned) scheduleClose(); });
   }
 
   closeBtn?.addEventListener('click', close);

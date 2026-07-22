@@ -102,19 +102,6 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   `OccasionController.ChooserRoutes`.
 - **Cần người dùng xác nhận:** có
 
-### WF-015 — Ba trang có sẵn thiếu thẻ H1
-
-- **Khu vực:** `/gio-hang`, `/hop-tac`, `/tai-khoan/dang-nhap`
-- **Desktop/Mobile:** cả hai
-- **Figma node:** —
-- **Mô tả:** ba trang này render không có `<h1>` nào.
-- **Nguyên nhân:** có từ trước, không liên quan B14/B15.
-- **Bằng chứng:** script regression 16 route × 2 breakpoint, chỉ ba trang này báo `h1=0`.
-- **Mức độ:** `minor`
-- **Đã thử:** chưa sửa — nằm ngoài phạm vi hai bước này, và đụng vào trang giỏ hàng/đăng nhập ngay
-  trước ngày bàn giao là rủi ro không đáng.
-- **Cách xử lý đề xuất:** nâng tiêu đề hiện có của mỗi trang lên thành `<h1>`.
-- **Cần người dùng xác nhận:** không
 
 ### WF-030 — 44/45 sản phẩm chưa có Thành phần, Câu chuyện và Kích thước ⚠️
 
@@ -246,20 +233,6 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   `db/scripts/2026-07-21-eight-listing-pages.sql`.
 - **Cần người dùng xác nhận:** không
 
-### WF-029 — Nút tìm kiếm trên nav không có ô nhập
-
-- **Khu vực:** `Views/Shared/_Nav.cshtml`
-- **Desktop/Mobile:** cả hai
-- **Figma node:** `988:21321` (trang search desktop) — không vẽ ô nhập nào trên chính trang này
-- **Mô tả:** icon kính lúp trên nav chỉ `location.href='/tim-kiem'`, không mở ô nhập hay drawer.
-  Figma cũng không vẽ ô nhập trên trang kết quả, nghĩa là ô nhập phải nằm ở một drawer/popup của
-  nav mà file thiết kế chưa ghép vào luồng này.
-- **Mức độ:** `minor`
-- **Đã thử:** dò `_Nav.cshtml` và `overlays.js` — không có search drawer nào.
-- **Cách xử lý đề xuất:** trang `/tim-kiem` đang tự render một ô nhập, nếu không thì không có
-  đường nào gõ từ khóa. Đây là điểm lệch Figma có chủ đích và đã ghi chú trong Razor. Search
-  drawer nhiều khả năng thuộc phạm vi B19 (popup/drawer) — sẽ xử lý ở bước đó.
-- **Cần người dùng xác nhận:** không
 
 ### WF-001 — Thanh phân trang: Figma vẽ mâu thuẫn giữa hai danh mục
 
@@ -390,6 +363,23 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Cần người dùng xác nhận:** có
 
 ## Đã xử lý trong phiên
+
+### WF-015 — Ba trang thiếu thẻ H1 (đã sửa)
+
+- **Khu vực:** , , , và cả 
+- **Mô tả:** bốn trang này mở thẳng vào panel nên không có tiêu đề nào, tức không có h1.
+- **Xử lý:** thêm h1 ẩn bằng  thay vì chèn tiêu đề mà thiết kế không vẽ. Đã đo
+  lại: cả bốn trang đúng một h1.
+
+### WF-029 — Bấm kính lúp trên nav không mở được ô tìm kiếm (đã sửa)
+
+- **Khu vực:** nav, mọi trang
+- **Mô tả:** trên máy có chuột, con trỏ luôn đi qua icon trước khi bấm nên  đã mở ô
+  tìm kiếm; cú click ngay sau đó rơi vào nhánh toggle và **đóng lại**. Kết quả: bấm vào kính lúp
+  thì không thấy gì mở ra.
+- **Xử lý:** click giờ luôn mở và ghim (), rời chuột không tự đóng nữa; đóng bằng nút X,
+  Escape hoặc bấm ra ngoài. Đã kiểm: bấm mở và đưa con trỏ vào ô, rời chuột vẫn mở, Enter ra
+  đúng 9 kết quả, Escape đóng.
 
 ### WF-009 — Ảnh 6 sản phẩm Trung thu bị gán lệch một bậc (đã sửa)
 
