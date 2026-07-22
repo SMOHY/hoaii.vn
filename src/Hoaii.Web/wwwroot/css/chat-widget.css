@@ -8,7 +8,10 @@
 .chat-widget {
   position: fixed;
   right: 24px;
-  bottom: 24px;
+  /* Figma xep khung chat NAM TREN nut cuon-len: chat o y 826-891, cuon-len o y 904-968
+     (node 1214:38730), cach nhau 13. Truoc day web dat nguoc lai — cuon-len o tren, chat o duoi.
+     Nut cuon-len cao 64 + 13 khoang cach + 24 le duoi = 101. */
+  bottom: 101px;
   width: 64px;
   height: 64px;
   z-index: 1000;
@@ -36,18 +39,20 @@
 
 .chat-widget .toggle {
   position: absolute;
-  width: 60px;
-  height: 60px;
+  /* Lap day dung 64x64 cua khung. Truoc day nut 60x60 lech 2px/2.5px, lai co nen xam rieng
+     trong khi anh icon da co san vong xam cua no — ra hai vong xam long nhau lech nhau, nhin
+     nhu bong bong bi cat. Bo nen di, de anh icon lo hinh tron cua chinh no. */
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 150px;
-  background: var(--color-grey-100);
+  background: none;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6.667px;
-  left: 2px;
-  top: 2.5px;
+  padding: 0;
 }
 .chat-widget .toggle img { width: 46.667px; height: 46.667px; }
 /* The collapsed icon is exported straight from Figma (its own grey ring baked in, node 1154:28821)
@@ -71,14 +76,11 @@
   pointer-events: none;
 }
 
-/* Back-to-top — Figma node 1214:38730 sits just 13px above the chat widget's collapsed circle
-   (top:904 vs the widget's outer frame at top:826/height:65 → 904-891=13), not the ~186px gap
-   this had before. Chat widget bottom:24 + height:64 = 88 is its top edge, so back-to-top's
-   bottom edge lands at 88+13=101. */
+/* Nut cuon-len nam DUOI khung chat, sat le duoi trang (Figma node 1214:38730 o y 904). */
 .back-to-top {
   position: fixed;
   right: 24px;
-  bottom: 101px;
+  bottom: 24px;
   width: 64px;
   height: 64px;
   border-radius: 76.8px;
@@ -100,5 +102,6 @@
 .chat-widget:not(.is-collapsed) ~ .back-to-top { opacity: 0; pointer-events: none; }
 
 @media (max-width: 767.98px) {
-  .back-to-top { right: 16px; bottom: 96px; width: 48px; height: 48px; }
+  .back-to-top { right: 16px; bottom: 16px; width: 48px; height: 48px; }
+  .chat-widget { right: 16px; bottom: 77px; } /* 48 + 13 + 16 */
 }
