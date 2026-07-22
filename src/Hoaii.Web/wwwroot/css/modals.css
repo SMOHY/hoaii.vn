@@ -148,8 +148,19 @@ input.is-invalid, textarea.is-invalid { border-color: var(--color-brand-red) !im
   padding: 0 16px; display: flex; flex-direction: column; gap: 8px; font: 300 16px/18px var(--font-body); color: var(--color-text-default);
 }
 
+/* Bản mobile 430x518.9 (file css all layer popup "mua so luong lon mobile"): panel chiếm trọn
+   chiều ngang màn hình, lề 24/16/40/16, khoảng cách 28 giống desktop, và mã QR nhỏ lại còn
+   120x116.4 chứ không giữ 148 như desktop. Trước đây panel chỉ rộng 382 vì lề 24 hai bên cộng
+   với khoảng cách mặc định của lớp phủ. */
 @media (max-width: 767.98px) {
-  .contact-popup__panel { padding: 24px; gap: 20px; }
-  .contact-popup__actions-row { flex-direction: column; }
-  .contact-popup__qr { width: 148px; }
+  /* Lớp phủ bỏ lề 24 và cho panel tụt xuống đáy — Figma vẽ panel rộng đúng 430, tức chạm hai mép
+     màn hình, nên mọi khoảng cách còn lại phải nằm trong chính panel. */
+  .contact-popup { padding: 0; align-items: flex-end; }
+  .contact-popup__panel {
+    width: 100%; max-width: 100%; border-radius: 16px 16px 0 0;
+    padding: 24px 16px 40px; gap: 28px;
+  }
+  .contact-popup__actions-row { gap: 16px; }
+  .contact-popup__qr { width: 120px; height: 116.4px; border-radius: 12px; }
+  .contact-popup__title { font: 500 20px/28px var(--font-body); } /* Mobile/Heading 4 */
 }
