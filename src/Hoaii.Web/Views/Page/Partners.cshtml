@@ -3,6 +3,7 @@
 @inject PageContentService Page
 @{
     ViewData["Title"] = "Hợp tác";
+    ViewData["MetaDescription"] = "Hợp tác cùng HOÀI — đăng ký làm đại lý, đặt hàng sỉ và quà tặng doanh nghiệp.";
     string T(string k) => Page.Get(PageContentKeys.Partners, k);
     var partnerLogos = ViewBag.PartnerLogos as IReadOnlyList<string> ?? new List<string>();
 }

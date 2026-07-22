@@ -1,6 +1,7 @@
 @model Hoaii.Web.Models.Blog.BlogPostDetailsViewModel
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["MetaDescription"] = Model.Excerpt is { Length: > 0 } ex ? ex : Model.Title;
 }
 
 @* No Figma spec exists for the blog post detail template — this is a minimal, typography-consistent

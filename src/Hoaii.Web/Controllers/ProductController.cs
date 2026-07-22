@@ -68,6 +68,9 @@ public class ProductController(HoaiiDbContext db) : Controller
             Name = product.Name,
             Price = product.Price,
             BreadcrumbLabel = $"Trang chủ/{product.Category.Name}",
+            MetaDescription = product.MetaDescription is { Length: > 0 } md ? md
+                : product.Description is { Length: > 0 } desc && desc.Length > 160 ? desc[..157] + "..."
+                : product.Description,
             GalleryImages = galleryImages,
             BoxOptions = product.Variants
                 .Select(v => new BoxOptionViewModel { Id = v.Id, Label = v.Name })

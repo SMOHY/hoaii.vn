@@ -1,6 +1,7 @@
 @model Hoaii.Web.Models.Search.SearchPageViewModel
 @{
     ViewData["Title"] = "Tìm kiếm";
+    ViewData["NoIndex"] = true;
     var hasQuery = !string.IsNullOrEmpty(Model.Query);
     var hasResults = hasQuery && Model.TotalResultCount > 0;
 }

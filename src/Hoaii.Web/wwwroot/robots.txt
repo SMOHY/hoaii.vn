@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /gio-hang
+Disallow: /thanh-toan
+Disallow: /tai-khoan
+Disallow: /tim-kiem
+
+Sitemap: https://hoaii.vn/sitemap.xml

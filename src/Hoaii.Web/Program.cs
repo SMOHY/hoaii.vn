@@ -81,6 +81,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStatusCodePagesWithReExecute("/loi/{0}");
 app.UseRouting();
 
 app.UseSession();
@@ -88,6 +89,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "status-code-page",
+    pattern: "loi/{code:int}",
+    defaults: new { controller = "Home", action = "StatusCodePage" })
+    .WithStaticAssets();
 
 app.MapControllerRoute(
     name: "category",

@@ -11,6 +11,12 @@
     {
         <meta name="description" content="@metaDescription" />
     }
+    @* Cart/checkout/account/search hold per-user or query-driven content with nothing for a
+       crawler to rank — indexing them just dilutes the site with duplicate/empty pages. *@
+    @if (ViewData["NoIndex"] is true)
+    {
+        <meta name="robots" content="noindex, follow" />
+    }
     @{
         var canonicalPage = Context.Request.Query["page"].ToString();
         var canonicalPath = Context.Request.Path.ToString();

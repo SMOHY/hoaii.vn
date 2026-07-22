@@ -3,6 +3,7 @@
 @inject PageContentService PageC
 @{
     ViewData["Title"] = Model.Name;
+    ViewData["MetaDescription"] = Model.MetaDescription ?? $"{Model.Name} — quà tặng thủ công tinh tế từ HOÀI.";
     // Main gallery shot is a CSS background — name it so it starts downloading immediately.
     ViewData["PreloadImage"] = Model.GalleryImages.FirstOrDefault();
 }

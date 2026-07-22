@@ -112,6 +112,17 @@ public class HomeController(HoaiiDbContext db) : Controller
         return View();
     }
 
+    // Reached via UseStatusCodePagesWithReExecute for any non-2xx response (wrong product slug,
+    // a stray typo'd URL, etc.). Every status still lands on the same friendly 404 view — the
+    // site has no distinct copy for e.g. 403 yet, and a generic "trang không tìm thấy" reads
+    // fine for all of them rather than leaking a bare status code to the visitor.
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult StatusCodePage(int code)
+    {
+        Response.StatusCode = code;
+        return View("NotFound");
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

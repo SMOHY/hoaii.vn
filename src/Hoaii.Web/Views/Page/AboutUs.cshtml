@@ -2,6 +2,7 @@
 @inject PageContentService Page
 @{
     ViewData["Title"] = "Về chúng tôi";
+    ViewData["MetaDescription"] = "Câu chuyện thương hiệu HOÀI — hành trình gìn giữ và lan tỏa tinh thần văn hóa Việt qua từng món quà.";
     string T(string k) => Page.Get(PageContentKeys.About, k);
     var customerLogos = ViewBag.CustomerLogos as IReadOnlyList<string> ?? new List<string>();
 }
