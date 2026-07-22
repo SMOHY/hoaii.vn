@@ -31,7 +31,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: left 0.25s ease, top 0.25s ease, opacity 0.2s ease;
 }
-.chat-widget .bubble img { width: 36px; height: 36px; }
+/* site.css sets a global `img { max-width: 100% }` for responsive images; inside the 60px bubble
+   (30px content box after its 15px padding) that clamped these to 30px wide while the explicit
+   height stayed 36px, squashing every icon. max-width: none opts these fixed-size icons back out. */
+.chat-widget .bubble img { width: 36px; height: 36px; max-width: none; }
 
 .chat-widget .bubble--phone { left: 0px; top: -71.5px; }
 .chat-widget .bubble--zalo { left: -69px; top: -33.5px; }
@@ -54,11 +57,15 @@
   justify-content: center;
   padding: 0;
 }
-.chat-widget .toggle img { width: 46.667px; height: 46.667px; }
 /* The collapsed icon is exported straight from Figma (its own grey ring baked in, node 1154:28821)
-   rather than hand-drawn, so it replaces the button's own background/border and fills it exactly. */
+   rather than hand-drawn, so it replaces the button's own background/border and fills it exactly —
+   it must win over any generic ".toggle img" sizing, so it's the only such rule here. Previously a
+   leftover `.toggle img { width: 46.667px }` rule (from when this was a bare centered glyph, before
+   the flattened-PNG swap) had higher specificity (extra type selector) and quietly won instead,
+   rendering the icon small and pinned to the button's top-left corner instead of centered/full-size —
+   same 64px button, but its icon didn't actually match the back-to-top button's icon in scale/position. */
 .chat-widget .toggle__icon-open {
-  position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 150px;
+  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; border-radius: 150px;
 }
 /* Figma's toggle button swaps to an explicit "đóng" (close) icon once the bubbles are open —
    not just the same chat icon left sitting there. */
@@ -76,7 +83,9 @@
   pointer-events: none;
 }
 
-/* Nut cuon-len nam DUOI khung chat, sat le duoi trang (Figma node 1214:38730 o y 904). */
+/* Nut cuon-len nam DUOI khung chat, sat le duoi trang (Figma node 1214:38730 o y 904). Icon la
+   anh xuat thang tu Figma ("Line Duotone / Arrows / Double Alt Arrow Right", node 1214:38731) —
+   mui ten kep hai tong vang, khong phai icon mui ten don mau xam nhu truoc. */
 .back-to-top {
   position: fixed;
   right: 24px;
@@ -89,7 +98,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-grey-700);
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 999;
@@ -97,11 +105,13 @@
   transition: opacity 0.2s ease;
 }
 .back-to-top.is-visible { opacity: 1; }
+.back-to-top img { width: 38px; height: 38px; max-width: none; }
 /* The expanded chat bubbles fan out through this same spot — get out of the way rather than
    overlap the phone bubble. */
 .chat-widget:not(.is-collapsed) ~ .back-to-top { opacity: 0; pointer-events: none; }
 
 @media (max-width: 767.98px) {
   .back-to-top { right: 16px; bottom: 16px; width: 48px; height: 48px; }
+  .back-to-top img { width: 28px; height: 28px; } /* same ~0.6 ratio to the button as desktop */
   .chat-widget { right: 16px; bottom: 77px; } /* 48 + 13 + 16 */
 }
