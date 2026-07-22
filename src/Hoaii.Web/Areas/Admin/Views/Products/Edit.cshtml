@@ -30,11 +30,11 @@
                 <div class="admin-form-row">
                     <div class="admin-field">
                         <label>Giá bán (đ)</label>
-                        <input type="number" name="Price" value="@Model.Price" step="1000" min="0" required />
+                        <input type="number" name="Price" value="@AdminDisplay.Num(Model.Price)" step="1000" min="0" required />
                     </div>
                     <div class="admin-field">
                         <label>Giá gạch ngang (đ)</label>
-                        <input type="number" name="CompareAtPrice" value="@(Model.CompareAtPrice)" step="1000" min="0" placeholder="Không bắt buộc" />
+                        <input type="number" name="CompareAtPrice" value="@AdminDisplay.Num(Model.CompareAtPrice)" step="1000" min="0" placeholder="Không bắt buộc" />
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                             {
                                 <tr data-variant-row>
                                     <td><input type="hidden" name="VariantIds" value="@v.Id" /><input type="text" name="VariantNames" value="@v.Name" placeholder="VD: 4 Bánh" style="width:100%;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
-                                    <td class="num"><input type="number" name="VariantPrices" value="@v.PriceModifier" step="1000" style="width:120px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
+                                    <td class="num"><input type="number" name="VariantPrices" value="@AdminDisplay.Num(v.PriceModifier)" step="1000" style="width:120px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
                                     <td><input type="text" name="VariantSkus" value="@v.Sku" style="width:120px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
                                     <td class="num"><input type="number" name="VariantStocks" value="@v.StockQuantity" min="0" style="width:90px;padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;" /></td>
                                     <td class="num"><button type="button" class="admin-btn admin-btn--danger admin-btn--sm" data-remove-variant>✕</button></td>

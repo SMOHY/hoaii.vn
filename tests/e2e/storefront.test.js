@@ -27,7 +27,7 @@ const PRODUCT = { slug: 'thien-dieu-lac-hong', id: 20, variant: 100, price: 8990
   });
 
   // ---------- category ----------
-  await test('Danh mục: phân trang 6 sản phẩm/trang', async () => {
+  await test('Danh mục: phân trang 9 sản phẩm/trang', async () => {
     const s = session();
     const r = await s.get('/danh-muc/tra');
     // Đếm 1 lần/thẻ: mỗi thẻ có đúng một __image-link. (Đừng đếm "product-card" —
@@ -39,7 +39,10 @@ const PRODUCT = { slug: 'thien-dieu-lac-hong', id: 20, variant: 100, price: 8990
       return (grid.match(/product-card__image-link/g) || []).length;
     };
     const cards = countCards(r.body);
-    check(cards > 0 && cards <= 6, `số thẻ trang 1 = ${cards}, phải trong 1..6`);
+    // Figma xếp lưới 3 cột x 3 hàng và ship thanh phân trang ở trạng thái ẩn (node 722:25541),
+    // nên PageSize là 9 chứ không phải 6. Ở mức 6 thì Quà tết tràn sang trang hai và thanh phân
+    // trang hiện ra — điều thiết kế không hề vẽ.
+    check(cards > 0 && cards <= 9, `số thẻ trang 1 = ${cards}, phải trong 1..9`);
     has(r.body, 'page=2', 'có link sang trang 2');
     const label = (r.body.match(/pagination__label">([^<]*)</) || [])[1];
     check(/^1\/\d+$/.test((label || '').trim()), `nhãn phân trang = "${label}" (mong "1/N")`);

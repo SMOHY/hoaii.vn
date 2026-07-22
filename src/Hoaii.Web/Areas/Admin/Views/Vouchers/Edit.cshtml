@@ -48,18 +48,18 @@
         <div class="admin-form-row">
             <div class="admin-field">
                 <label>Giá trị <span class="admin-field__hint" style="display:inline;">(% hoặc đ, tùy loại)</span></label>
-                <input type="number" name="value" value="@Model.Value" step="1000" min="0" />
+                <input type="number" name="value" value="@AdminDisplay.Num(Model.Value)" step="1000" min="0" />
             </div>
             <div class="admin-field">
                 <label>Giảm tối đa (chỉ loại %)</label>
-                <input type="number" name="maxDiscountAmount" value="@Model.MaxDiscountAmount" step="1000" min="0" placeholder="Để trống = không giới hạn" />
+                <input type="number" name="maxDiscountAmount" value="@AdminDisplay.Num(Model.MaxDiscountAmount)" step="1000" min="0" placeholder="Để trống = không giới hạn" />
             </div>
         </div>
 
         <div class="admin-form-row">
             <div class="admin-field">
                 <label>Đơn tối thiểu (đ)</label>
-                <input type="number" name="minOrderAmount" value="@Model.MinOrderAmount" step="1000" min="0" />
+                <input type="number" name="minOrderAmount" value="@AdminDisplay.Num(Model.MinOrderAmount)" step="1000" min="0" />
             </div>
             <div class="admin-field">
                 <label>Giới hạn lượt dùng</label>

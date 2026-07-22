@@ -292,6 +292,23 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 
 ## Đã xử lý trong phiên
 
+### WF-048 — Không sửa được sản phẩm nào trong admin ⚠️ (đã sửa)
+
+- **Khu vực:** admin → Sản phẩm, admin → Voucher
+- **Mô tả:** ô **Giá** render ra `value="899000,00"` — dấu phẩy thập phân của tiếng Việt. Nhưng
+  `<input type="number">` chỉ chấp nhận dấu chấm, nên trình duyệt đọc ô đó là **rỗng**, thuộc tính
+  `required` không qua và **cả form không gửi đi được**. Nghĩa là không sản phẩm nào sửa được trong
+  admin — bấm Lưu không có gì xảy ra và cũng không báo lỗi gì.
+- **Nguyên nhân:** `@Model.Price` gọi `ToString()` theo `CurrentCulture`, mà máy chủ chạy văn hoá
+  tiếng Việt.
+- **Bằng chứng:** `form.checkValidity()` trả `false`, `Price.validationMessage` = "Please fill out
+  this field", trong khi thuộc tính `value` vẫn có nội dung.
+- **Ảnh hưởng:** Price, CompareAtPrice, PriceModifier của biến thể, và ba ô tiền của Voucher.
+  Các ô số nguyên (thứ tự, tồn kho) không bị.
+- **Xử lý:** thêm `AdminDisplay.Num()` in số theo `InvariantCulture` và dùng cho mọi ô số thập phân.
+  Đã thử lại: sửa tên và đổi giá 899.000 → 950.000, lưu, đọc lại đúng, storefront đổi theo, rồi trả
+  giá trị cũ.
+
 ### WF-039 — Escape chồng khi lưu qua admin (đã kiểm chứng là hết)
 
 - **Khu vực:** admin → Chính sách và mọi form admin lưu text

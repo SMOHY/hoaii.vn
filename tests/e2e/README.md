@@ -45,3 +45,33 @@ Mỗi file thoát với mã `1` nếu có test hỏng, nên cắm vào CI đư�
 - Ô tìm kiếm ở admin echo lại từ khóa vào `value=""`, nên đừng dùng `body.includes(từ khóa)`
   để kết luận "có kết quả" — hãy đếm dòng trong bảng.
 - Test có tạo dữ liệu thật (đơn hàng, liên hệ…). Dữ liệu dùng email `*@example.com` để dễ dọn.
+
+## Các bộ test
+
+| File | Nội dung | Số phép thử |
+|---|---|---|
+| `storefront.test.js` | HTTP thuần: route, phân trang, lọc, giỏ, checkout, OTP | 22 |
+| `admin.test.js` | HTTP thuần: đăng nhập, CRUD, phân quyền, CMS, cài đặt | 18 |
+| `e2e.js` | Trình duyệt thật: mua hàng → admin xử lý đơn → sửa sản phẩm → bảo mật → form | 15 |
+| `admin-sweep.js` | 29 màn admin: HTTP, lỗi JS, lỗi 500, tràn ngang | 29 |
+| `storefront-sweep.js` | 22 route storefront x 2 breakpoint | 44 |
+| `overflow-sweep.js` | 14 trang x 10 độ rộng, 2560 → 375 | 140 |
+
+Chạy tất cả:
+
+```bash
+for f in storefront.test.js admin.test.js e2e.js admin-sweep.js storefront-sweep.js overflow-sweep.js; do
+  echo "=== $f ==="; node "$f" | tail -3
+done
+```
+
+## Tài khoản dùng để test
+
+`admin@hoaii.vn` / `Hoaii@2026` — **đổi mật khẩu này trước khi lên production.**
+Giá trị mặc định nằm trong `AdminAuthService.EnsureSeedAdminAsync`, ai đọc repo đều biết.
+
+## Lưu ý
+
+- `e2e.js` tự trả dữ liệu về trạng thái ban đầu, chạy lại được nhiều lần. Riêng đơn hàng thì mỗi
+  lần chạy tạo thêm một đơn thật — xoá trong admin nếu không muốn giữ.
+- Đổi CSS/JS phải `dotnet build` lại rồi mới chạy test, vì manifest static asset chỉ sinh khi build.

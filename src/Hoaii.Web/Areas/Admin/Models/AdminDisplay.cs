@@ -5,6 +5,14 @@ namespace Hoaii.Web.Areas.Admin.Models;
 /// <summary>Vietnamese labels + badge colours for the enums the admin screens show.</summary>
 public static class AdminDisplay
 {
+    /// <summary>Số cho ô &lt;input type="number"&gt;. HTML chỉ chấp nhận dấu chấm làm dấu thập phân,
+    /// trong khi văn hoá tiếng Việt in ra dấu phẩy — "899000,00" bị trình duyệt coi là RỖNG, nên ô
+    /// `required` không qua và cả form không lưu được. Luôn dùng hàm này cho ô số thập phân.</summary>
+    public static string Num(decimal v) =>
+        v.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+
+    public static string Num(decimal? v) => v.HasValue ? Num(v.Value) : "";
+
     public static string OrderStatusLabel(OrderStatus s) => s switch
     {
         OrderStatus.Pending => "Chờ xác nhận",
