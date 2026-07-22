@@ -36,7 +36,7 @@
         <div class="cat-banner__inner @(Model.BannerImageUrl is null ? "cat-banner__inner--empty" : "")">
             @if (Model.BannerImageUrl is not null)
             {
-                <img src="@Model.BannerImageUrl" alt="" fetchpriority="high" />
+                <img src="@Model.BannerImageUrl" alt="@Model.Title" fetchpriority="high" />
             }
             <p class="cat-banner__title">@Model.Title.ToUpperInvariant()</p>
         </div>

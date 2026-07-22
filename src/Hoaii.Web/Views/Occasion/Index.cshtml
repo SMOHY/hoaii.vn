@@ -30,7 +30,7 @@
         </nav>
 
         <div class="occ-hero__media">
-            <img src="@Model.HeroImageUrl" alt="" fetchpriority="high" />
+            <img src="@Model.HeroImageUrl" alt="@Model.HeroHeading" fetchpriority="high" />
         </div>
 
         <h1 class="occ-hero__heading">@Model.HeroHeading</h1>
@@ -50,7 +50,7 @@
             <span class="occ-chooser__thumb @(item.ImageUrl is null ? "occ-chooser__thumb--empty" : "")">
                 @if (item.ImageUrl is not null)
                 {
-                    <img src="@item.ImageUrl" alt="" loading="lazy" />
+                    <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" />
                 }
             </span>
             @* Rendered even when empty. Figma gives all three columns the same 92px description

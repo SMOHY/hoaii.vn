@@ -23,7 +23,7 @@
                         @foreach (var logo in rowLogos)
                         {
                             <div class="logo-card">
-                                <img src="/images/customers/@(logo).png" alt="" decoding="async" />
+                                <img src="/images/customers/@(logo).png" alt="@System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(logo.Replace('-', ' '))" decoding="async" />
                             </div>
                         }
                     }
