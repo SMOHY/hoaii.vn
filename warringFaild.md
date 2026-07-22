@@ -292,6 +292,21 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 
 ## Đã xử lý trong phiên
 
+### WF-050 — Chữ dải campaign không đọc được trên 11 trang (đã sửa)
+
+- **Khu vực:** dải "Sản phẩm nổi bật/giới hạn" trên 9 trang danh mục + 2 trang landing
+- **Figma node:** layer "Sản phẩm giới hạn/đặc biệt" trong các file `css all layer`
+- **Mô tả:** chữ trắng trên nền `#E5D9CB` chỉ đạt tương phản **1.39:1**, trên `#E4C0D3` đạt
+  **1.64:1** — dưới xa ngưỡng 4.5:1 và nhìn bằng mắt thường thì gần như không ra chữ.
+- **Nguyên nhân:** đây là lỗi do chính đợt sửa trước gây ra. Figma ghép sẵn từng cặp màu — nền
+  `#AA8656` đi với chữ `#FFFFFF`, còn `#E5D9CB` và `#E4C0D3` đi với chữ `#0F0F0F`. Khi đưa màu nền
+  vào dữ liệu để sửa được trong admin, màu chữ vẫn bị để cứng là trắng trong CSS.
+- **Xử lý:** thêm `Models/PromoContrast.cs` tự suy màu chữ từ độ sáng của nền, phát ra biến
+  `--promo-fg` cạnh `--promo-bg`. Chọn cách suy ra thay vì thêm một cột nữa, để người quản trị đổi
+  màu nền trong admin là chữ tự đổi theo, không ai phải nhớ chỉnh kèm.
+- **Kết quả:** Trà/Khăn/Gốm/Rượu và 5 trang dịp từ 1.39:1 lên **13.80:1**; hai trang landing từ
+  1.64:1 lên **11.66:1**. Đúng bằng màu `#0F0F0F` Figma quy định.
+
 ### WF-049 — Điền nội dung tạm để bàn giao không còn khoảng trống (đã làm)
 
 - **Khu vực:** trang chi tiết sản phẩm, trang chi tiết blog

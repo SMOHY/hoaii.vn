@@ -87,6 +87,9 @@ public partial class OccasionCampaignViewModel
     }
     private readonly string? _background;
 
+    /// <summary>Màu chữ suy ra từ nền — xem <see cref="Hoaii.Web.Models.PromoContrast"/>.</summary>
+    public string? Foreground => Hoaii.Web.Models.PromoContrast.ForBackground(Background);
+
     [System.Text.RegularExpressions.GeneratedRegex(@"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")]
     private static partial System.Text.RegularExpressions.Regex HexColour();
 }

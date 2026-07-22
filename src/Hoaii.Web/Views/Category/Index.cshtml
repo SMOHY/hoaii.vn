@@ -233,7 +233,7 @@ else
    background per category, both of which live on the Category row rather than in CSS.
    The colour is emitted as a custom property so the stylesheet still owns every other rule. *@
 <section class="promo-banner @(Model.Promo.Wide ? "promo-banner--wide" : "")"
-         style="@(Model.Promo.Background is { Length: > 0 } bg ? $"--promo-bg:{bg}" : "")">
+         style="@(Model.Promo.Background is { Length: > 0 } bg ? $"--promo-bg:{bg};--promo-fg:{Model.Promo.Foreground}" : "")">
     <div class="promo-banner__text">
         <p class="promo-banner__eyebrow">@Model.Promo.Eyebrow</p>
         <p class="promo-banner__title">@Model.Promo.Title</p>

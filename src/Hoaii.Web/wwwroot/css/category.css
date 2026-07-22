@@ -357,8 +357,13 @@
    chênh cho riêng nút: 24 + 56 = 80. */
 /* Chữ trong dải campaign — số lấy thẳng từ bản CSS Figma xuất ra:
    eyebrow 600 24/32 trắng, thân bài 500 32/40 trắng, nút 600 24/32 màu grey-800. */
-.promo-banner__eyebrow { font: 600 24px/32px var(--font-body); color: #FFFFFF; margin: 0; }
-.promo-banner__title { font: 500 32px/40px var(--font-body); color: #FFFFFF; margin: 0; }
+/* Màu chữ đi theo màu nền chứ không cố định trắng. Figma ghép sẵn từng cặp — nền vàng đồng
+   #AA8656 dùng chữ trắng, còn nền nhạt #E5D9CB và #E4C0D3 dùng #0F0F0F. Khi nền thành dữ liệu
+   sửa được trong admin mà chữ vẫn nằm cứng là trắng, chín trang danh mục và hai trang landing
+   rơi xuống tương phản 1.39:1 — nhìn gần như không ra chữ. PromoContrast.cs tự suy màu này ra
+   từ độ sáng của nền, nên đổi nền trong admin là chữ tự theo. */
+.promo-banner__eyebrow { font: 600 24px/32px var(--font-body); color: var(--promo-fg, #FFFFFF); margin: 0; }
+.promo-banner__title { font: 500 32px/40px var(--font-body); color: var(--promo-fg, #FFFFFF); margin: 0; }
 .promo-banner__cta {
   display: inline-flex; align-self: flex-start; margin-top: 56px;
   padding: 16px 20px; border-radius: var(--radius-sm);

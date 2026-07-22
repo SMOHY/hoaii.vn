@@ -93,6 +93,9 @@ public partial class PromoBannerViewModel
     }
     private readonly string? _background;
 
+    /// <summary>Màu chữ suy ra từ nền — xem <see cref="PromoContrast"/>.</summary>
+    public string? Foreground => PromoContrast.ForBackground(Background);
+
     [System.Text.RegularExpressions.GeneratedRegex(@"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")]
     private static partial System.Text.RegularExpressions.Regex HexColour();
 
