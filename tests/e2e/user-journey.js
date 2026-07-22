@@ -54,12 +54,24 @@ async function journey(browser, width) {
   log(/\/san-pham\//.test(p.url()), 'Bấm thẻ -> vào trang sản phẩm: ' + p.url().replace(BASE, ''));
 
   // 3. pick a variant if there is one
+  //
+  // Trước đây bước này tìm [name="variantId"]. Trên trang sản phẩm thứ đó khớp toàn phần tử
+  // không bấm được: input ẩn #pdp-variant-id-input, các input ẩn của giỏ hàng nằm ngoài màn
+  // hình, và radio trong tấm chọn quà kèm. Nên phép thử luôn hỏng "Element is outside of the
+  // viewport" dù bộ chọn hộp thật vẫn chạy tốt. Bộ chọn thật là .pdp-box-option, và bấm vào
+  // nó phải cập nhật giá trị của input ẩn — giờ kiểm đúng điều đó.
   await step('Chọn loại hộp', async () => {
-    const opts = await p.$$('[name="variantId"]');
+    const opts = await p.$$('.pdp-box-option');
     if (opts.length > 1) {
-      const label = await opts[1].evaluateHandle(el => el.closest('label'));
-      await (label.asElement() || opts[1]).click({ force: true, timeout: 5000 });
-      log(true, `Chọn được loại hộp (${opts.length} lựa chọn)`);
+      const truoc = await p.$eval('#pdp-variant-id-input', el => el.value);
+      await opts[1].click({ timeout: 5000 });
+      const sau = await p.$eval('#pdp-variant-id-input', el => el.value);
+      const daChon = await opts[1].evaluate(el => el.classList.contains('selected'));
+      log(sau !== truoc && daChon, `Chọn được loại hộp (${opts.length} lựa chọn, mã ${truoc} → ${sau})`);
+    } else {
+      // Không phải sản phẩm nào cũng có nhiều loại hộp. Nói rõ là đã bỏ qua, thay vì im lặng
+      // khiến người đọc kết quả tưởng bước này đã chạy.
+      console.log(`  --    Sản phẩm này chỉ có ${opts.length} loại hộp, bỏ qua bước chọn`);
     }
   });
 

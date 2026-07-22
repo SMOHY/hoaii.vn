@@ -53,6 +53,8 @@
             {
                 <p class="wholesale__success">Cảm ơn bạn đã gửi yêu cầu! Đội ngũ HOÀI sẽ liên hệ trong thời gian sớm nhất.</p>
             }
+            @* Xem ghi chú ở Contact.cshtml — form này cũng có [Required] mà không in lỗi. *@
+            <div asp-validation-summary="All" class="form-errors"></div>
             @* Figma cho Tên và Họ mỗi ô một dòng riêng (Frame 121 và 122, cùng rộng 613);
                chỉ Điện thoại và Mã bưu điện mới chia đôi một hàng (Frame 344). *@
             <div class="simple-field">

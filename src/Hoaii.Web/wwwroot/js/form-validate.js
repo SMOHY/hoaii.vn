@@ -16,7 +16,9 @@
 
   function messageFor(input) {
     const v = input.validity;
-    if (v.valueMissing) return MESSAGES.valueMissing;
+    // DataAnnotations đã viết sẵn câu tiếng Việt cho từng trường ("Vui lòng nhập họ") — dùng
+    // lại đúng câu đó thay vì câu chung chung, để lỗi ở máy khách và ở máy chủ khớp nhau.
+    if (v.valueMissing) return input.dataset.valRequired || MESSAGES.valueMissing;
     if (v.typeMismatch) return input.type === 'email' ? 'Email chưa đúng định dạng.' : MESSAGES.typeMismatch;
     if (v.tooShort) return MESSAGES.tooShort;
     if (v.patternMismatch) return MESSAGES.patternMismatch;
@@ -27,13 +29,25 @@
   // is created on demand rather than editing every field in those views.
   function errorSlot(input) {
     const field = input.closest('.form-field, .simple-field');
-    if (!field) return null;
+    if (field) {
+      let slot = field.querySelector('.form-field__error, .field-error');
+      if (!slot) {
+        slot = document.createElement('span');
+        slot.className = 'field-error';
+        field.appendChild(slot);
+      }
+      return slot;
+    }
 
-    let slot = field.querySelector('.form-field__error, .field-error');
-    if (!slot) {
+    // Form liên hệ đặt input làm con trực tiếp của <form>, không có lớp bọc nào. Trước đây
+    // trường hợp này trả về null nên câu báo lỗi không có chỗ nào để hiện: bấm "Gửi" với form
+    // trống thì trang nạp lại y nguyên, khách không biết mình thiếu gì. Chèn ô báo lỗi ngay
+    // sau ô nhập là đủ, không phải sửa markup của từng view.
+    let slot = input.nextElementSibling;
+    if (!slot || !slot.classList.contains('field-error')) {
       slot = document.createElement('span');
       slot.className = 'field-error';
-      field.appendChild(slot);
+      input.insertAdjacentElement('afterend', slot);
     }
     return slot;
   }
@@ -51,6 +65,15 @@
     input.classList.remove('is-invalid');
     if (slot) slot.textContent = '';
   }
+
+  // Tag helper asp-for sinh ra data-val-required chứ không sinh thuộc tính required của HTML.
+  // Vì thế form liên hệ và form hợp tác — vốn khai báo [Required] trong model — lại lọt qua
+  // hết mọi kiểm tra bên dưới, gửi lên máy chủ, bị từ chối, rồi render lại y hệt mà không một
+  // dòng báo lỗi nào. Sao chép sang required để chúng đi chung một đường với các form khác
+  // (và để trình duyệt vẫn chặn được khi tắt JavaScript).
+  document.querySelectorAll('[data-val-required]:not([required])').forEach(function (input) {
+    input.required = true;
+  });
 
   document.querySelectorAll('form').forEach(function (form) {
     const fields = form.querySelectorAll('input[required], input[type="email"], textarea[required], select[required]');

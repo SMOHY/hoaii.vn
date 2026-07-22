@@ -5,21 +5,36 @@
 @model (int Page, int TotalPages, Func<int, string> Url)
 @{
     var (page, totalPages, url) = Model;
+
+    // Trước đây vòng lặp in đủ 1..totalPages. Nhật ký sinh thêm dòng sau mỗi thao tác của admin,
+    // nên chỉ vài tuần dùng thật là thanh này thành bức tường vài trăm số. Giữ trang đầu, trang
+    // cuối và hai trang quanh trang hiện tại; chỗ đứt quãng thay bằng "…".
+    var hienThi = new SortedSet<int> { 1, totalPages };
+    for (var i = page - 2; i <= page + 2; i++)
+    {
+        if (i >= 1 && i <= totalPages) { hienThi.Add(i); }
+    }
+    var truoc = 0;
 }
 @if (totalPages > 1)
 {
     <nav class="admin-pager" aria-label="Phân trang">
         <a class="@(page <= 1 ? "is-disabled" : "")" href="@url(page - 1)" aria-label="Trang trước">‹</a>
-        @for (var i = 1; i <= totalPages; i++)
+        @foreach (var i in hienThi)
         {
+            @if (truoc > 0 && i > truoc + 1)
+            {
+                <span class="admin-pager__gap" aria-hidden="true">…</span>
+            }
             @if (i == page)
             {
-                <span class="is-current">@i</span>
+                <span class="is-current" aria-current="page">@i</span>
             }
             else
             {
-                <a href="@url(i)">@i</a>
+                <a href="@url(i)" aria-label="Trang @i">@i</a>
             }
+            truoc = i;
         }
         <a class="@(page >= totalPages ? "is-disabled" : "")" href="@url(page + 1)" aria-label="Trang sau">›</a>
     </nav>

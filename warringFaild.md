@@ -688,3 +688,59 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   (`758:11395`).
 - **Xử lý:** thêm cột `Category.HeroKicker` (migration `AddCategoryHeroKicker`), đưa qua ViewModel.
   Để trống thì ẩn dòng, không đoán số hộp.
+
+### WF-019 — Footer dùng nhầm `:nth-of-type` thay vì `:nth-child` (đã sửa)
+
+- **Khu vực:** `wwwroot/css/footer.css`, mọi trang (desktop)
+- **Mô tả:** ba cột link footer được đặt bề rộng Figma (155/244/238) qua
+  `.footer-col:nth-of-type(1|2|3)`. Nhưng `.footer-brand` cũng là một `<div>` anh em, nên
+  `nth-of-type` đếm cả nó: rule "cột 1" không khớp phần tử nào, hai rule sau khớp lệch sang cột
+  trước đó, và cột cuối không được đặt bề rộng. Hệ quả nhìn thấy được là `margin-left: auto`
+  không bao giờ chạy — ba cột dồn sang trái, để hở 164px ở mép phải so với Figma.
+- **Xử lý:** đổi sang `:nth-child(2|3|4)` (khối thương hiệu là con thứ 1). Đo lại khớp Figma
+  chính xác: `422@240`, `155@963`, `244@1158`, `238@1442`, kết thúc tại x=1680.
+- **Ghi chú:** thêm `:nth-child(n+5) { flex: 0 1 auto }` để nếu admin thêm cột thứ tư thì nó co
+  giãn theo nội dung thay vì đổ vỡ.
+
+### WF-020 — Nút "Hủy bỏ" ở trang thanh toán là `href="#"` (đã sửa)
+
+- **Khu vực:** `Views/Checkout/Index.cshtml`
+- **Mô tả:** bấm "Hủy bỏ" giữa lúc đang điền thanh toán thì trang chỉ nhảy lên đầu, không huỷ gì.
+- **Xử lý:** trỏ về `/gio-hang`.
+
+### WF-021 — Form liên hệ và form hợp tác không báo lỗi gì khi bỏ trống (đã sửa)
+
+- **Khu vực:** `/lien-he`, `/hop-tac`
+- **Mô tả:** hai model đều có `[Required]`, nhưng tag helper `asp-for` chỉ sinh
+  `data-val-required` chứ **không** sinh thuộc tính `required` của HTML. `form-validate.js` lại
+  chỉ quét `input[required]`, nên bỏ qua sạch hai form này. View cũng không in
+  `asp-validation-summary`. Kết quả: bấm "Gửi" với form trống → POST lên máy chủ → `ModelState`
+  không hợp lệ → render lại y hệt, **không một dòng báo lỗi nào**. Khách tưởng đã gửi được.
+- **Xử lý:** ba lớp, đều không đổi giao diện khi form hợp lệ —
+  1. `form-validate.js` sao chép `data-val-required` sang `required` lúc khởi động, nên hai form
+     này đi chung đường với các form còn lại (và trình duyệt vẫn chặn được khi tắt JavaScript);
+  2. `messageFor()` đọc `data-val-required` để dùng đúng câu tiếng Việt của từng trường
+     ("Vui lòng nhập họ") thay vì câu chung chung — trang thanh toán cũng được lợi;
+  3. `errorSlot()` tự chèn ô báo lỗi ngay sau input khi không có lớp bọc `.form-field`, cộng thêm
+     `asp-validation-summary="All"` làm đường lui phía máy chủ.
+- **Kiểm chứng:** cả 4 form (`/lien-he`, `/hop-tac`, `/thanh-toan`, `/tai-khoan/dang-nhap`) đều
+  chặn đúng, tô đỏ ô sai và đưa con trỏ về ô sai đầu tiên.
+
+### WF-022 — Thanh phân trang admin in đủ mọi số trang (đã sửa)
+
+- **Khu vực:** `Areas/Admin/Views/Shared/_Pager.cshtml`, rõ nhất ở `/admin/nhat-ky`
+- **Mô tả:** vòng lặp in `1..totalPages` và `.admin-pager` không có `flex-wrap`. Nhật ký đã 14
+  trang → hàng số đẩy toàn trang admin tràn ngang 118px trên điện thoại (cuộn ngang cả màn hình,
+  không riêng thanh phân trang). Nhật ký sinh thêm dòng sau mỗi thao tác nên chỗ này chỉ ngày
+  càng tệ.
+- **Xử lý:** chỉ hiện trang đầu, trang cuối và ±2 quanh trang hiện tại, chỗ đứt quãng là "…";
+  thêm `flex-wrap: wrap` và `aria-current="page"`.
+
+### WF-023 — Tương phản dưới chuẩn WCAG AA ở vài chỗ (giữ nguyên, có chủ ý)
+
+- **Khu vực:** `.btn-primary`, `.contact-popup__body-copy`, `.minicart__empty`,
+  `.addon-sheet__variant`, chữ nhỏ 13px ở footer
+- **Mô tả:** tỉ lệ tương phản 3.83–4.29:1, chuẩn AA cho chữ thường là 4.5:1.
+- **Vì sao không sửa:** các màu này lấy thẳng từ bảng màu Figma (đỏ thương hiệu `#AF2234`, xám
+  phụ) và cỡ chữ cũng là cỡ Figma. Sửa là lệch thiết kế. Ghi lại ở đây để khách quyết định —
+  nếu muốn đạt AA thì cần đổi ở tầng bảng màu chứ không vá từng chỗ.

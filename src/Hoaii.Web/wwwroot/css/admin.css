@@ -199,7 +199,10 @@
 .admin-alert--error { background: var(--color-brand-red-tint); color: var(--color-brand-red); }
 
 /* ---------- Pager ---------- */
-.admin-pager { display: flex; gap: 6px; align-items: center; justify-content: center; margin-top: 20px; }
+/* flex-wrap là bắt buộc chứ không phải cho đẹp: số trang do dữ liệu quyết định, và nhật ký
+   hiện đã 14 trang. Một hàng không xuống dòng đẩy trang admin tràn ngang 118px trên điện
+   thoại — cuộn ngang cả màn hình chứ không riêng thanh phân trang. */
+.admin-pager { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; margin-top: 20px; }
 .admin-pager a, .admin-pager span {
   min-width: 36px; height: 36px; padding: 0 10px; border-radius: var(--radius-sm);
   display: inline-flex; align-items: center; justify-content: center;
@@ -208,6 +211,8 @@
 .admin-pager a:hover { border-color: var(--color-brand-red); color: var(--color-brand-red); }
 .admin-pager .is-current { background: var(--color-brand-red-deep); color: #fff; border-color: var(--color-brand-red-deep); }
 .admin-pager .is-disabled { opacity: .4; pointer-events: none; }
+/* Dấu "…" là chỗ đứt quãng, không phải một nút bấm — bỏ khung viền của .admin-pager span. */
+.admin-pager__gap { border: none; min-width: 16px; padding: 0; color: var(--color-grey-500); }
 
 /* ---------- Detail two-column ---------- */
 .admin-detail-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }

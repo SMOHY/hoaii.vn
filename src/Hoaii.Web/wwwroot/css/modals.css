@@ -32,6 +32,13 @@
 .field-error { display: block; margin-top: 4px; font: 400 13px/16px var(--font-body); color: var(--color-brand-red); }
 input.is-invalid, textarea.is-invalid { border-color: var(--color-brand-red) !important; }
 
+/* Bản tóm tắt lỗi từ máy chủ (form liên hệ, form hợp tác). ASP.NET chỉ gắn lớp
+   validation-summary-errors khi thật sự có lỗi, nên khi form hợp lệ khối này rỗng và
+   `:empty` giấu nó đi — bố cục Figma không hề bị đẩy. */
+.form-errors:empty, .form-errors.validation-summary-valid { display: none; }
+.form-errors ul { margin: 0; padding-left: 18px; list-style: disc; }
+.form-errors li { font: 400 13px/18px var(--font-body); color: var(--color-brand-red); }
+
 .footer-signup__done { margin-top: 12px; font: 500 16px/20px var(--font-body); color: var(--color-brand-red); }
 
 .modal-backdrop {

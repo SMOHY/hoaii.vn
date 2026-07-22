@@ -161,7 +161,10 @@
             <footer class="checkout-policy-strip">
                 <a href="/chinh-sach/giao-hang">Chính sách vận chuyển</a>
                 <a href="/chinh-sach/bao-mat">Chính sách bảo mật</a>
-                <a href="#">Hủy bỏ</a>
+                @* Trước đây là href="#": bấm "Hủy bỏ" giữa lúc đang điền thanh toán thì trang chỉ
+                   nhảy lên đầu, không huỷ gì cả. Huỷ thanh toán nghĩa là quay lại giỏ hàng —
+                   hàng vẫn còn nguyên trong giỏ, khách quay lại lúc nào cũng được. *@
+                <a href="/gio-hang">Hủy bỏ</a>
             </footer>
         </form>
     </div>

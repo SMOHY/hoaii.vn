@@ -79,6 +79,10 @@
             {
                 <p class="contact-form__success">@C("form_success")</p>
             }
+            @* Máy chủ có [Required] trên bốn trường nhưng view chưa hề in lỗi ra: gửi form
+               trống thì trang chỉ nạp lại y nguyên. Khối này rỗng khi mọi thứ hợp lệ nên
+               giao diện Figma không đổi. *@
+            <div asp-validation-summary="All" class="form-errors"></div>
             @* Figma stacks every field full-width with the label as the field's own text (node 809:30314). *@
             <input type="text" asp-for="FirstName" class="contact-form__field" placeholder="Tên*" />
             <input type="text" asp-for="LastName" class="contact-form__field" placeholder="Họ*" />

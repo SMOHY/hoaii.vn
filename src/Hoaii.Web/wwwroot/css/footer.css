@@ -103,10 +103,19 @@
 .footer-brand-info a { text-decoration: none; }
 
 /* Figma widths: 155 / 244 / 238, sitting together on the right with 40px between them —
-   not spread evenly across the row (node 683:4396). */
-.footer-links-row > .footer-col:nth-of-type(1) { width: 155px; margin-left: auto; }
-.footer-links-row > .footer-col:nth-of-type(2) { width: 244px; }
-.footer-links-row > .footer-col:nth-of-type(3) { width: 238px; }
+   not spread evenly across the row (node 683:4396).
+
+   Phải dùng :nth-child chứ không phải :nth-of-type. `.footer-brand` cũng là một <div> nên
+   nth-of-type đếm cả nó: rule "cột 1" không khớp phần tử nào, còn hai rule sau thì khớp lệch
+   sang cột trước đó, và cột cuối không được đặt bề rộng. Hệ quả nhìn thấy được là `margin-left:
+   auto` không bao giờ chạy, nhóm ba cột bị dồn sang trái và để hở 164px ở mép phải.
+   nth-child đếm mọi phần tử anh em, nên khối thương hiệu là con thứ 1 và ba cột là 2, 3, 4. */
+.footer-links-row > .footer-col:nth-child(2) { width: 155px; margin-left: auto; }
+.footer-links-row > .footer-col:nth-child(3) { width: 244px; }
+.footer-links-row > .footer-col:nth-child(4) { width: 238px; }
+/* Số cột do CMS quyết định. Nếu ai đó thêm cột thứ tư trong admin thì nó không có bề rộng
+   Figma nào để bám, nên cho co giãn theo nội dung thay vì đổ vỡ. */
+.footer-links-row > .footer-col:nth-child(n+5) { flex: 0 1 auto; }
 
 .footer-col { display: flex; flex-direction: column; gap: 24px; }
 /* SOCIAL lives inside the last column, 40px under its links. */
