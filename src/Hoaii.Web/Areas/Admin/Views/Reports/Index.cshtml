@@ -46,7 +46,8 @@
 
     <div class="admin-card">
         <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Đơn theo trạng thái</h2>
-        <table class="admin-table">
+        <div class="admin-table-wrap">
+            <table class="admin-table">
             <thead><tr><th>Trạng thái</th><th class="num">Số đơn</th><th class="num">Giá trị</th></tr></thead>
             <tbody>
                 @foreach (var s in Model.StatusBreakdown.OrderBy(s => s.Status))
@@ -59,11 +60,13 @@
                 }
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="admin-card">
         <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Sản phẩm bán chạy</h2>
-        <table class="admin-table">
+        <div class="admin-table-wrap">
+            <table class="admin-table">
             <thead><tr><th>Sản phẩm</th><th class="num">SL</th><th class="num">Doanh thu</th></tr></thead>
             <tbody>
                 @if (Model.TopProducts.Count == 0)
@@ -76,11 +79,13 @@
                 }
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="admin-card">
         <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Khách chi tiêu nhiều</h2>
-        <table class="admin-table">
+        <div class="admin-table-wrap">
+            <table class="admin-table">
             <thead><tr><th>Email</th><th class="num">Đơn</th><th class="num">Tổng chi</th></tr></thead>
             <tbody>
                 @if (Model.TopCustomers.Count == 0)
@@ -93,5 +98,6 @@
                 }
             </tbody>
         </table>
+        </div>
     </div>
 </div>

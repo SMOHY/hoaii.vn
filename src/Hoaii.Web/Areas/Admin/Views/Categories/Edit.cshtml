@@ -45,10 +45,21 @@
             <label>Mô tả (dưới tiêu đề)</label>
             <input type="text" name="cms.Description" value="@Model.Description" />
         </div>
-        <div class="admin-field">
-            <label>Eyebrow hero</label>
-            <input type="text" name="cms.HeroEyebrow" value="@Model.HeroEyebrow" placeholder="VD: Quà tết đặc sắc" />
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Eyebrow hero</label>
+                <input type="text" name="cms.HeroEyebrow" value="@Model.HeroEyebrow" placeholder="VD: Quà tết đặc sắc" />
+            </div>
+            <div class="admin-field">
+                <label>Dòng dưới ảnh hero</label>
+                <input type="text" name="cms.HeroKicker" value="@Model.HeroKicker" placeholder="VD: Bộ quà 6 hộp" />
+                <span class="admin-field__hint">Để trống thì ẩn dòng này.</span>
+            </div>
         </div>
+
+        @* Hai ảnh này quyết định phần đầu trang danh mục và ô cover trên trang "Quà theo dịp". *@
+        <partial name="_ImageField" model="@(("Ảnh banner đầu trang", "cms.BannerImageUrl", "cat-banner-img", Model.BannerImageUrl))" />
+        <partial name="_ImageField" model="@(("Ảnh cover (dùng ở trang Quà theo dịp)", "cms.CoverImageUrl", "cat-cover-img", Model.CoverImageUrl))" />
 
         <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Banner khuyến mãi</h4>
         <div class="admin-form-row">
@@ -69,7 +80,26 @@
             <label>Nút — liên kết</label>
             <input type="text" name="cms.PromoCtaUrl" value="@Model.PromoCtaUrl" placeholder="/danh-muc/qua-tet" />
         </div>
-        <partial name="_ImageField" model="@(("Ảnh banner", "cms.PromoImageUrl", "cat-promo-img", Model.PromoImageUrl))" />
+        <partial name="_ImageField" model="@(("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "cat-promo-img", Model.PromoImageUrl))" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Màu nền banner</label>
+                <input type="text" name="cms.PromoBackground" value="@Model.PromoBackground"
+                       placeholder="#E5D9CB" pattern="^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" />
+                <span class="admin-field__hint">
+                    Chỉ nhận mã hex, VD <code>#AA8656</code>. Để trống dùng màu mặc định.
+                    Thiết kế: Quà tết #AA8656, Quà trung thu #AF2234, còn lại #E5D9CB.
+                </span>
+            </div>
+            <div class="admin-field">
+                <label>Bố cục banner</label>
+                <select name="cms.PromoWide">
+                    <option value="false" selected="@(!Model.PromoWide)">Hẹp — chữ 760, ảnh 760 (Quà tết, Trung thu)</option>
+                    <option value="true" selected="@Model.PromoWide">Rộng — ảnh 840 (các trang còn lại)</option>
+                </select>
+            </div>
+        </div>
 
         <div class="admin-form-actions">
             <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
