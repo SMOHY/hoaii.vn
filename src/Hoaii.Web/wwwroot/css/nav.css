@@ -395,7 +395,7 @@ body.hero-overlay .nav-menu .item.is-open {
 @media (min-width: 992px) {
   .mega-menu-wrap [data-menu-panel="qua-tet"] { --menu-duration: 0.8s; }           /* node 1287:56680 */
   .mega-menu-wrap [data-menu-panel="qua-trung-thu"] { --menu-duration: 0.1s; }     /* node 1287:56777 */
-  .mega-menu-wrap [data-menu-panel="qua-tang-theo-dip"] { --menu-duration: 0.1s; } /* node 1287:56871 */
+  .mega-menu-wrap [data-menu-panel="qua-theo-dip"] { --menu-duration: 0.1s; } /* node 1287:56871 */
   .mega-menu-wrap [data-menu-panel="san-pham-chon-loc"] { --menu-duration: 0.1s; } /* node 1287:56965 */
 
   .mega-menu-wrap .mega-menu {
@@ -411,7 +411,7 @@ body.hero-overlay .nav-menu .item.is-open {
   }
   .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"],
   .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"],
-  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"].is-open) [data-menu-panel="qua-tang-theo-dip"],
+  .nav-desktop:has([data-menu-trigger="qua-theo-dip"].is-open) [data-menu-panel="qua-theo-dip"],
   .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] {
     height: 403px;
     visibility: visible;
@@ -434,7 +434,7 @@ body.hero-overlay .nav-menu .item.is-open {
   .mega-menu-wrap .mega-menu,
   .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"],
   .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"],
-  .nav-desktop:has([data-menu-trigger="qua-tang-theo-dip"].is-open) [data-menu-panel="qua-tang-theo-dip"],
+  .nav-desktop:has([data-menu-trigger="qua-theo-dip"].is-open) [data-menu-panel="qua-theo-dip"],
   .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] {
     transition-duration: 0s;
     transition-delay: 0s;

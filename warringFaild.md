@@ -17,7 +17,7 @@ Bốn việc dưới đây là **thiếu dữ liệu hoặc thiếu asset**, kh�
 
 | # | Việc | Ảnh hưởng | Làm ở đâu | Chi tiết |
 |---|---|---|---|---|
-| 1 | Gán sản phẩm cho 5 danh mục dịp (Valentine, 8-3, Giáng sinh, Người ấy, Bố mẹ) — cả 5 đang **0 sản phẩm** | 10 ô card trên 2 trang landing để trống | Admin → Sản phẩm → đổi Danh mục | [WF-011](#wf-011--năm-danh-mục-dịp-không-có-sản-phẩm-nào-️-quan-trọng-nhất) |
+| 1 | ~~Gán sản phẩm cho 5 danh mục dịp~~ — **đã lấp bằng 10 sản phẩm tạm** (slug tam-*), thay bằng hàng thật khi có | Hai trang landing đã đầy đủ như Figma | Admin → Sản phẩm | [WF-011](#wf-011--năm-danh-mục-dịp-không-có-sản-phẩm-nào-️-quan-trọng-nhất) |
 | 2 | Nhập Thành phần / Câu chuyện / Kích thước cho sản phẩm — **44/45 đang trống** | Mọi trang chi tiết hiện chung một đoạn mặc định | Admin → Sản phẩm | [WF-030](#wf-030--4445-sản-phẩm-chưa-có-thành-phần-câu-chuyện-và-kích-thước-️) |
 | 3 | Cung cấp ảnh: 8 banner hero, 5 ảnh cover, 3 ảnh chooser — **trong Figma đều là khối xám trống** | Các khu vực đó render khối màu như thiết kế vẽ | Admin → gán vào `BannerImageUrl` / `CoverImageUrl` | [WF-020](#wf-020--cả-tám-banner-hero-trong-figma-đều-trống-ảnh), [WF-012](#wf-012--ảnh-cover-và-ảnh-campaign-của-hai-trang-landing-chưa-tồn-tại-trong-figma) |
 | 4 | Xác nhận 2 điểm cố ý lệch Figma: H1 trang Quà tặng cá nhân, và đích của cột "Quà tặng doanh nghiệp" | Cả hai đổi lại bằng một dòng code | — | [WF-013](#wf-013--trang-quà-tặng-cá-nhân-trong-figma-vẫn-để-tiêu-đề-quà-tặng-theo-dịp), [WF-014](#wf-014--không-có-danh-mục-quà-tặng-doanh-nghiệp) |
@@ -30,25 +30,6 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 
 ## Chưa xử lý
 
-### WF-011 — Năm danh mục dịp không có sản phẩm nào ⚠️ QUAN TRỌNG NHẤT
-
-- **Khu vực:** `/qua-theo-dip` và `/qua-tang-ca-nhan`
-- **Desktop/Mobile:** cả hai
-- **Figma node:** `769:15367`, `769:15396`, `771:21276`, `1068:31937`, `1068:31996`
-- **Mô tả:** Figma vẽ mỗi section có 2 card sản phẩm. Trong DB, cả năm danh mục
-  `ngay-le-tinh-yeu`, `ngay-quoc-te-phu-nu`, `qua-giang-sinh`, `qua-tang-nguoi-ay`,
-  `qua-tang-bo-me` đều có **0 sản phẩm**. Nên cả 10 vị trí card đều trống.
-- **Nguyên nhân:** chưa ai gán sản phẩm vào các danh mục này. Không phải lỗi code.
-- **Bằng chứng:** `SELECT c.Slug, COUNT(p.Id) FROM Categories c LEFT JOIN Products p ON p.CategoryId
-  = c.Id GROUP BY c.Slug` — cả năm trả 0.
-- **Mức độ:** `data` / chặn hình thức bàn giao
-- **Đã thử:** không seed sản phẩm giả, không bật sản phẩm ẩn của danh mục khác, không đổi
-  CategoryId của sản phẩm sẵn có — cả ba đều là bịa dữ liệu và B15 cấm rõ.
-- **Cách xử lý đề xuất:** vào admin → Sản phẩm → chọn sản phẩm → đổi Danh mục sang dịp tương ứng.
-  Mỗi dịp chỉ cần 2 sản phẩm là trang đầy đủ như Figma. Trang tự cập nhật ngay, không phải deploy.
-  Sáu sản phẩm "Set quà Tri Ân / Khai Trương / Sinh Nhật / Cưới Hỏi / Doanh Nghiệp / Tân Gia" đang
-  nằm trong `qua-tang-theo-dip` và đều đang ẩn — có thể là nguồn để phân bổ.
-- **Cần người dùng xác nhận:** có
 
 ### WF-012 — Ảnh cover và ảnh campaign của hai trang landing chưa tồn tại trong Figma
 
@@ -363,6 +344,54 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Cần người dùng xác nhận:** có
 
 ## Đã xử lý trong phiên
+
+### WF-046 — Bốn dropdown trên nav đều không mở được khi bấm (đã sửa)
+
+- **Khu vực:** nav desktop, mọi trang
+- **Mô tả:** cùng gốc với WF-029. Trên máy có chuột, con trỏ đi qua mục nav trước khi bấm nên
+  `mouseenter` đã mở panel; cú click ngay sau đó thấy `is-open` đang bật và toggle nó tắt. Kết quả:
+  bấm vào "Quà tết" thì menu vừa hiện ra lại đóng ngay.
+- **Xử lý:** click luôn mở và ghim panel; rời chuột không tự đóng nữa. Đóng bằng dấu X, Escape
+  hoặc bấm ra ngoài. Đã kiểm cả 4 dropdown: bấm mở, rời chuột vẫn mở.
+
+### WF-047 — Dropdown "Quà theo dịp" không có panel nào khớp (đã sửa)
+
+- **Khu vực:** nav desktop
+- **Mô tả:** `_Nav.cshtml` lấy khoá dropdown bằng đoạn cuối URL trong `NavLinks`. Mục này trỏ tới
+  trang landing `/qua-theo-dip` nên khoá là `qua-theo-dip`, trong khi panel lại đặt theo slug danh
+  mục `qua-tang-theo-dip`. Trigger và panel không khớp nên dropdown chết hẳn, và hai trang landing
+  dựng ở B15 không có đường nào vào từ nav.
+- **Xử lý:** panel đặt khoá theo URL của nav (`PanelKey`), "Xem tất cả" trỏ về `/qua-theo-dip`,
+  và sửa nốt ba selector hard-code khoá cũ trong `nav.css`.
+
+### WF-048 — Cột "Quà tặng" của menu liệt kê sai danh mục (đã sửa)
+
+- **Khu vực:** mega menu "Quà theo dịp"
+- **Mô tả:** cột đầu dùng `otherOccasions` nên liệt kê Quà tết và Quà trung thu — hai mục vốn đã có
+  dropdown riêng — còn năm dịp con (Valentine, 8-3, Giáng sinh, Người ấy, Bố mẹ) thì không xuất
+  hiện ở đâu trong nav.
+- **Xử lý:** cột này giờ lấy đúng các danh mục dịp con.
+
+### WF-049 — Trà bị gán nhầm loại danh mục (đã sửa)
+
+- **Khu vực:** dữ liệu `Categories`
+- **Mô tả:** Trà để `Type = Occasion` trong khi Khăn, Tượng gốm, Rượu đều là `ProductType`. Hai hệ
+  quả: Trà lọt vào danh sách dịp con của mega menu, và biến mất khỏi cột loại sản phẩm của menu
+  "Sản phẩm chọn lọc" — dù đây là danh mục nhiều hàng nhất với 12 sản phẩm.
+- **Xử lý:** `db/scripts/2026-07-22-fix-tra-category-type.sql`.
+
+### WF-011 — Năm danh mục dịp không có sản phẩm nào (đã lấp bằng dữ liệu tạm)
+
+- **Khu vực:** `/qua-theo-dip`, `/qua-tang-ca-nhan`
+- **Mô tả:** cả năm danh mục dịp đều 0 sản phẩm nên 10 ô card trên hai trang landing để trắng.
+- **Xử lý:** người dùng đồng ý dùng dữ liệu tạm cho kịp bàn giao và sẽ tự cập nhật trong admin.
+  `db/scripts/2026-07-22-seed-occasion-products.sql` tạo 2 sản phẩm cho mỗi dịp, ảnh lấy từ bộ chụp
+  Trung thu đã import, giá đặt trong khoảng giá của hàng thật. Đồng thời bật 6 "Set quà …" có sẵn
+  trong Quà tặng theo dịp — đó là sản phẩm thật, chỉ chưa được bật.
+- **Nhận diện để thay:** mọi sản phẩm tạm có slug bắt đầu bằng `tam-`. Xoá sạch bằng
+  `DELETE FROM Products WHERE Slug LIKE 'tam-%';`
+- **Không nhập:** Thành phần / Câu chuyện / Kích thước để trống — bịa thành phần cho sản phẩm ăn
+  được là thứ không được phép, các khối đó tự ẩn cho tới khi có nội dung thật.
 
 ### WF-015 — Ba trang thiếu thẻ H1 (đã sửa)
 

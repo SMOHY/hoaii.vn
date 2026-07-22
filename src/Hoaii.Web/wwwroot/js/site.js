@@ -125,6 +125,7 @@
    *   Escape, click outside — keeps the normal animated close.
    */
   function closeAll(instant) {
+    pinned = null;
     triggers.forEach(function (t) {
       if (!t.classList.contains('is-open')) return;
 
@@ -154,13 +155,22 @@
     if (e.detail !== 'mega-menu') closeAll();
   });
 
+  // Trên máy có chuột, con trỏ luôn đi qua mục nav trước khi bấm nên hover đã mở panel; cú click
+  // ngay sau đó thấy is-open đang bật và toggle nó tắt — bấm vào mục nav thành ra đóng menu vừa
+  // hiện ra. Click giờ luôn mở và ghim panel lại; đóng bằng dấu X, Escape, hoặc bấm ra ngoài.
+  let pinned = null;
+
   triggers.forEach(function (trigger) {
     trigger.addEventListener('click', function () {
-      const willOpen = !trigger.classList.contains('is-open');
-      closeAll(willOpen); // opening a different menu replaces the current one outright
-      trigger.classList.toggle('is-open', willOpen);
-      trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      if (willOpen) document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'mega-menu' }));
+      const already = trigger.classList.contains('is-open');
+      if (!already) {
+        closeAll(true); // mở menu khác thì thay thẳng menu đang mở
+        trigger.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'mega-menu' }));
+      }
+      // Ghim sau closeAll, vì closeAll tự xoá ghim.
+      pinned = trigger;
     });
   });
 
@@ -173,12 +183,12 @@
 
     triggers.forEach(function (trigger) {
       trigger.addEventListener('mouseenter', function () { cancelClose(); open(trigger, true); });
-      trigger.addEventListener('mouseleave', scheduleClose);
+      trigger.addEventListener('mouseleave', function () { if (pinned !== trigger) scheduleClose(); });
 
       const panel = panelFor(trigger);
       if (panel) {
         panel.addEventListener('mouseenter', cancelClose);
-        panel.addEventListener('mouseleave', scheduleClose);
+        panel.addEventListener('mouseleave', function () { if (pinned !== trigger) scheduleClose(); });
       }
     });
   }
