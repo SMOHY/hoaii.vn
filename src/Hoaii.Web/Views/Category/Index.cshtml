@@ -1,5 +1,7 @@
 @model Hoaii.Web.Models.Category.CategoryPageViewModel
 @using Hoaii.Web.Services
+@using Microsoft.AspNetCore.Html
+@using System.Text.Json
 @inject PageContentService PageC
 @{
     ViewData["Title"] = Model.Title;
@@ -7,6 +9,22 @@
     ViewData["HeroOverlay"] = true;
     ViewData["PreloadImage"] = Model.BannerImageUrl ?? Model.HeroSlides.FirstOrDefault()?.ImageUrl;
     var hasSlides = Model.HeroSlides.Count > 0;
+
+    var origin = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var breadcrumbJsonLd = new
+    {
+        context = "https://schema.org",
+        type = "BreadcrumbList",
+        itemListElement = new object[]
+        {
+            new { type = "ListItem", position = 1, name = "Trang chủ", item = origin + "/" },
+            new { type = "ListItem", position = 2, name = Model.Title, item = origin + Context.Request.Path },
+        },
+    };
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+    var breadcrumbJson = JsonSerializer.Serialize(breadcrumbJsonLd, jsonOptions)
+        .Replace("\"context\"", "\"@context\"").Replace("\"type\"", "\"@type\"");
+    ViewData["StructuredData"] = new HtmlString($"<script type=\"application/ld+json\">{breadcrumbJson}</script>");
 }
 
 @if (Model.HeroStyle == Hoaii.Domain.Entities.CategoryHeroStyle.Banner)

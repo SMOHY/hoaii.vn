@@ -9,6 +9,7 @@ public class ProductDetailsViewModel
     public required string Name { get; init; }
     public required decimal Price { get; init; }
     public required string BreadcrumbLabel { get; init; }
+    public required string CategorySlug { get; init; }
     public string? MetaDescription { get; init; }
 
     public required IReadOnlyList<string?> GalleryImages { get; init; } // null entries render as placeholder tiles

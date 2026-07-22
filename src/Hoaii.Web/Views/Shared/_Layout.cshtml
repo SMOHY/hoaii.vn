@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -20,10 +21,34 @@
     @{
         var canonicalPage = Context.Request.Query["page"].ToString();
         var canonicalPath = Context.Request.Path.ToString();
-        var canonical = $"{Context.Request.Scheme}://{Context.Request.Host}{canonicalPath}"
+        var siteOrigin = $"{Context.Request.Scheme}://{Context.Request.Host}";
+        var canonical = siteOrigin + canonicalPath
             + (canonicalPage.Length > 0 && canonicalPage != "1" ? $"?page={canonicalPage}" : "");
     }
     <link rel="canonical" href="@canonical" />
+    @{
+        // Product/blog pages hand in their own shot via OgImage; everything else falls back to
+        // the brand mark so a bare link (chat, Zalo, Facebook) never posts with no image at all.
+        var ogTitle = ViewData["OgTitle"] as string ?? ViewData["Title"] as string ?? "Hoài";
+        // Facebook/Zalo don't render SVG previews, so the fallback needs a raster image.
+        var ogImage = ViewData["OgImage"] as string ?? "/apple-touch-icon.png";
+        if (!ogImage.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        {
+            ogImage = siteOrigin + ogImage;
+        }
+    }
+    <meta property="og:type" content="@(ViewData["OgType"] as string ?? "website")" />
+    <meta property="og:site_name" content="Hoài" />
+    <meta property="og:title" content="@ogTitle" />
+    @if (ViewData["MetaDescription"] is string ogDescription && ogDescription.Length > 0)
+    {
+        <meta property="og:description" content="@ogDescription" />
+    }
+    <meta property="og:url" content="@canonical" />
+    <meta property="og:image" content="@ogImage" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ogTitle" />
+    <meta name="twitter:image" content="@ogImage" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
     <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
@@ -48,6 +73,19 @@
     @await RenderSectionAsync("Styles", required: false)
     @* Last, so the touch-target sizes win over the page stylesheets without !important. *@
     <link rel="stylesheet" href="~/css/touch.css" asp-append-version="true" />
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Organization",
+        "name": "Hoài",
+        "url": "@siteOrigin",
+        "logo": "@(siteOrigin)/apple-touch-icon.png"
+    }
+    </script>
+    @if (ViewData["StructuredData"] is IHtmlContent structuredData)
+    {
+        @structuredData
+    }
 </head>
 <body class="@(ViewData["HeroOverlay"] as bool? == true ? "hero-overlay" : "")">
     <a class="skip-link" href="#main">Bỏ qua, tới nội dung chính</a>

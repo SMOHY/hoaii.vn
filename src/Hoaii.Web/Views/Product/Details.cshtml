@@ -1,11 +1,52 @@
 @model Hoaii.Web.Models.Product.ProductDetailsViewModel
 @using Hoaii.Web.Services
+@using Microsoft.AspNetCore.Html
+@using System.Text.Json
 @inject PageContentService PageC
 @{
+    var resolvedDescription = Model.MetaDescription ?? $"{Model.Name} — quà tặng thủ công tinh tế từ HOÀI.";
     ViewData["Title"] = Model.Name;
-    ViewData["MetaDescription"] = Model.MetaDescription ?? $"{Model.Name} — quà tặng thủ công tinh tế từ HOÀI.";
+    ViewData["MetaDescription"] = resolvedDescription;
+    ViewData["OgType"] = "product";
+    ViewData["OgImage"] = Model.GalleryImages.FirstOrDefault();
     // Main gallery shot is a CSS background — name it so it starts downloading immediately.
     ViewData["PreloadImage"] = Model.GalleryImages.FirstOrDefault();
+
+    var origin = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var breadcrumbParts = Model.BreadcrumbLabel.Split('/');
+    var productJsonLd = new
+    {
+        context = "https://schema.org",
+        type = "Product",
+        name = Model.Name,
+        image = Model.GalleryImages.Where(i => i is not null).Select(i => origin + i).ToList(),
+        description = resolvedDescription,
+        offers = new
+        {
+            type = "Offer",
+            priceCurrency = "VND",
+            price = Model.Price,
+            availability = "https://schema.org/InStock",
+            url = origin + Context.Request.Path,
+        },
+    };
+    var breadcrumbJsonLd = new
+    {
+        context = "https://schema.org",
+        type = "BreadcrumbList",
+        itemListElement = new object[]
+        {
+            new { type = "ListItem", position = 1, name = "Trang chủ", item = origin + "/" },
+            new { type = "ListItem", position = 2, name = breadcrumbParts.ElementAtOrDefault(1) ?? breadcrumbParts[0], item = origin + "/danh-muc/" + Model.CategorySlug },
+            new { type = "ListItem", position = 3, name = Model.Name, item = origin + Context.Request.Path },
+        },
+    };
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+    string ToLd(object o) => JsonSerializer.Serialize(o, jsonOptions)
+        .Replace("\"context\"", "\"@context\"").Replace("\"type\"", "\"@type\"");
+    ViewData["StructuredData"] = new HtmlString(
+        $"<script type=\"application/ld+json\">{ToLd(productJsonLd)}</script>" +
+        $"<script type=\"application/ld+json\">{ToLd(breadcrumbJsonLd)}</script>");
 }
 
 <div class="pdp-breadcrumb">
