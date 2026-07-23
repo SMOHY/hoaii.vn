@@ -74,9 +74,15 @@
   display: flex;
   justify-content: center;
 }
+/* Figma "Frame 89": rộng 1440, hai khối con — brand (422) và cụm cột (717) — cách nhau một
+   khoảng 301px (422 + 301 + 717 = 1440). Dùng space-between để khoảng hở đó tự co theo bề rộng
+   thật thay vì ghim cứng 301px. flex-wrap để khi màn hình hẹp hơn ~1519px (lúc brand + cụm cột
+   không còn đủ chỗ nằm cạnh nhau) thì CẢ cụm cột tụt xuống dòng dưới nguyên khối — không tách
+   lẻ từng cột như bản cũ. */
 .footer-links-row {
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   width: 100%;
   max-width: var(--content-max-width);
   gap: 40px;
@@ -87,6 +93,7 @@
   display: flex;
   gap: 24px;
   align-items: flex-start;
+  flex: none; /* giữ nguyên 422px, không co lại làm lệch chữ địa chỉ */
 }
 .footer-brand img.logo { width: 114px; height: 114px; }
 .footer-brand-info {
@@ -102,20 +109,21 @@
 }
 .footer-brand-info a { text-decoration: none; }
 
-/* Figma widths: 155 / 244 / 238, sitting together on the right with 40px between them —
-   not spread evenly across the row (node 683:4396).
-
-   Phải dùng :nth-child chứ không phải :nth-of-type. `.footer-brand` cũng là một <div> nên
-   nth-of-type đếm cả nó: rule "cột 1" không khớp phần tử nào, còn hai rule sau thì khớp lệch
-   sang cột trước đó, và cột cuối không được đặt bề rộng. Hệ quả nhìn thấy được là `margin-left:
-   auto` không bao giờ chạy, nhóm ba cột bị dồn sang trái và để hở 164px ở mép phải.
-   nth-child đếm mọi phần tử anh em, nên khối thương hiệu là con thứ 1 và ba cột là 2, 3, 4. */
-.footer-links-row > .footer-col:nth-child(2) { width: 155px; margin-left: auto; }
-.footer-links-row > .footer-col:nth-child(3) { width: 244px; }
-.footer-links-row > .footer-col:nth-child(4) { width: 238px; }
-/* Số cột do CMS quyết định. Nếu ai đó thêm cột thứ tư trong admin thì nó không có bề rộng
-   Figma nào để bám, nên cho co giãn theo nội dung thay vì đổ vỡ. */
-.footer-links-row > .footer-col:nth-child(n+5) { flex: 0 1 auto; }
+/* Figma "Frame 85": cụm ba cột đi liền, rộng 717 = 155 + 40 + 244 + 40 + 238 (node 683:4396).
+   flex: none để cụm giữ nguyên 717px và tụt xuống nguyên khối khi hết chỗ, chứ không để từng
+   cột co giãn rồi rớt lẻ. */
+.footer-cols {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  flex: none;
+}
+.footer-cols > .footer-col:nth-child(1) { width: 155px; }
+.footer-cols > .footer-col:nth-child(2) { width: 244px; }
+.footer-cols > .footer-col:nth-child(3) { width: 238px; }
+/* Số cột do CMS quyết định. Cột thứ tư trở đi không có bề rộng Figma nào để bám nên cho co
+   giãn theo nội dung thay vì đổ vỡ. */
+.footer-cols > .footer-col:nth-child(n+4) { flex: 0 1 auto; }
 
 .footer-col { display: flex; flex-direction: column; gap: 24px; }
 /* SOCIAL lives inside the last column, 40px under its links. */
@@ -163,6 +171,18 @@
 .footer-badge { width: 122px; height: 40px; padding-left: 8px; }
 .footer-badge img { width: 106px; height: 40px; object-fit: cover; }
 
+/* Khoảng tablet: dưới ~992px, vùng nội dung không còn đủ 717px cho cụm ba cột nằm ngang.
+   Cho cụm chiếm cả bề rộng và xếp dọc, tránh tràn hoặc rớt cột lộn xộn. Kiểu chữ vẫn giữ như
+   desktop, chỉ đổi cách xếp. */
+@media (max-width: 991.98px) {
+  .footer-cols {
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+  }
+  .footer-cols > .footer-col { width: 100%; }
+}
+
 @media (max-width: 767.98px) {
   .footer { gap: 40px; padding-top: 40px; }
 
@@ -183,15 +203,14 @@
 
   .footer-links-section { padding: 40px 16px; }
   .footer-links-row { flex-direction: column; gap: 16px; }
+  .footer-cols { gap: 16px; }
 
   .footer-brand img.logo { width: 60px; height: 60px; }
   .footer-brand-info { font-weight: 400; font-size: 13px; line-height: 16px; gap: 4px; }
 
-  /* The desktop column widths (155/244/238) and the auto margin that pushes them right are
-     desktop-only — stacked on a phone each column takes the full width. */
-  .footer-links-row > .footer-col:nth-of-type(1),
-  .footer-links-row > .footer-col:nth-of-type(2),
-  .footer-links-row > .footer-col:nth-of-type(3) { width: 100%; margin-left: 0; }
+  /* Bề rộng cột Figma (155/244/238) chỉ dành cho desktop — trên điện thoại mỗi cột chiếm trọn
+     chiều ngang (đã xử lý ở breakpoint 992px, giữ lại đây cho chắc). */
+  .footer-cols > .footer-col { width: 100%; }
 
   .footer-col { gap: 8px; }
   .footer-col h3 { font-size: 16px; line-height: 20px; }

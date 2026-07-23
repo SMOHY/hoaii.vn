@@ -34,8 +34,13 @@
                 </div>
             </div>
 
-            @* SOCIAL is not a column of its own — Figma tucks it under "Chính sách pháp lý"
-               (node 683:4413), so the footer is three link columns, not four. *@
+            @* Ba cột link đi liền một khối (Figma "Frame 85", rộng 717 = 155+40+244+40+238),
+               nằm bên phải, cách khối thương hiệu một khoảng 301px (Frame 89, gap 301). Bọc
+               chúng trong .footer-cols để trên màn hình hẹp cả cụm tụt xuống dưới brand nguyên
+               khối, thay vì từng cột rớt lẻ ra như trước.
+               SOCIAL không phải cột riêng — Figma nhét dưới "Chính sách pháp lý" (node 683:4413),
+               nên footer là ba cột link, không phải bốn. *@
+            <div class="footer-cols">
             @for (var i = 0; i < footerColumns.Count; i++)
             {
                 var column = footerColumns[i];
@@ -77,6 +82,7 @@
                     }
                 </div>
             }
+            </div>
         </div>
     </div>
 </footer>
