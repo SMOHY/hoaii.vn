@@ -744,3 +744,20 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
 - **Vì sao không sửa:** các màu này lấy thẳng từ bảng màu Figma (đỏ thương hiệu `#AF2234`, xám
   phụ) và cỡ chữ cũng là cỡ Figma. Sửa là lệch thiết kế. Ghi lại ở đây để khách quyết định —
   nếu muốn đạt AA thì cần đổi ở tầng bảng màu chứ không vá từng chỗ.
+
+### WF-019b — Footer vẫn vỡ trên màn dưới 1519px (bổ sung cho WF-019)
+
+- **Khu vực:** `wwwroot/css/footer.css`, `Views/Shared/_Footer.cshtml`
+- **Vì sao WF-019 chưa đủ:** bản vá `:nth-child` chỉ đúng ở bề rộng 1920 (nơi vùng nội dung
+  đủ 1440px). Nhưng `--page-gutter` co theo màn hình, laptop 1440 chỉ còn ~1080px nội dung —
+  ít hơn 1179px mà bố cục phẳng (brand + 3 cột rời + margin-left:auto + flex-wrap) cần. Cột
+  cuối "CHÍNH SÁCH PHÁP LÝ" rớt xuống một dòng riêng bên trái, hở khoảng trống lớn ở giữa.
+  Khách chụp đúng cảnh này: "khác 1 trời 1 vực so với figma".
+- **Gốc rễ:** tôi đã làm phẳng "Frame 85" của Figma (cụm 3 cột) thành con trực tiếp của
+  `.footer-links-row`. Figma dựng brand (422) và Frame 85 (717) là hai khối trong Frame 89,
+  cách nhau 301px (`422 + 301 + 717 = 1440`).
+- **Xử lý đúng:** bọc 3 cột trong `.footer-cols` (Frame 85, `flex: none` giữ 717px liền khối);
+  hàng cha dùng `justify-content: space-between` cho khoảng hở tự co; `flex-wrap` để khi hẹp cả
+  cụm tụt xuống nguyên khối chứ không tách lẻ; breakpoint 992px cho cụm xếp dọc.
+- **Kiểm chứng:** đo 8 bề rộng 1920→430, không chỗ nào tràn, cột không bao giờ rớt lẻ.
+  ≥1600px brand+cụm nằm cạnh nhau đúng Figma; 992–1519px cụm tụt xuống dưới brand nguyên khối.
