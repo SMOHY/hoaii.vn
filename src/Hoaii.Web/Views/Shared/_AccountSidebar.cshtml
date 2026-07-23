@@ -7,13 +7,20 @@
         ("Sổ địa chỉ", "/tai-khoan/dia-chi", "Addresses"),
     };
 }
-<nav class="account-sidebar">
-    @foreach (var item in items)
-    {
-        <a href="@item.Url" class="@(Model == item.Key ? "active" : "")">@item.Label</a>
-    }
-    <form method="post" action="/tai-khoan/dang-xuat" class="account-sidebar__logout-form">
-        @Html.AntiForgeryToken()
-        <button type="submit" class="logout">Đăng xuất</button>
-    </form>
+<nav class="account-sidebar" id="account-drawer">
+    @* Chỉ hiện trên mobile khi drawer mở (Figma node 1265:39388). Desktop ẩn. *@
+    <button type="button" class="account-sidebar__close" data-account-menu-close aria-label="Đóng menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    @* Cụm link tách riêng để trên mobile cách nút X 40px, còn giữa các link chỉ 16px. *@
+    <div class="account-sidebar__list">
+        @foreach (var item in items)
+        {
+            <a href="@item.Url" class="@(Model == item.Key ? "active" : "")">@item.Label</a>
+        }
+        <form method="post" action="/tai-khoan/dang-xuat" class="account-sidebar__logout-form">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="logout">Đăng xuất</button>
+        </form>
+    </div>
 </nav>

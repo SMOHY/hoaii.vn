@@ -14,6 +14,9 @@
   display: flex; align-items: center; justify-content: center;
   font: 500 16px/20px var(--font-body); color: #1C1C1C;
 }
+/* Hamburger + nút đóng drawer: chỉ dùng trên mobile, ẩn trên desktop. */
+.account-nav__menu-btn { display: none; background: none; border: none; padding: 0; cursor: pointer; color: #0F0F0F; }
+.account-sidebar__close { display: none; background: none; border: none; padding: 0; cursor: pointer; color: #0F0F0F; }
 
 /* The grey field runs edge to edge; only the columns inside it are centred. */
 .account-body main { background: var(--color-grey-50); }
@@ -23,8 +26,9 @@
 }
 
 .account-sidebar {
-  width: 219px; flex-shrink: 0; padding: 40px 0 10px; display: flex; flex-direction: column; gap: 37px;
+  width: 219px; flex-shrink: 0; padding: 40px 0 10px; display: flex; flex-direction: column;
 }
+.account-sidebar__list { display: flex; flex-direction: column; gap: 37px; }
 .account-sidebar a {
   font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px;
   color: var(--color-grey-500); text-decoration: none; white-space: nowrap;
@@ -36,23 +40,47 @@
   font-family: var(--font-body); font-weight: 600; font-size: 24px; line-height: 32px; color: var(--color-brand-red);
 }
 
-/* Figma indents the panel 120px from the sidebar and gives it 742px of width. */
-.account-content { flex: 1; padding: 40px 120px 40px 120px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+/* Cột nội dung rộng 982px (sidebar 219 + 982 = band 1201), vùng trong 742px cho card/form.
+   Trang Lịch sử đơn hàng canh giữa (padding 120/120, node 848:14789); còn Thông tin tài khoản
+   và Địa chỉ lệch trái (padding trái 80 / phải 160, node 848:20075 & 853:10999). Đáy 10px. */
+.account-content { flex: 1; padding: 40px 120px 10px 120px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+/* Chỉ desktop: Thông tin tài khoản & Địa chỉ lệch trái (80/160). Bọc trong min-width để
+   :has() (specificity cao) không đè lên padding 16px của mobile. */
+@media (min-width: 992px) {
+  .account-content:has(.profile-card), .account-content:has(.address-form) { padding-left: 80px; padding-right: 160px; }
+}
 .account-content__heading { font: 500 20px/23px var(--font-body); color: #000; margin: 0; }
 
 @media (max-width: 991.98px) {
   .account-layout { flex-direction: column; }
+
+  /* Header mobile: ☰ mép trái, logo canh giữa, avatar mép phải (Figma mobile). */
+  .account-nav__inner { position: relative; padding: 16px; }
+  .account-nav__menu-btn { display: flex; }
+  .account-nav__logo { position: absolute; left: 50%; transform: translateX(-50%); }
+  .account-nav__logo img { width: 40px; height: 40px; }
+
+  /* Sidebar trở thành drawer toàn màn, mở bằng ☰ (Figma node 1265:39388): panel trắng,
+     nút X trên cùng, nav dọc. padding 20, gap 40 giữa X và danh sách; item 20/23, cách 16. */
   .account-sidebar {
-    width: auto; flex-direction: row; gap: 24px; padding: 16px; overflow-x: auto;
-    background: #fff; border-bottom: 1px solid var(--color-grey-300);
+    position: fixed; inset: 0; z-index: 1200; background: #fff;
+    width: auto; flex-direction: column; gap: 40px; padding: 20px;
+    overflow-y: auto; border-bottom: none;
+    transform: translateX(-100%); transition: transform 0.25s ease;
   }
-  .account-sidebar a, .account-sidebar .logout { font-size: 16px; line-height: 20px; white-space: nowrap; }
+  .account-sidebar.is-open { transform: none; }
+  .account-sidebar__close { display: flex; }
+  /* Cụm link cách nút X 40px (gap của panel), giữa các link 16px (Figma Frame 639). */
+  .account-sidebar__list { gap: 16px; }
+  .account-sidebar a, .account-sidebar .logout { font-size: 20px; line-height: 23px; white-space: nowrap; }
+
   .account-content { padding: 20px 16px 10px; gap: 20px; }
 }
 
 /* ---------- Profile ---------- */
-/* Figma caps the card at ~503px rather than letting it run the full width (node 848:20065). */
-.profile-card { background: #fff; border-radius: 8px; padding-left: 24px; width: 100%; max-width: 503px; }
+/* Card lấp đầy vùng trong 742px của cột nội dung (Frame 460 width 742, align-self: stretch,
+   node 848:20065). Trước đây cap nhầm ở 503px nên card hẹp hơn Figma 239px. */
+.profile-card { background: #fff; border-radius: 8px; padding-left: 24px; width: 100%; max-width: 742px; }
 .profile-row {
   height: 56px; display: flex; align-items: center; justify-content: space-between;
   border-bottom: 1px solid var(--color-grey-300);
@@ -139,36 +167,29 @@
   .status-tabs .tab.active { font-weight: 500; }
 }
 
-/* ---------- Order card ---------- */
+/* ---------- Order card (Figma node 848:14779, Frame 460) ----------
+   Một hàng: bên trái dòng sản phẩm, bên phải pill trạng thái. */
 .order-list { display: flex; flex-direction: column; gap: 10px; }
-.order-card { background: #fff; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-.order-card__header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-.order-card__number { font: 500 16px/20px var(--font-body); color: #000; }
-.order-card__date { font: 300 14px/20px var(--font-body); color: var(--color-grey-500); margin-left: 12px; }
-.order-status-badge { border-radius: 999px; padding: 4px 12px; font: 500 13px/18px var(--font-body); white-space: nowrap; }
-.order-status-badge--pending { background: var(--color-grey-50); color: var(--color-grey-500); }
-.order-status-badge--confirmed { background: #FDF3E7; color: var(--color-brand-gold); }
-.order-status-badge--shipping { background: #EAF2FB; color: #2E6DB4; }
-.order-status-badge--delivered { background: #EAF7EE; color: #2E8B57; }
-.order-status-badge--returned { background: #FBEAEA; color: var(--color-brand-red); }
-.order-status-badge--cancelled { background: var(--color-grey-50); color: var(--color-grey-700); }
-.order-card:has(.order-status-badge--cancelled) .order-line { opacity: 0.6; }
-
-.order-card__items { display: flex; flex-direction: column; gap: 12px; }
+.order-card {
+  background: #fff; border-radius: 8px; padding: 16px;
+  display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 16px;
+}
+.order-card__items { display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 0; }
 .order-line { display: flex; align-items: center; gap: 16px; }
 .order-line__thumb { width: 88px; height: 81px; border-radius: 4px; background-color: var(--color-grey-200); background-size: cover; background-position: center; flex-shrink: 0; }
-.order-line__info { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+/* Figma xếp dọc tên → biến thể (gap 0) rồi cách 8px xuống giá (Frame 457). */
+.order-line__info { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.order-line__title { display: flex; flex-direction: column; }
 .order-line__name { font: 500 16px/20px var(--font-body); color: #000; }
 .order-line__variant { font: 300 16px/18px var(--font-body); color: #000; }
-.order-line__price { font: 500 20px/23px var(--font-body); color: #000; white-space: nowrap; }
+.order-line__price { font: 500 20px/23px var(--font-body); color: #000; }
 
-.order-card__footer { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-wrap: wrap; }
-.order-card__total { font: 500 16px/20px var(--font-body); color: #000; margin-right: auto; }
-.btn-outline {
-  border: 1px solid #0F0F0F; color: #000; background: transparent; padding: 8px 20px; border-radius: 4px;
-  font: 500 16px/20px var(--font-body); text-decoration: none; cursor: pointer;
+/* Figma dùng MỘT kiểu pill cho mọi trạng thái: nền beige, chữ xám, radius 8 (Frame 132).
+   Không tô màu theo trạng thái — nhãn chữ đã nói rõ trạng thái. */
+.order-status-badge {
+  padding: 8px 16px; border-radius: 8px; background: var(--color-brand-gold-bg); color: var(--color-grey-500);
+  font: 500 16px/20px var(--font-body); white-space: nowrap; flex-shrink: 0;
 }
-.btn-outline--filled { background: var(--color-brand-red); color: #fff; border-color: var(--color-brand-red); }
 
 @media (max-width: 767.98px) {
   .order-card { padding: 8px; gap: 8px; }
@@ -177,6 +198,7 @@
   .order-line__name { font-weight: 400; font-size: 13px; line-height: 16px; }
   .order-line__variant { font-weight: 300; font-size: 11px; line-height: 24px; }
   .order-line__price { font-size: 16px; line-height: 20px; }
+  .order-status-badge { padding: 4px 12px; font-size: 13px; line-height: 18px; }
 }
 
 /* ---------- Empty state ---------- */
@@ -195,7 +217,8 @@
 .address-card__remove { background: none; border: none; color: var(--color-grey-500); cursor: pointer; flex-shrink: 0; }
 
 .address-form__heading { font: 500 20px/23px var(--font-body); color: #000; margin: 0; }
-.address-form { display: flex; flex-direction: column; gap: 8px; max-width: 600px; }
+/* Form lấp đầy vùng trong 742px (node 853:10999), không phải 600px. */
+.address-form { display: flex; flex-direction: column; gap: 8px; max-width: 742px; }
 .address-form .form-field { margin-top: 8px; }
 .address-form .form-field:first-of-type { margin-top: 0; }
 .address-form .form-field__error { margin-top: -4px; }

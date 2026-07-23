@@ -1,38 +1,27 @@
 @model Hoaii.Web.Models.Account.OrderCardViewModel
-@* Order card — see design-specs/account/order-history.md *@
+@* Thẻ đơn hàng — Figma node 848:14779 (Frame 460): một hàng space-between, bên trái là dòng
+   sản phẩm (thumb + tên/biến thể/giá xếp dọc), bên phải là pill trạng thái. Figma KHÔNG có mã
+   đơn, ngày, tổng hay nút — và hai nút "Xem chi tiết"/"Mua lại" cũ đều href="#" (link chết,
+   chưa có trang chi tiết đơn), nên bỏ luôn. *@
 <div class="order-card">
-    <div class="order-card__header">
-        <div>
-            <span class="order-card__number">Mã đơn: #@Model.OrderNumber</span>
-            <span class="order-card__date">@Model.OrderDate.ToString("dd/MM/yyyy")</span>
-        </div>
-        <span class="order-status-badge order-status-badge--@Model.StatusVariant">@Model.StatusLabel</span>
-    </div>
-
     <div class="order-card__items">
         @foreach (var item in Model.Items)
         {
             <div class="order-line">
                 <div class="order-line__thumb" style="@(item.ThumbnailUrl is not null ? $"background-image:url('{item.ThumbnailUrl}')" : "")"></div>
                 <div class="order-line__info">
-                    <span class="order-line__name">@item.Name</span>
-                    @if (!string.IsNullOrEmpty(item.VariantLabel))
-                    {
-                        <span class="order-line__variant">@item.VariantLabel</span>
-                    }
+                    <div class="order-line__title">
+                        <span class="order-line__name">@item.Name</span>
+                        @if (!string.IsNullOrEmpty(item.VariantLabel))
+                        {
+                            <span class="order-line__variant">@item.VariantLabel</span>
+                        }
+                    </div>
+                    @* Figma chỉ hiện giá; giữ "× N" khi số lượng > 1 vì đó là thông tin thật cần thấy. *@
+                    <span class="order-line__price">@item.Price.ToString("N0")đ@(item.Quantity > 1 ? $" × {item.Quantity}" : "")</span>
                 </div>
-                @* Parenthesised — Razor reads a bare "x@item" as an email address and emits it literally. *@
-                <span class="order-line__price">@item.Price.ToString("N0")đ x@(item.Quantity)</span>
             </div>
         }
     </div>
-
-    <div class="order-card__footer">
-        <span class="order-card__total">Tổng: @Model.Total.ToString("N0")đ</span>
-        <a href="#" class="btn-outline">Xem chi tiết</a>
-        @if (Model.CanReorder)
-        {
-            <a href="#" class="btn-outline btn-outline--filled">Mua lại</a>
-        }
-    </div>
+    <span class="order-status-badge">@Model.StatusLabel</span>
 </div>

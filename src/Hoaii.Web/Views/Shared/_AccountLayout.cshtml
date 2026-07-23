@@ -32,6 +32,11 @@
     <a class="skip-link" href="#main">Bỏ qua, tới nội dung chính</a>
     <header class="account-nav">
         <div class="account-nav__inner">
+            @* Chỉ hiện trên mobile — mở drawer nav tài khoản (Figma node 1265:39388). Desktop
+               ẩn nút này, logo tự về mép trái. *@
+            <button type="button" class="account-nav__menu-btn" data-account-menu-open aria-label="Mở menu tài khoản" aria-expanded="false" aria-controls="account-drawer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
             <a class="account-nav__logo" href="/" aria-label="Hoài">
                 <img src="~/images/logo.svg" alt="Hoài" width="64" height="64" />
             </a>
@@ -48,6 +53,20 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/overlays.js" asp-append-version="true"></script>
+    @* Drawer nav tài khoản (chỉ dùng trên mobile). Nhỏ gọn nên để inline thay vì thêm file. *@
+    <script>
+        (function () {
+            var drawer = document.getElementById('account-drawer');
+            var openBtn = document.querySelector('[data-account-menu-open]');
+            if (!drawer || !openBtn) return;
+            var closeBtn = drawer.querySelector('[data-account-menu-close]');
+            function open() { drawer.classList.add('is-open'); document.body.style.overflow = 'hidden'; openBtn.setAttribute('aria-expanded', 'true'); }
+            function close() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; openBtn.setAttribute('aria-expanded', 'false'); }
+            openBtn.addEventListener('click', open);
+            if (closeBtn) closeBtn.addEventListener('click', close);
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drawer.classList.contains('is-open')) close(); });
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
