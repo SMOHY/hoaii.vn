@@ -70,15 +70,18 @@
 .footer-links-section {
   background: var(--color-brand-gold-bg);
   width: 100%;
-  padding: 80px var(--page-gutter) 120px;
+  /* Lề dọc giữ đúng Figma (80/120). Lề ngang KHÔNG dùng --page-gutter chung của site: gutter
+     đó co mạnh nên trên laptop 1440 vùng nội dung chỉ còn ~1080px, không đủ cho hàng ngang
+     brand + cụm cột (cần ~1179px), buộc phải xếp dọc — chính là chỗ khách chê. Ở đây dành sẵn
+     1179px cho hàng ngang rồi mới chia đôi phần dư làm lề, chặn trên 240px để ở màn 1920 vẫn ra
+     đúng vùng nội dung 1440px như Figma. Nhờ vậy brand + cột nằm ngang được xuống tới ~1280px. */
+  padding: 80px clamp(16px, (100% - 1179px) / 2, 240px) 120px;
   display: flex;
   justify-content: center;
 }
 /* Figma "Frame 89": rộng 1440, hai khối con — brand (422) và cụm cột (717) — cách nhau một
    khoảng 301px (422 + 301 + 717 = 1440). Dùng space-between để khoảng hở đó tự co theo bề rộng
-   thật thay vì ghim cứng 301px. flex-wrap để khi màn hình hẹp hơn ~1519px (lúc brand + cụm cột
-   không còn đủ chỗ nằm cạnh nhau) thì CẢ cụm cột tụt xuống dòng dưới nguyên khối — không tách
-   lẻ từng cột như bản cũ. */
+   thật thay vì ghim cứng 301px. */
 .footer-links-row {
   display: flex;
   align-items: flex-start;
@@ -86,7 +89,6 @@
   width: 100%;
   max-width: var(--content-max-width);
   gap: 40px;
-  flex-wrap: wrap;
 }
 
 .footer-brand {
@@ -171,10 +173,11 @@
 .footer-badge { width: 122px; height: 40px; padding-left: 8px; }
 .footer-badge img { width: 106px; height: 40px; object-fit: cover; }
 
-/* Khoảng tablet: dưới ~992px, vùng nội dung không còn đủ 717px cho cụm ba cột nằm ngang.
-   Cho cụm chiếm cả bề rộng và xếp dọc, tránh tràn hoặc rớt cột lộn xộn. Kiểu chữ vẫn giữ như
-   desktop, chỉ đổi cách xếp. */
-@media (max-width: 991.98px) {
+/* Dưới 1280px, ngay cả khi bỏ gần hết lề thì hàng ngang brand + cụm cột (≈1179px) cũng không
+   còn đủ chỗ. Từ đây brand xuống trên, cụm ba cột xuống dưới và mỗi cột chiếm cả bề rộng —
+   giống cách Figma xếp footer ở khung hẹp. Kiểu chữ vẫn như desktop, chỉ đổi cách xếp. */
+@media (max-width: 1279.98px) {
+  .footer-links-row { flex-wrap: wrap; }
   .footer-cols {
     flex-direction: column;
     gap: 24px;
