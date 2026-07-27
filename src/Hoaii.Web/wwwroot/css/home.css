@@ -632,7 +632,7 @@
   /* Figma fades ~171px each edge (nodes 1214:38912 overlays) — 171/1920 ≈ 8.9%. */
   mask-image: linear-gradient(to right, transparent 0, #000 8.9%, #000 91.1%, transparent 100%);
 }
-.customers-track { display: flex; gap: 24px; width: max-content; animation: home-marquee 80s linear infinite; }
+.customers-track { display: flex; gap: 24px; width: max-content; animation: home-marquee 140s linear infinite; }
 .customers-row:nth-child(even) .customers-track { animation-direction: reverse; }
 .logo-card { width: 200px; height: 100px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 /* Figma shows the logos desaturated (node 1214:38912). Per-logo opacity varies 60–100% in the
@@ -666,7 +666,7 @@
      track bleeding past the 430px frame), just at a smaller scale. Laying the cards
      out as a grid instead stacked all 108 of them into a 3200px column. */
   .customers-marquee { gap: 8px; }
-  .customers-track { gap: 8px; animation-duration: 56s; }
+  .customers-track { gap: 8px; animation-duration: 98s; }
   .logo-card { width: 132px; height: 66px; }
   .logo-card img { max-width: 108px; max-height: 46px; }
 }
