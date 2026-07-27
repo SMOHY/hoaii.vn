@@ -1,13 +1,28 @@
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Models.Page;
+using Hoaii.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hoaii.Web.Controllers;
 
-public class PageController(HoaiiDbContext db) : Controller
+public class PageController(HoaiiDbContext db, SiteSettingsService settings) : Controller
 {
+
+    /// <summary>Legal owner-info disclosure page. Reads live from Cài đặt trang instead of
+    /// duplicating the values into a PolicyPage, so it never drifts from what's set in admin.</summary>
+    public IActionResult OwnerInfo()
+    {
+        return View(new OwnerInfoViewModel
+        {
+            CompanyName = settings.Get(SiteSettingKeys.CompanyName),
+            Address = settings.Get(SiteSettingKeys.Address),
+            TaxCode = settings.Get(SiteSettingKeys.TaxCode),
+            Phone = settings.Get(SiteSettingKeys.ContactPhone),
+            Email = settings.Get(SiteSettingKeys.ContactEmail),
+        });
+    }
 
     public async Task<IActionResult> AboutUs()
     {

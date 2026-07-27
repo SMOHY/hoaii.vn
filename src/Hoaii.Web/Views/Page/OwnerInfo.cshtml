@@ -1,0 +1,26 @@
+@using Hoaii.Web.Models.Page
+@model OwnerInfoViewModel
+@{
+    ViewData["Title"] = "Thông tin chủ sở hữu";
+    ViewData["MetaDescription"] = "Thông tin pháp lý về chủ sở hữu website HOÀI.";
+}
+
+<div class="policy-page">
+    <p class="policy-breadcrumb">Trang chủ/Thông tin chủ sở hữu</p>
+    <h1 class="policy-title">THÔNG TIN CHỦ SỞ HỮU</h1>
+
+    <div class="policy-body">
+        <p>Theo quy định về thương mại điện tử, HOÀI công khai thông tin pháp lý của chủ sở hữu website như sau:</p>
+        <dl class="owner-info-list">
+            <div><dt>Tên thương nhân</dt><dd>@Model.CompanyName</dd></div>
+            <div><dt>Địa chỉ</dt><dd>@Model.Address</dd></div>
+            <div><dt>Mã số thuế</dt><dd>@Model.TaxCode</dd></div>
+            <div><dt>Số điện thoại</dt><dd>@Model.Phone</dd></div>
+            <div><dt>Email</dt><dd>@Model.Email</dd></div>
+        </dl>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/policy.css" asp-append-version="true" />
+}

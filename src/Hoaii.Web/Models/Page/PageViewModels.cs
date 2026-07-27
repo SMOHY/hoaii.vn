@@ -44,6 +44,15 @@ public class WholesaleFormModel
     public string? Message { get; set; }
 }
 
+public class OwnerInfoViewModel
+{
+    public required string CompanyName { get; init; }
+    public required string Address { get; init; }
+    public required string TaxCode { get; init; }
+    public required string Phone { get; init; }
+    public required string Email { get; init; }
+}
+
 public class PolicyPageViewModel
 {
     /// <summary>Page heading, e.g. "CHÍNH SÁCH ĐỔI TRẢ &amp; HOÀN TÁC".</summary>

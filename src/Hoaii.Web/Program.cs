@@ -195,6 +195,12 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.MapControllerRoute(
+    name: "owner-info",
+    pattern: "chinh-sach/thong-tin-chu-so-huu",
+    defaults: new { controller = "Page", action = "OwnerInfo" })
+    .WithStaticAssets();
+
+app.MapControllerRoute(
     name: "policy",
     pattern: "chinh-sach/{slug}",
     defaults: new { controller = "Page", action = "Policy" })

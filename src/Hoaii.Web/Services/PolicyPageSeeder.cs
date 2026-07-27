@@ -5,9 +5,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Hoaii.Web.Services;
 
 /// <summary>
-/// Seeds the four storefront policy pages into the database the first time the app runs against
-/// an empty PolicyPages table. The copy is transcribed from Figma (nodes 1246:42533, 1246:43442,
-/// 1246:43583, 1246:43724); once seeded it lives in the DB and the admin owns it.
+/// Seeds the storefront policy pages into the database. Runs on every startup but only inserts
+/// pages whose slug doesn't exist yet, so new pages added here later reach an already-seeded
+/// database without touching content an admin may have edited. The copy for the original four
+/// (trao-doi/giao-hang/dieu-khoan-su-dung/bao-mat) is transcribed from Figma (nodes 1246:42533,
+/// 1246:43442, 1246:43583, 1246:43724); the rest is compliance copy for the legally required
+/// storefront disclosures (pricing/payment, complaint handling, owner-info footer link).
 /// </summary>
 public static class PolicyPageSeeder
 {
@@ -17,10 +20,7 @@ public static class PolicyPageSeeder
 
     public static async Task EnsureSeedAsync(HoaiiDbContext db)
     {
-        if (await db.PolicyPages.AnyAsync())
-        {
-            return;
-        }
+        var existingSlugs = await db.PolicyPages.Select(p => p.Slug).ToListAsync();
 
         var pages = new List<PolicyPage>
         {
@@ -116,9 +116,60 @@ public static class PolicyPageSeeder
                     P("HOÀI xem việc bảo mật quyền riêng tư là nguyên tắc cốt lõi trong mọi trải nghiệm của khách hàng. Cảm ơn bạn đã tin tưởng trao gửi thông tin để HOÀI có cơ hội kết nối và phục vụ bạn một cách chu đáo nhất!"),
                 ],
             },
+            new()
+            {
+                Slug = "gia-thanh-toan",
+                Title = "CHÍNH SÁCH GIÁ & THANH TOÁN",
+                NavLabel = "Chính sách giá & thanh toán",
+                BreadcrumbLabel = "Trang chủ/Chính sách giá & thanh toán",
+                SortOrder = 5,
+                Blocks =
+                [
+                    H("I. Chính Sách Giá"),
+                    B("Giá bán sản phẩm niêm yết trên website đã bao gồm thuế giá trị gia tăng (nếu có) và được thể hiện bằng đồng Việt Nam (VNĐ)."),
+                    B("Giá có thể được điều chỉnh theo chương trình khuyến mãi hoặc biến động thị trường mà không cần báo trước; tuy nhiên đơn hàng đã được xác nhận sẽ giữ nguyên mức giá tại thời điểm đặt hàng."),
+                    B("Trường hợp phát sinh sai lệch giá do lỗi kỹ thuật hiển thị, HOÀI sẽ chủ động liên hệ để thông báo và cùng khách hàng thống nhất phương án xử lý (tiếp tục giao dịch theo giá đúng hoặc hủy đơn, hoàn tiền nếu đã thanh toán) trước khi giao hàng."),
+                    H("II. Phương Thức Thanh Toán"),
+                    P("Quý khách có thể lựa chọn một trong các hình thức thanh toán sau khi đặt hàng trên website:"),
+                    B("Thanh toán khi nhận hàng (COD)."),
+                    B("Chuyển khoản ngân hàng — thông tin tài khoản cụ thể được cung cấp tại bước thanh toán hoặc theo yêu cầu qua hotline."),
+                    B("Thanh toán trực tiếp tại cửa hàng/văn phòng của HOÀI."),
+                    B("Thanh toán qua cổng thanh toán trực tuyến (nếu được kích hoạt trên website)."),
+                    H("III. Xác Nhận Đơn Hàng & Hóa Đơn"),
+                    P("Đơn hàng được xem là hoàn tất khi quý khách nhận được xác nhận từ HOÀI qua email, điện thoại hoặc tin nhắn. Trường hợp cần xuất hóa đơn hoặc chứng từ kế toán, quý khách vui lòng cung cấp đầy đủ thông tin trước khi đơn hàng được giao."),
+                ],
+            },
+            new()
+            {
+                Slug = "khieu-nai",
+                Title = "CƠ CHẾ TIẾP NHẬN & GIẢI QUYẾT PHẢN ÁNH, KHIẾU NẠI",
+                NavLabel = "Giải quyết khiếu nại",
+                BreadcrumbLabel = "Trang chủ/Giải quyết khiếu nại",
+                SortOrder = 6,
+                Blocks =
+                [
+                    P("HOÀI luôn lắng nghe và trân trọng mọi phản ánh, góp ý từ khách hàng để không ngừng hoàn thiện chất lượng sản phẩm và dịch vụ."),
+                    H("I. Kênh Tiếp Nhận Phản Ánh, Khiếu Nại"),
+                    B("Hotline/Zalo: 0335006783."),
+                    B("Email: hoai@gmail.com."),
+                    B("Fanpage Facebook chính thức của HOÀI."),
+                    B("Trực tiếp tại địa chỉ: 945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội."),
+                    H("II. Thời Gian Tiếp Nhận & Phản Hồi"),
+                    B("HOÀI tiếp nhận và phản hồi ban đầu trong vòng 24 giờ làm việc kể từ khi nhận được phản ánh, khiếu nại."),
+                    B("Thời gian đưa ra phương án giải quyết cụ thể không quá 07 ngày làm việc kể từ ngày tiếp nhận đầy đủ thông tin, minh chứng liên quan."),
+                    H("III. Quy Trình Xử Lý"),
+                    B("Tiếp nhận thông tin qua hotline, email hoặc các kênh mạng xã hội."),
+                    B("Xác minh thông tin đơn hàng và nội dung phản ánh."),
+                    B("Đề xuất phương án xử lý (đổi trả, hoàn tiền, hỗ trợ khác) và trao đổi thống nhất với khách hàng."),
+                    B("Thực hiện phương án đã thống nhất và thông báo kết quả."),
+                    H("IV. Trường Hợp Chưa Thỏa Đáng"),
+                    P("Nếu chưa hài lòng với phương án xử lý, khách hàng có thể yêu cầu chuyển khiếu nại lên cấp quản lý trực tiếp của HOÀI để được xem xét lại. Trường hợp hai bên không đạt được thỏa thuận, khách hàng có quyền yêu cầu cơ quan quản lý nhà nước về bảo vệ quyền lợi người tiêu dùng hoặc tòa án có thẩm quyền giải quyết theo quy định của pháp luật Việt Nam."),
+                ],
+            },
         };
 
-        foreach (var page in pages)
+        var newPages = pages.Where(p => !existingSlugs.Contains(p.Slug)).ToList();
+        foreach (var page in newPages)
         {
             for (var i = 0; i < page.Blocks.Count; i++)
             {
@@ -126,7 +177,43 @@ public static class PolicyPageSeeder
             }
         }
 
-        db.PolicyPages.AddRange(pages);
+        if (newPages.Count > 0)
+        {
+            db.PolicyPages.AddRange(newPages);
+            await db.SaveChangesAsync();
+        }
+
+        await EnsureWarrantySectionAsync(db);
+    }
+
+    /// <summary>
+    /// The "trao-doi" (exchange/return) page originally had no warranty clause. Appends one the
+    /// first time this runs against a database where the page already exists without it, so it
+    /// reaches sites seeded before this section was written without duplicating on every restart.
+    /// </summary>
+    private static async Task EnsureWarrantySectionAsync(HoaiiDbContext db)
+    {
+        var page = await db.PolicyPages
+            .Include(p => p.Blocks)
+            .FirstOrDefaultAsync(p => p.Slug == "trao-doi");
+        if (page is null || page.Blocks.Any(b => b.Text.Contains("Bảo Hành")))
+        {
+            return;
+        }
+
+        var nextOrder = page.Blocks.Count == 0 ? 0 : page.Blocks.Max(b => b.SortOrder) + 1;
+        var warranty = new List<PolicyBlock>
+        {
+            H("V. Chính Sách Bảo Hành"),
+            P("Đối với các sản phẩm phụ kiện đi kèm có tính chất sử dụng lâu dài (bình, hộp, khung, vật phẩm trang trí...), HOÀI hỗ trợ bảo hành lỗi do nhà sản xuất trong vòng 30 ngày kể từ ngày nhận hàng, áp dụng với các lỗi kỹ thuật/vật liệu không do quá trình sử dụng, va đập hoặc bảo quản không đúng cách của khách hàng gây ra."),
+            P("Riêng đối với hoa tươi và các thành phần tươi sống trong giỏ/hộp quà, do đặc thù dễ hư hỏng theo thời gian, chính sách bảo hành không áp dụng; các vấn đề phát sinh ngay khi nhận hàng được xử lý theo Mục I và II ở trên."),
+        };
+        for (var i = 0; i < warranty.Count; i++)
+        {
+            warranty[i].SortOrder = nextOrder + i;
+        }
+
+        db.PolicyBlocks.AddRange(warranty.Select(b => { b.PolicyPageId = page.Id; return b; }));
         await db.SaveChangesAsync();
     }
 }

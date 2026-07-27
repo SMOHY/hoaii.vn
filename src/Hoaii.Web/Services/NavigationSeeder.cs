@@ -47,6 +47,8 @@ public static class NavigationSeeder
                         new() { Label = "Liên hệ", Url = "/lien-he", SortOrder = 0 },
                         new() { Label = "Chính sách trao đổi & hoàn tác", Url = "/chinh-sach/trao-doi", SortOrder = 1 },
                         new() { Label = "Chính sách giao nhận hàng hóa", Url = "/chinh-sach/giao-hang", SortOrder = 2 },
+                        new() { Label = "Chính sách giá & thanh toán", Url = "/chinh-sach/gia-thanh-toan", SortOrder = 3 },
+                        new() { Label = "Giải quyết khiếu nại", Url = "/chinh-sach/khieu-nai", SortOrder = 4 },
                     ],
                 },
                 new FooterMenuColumn
@@ -56,10 +58,32 @@ public static class NavigationSeeder
                     [
                         new() { Label = "Điều khoản sử dụng", Url = "/chinh-sach/dieu-khoan-su-dung", SortOrder = 0 },
                         new() { Label = "Chính sách bảo vệ dữ liệu cá nhân", Url = "/chinh-sach/bao-mat", SortOrder = 1 },
+                        new() { Label = "Thông tin chủ sở hữu", Url = "/chinh-sach/thong-tin-chu-so-huu", SortOrder = 2 },
                     ],
                 });
         }
+        else
+        {
+            await EnsureFooterLinkAsync(db, "HỖ TRỢ KHÁCH HÀNG", "Chính sách giá & thanh toán", "/chinh-sach/gia-thanh-toan", 3);
+            await EnsureFooterLinkAsync(db, "HỖ TRỢ KHÁCH HÀNG", "Giải quyết khiếu nại", "/chinh-sach/khieu-nai", 4);
+            await EnsureFooterLinkAsync(db, "CHÍNH SÁCH PHÁP LÝ", "Thông tin chủ sở hữu", "/chinh-sach/thong-tin-chu-so-huu", 2);
+        }
 
         await db.SaveChangesAsync();
+    }
+
+    /// <summary>Adds a footer link to an existing column if a link with that URL isn't already
+    /// there — lets new pages reach a footer that was seeded before they existed.</summary>
+    private static async Task EnsureFooterLinkAsync(HoaiiDbContext db, string columnTitle, string label, string url, int sortOrder)
+    {
+        var column = await db.FooterMenuColumns
+            .Include(c => c.Links)
+            .FirstOrDefaultAsync(c => c.Title == columnTitle);
+        if (column is null || column.Links.Any(l => l.Url == url))
+        {
+            return;
+        }
+
+        column.Links.Add(new FooterMenuLink { Label = label, Url = url, SortOrder = sortOrder });
     }
 }
