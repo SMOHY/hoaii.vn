@@ -482,47 +482,51 @@
   .custom-services__cta span { font-size: 16px; line-height: 20px; }
 }
 
-/* ---------- Câu chuyện trong từng sản phẩm (story banner) ---------- */
-.story-banner {
+/* ---------- Câu chuyện trong từng sản phẩm (story banner, reveal-on-scroll) ---------- */
+/* Modelled on thecrafthouse.vn's "revealed image" section: a tall wrapper with a sticky-pinned
+   stage inside it. Scrolling through the wrapper drives two custom properties set by home.js —
+   --story-grow (0→1, the video's clip-path opening up) and --story-hold (0→1, starts once grow
+   finishes, drives the caption fading in) — while the wrapper's own height is what makes the
+   stage stay pinned for that long. 220vh ≈ 100vh occupied by the sticky stage itself + ~70vh of
+   scroll to finish the grow + ~50vh held open afterwards before releasing to the next section. */
+.story-banner-wrap {
   position: relative;
+  height: 220vh;
+}
+.story-banner {
+  position: sticky;
+  top: 0;
   width: 100%;
-  aspect-ratio: 1920 / 1080;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #fff;
   overflow: hidden;
+  --story-grow: 0;
+  --story-hold: 0;
 }
-/* Figma node 1530:39223: a 184×103 media frame dead-centre of the 1920×1080 section, sitting
-   over the heading. Hovering the section grows it to fill the whole thing — behaviour given by
-   the client, not read from Figma (no Prototype data is exposed for this file). */
+/* Figma node 1530:39223: a 184×103 media frame dead-centre of the section, sitting over the
+   heading — reproduced here as a clip-path inset instead of a small width/height so it can grow
+   smoothly from a JS-driven scroll fraction. Open state is edge-to-edge on all four sides
+   (inset 0%) — object-fit: cover already crops the video to fill the 100vh stage, so an extra
+   clip-path inset on top of that was cutting real picture off the top/bottom.
+   At rest (--story-grow: 0) it's fully transparent — the heading must read cleanly with nothing
+   over it before the visitor starts scrolling — then fades in together with the growth, so it's
+   never both invisible-but-blocking and never covers text that hasn't already faded out. */
 .story-banner__video {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 9.583%;   /* 184 / 1920 */
-  height: 9.537%;  /* 103 / 1080 */
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: 2;
-  transition: width 3.6s ease, height 3.6s ease;
-}
-/* Grows to the same 240px side gutter the rest of the page uses (1440 of 1920), not edge to
-   edge; height follows the video's own 1.52 ratio so it stays uncropped. */
-.story-banner:hover .story-banner__video,
-.story-banner:focus-within .story-banner__video {
-  width: min(75%, 1440px);   /* 1440 / 1920, nhưng không vượt 1440 trên màn rộng */
-  height: 87.8%;   /* 948 / 1080 — keeps the video's aspect at that width */
+  opacity: var(--story-grow);
+  clip-path: inset(calc(45.2% * (1 - var(--story-grow))));
 }
 /* The heading sits dead centre, so the growing video would cover it half-way and leave the
-   ends poking out. Fade it before the video reaches it. */
-.story-banner__title { transition: opacity 1.2s ease; }
-.story-banner:hover .story-banner__title,
-.story-banner:focus-within .story-banner__title { opacity: 0; }
-
-@media (prefers-reduced-motion: reduce) {
-  .story-banner__video { transition: none; }
-}
+   ends poking out. Fade it out over the first half of the grow — by the time the video is
+   opaque enough to matter, the heading is already gone. */
 .story-banner__title {
   position: relative;
   z-index: 1;
@@ -530,7 +534,33 @@
   color: var(--color-brand-red);
   text-align: center;
   padding: 0 24px;
+  opacity: calc(1 - var(--story-grow) * 2);
 }
+/* New caption, fades in over the video once it's (almost) fully open and stays up through the
+   held/pinned tail of the scroll — see design discussion: text should "appear", not just the
+   old heading fading away. */
+.story-banner__caption {
+  position: absolute;
+  z-index: 3;
+  bottom: 8%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0 24px;
+  text-align: center;
+  font: 500 24px/32px var(--font-body);
+  color: var(--color-grey-50);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .45);
+  opacity: var(--story-hold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No scroll-jacking for these visitors: collapse the wrapper back to one screen and show the
+     end state (video open, caption up, heading gone) permanently instead of animating into it. */
+  .story-banner-wrap { height: auto; }
+  .story-banner { position: relative; --story-grow: 1; --story-hold: 1; }
+}
+
 .story-banner__title--desktop {
   display: block;
   font-size: 56px;
@@ -540,13 +570,13 @@
 .story-banner__title--mobile { display: none; }
 
 @media (max-width: 767.98px) {
-  .story-banner { aspect-ratio: 430 / 340; }
-  .story-banner__accent { left: 37.9%; top: 37.9%; width: 24.2%; height: 24.1%; }
+  .story-banner-wrap { height: 190vh; }
   .story-banner__title--desktop { display: none; }
   .story-banner__title--mobile {
     display: flex; flex-direction: column; gap: 4px;
     font-size: 28px; line-height: 36px;
   }
+  .story-banner__caption { font-size: 16px; line-height: 22px; bottom: 6%; }
 }
 
 /* ---------- Về Hoài (About) ---------- */
@@ -602,7 +632,7 @@
   /* Figma fades ~171px each edge (nodes 1214:38912 overlays) — 171/1920 ≈ 8.9%. */
   mask-image: linear-gradient(to right, transparent 0, #000 8.9%, #000 91.1%, transparent 100%);
 }
-.customers-track { display: flex; gap: 24px; width: max-content; animation: home-marquee 40s linear infinite; }
+.customers-track { display: flex; gap: 24px; width: max-content; animation: home-marquee 80s linear infinite; }
 .customers-row:nth-child(even) .customers-track { animation-direction: reverse; }
 .logo-card { width: 200px; height: 100px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 /* Figma shows the logos desaturated (node 1214:38912). Per-logo opacity varies 60–100% in the
@@ -636,7 +666,7 @@
      track bleeding past the 430px frame), just at a smaller scale. Laying the cards
      out as a grid instead stacked all 108 of them into a 3200px column. */
   .customers-marquee { gap: 8px; }
-  .customers-track { gap: 8px; animation-duration: 28s; }
+  .customers-track { gap: 8px; animation-duration: 56s; }
   .logo-card { width: 132px; height: 66px; }
   .logo-card img { max-width: 108px; max-height: 46px; }
 }

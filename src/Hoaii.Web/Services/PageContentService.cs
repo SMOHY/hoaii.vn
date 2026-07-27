@@ -65,6 +65,8 @@ public static class PageContentKeys
         new(Home, "story_banner_desktop", "Banner câu chuyện (desktop)", "CÂU CHUYỆN TRONG TỪNG SẢN PHẨM", FieldKind.Text),
         new(Home, "story_banner_mobile_1", "Banner câu chuyện (mobile — dòng 1)", "CÂU CHUYỆN", FieldKind.Text),
         new(Home, "story_banner_mobile_2", "Banner câu chuyện (mobile — dòng 2)", "TRONG TỪNG SẢN PHẨM", FieldKind.Text),
+        new(Home, "story_banner_caption", "Banner câu chuyện — dòng chữ hiện ra khi video mở hết cỡ",
+            "Mỗi sản phẩm là một câu chuyện HOÀI muốn kể cùng bạn", FieldKind.Text),
         new(Home, "about_heading", "Về Hoài — tiêu đề", "VỀ HOÀI", FieldKind.Text),
         new(Home, "about_subtitle", "Về Hoài — mô tả",
             "Khởi nguồn từ tình yêu dành cho di sản Việt Nam, HOÀI chọn hành trình gìn giữ và lan tỏa giá trị truyền thống thông qua những tặng phẩm văn hóa cao cấp. Bằng lăng kính của thế hệ trẻ, chúng tôi đưa nét đẹp xưa hòa cùng nhịp sống hôm nay, để ký ức, câu chuyện và tinh thần dân tộc được tiếp nối một cách mới mẻ, đầy cảm hứng qua ngôn ngữ thiết kế đương đại.", FieldKind.Multiline),

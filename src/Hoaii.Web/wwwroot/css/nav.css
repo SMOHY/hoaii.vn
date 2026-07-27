@@ -93,10 +93,19 @@ body.hero-overlay .nav-menu .item.is-open {
   text-decoration: none;
 }
 .nav-subbar-left img { width: 24px; height: 24px; }
-/* 12px red dot centred in a 24px transparent slot, so the text starts 36px in (Figma 908:16467). */
+/* 12px red dot centred in a 24px transparent slot, so the text starts 36px in (Figma 908:16467).
+   Blinks slowly to draw the eye to the announcement line next to it. */
 .nav-subbar-dot {
   width: 24px; height: 24px; flex: none;
   display: flex; align-items: center; justify-content: center;
+  animation: nav-subbar-dot-blink 2.4s ease-in-out infinite;
+}
+@keyframes nav-subbar-dot-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-subbar-dot { animation: none; }
 }
 
 .nav-desktop { position: relative; } /* anchors the mega-menu dropdown panels */

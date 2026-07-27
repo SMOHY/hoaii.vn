@@ -89,27 +89,62 @@
   dots.forEach(function (dot, i) { dot.addEventListener('click', function () { show(i); }); });
 })();
 
-// Story banner video — plays only while the section is hovered/focused, so a 1.6MB file is
-// never fetched for visitors who scroll past. The grow-to-fill motion itself lives in CSS.
+// Story banner — reveal-on-scroll (see the comment block in _StoryBanner.cshtml for how this
+// replaced the old hover-to-grow version, and home.css for what --story-grow/--story-hold do).
 (function () {
-  const banner = document.querySelector('[data-story-banner]');
+  const wrap = document.querySelector('[data-story-banner-wrap]');
+  const banner = wrap?.querySelector('[data-story-banner]');
   const video = banner?.querySelector('.story-banner__video');
-  if (!banner || !video) return;
+  if (!wrap || !banner || !video) return;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  function start() {
-    if (reduced.matches) return;
-    // preload="none" means the first hover has to fetch before it can play.
-    video.play().catch(function () { /* autoplay blocked — the poster stays up */ });
-  }
-  function stop() {
-    video.pause();
-    video.currentTime = 0;
-  }
+  // Fraction of the wrapper's pinned scroll range (0–1) at which the video finishes opening;
+  // the caption starts fading in a little before that point and is fully up by 1. Chosen so the
+  // open+captioned state holds for the tail ~40% of the pinned range before releasing — enough
+  // to read it without feeling stuck.
+  const GROW_END = 0.6;
+  const HOLD_START = 0.55;
 
-  banner.addEventListener('mouseenter', start);
-  banner.addEventListener('mouseleave', stop);
-  banner.addEventListener('focusin', start);
-  banner.addEventListener('focusout', stop);
+  if (!reduced.matches) {
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const rect = wrap.getBoundingClientRect();
+      const pinnedRange = rect.height - window.innerHeight;
+      let raw = pinnedRange > 0 ? -rect.top / pinnedRange : 0;
+      raw = Math.min(1, Math.max(0, raw));
+
+      const grow = Math.min(1, raw / GROW_END);
+      const hold = Math.min(1, Math.max(0, (raw - HOLD_START) / (1 - HOLD_START)));
+
+      banner.style.setProperty('--story-grow', grow);
+      banner.style.setProperty('--story-hold', hold);
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+
+    // preload="none" means playback only starts once fetched — kick that off (and stop it) as
+    // the section nears/leaves the viewport, so a 1.6MB file is never fetched for visitors who
+    // scroll straight past.
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => { /* autoplay blocked — the poster stays up */ });
+        } else {
+          video.pause();
+        }
+      });
+    }, { rootMargin: '50% 0px' });
+    io.observe(wrap);
+  }
 })();
