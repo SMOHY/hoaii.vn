@@ -6,7 +6,11 @@
 @{
     ViewData["Title"] = Model.Title;
     ViewData["MetaDescription"] = Model.Description;
-    ViewData["HeroOverlay"] = true;
+    // Overlay (nav trong suốt, chữ trắng) CHỈ hợp với hero carousel đỏ full-bleed bên dưới.
+    // Trang kiểu Banner là khối xám/trắng sáng (Figma node 1269:39703) — nav trắng sẽ vô hình
+    // trên đó, nên để nav đặc (nền trắng, chữ đậm) như bình thường.
+    var isBanner = Model.HeroStyle == Hoaii.Domain.Entities.CategoryHeroStyle.Banner;
+    ViewData["HeroOverlay"] = !isBanner;
     ViewData["PreloadImage"] = Model.BannerImageUrl ?? Model.HeroSlides.FirstOrDefault()?.ImageUrl;
     var hasSlides = Model.HeroSlides.Count > 0;
 

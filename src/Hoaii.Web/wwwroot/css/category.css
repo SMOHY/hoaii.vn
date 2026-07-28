@@ -401,7 +401,10 @@
    Eight of the ten listings open on this instead of the coverflow: a 1440x600 block inside the
    page gutters with the category name near its bottom-left. Figma has not placed a photograph
    behind any of the eight, so an empty banner renders the grey-100 block it draws. */
-.cat-banner { padding-top: 168px; background: #fff; }
+/* Nav của trang banner là nav ĐẶC, nằm trong luồng (không overlay) nên đã tự chiếm chỗ ở đầu
+   trang — banner không cần chừa 168px như trước (khoảng chừa đó chỉ để lách nav absolute của
+   chế độ overlay, mà trang banner không còn dùng). Chừa lại gây dải trắng dưới nav. */
+.cat-banner { padding-top: 0; background: #fff; }
 .cat-banner__inner {
   position: relative; margin: 0 var(--page-gutter); height: 600px; overflow: hidden;
   display: flex; align-items: flex-end; padding: 0 80px 56px;
@@ -415,7 +418,7 @@
 
 /* Mobile: the banner goes full-bleed and shortens, title 28px in (node 1265:31315). */
 @media (max-width: 767.98px) {
-  .cat-banner { padding-top: 92px; }
+  .cat-banner { padding-top: 0; } /* nav đặc trong luồng, không cần chừa (xem ghi chú desktop) */
   .cat-banner__inner { margin: 0; height: 400px; padding: 0 28px 24px; }
   .cat-banner__title { font: 400 32px/35px var(--font-display); }
 }
