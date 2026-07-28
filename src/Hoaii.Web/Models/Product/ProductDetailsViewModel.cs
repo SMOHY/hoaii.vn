@@ -35,6 +35,9 @@ public class BoxOptionViewModel
 {
     public required int Id { get; init; }
     public required string Label { get; init; }
+    // Giá bán đầy đủ của biến thể = Product.Price + variant.PriceModifier. Có sẵn ở đây để PDP
+    // đổi giá hiển thị khi khách chọn loại hộp, khớp với cách CartService tính (base + delta).
+    public required decimal Price { get; init; }
 }
 
 public class CollectionSectionViewModel

@@ -74,7 +74,7 @@ public class ProductController(HoaiiDbContext db) : Controller
                 : product.Description,
             GalleryImages = galleryImages,
             BoxOptions = product.Variants
-                .Select(v => new BoxOptionViewModel { Id = v.Id, Label = v.Name })
+                .Select(v => new BoxOptionViewModel { Id = v.Id, Label = v.Name, Price = product.Price + v.PriceModifier })
                 .ToList(),
             // Cùng lý do với FeatureBody bên dưới: trước đây chỗ này in ra "Thông tin thành phần
             // sẽ được cập nhật…", tức là khoe với khách rằng trang chưa làm xong. Tệ hơn, nhãn

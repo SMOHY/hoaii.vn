@@ -81,7 +81,9 @@
     <div class="pdp-info">
         <div class="pdp-title-block">
             <h1 class="pdp-title">@Model.Name.ToUpperInvariant()</h1>
-            <p class="pdp-price">@Model.Price.ToString("N0") VNĐ</p>
+            @* Khởi tạo theo giá của hộp đầu tiên (hộp được chọn mặc định), không phải giá gốc
+               thuần — nếu biến thể đầu có giá chênh thì lúc tải trang giá đã đúng ngay. *@
+            <p class="pdp-price">@((Model.BoxOptions.Count > 0 ? Model.BoxOptions[0].Price : Model.Price).ToString("N0")) VNĐ</p>
             <p class="pdp-price-note">@PageC.Get(PageContentKeys.Shop, "pdp_price_note")</p>
         </div>
 
@@ -96,7 +98,9 @@
                     @for (var i = 0; i < Model.BoxOptions.Count; i++)
                     {
                         var b = Model.BoxOptions[i];
-                        <button type="button" class="pdp-box-option @(i == 0 ? "selected" : "")" data-box-id="@b.Id">@b.Label</button>
+                        @* data-price mang chuỗi giá đã format sẵn (giữ định dạng VN "395.000"),
+                           để pdp.js chỉ việc thay text, không format lại ở client. *@
+                        <button type="button" class="pdp-box-option @(i == 0 ? "selected" : "")" data-box-id="@b.Id" data-price="@($"{b.Price:N0} VNĐ")">@b.Label</button>
                     }
                 </div>
             </div>

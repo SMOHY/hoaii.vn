@@ -21,15 +21,21 @@
   });
 
 
-  // Box type selection — keep the hidden variantId input (posted to /gio-hang/them) in sync.
+  // Box type selection — keep the hidden variantId input (posted to /gio-hang/them) in sync,
+  // and update the shown price to this variant's (base + delta), so the PDP matches the cart.
   var boxOptions = document.querySelectorAll('.pdp-box-option');
   var variantIdInput = document.getElementById('pdp-variant-id-input');
+  var priceEl = document.querySelector('.pdp-price');
   boxOptions.forEach(function (btn) {
     btn.addEventListener('click', function () {
       boxOptions.forEach(function (b) { b.classList.remove('selected'); });
       btn.classList.add('selected');
       if (variantIdInput) {
         variantIdInput.value = btn.getAttribute('data-box-id') || '';
+      }
+      var price = btn.getAttribute('data-price');
+      if (priceEl && price) {
+        priceEl.textContent = price;
       }
     });
   });
