@@ -94,18 +94,29 @@ body.hero-overlay .nav-menu .item.is-open {
 }
 .nav-subbar-left img { width: 24px; height: 24px; }
 /* 12px red dot centred in a 24px transparent slot, so the text starts 36px in (Figma 908:16467).
-   Blinks slowly to draw the eye to the announcement line next to it. */
+   Thay vì nhấp nháy opacity cả slot (thô), chấm đứng yên và một vòng sáng đỏ lan ra rồi mờ dần
+   phía sau — kiểu chỉ báo "có thông báo mới", nhẹ nhàng và cuốn mắt hơn. */
 .nav-subbar-dot {
   width: 24px; height: 24px; flex: none;
+  position: relative;
   display: flex; align-items: center; justify-content: center;
-  animation: nav-subbar-dot-blink 2.4s ease-in-out infinite;
 }
-@keyframes nav-subbar-dot-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .25; }
+/* Chấm thật nằm trên cùng, luôn hiện rõ. */
+.nav-subbar-dot > svg { position: relative; z-index: 1; }
+/* Vòng "ping" lan ra phía sau chấm rồi mờ hẳn, nghỉ một nhịp trước khi lặp. */
+.nav-subbar-dot::before {
+  content: "";
+  position: absolute; top: 50%; left: 50%;
+  width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  border-radius: 50%; background: #9F1F2F; z-index: 0;
+  animation: nav-subbar-dot-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes nav-subbar-dot-ping {
+  0%        { transform: scale(1);   opacity: 0.5; }
+  70%, 100% { transform: scale(2.6); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nav-subbar-dot { animation: none; }
+  .nav-subbar-dot::before { animation: none; }
 }
 
 .nav-desktop { position: relative; } /* anchors the mega-menu dropdown panels */
