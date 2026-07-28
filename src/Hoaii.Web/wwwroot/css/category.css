@@ -126,13 +126,17 @@
 /* ---------- Filter/Sort Bar ---------- */
 .filter-bar {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 16px 0 24px;
   gap: 24px;
   flex-wrap: wrap;
 }
-.filter-bar__heading { max-width: 722px; }
+/* Cho khối tiêu đề co lại (basis 0, không đòi cả chiều rộng max-content của đoạn mô tả dài) để
+   cụm Sắp xếp/Bộ lọc ở lại cùng hàng bên phải như Figma, thay vì bị đẩy xuống dưới. */
+.filter-bar { flex-wrap: nowrap; }
+.filter-bar__heading { flex: 1 1 0; min-width: 0; max-width: 722px; }
+.filter-bar__actions { flex: 0 0 auto; }
 .filter-bar__title { font: 500 32px/40px var(--font-body); color: var(--color-black); margin: 0; }
 .filter-bar__desc { font: 400 24px/32px var(--font-body); color: var(--color-grey-600); margin: 4px 0 0; }
 .filter-bar__actions { display: flex; align-items: center; gap: 24px; }
@@ -429,10 +433,12 @@
   .cat-banner__title { font-size: clamp(36px, 4.4vw, 70px); line-height: 1; }
 }
 
-/* Bản rộng ở khung hẹp: ảnh 840px cứng tràn ra ngoài từ khoảng 1200 trở xuống, và ở mobile
-   Figma xếp ảnh lên trên chữ. Đặt ở đây cùng chỗ với .promo-banner--wide để mọi trang dùng
-   biến thể này đều nhận được, không riêng hai trang landing. */
-@media (max-width: 1279.98px) {
+/* Bố cục pixel-cứng (ảnh 840 + chữ thụt 240) chỉ vừa đúng ở bề rộng thiết kế 1920. Dưới mức đó
+   ảnh 840 cứng không co, còn cột chữ lại bị padding-left = --page-gutter (180px ở 1440) nuốt hết
+   chỗ, nên chữ 32px bị nhồi vào cột ~180px và wrap thành cột cao nhòng — nhìn "quá to", lệch hẳn
+   Figma. Vì thế cho bố cục co giãn (hai cột chia đều, bỏ thụt chữ) áp cho MỌI màn dưới 1920,
+   không riêng ≤1280 như trước. */
+@media (max-width: 1919.98px) {
   .promo-banner--wide { padding: 60px var(--page-gutter); gap: 40px; }
   .promo-banner--wide .promo-banner__text { max-width: 100%; padding-left: 0; }
   .promo-banner--wide .promo-banner__image { flex: 1 1 0; min-width: 0; }
