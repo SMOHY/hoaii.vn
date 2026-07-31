@@ -45,7 +45,7 @@
     <h2 class="wholesale__heading">@T("wholesale_heading")</h2>
     <div class="wholesale__panel">
         <div class="wholesale__image">
-            <img src="@T("wholesale_image")" alt="Hộp quà HOÀI" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@((T("wholesale_image"), T("wholesale_image_mobile"), "Hộp quà HOÀI", (string?)null, true))" />
         </div>
         <form method="post" asp-action="Partners" class="wholesale__form">
             @Html.AntiForgeryToken()

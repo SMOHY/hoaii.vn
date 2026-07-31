@@ -24,7 +24,7 @@
         </div>
         <div class="contact-hero__aside">
             <div class="contact-hero__img">
-                <img src="@C("hero_image")" alt="Hộp quà HOÀI" />
+                <partial name="_ResponsiveImg" model="@((C("hero_image"), C("hero_image_mobile"), "Hộp quà HOÀI", (string?)null, false))" />
             </div>
             <p class="contact-hero__caption">@C("hero_caption")</p>
         </div>
@@ -35,9 +35,9 @@
     <h2 class="contact-section__heading">@C("address_heading")</h2>
     <div class="contact-address__row">
         <a class="contact-address__img" href="@C("map_url")" target="_blank" rel="noopener">
-            <img src="@C("map_image")" alt="Bản đồ tới HOÀI" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@((C("map_image"), C("map_image_mobile"), "Bản đồ tới HOÀI", (string?)null, true))" />
             @* Google Maps place card, overlaid top-left of the map (node 970:20952). *@
-            <img class="contact-address__map-card" src="@C("map_card_image")" alt="" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@((C("map_card_image"), C("map_card_image_mobile"), "", "contact-address__map-card", true))" />
         </a>
         <p class="contact-address__text">@contactAddress</p>
     </div>

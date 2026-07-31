@@ -31,6 +31,7 @@
                     @if (f.Kind == FieldKind.Multiline)
                     {
                         <textarea name="f[@f.Key]" rows="4">@Model[f.Key]</textarea>
+                        <p class="admin-field__hint" style="margin:4px 0 0;">Gắn link vào một cụm từ bằng cú pháp <code>[cụm từ](đường-dẫn)</code>, ví dụ: <code>[Khám phá](/san-pham/tinh-hoa-bac-bo)</code>.</p>
                     }
                     else
                     {

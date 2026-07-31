@@ -31,7 +31,7 @@
 
     <div class="about-page-hero__media">
         <div class="about-page-hero__img">
-            <img src="@T("hero_image")" alt="Đội ngũ HOÀI" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@((T("hero_image"), T("hero_image_mobile"), "Đội ngũ HOÀI", (string?)null, true))" />
         </div>
         <div class="about-page-hero__caption">
             <p class="about-page-hero__caption-label">@T("caption_label")</p>
@@ -45,7 +45,7 @@
     <div class="about-page-hero__story">
         <p class="about-page-hero__story-text">@ContentText.Lines(T("story"))</p>
         <div class="about-page-hero__story-img">
-            <img src="@T("story_image")" alt="Sản phẩm HOÀI" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@((T("story_image"), T("story_image_mobile"), "Sản phẩm HOÀI", (string?)null, true))" />
         </div>
     </div>
 </section>
@@ -73,12 +73,12 @@
     </div>
     @* Collage: one tall tile on the right, one wide tile above two small ones (node 792:24972). *@
     <div class="about-team__collage">
-        <div class="about-team__tile about-team__tile--wide"><img src="@T("team_img_wide")" alt="Đội ngũ HOÀI" loading="lazy" /></div>
+        <div class="about-team__tile about-team__tile--wide"><partial name="_ResponsiveImg" model="@((T("team_img_wide"), T("team_img_wide_mobile"), "Đội ngũ HOÀI", (string?)null, true))" /></div>
         <div class="about-team__smalls">
-            <div class="about-team__tile"><img src="@T("team_img_small_1")" alt="Đội ngũ HOÀI" loading="lazy" /></div>
-            <div class="about-team__tile"><img src="@T("team_img_small_2")" alt="Đội ngũ HOÀI" loading="lazy" /></div>
+            <div class="about-team__tile"><partial name="_ResponsiveImg" model="@((T("team_img_small_1"), T("team_img_small_1_mobile"), "Đội ngũ HOÀI", (string?)null, true))" /></div>
+            <div class="about-team__tile"><partial name="_ResponsiveImg" model="@((T("team_img_small_2"), T("team_img_small_2_mobile"), "Đội ngũ HOÀI", (string?)null, true))" /></div>
         </div>
-        <div class="about-team__tile about-team__tile--main"><img src="@T("team_img_main")" alt="Đội ngũ HOÀI" loading="lazy" /></div>
+        <div class="about-team__tile about-team__tile--main"><partial name="_ResponsiveImg" model="@((T("team_img_main"), T("team_img_main_mobile"), "Đội ngũ HOÀI", (string?)null, true))" /></div>
     </div>
 </section>
 

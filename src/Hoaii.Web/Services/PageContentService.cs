@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,22 @@ namespace Hoaii.Web.Services;
 public enum FieldKind { Text, Multiline, Image }
 
 /// <summary>Renders admin-entered multiline text safely: escape the HTML-significant characters,
-/// then turn newlines into &lt;br&gt;. Never emits raw user HTML. Unicode is left alone so Vietnamese
-/// stays readable in the source (WebUtility.HtmlEncode would turn it into numeric entities).</summary>
+/// turn <c>[cụm từ](/duong-dan)</c> into a real link, then turn newlines into &lt;br&gt;. Never
+/// emits raw admin HTML — only the one deliberate markdown-link pattern below becomes a tag, so
+/// there's no way to inject arbitrary markup through a CMS textarea. Unicode is left alone so
+/// Vietnamese stays readable in the source (WebUtility.HtmlEncode would turn it into numeric
+/// entities).</summary>
 public static class ContentText
 {
+    // Runs on the already-escaped string, so the captured "label" text is safe as-is. The URL is
+    // re-validated below — only relative paths and http(s) links are allowed, so a shop owner
+    // can't (accidentally or otherwise) produce a "javascript:" href.
+    private static readonly Regex LinkPattern = new(@"\[([^\]\r\n]+)\]\(([^)\s]+)\)", RegexOptions.Compiled);
+
+    private static bool IsSafeUrl(string url) =>
+        url.StartsWith('/') ||
+        Uri.TryCreate(url, UriKind.Absolute, out var abs) && (abs.Scheme == "http" || abs.Scheme == "https");
+
     public static Microsoft.AspNetCore.Html.IHtmlContent Lines(string? s)
     {
         var html = (s ?? "")
@@ -19,9 +32,16 @@ public static class ContentText
             .Replace("<", "&lt;")
             .Replace(">", "&gt;")
             .Replace("\"", "&quot;")
-            .Replace("'", "&#39;")
-            .Replace("\r\n", "\n")
-            .Replace("\n", "<br />");
+            .Replace("'", "&#39;");
+
+        html = LinkPattern.Replace(html, m =>
+        {
+            var label = m.Groups[1].Value;
+            var url = m.Groups[2].Value;
+            return IsSafeUrl(url) ? $"<a href=\"{url}\">{label}</a>" : m.Value;
+        });
+
+        html = html.Replace("\r\n", "\n").Replace("\n", "<br />");
         return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
 }
@@ -86,11 +106,14 @@ public static class PageContentKeys
         // ---------- Trang Liên hệ ----------
         new(Contact, "hero_title", "Tiêu đề hero", "LIÊN HỆ", FieldKind.Text),
         new(Contact, "hero_image", "Ảnh hero", "/images/contact/hero.jpg", FieldKind.Image),
+        new(Contact, "hero_image_mobile", "Ảnh hero (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(Contact, "hero_caption", "Chú thích hero", "Hãy liên hệ với chúng tôi", FieldKind.Text),
         new(Contact, "address_heading", "Tiêu đề mục địa chỉ", "Địa chỉ", FieldKind.Text),
         new(Contact, "map_url", "Link bản đồ", "https://maps.google.com/?q=945+Ngô+Gia+Tự,+Việt+Hưng,+Hà+Nội", FieldKind.Text),
         new(Contact, "map_image", "Ảnh bản đồ", "/images/contact/map.jpg", FieldKind.Image),
+        new(Contact, "map_image_mobile", "Ảnh bản đồ (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(Contact, "map_card_image", "Ảnh thẻ địa điểm", "/images/contact/map-card.png", FieldKind.Image),
+        new(Contact, "map_card_image_mobile", "Ảnh thẻ địa điểm (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(Contact, "methods_heading", "Tiêu đề mục liên hệ", "Liên hệ", FieldKind.Text),
         new(Contact, "method_1_title", "Thẻ 1 — tiêu đề", "TRÒ CHUYỆN TRỰC TIẾP", FieldKind.Text),
         new(Contact, "method_1_text", "Thẻ 1 — mô tả",
@@ -116,6 +139,7 @@ public static class PageContentKeys
         new(About, "hero_headline_mobile", "Tiêu đề hero (mobile)",
             "CHÚNG TÔI LÀ MỘT NHÓM THIẾT KẾ ĐỘC LẬP, ĐƯỢC THÀNH LẬP VÀO NĂM 2021 VÀ CÓ VĂN PHÒNG TẠI HÀ NỘI", FieldKind.Multiline),
         new(About, "hero_image", "Ảnh hero", "/images/about/hero.jpg", FieldKind.Image),
+        new(About, "hero_image_mobile", "Ảnh hero (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(About, "caption_label", "Nhãn chú thích", "KHỞI ĐẦU", FieldKind.Text),
         new(About, "caption_1", "Chú thích — đoạn 1",
             "Khởi nguồn từ tình yêu dành cho di sản Việt Nam, HOÀI chọn hành trình gìn giữ và lan tỏa giá trị truyền thống thông qua những tặng phẩm văn hóa cao cấp.", FieldKind.Multiline),
@@ -125,6 +149,7 @@ public static class PageContentKeys
         new(About, "story", "Câu chuyện (đoạn trống = xuống dòng)",
             "Văn hóa là một dòng chảy bất tận. Tại HOÀI, chúng tôi chọn đứng nơi giao lộ của thời gian để thực hiện một nhiệm vụ đơn giản nhưng bền bỉ: Gói ghém chân tình, viết tiếp dòng di sản.\n\nBằng lăng kính của thế hệ trẻ, chúng tôi đưa nét đẹp xưa hòa cùng nhịp sống hôm nay, để ký ức, câu chuyện và tinh thần dân tộc được tiếp nối một cách mới mẻ, đầy cảm hứng qua ngôn ngữ thiết kế đương đại.", FieldKind.Multiline),
         new(About, "story_image", "Ảnh câu chuyện", "/images/about/story.jpg", FieldKind.Image),
+        new(About, "story_image_mobile", "Ảnh câu chuyện (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(About, "foundation_heading", "Tiêu đề Nền tảng", "NỀN TẢNG THƯƠNG HIỆU", FieldKind.Text),
         new(About, "found_1_title", "Nền tảng 01 — tiêu đề", "Mục đích", FieldKind.Text),
         new(About, "found_1_body", "Nền tảng 01 — nội dung",
@@ -139,9 +164,13 @@ public static class PageContentKeys
         new(About, "team_subtitle", "Mô tả Đội ngũ",
             "Chúng tôi là những người trẻ cùng chung tình yêu dành cho văn hóa và thủ công Việt. Bằng sự thấu hiểu, tinh thần sáng tạo và sự chỉn chu trong từng chi tiết, đội ngũ HOÀI không ngừng kết nối giá trị truyền thống với nhịp sống đương đại, để mỗi sản phẩm trở thành một món quà mang theo câu chuyện, cảm xúc và dấu ấn riêng.", FieldKind.Multiline),
         new(About, "team_img_wide", "Ảnh đội ngũ — rộng", "/images/about/team-wide.jpg", FieldKind.Image),
+        new(About, "team_img_wide_mobile", "Ảnh đội ngũ — rộng (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(About, "team_img_small_1", "Ảnh đội ngũ — nhỏ 1", "/images/about/team-small-1.jpg", FieldKind.Image),
+        new(About, "team_img_small_1_mobile", "Ảnh đội ngũ — nhỏ 1 (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(About, "team_img_small_2", "Ảnh đội ngũ — nhỏ 2", "/images/about/team-small-2.jpg", FieldKind.Image),
+        new(About, "team_img_small_2_mobile", "Ảnh đội ngũ — nhỏ 2 (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(About, "team_img_main", "Ảnh đội ngũ — chính", "/images/about/team-main.jpg", FieldKind.Image),
+        new(About, "team_img_main_mobile", "Ảnh đội ngũ — chính (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
 
         // ---------- Hợp tác ----------
         new(Partners, "stats_heading", "Tiêu đề số liệu", "Thương hiệu Hoài tự hào với", FieldKind.Text),
@@ -153,6 +182,7 @@ public static class PageContentKeys
         new(Partners, "stat_3_label", "Số liệu 3 — nhãn", "Sản phẩm đã được gửi trao", FieldKind.Text),
         new(Partners, "wholesale_heading", "Tiêu đề mục mua sỉ", "Yêu cầu mua sỉ", FieldKind.Text),
         new(Partners, "wholesale_image", "Ảnh mục mua sỉ", "/images/partners/wholesale.jpg", FieldKind.Image),
+        new(Partners, "wholesale_image_mobile", "Ảnh mục mua sỉ (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
     ];
 
     public static IReadOnlyList<Field> ForPage(string page) => All.Where(f => f.Page == page).ToList();

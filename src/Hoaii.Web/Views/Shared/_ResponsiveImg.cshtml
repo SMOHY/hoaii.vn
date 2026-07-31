@@ -1,0 +1,18 @@
+@*
+    A CMS image field with an optional separate mobile crop. Pass (Src, MobileSrc, Alt, CssClass,
+    Lazy). MobileSrc is null/empty when the admin hasn't set one — in that case this renders a
+    plain <img>, identical to before; a <picture> wrapper is only added once a mobile override
+    actually exists, so it never changes markup for fields nobody has customised.
+*@
+@model (string Src, string? MobileSrc, string Alt, string? CssClass, bool Lazy)
+@if (string.IsNullOrWhiteSpace(Model.MobileSrc))
+{
+    <img src="@Model.Src" alt="@Model.Alt" class="@Model.CssClass" loading="@(Model.Lazy ? "lazy" : null)" />
+}
+else
+{
+    <picture>
+        <source media="(max-width: 767px)" srcset="@Model.MobileSrc" />
+        <img src="@Model.Src" alt="@Model.Alt" class="@Model.CssClass" loading="@(Model.Lazy ? "lazy" : null)" />
+    </picture>
+}
