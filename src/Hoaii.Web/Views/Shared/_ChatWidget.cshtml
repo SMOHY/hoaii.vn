@@ -2,6 +2,25 @@
 @inject SiteSettingsService Settings
 @{
     var telDigits = new string(Settings.Get(SiteSettingKeys.ContactPhone).Where(char.IsDigit).ToArray());
+
+    // Was hardcoded to the generic "https://m.me" (no page — opens Messenger's own homepage,
+    // not a chat). Derive the shop's actual m.me deep link from the Facebook Page URL already
+    // set in Cài đặt trang, so this button only needs the one Facebook field to be correct.
+    var messengerUrl = "https://m.me";
+    var fbUrl = Settings.Get(SiteSettingKeys.FacebookUrl);
+    if (Uri.TryCreate(fbUrl, UriKind.Absolute, out var fbUri))
+    {
+        var pageName = fbUri.AbsolutePath.Trim('/');
+        if (!string.IsNullOrEmpty(pageName) && !pageName.Contains("profile.php", StringComparison.OrdinalIgnoreCase))
+        {
+            messengerUrl = $"https://m.me/{pageName}";
+        }
+        else if (!string.IsNullOrEmpty(pageName))
+        {
+            // "profile.php?id=..." has no clean page-name segment for m.me — link to the Page itself.
+            messengerUrl = fbUrl;
+        }
+    }
 }
 <div class="chat-widget is-collapsed" data-chat-widget>
     <button class="bubble bubble--phone" type="button" aria-label="Gọi điện" onclick="location.href='tel:@telDigits'">
@@ -10,7 +29,7 @@
     <a class="bubble bubble--zalo" href="@Settings.Get(SiteSettingKeys.ZaloUrl)" target="_blank" rel="noopener" aria-label="Zalo">
         <img src="/images/icons/chat-zalo.png" alt="Zalo" width="36" height="36" />
     </a>
-    <a class="bubble bubble--messenger" href="https://m.me" target="_blank" rel="noopener" aria-label="Messenger">
+    <a class="bubble bubble--messenger" href="@messengerUrl" target="_blank" rel="noopener" aria-label="Messenger">
         <img src="/images/icons/chat-messenger.png" alt="Messenger" width="36" height="36" />
     </a>
     <button class="toggle" type="button" aria-label="Mở/đóng liên hệ nhanh">

@@ -3,6 +3,7 @@ using Hoaii.Web.Services;
 using Hoaii.Web.Services.Admin;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +82,19 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// MapStaticAssets() below only serves the fixed set of files known at build/publish time (it's
+// backed by the fingerprint manifest, same one tools/strip-compressed-assets.js patches) — it
+// never sees files MediaService writes to wwwroot/uploads at runtime. Without this, every
+// admin-uploaded image (media library, product photos, blog images) 404s and shows as a broken/
+// blank image on the storefront and in the picker, even though the upload itself "succeeded".
+Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, "uploads"));
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "uploads")),
+    RequestPath = "/uploads",
+});
+
 app.UseStatusCodePagesWithReExecute("/loi/{0}");
 app.UseRouting();
 
