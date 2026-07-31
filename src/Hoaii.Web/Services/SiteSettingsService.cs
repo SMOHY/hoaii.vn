@@ -15,6 +15,7 @@ public static class SiteSettingKeys
     public const string AnnouncementText = "announcement_text";
     public const string ZaloPhone = "zalo_phone";
     public const string ZaloUrl = "zalo_url";
+    public const string MessengerUrl = "messenger_url";
     public const string ContactEmail = "contact_email";
     public const string ContactPhone = "contact_phone";
     public const string Address = "address";
@@ -60,6 +61,7 @@ public static class SiteSettingKeys
         (ContactEmail, "Email liên hệ", "hoai@gmail.com", false, "contact"),
         (ZaloPhone, "Số Zalo", "0335006783", false, "contact"),
         (ZaloUrl, "Link Zalo", "https://zalo.me/0335006783", false, "contact"),
+        (MessengerUrl, "Link Messenger (widget chat nhanh)", "https://www.facebook.com/messages/t/107456420596977", false, "contact"),
         (OpeningHours, "Giờ làm việc", "09:00-18:00 (T2 - T7)", false, "contact"),
         (FacebookUrl, "Link Facebook", "https://facebook.com", false, "contact"),
         (InstagramUrl, "Link Instagram", "https://instagram.com", false, "contact"),
