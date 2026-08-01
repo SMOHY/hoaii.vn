@@ -4,6 +4,7 @@ using Hoaii.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hoaii.Infrastructure.Migrations
 {
     [DbContext(typeof(HoaiiDbContext))]
-    partial class HoaiiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260801120000_AddNavLinkParent")]
+    partial class AddNavLinkParent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1837,16 +1840,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Navigation("Column");
                 });
 
-            modelBuilder.Entity("Hoaii.Domain.Entities.MediaAsset", b =>
-                {
-                    b.HasOne("Hoaii.Domain.Entities.AdminUser", "UploadedByAdminUser")
-                        .WithMany()
-                        .HasForeignKey("UploadedByAdminUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("UploadedByAdminUser");
-                });
-
             modelBuilder.Entity("Hoaii.Domain.Entities.NavLink", b =>
                 {
                     b.HasOne("Hoaii.Domain.Entities.NavLink", "Parent")
@@ -1855,6 +1848,16 @@ namespace Hoaii.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Hoaii.Domain.Entities.MediaAsset", b =>
+                {
+                    b.HasOne("Hoaii.Domain.Entities.AdminUser", "UploadedByAdminUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedByAdminUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("UploadedByAdminUser");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.Order", b =>

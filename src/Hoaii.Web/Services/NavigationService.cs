@@ -31,7 +31,7 @@ public class NavigationService(HoaiiDbContext db, IMemoryCache cache)
                 .ToList();
 
             return new Snapshot(
-                links.Where(l => l.Placement == NavPlacement.Main)
+                links.Where(l => l.Placement == NavPlacement.Main && l.ParentId is null)
                     .Select(l => new NavMenuItem { Label = l.Label, Url = l.Url, HasDropdown = l.HasDropdown }).ToList(),
                 links.Where(l => l.Placement == NavPlacement.Sub)
                     .Select(l => new NavMenuItem { Label = l.Label, Url = l.Url }).ToList(),

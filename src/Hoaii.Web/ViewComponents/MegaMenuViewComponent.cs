@@ -146,6 +146,40 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             ],
         });
 
+        // Any other Main nav item marked "Dropdown" in Admin → Menu isn't one of the four panels
+        // above — those are hand-built from Figma. For everything else the admin's own submenu
+        // links (NavLink.Children) are the panel content, one plain column, no photo.
+        var builtInKeys = new HashSet<string>(OccasionSlugs.Select(PanelKey)) { "san-pham-chon-loc" };
+        var customDropdowns = await db.NavLinks
+            .Where(l => l.Placement == NavPlacement.Main && l.ParentId == null && l.HasDropdown)
+            .Include(l => l.Children.OrderBy(c => c.SortOrder))
+            .ToListAsync();
+
+        foreach (var parent in customDropdowns)
+        {
+            var key = parent.Url.Split('/').Last();
+            if (builtInKeys.Contains(key) || parent.Children.Count == 0)
+            {
+                continue;
+            }
+
+            panels.Add(new MegaMenuPanelViewModel
+            {
+                CategoryKey = key,
+                Title = parent.Label,
+                SeeAllUrl = parent.Url,
+                ImageUrl = null,
+                Columns =
+                [
+                    new MegaMenuColumnViewModel
+                    {
+                        Title = parent.Label,
+                        Links = parent.Children.Select(c => new MegaMenuLinkViewModel { Label = c.Label, Url = c.Url }).ToList(),
+                    },
+                ],
+            });
+        }
+
         return View(view, panels);
     }
 }

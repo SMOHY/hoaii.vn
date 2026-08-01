@@ -256,6 +256,14 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<NavLink>(entity =>
+        {
+            entity.HasMany(l => l.Children)
+                .WithOne(l => l.Parent)
+                .HasForeignKey(l => l.ParentId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         SeedCategories(modelBuilder);
         SeedProducts(modelBuilder);
         SeedProductVariants(modelBuilder);
