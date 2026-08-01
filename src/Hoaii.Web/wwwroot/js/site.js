@@ -129,13 +129,14 @@
     triggers.forEach(function (t) {
       if (!t.classList.contains('is-open')) return;
 
-      const panel = instant ? panelFor(t) : null;
-      if (panel) panel.classList.add('is-closing-instantly');
+      const panel = panelFor(t);
+      if (instant && panel) panel.classList.add('is-closing-instantly');
 
       t.classList.remove('is-open');
       t.setAttribute('aria-expanded', 'false');
+      if (panel) panel.classList.remove('is-open');
 
-      if (panel) {
+      if (instant && panel) {
         void panel.offsetHeight; // commit the collapsed height while transitions are off
         panel.classList.remove('is-closing-instantly');
       }
@@ -147,6 +148,7 @@
     closeAll(instant);
     trigger.classList.add('is-open');
     trigger.setAttribute('aria-expanded', 'true');
+    panelFor(trigger)?.classList.add('is-open');
     document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'mega-menu' }));
   }
 
@@ -167,6 +169,7 @@
         closeAll(true); // mở menu khác thì thay thẳng menu đang mở
         trigger.classList.add('is-open');
         trigger.setAttribute('aria-expanded', 'true');
+        panelFor(trigger)?.classList.add('is-open');
         document.dispatchEvent(new CustomEvent('nav-flyout:open', { detail: 'mega-menu' }));
       }
       // Ghim sau closeAll, vì closeAll tự xoá ghim.
