@@ -16,7 +16,9 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
     {
         ViewBag.TextFields = PageContentKeys.ForPage(PageContentKeys.Footer);
         ViewBag.TextValues = content.GetForEditing(PageContentKeys.Footer);
-        ViewBag.Main = await Db.NavLinks.Where(l => l.Placement == NavPlacement.Main).OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToListAsync();
+        ViewBag.Main = await Db.NavLinks.Where(l => l.Placement == NavPlacement.Main && l.ParentId == null)
+            .Include(l => l.Children.OrderBy(c => c.SortOrder))
+            .OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToListAsync();
         ViewBag.Sub = await Db.NavLinks.Where(l => l.Placement == NavPlacement.Sub).OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToListAsync();
         ViewBag.Columns = await Db.FooterMenuColumns.Include(c => c.Links.OrderBy(l => l.SortOrder)).OrderBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
         return View();
@@ -73,6 +75,46 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
         auth.Audit("Xóa liên kết menu", nameof(NavLink), id, x.Label);
         await Db.SaveChangesAsync();
         Done("Đã xóa liên kết.");
+        return RedirectToAction(nameof(Index));
+    }
+
+    // ---------- Submenu (dropdown children of a Main link) ----------
+    [HttpPost("/admin/menu/menu-con/luu")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubLinkSave(int id, int parentId, string label, string url, int sortOrder)
+    {
+        if (string.IsNullOrWhiteSpace(label) || string.IsNullOrWhiteSpace(url))
+        {
+            Fail("Nhãn và đường dẫn không được để trống.");
+            return RedirectToAction(nameof(Index));
+        }
+        var parent = await Db.NavLinks.FindAsync(parentId);
+        if (parent is null || parent.Placement != NavPlacement.Main || parent.ParentId is not null)
+        {
+            return NotFound();
+        }
+        var x = id == 0 ? new NavLink { Label = "", Url = "", Placement = NavPlacement.Main, ParentId = parentId } : await Db.NavLinks.FindAsync(id);
+        if (x is null) return NotFound();
+        x.Label = label.Trim();
+        x.Url = url.Trim();
+        x.SortOrder = sortOrder;
+        if (id == 0) Db.NavLinks.Add(x);
+        auth.Audit(id == 0 ? "Thêm mục menu con" : "Sửa mục menu con", nameof(NavLink), id == 0 ? null : id, label);
+        await Db.SaveChangesAsync();
+        Done("Đã lưu mục menu con.");
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("/admin/menu/menu-con/{id:int}/xoa")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubLinkDelete(int id)
+    {
+        var x = await Db.NavLinks.FindAsync(id);
+        if (x is null) return NotFound();
+        Db.NavLinks.Remove(x);
+        auth.Audit("Xóa mục menu con", nameof(NavLink), id, x.Label);
+        await Db.SaveChangesAsync();
+        Done("Đã xóa mục menu con.");
         return RedirectToAction(nameof(Index));
     }
 

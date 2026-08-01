@@ -6,7 +6,8 @@ public enum NavPlacement
     Sub,  // secondary bar (Về chúng tôi / Liên hệ / …)
 }
 
-/// <summary>A link in the header — either the main menu or the sub bar, ordered by SortOrder.</summary>
+/// <summary>A link in the header — either the main menu or the sub bar, ordered by SortOrder.
+/// A Main link with HasDropdown can own Children: the submenu links shown in its dropdown panel.</summary>
 public class NavLink
 {
     public int Id { get; set; }
@@ -15,6 +16,9 @@ public class NavLink
     public required string Url { get; set; }
     public bool HasDropdown { get; set; }
     public int SortOrder { get; set; }
+    public int? ParentId { get; set; }
+    public NavLink? Parent { get; set; }
+    public List<NavLink> Children { get; set; } = [];
 }
 
 public class FooterMenuColumn

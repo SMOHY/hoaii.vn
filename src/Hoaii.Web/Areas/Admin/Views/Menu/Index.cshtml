@@ -11,6 +11,12 @@
 
 @functions {
     const string Ph = "padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;";
+
+    // "Quà tết" / "Quà trung thu" / "Quà theo dịp" / "Sản phẩm chọn lọc" render hand-built
+    // dropdown panels sourced from Danh mục/Sản phẩm — menu con thêm ở đây sẽ không hiện ra
+    // trên site cho bốn mục này, nên UI phải nói rõ thay vì âm thầm bỏ qua.
+    static readonly HashSet<string> BuiltInDropdownKeys = ["qua-tet", "qua-trung-thu", "qua-theo-dip", "san-pham-chon-loc"];
+    static bool HasBuiltInPanel(string url) => BuiltInDropdownKeys.Contains(url.Split('/').Last());
 }
 
 <p style="color:var(--color-grey-500);margin:0 0 24px;">Sửa menu đầu trang (chính + phụ) và các cột chân trang. Thay đổi áp dụng ngay.</p>
@@ -36,6 +42,51 @@
                 <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
             </form>
         </div>
+        @if (l.HasDropdown && HasBuiltInPanel(l.Url))
+        {
+            <p style="margin:0 0 12px 24px;color:var(--color-grey-500);font-size:13px;">
+                Dropdown của "@l.Label" lấy dữ liệu từ Danh mục/Sản phẩm, không sửa được ở đây.
+            </p>
+        }
+        else if (l.HasDropdown)
+        {
+            <div style="margin:4px 0 12px 24px;padding:12px;border-left:2px solid var(--color-grey-200);">
+                <p class="admin-field__hint" style="margin:0 0 8px;">
+                    Menu con của "@l.Label" — các mục hiện trong dropdown khi hover/bấm vào mục này.
+                    @if (l.Children.Count == 0)
+                    {
+                        <text>Chưa có mục nào nên dropdown sẽ không hiện gì.</text>
+                    }
+                </p>
+                @foreach (var c in l.Children)
+                {
+                    <div class="admin-menu-row" style="margin-bottom:6px;">
+                        <form method="post" action="/admin/menu/menu-con/luu" class="admin-menu-row__form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <input type="hidden" name="parentId" value="@l.Id" />
+                            <input type="text" name="label" value="@c.Label" style="@Ph;flex:1;min-width:100px;" />
+                            <input type="text" name="url" value="@c.Url" style="@Ph;flex:1;min-width:120px;" />
+                            <input type="number" name="sortOrder" value="@c.SortOrder" style="@Ph;width:56px;" />
+                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+                        </form>
+                        <form method="post" action="/admin/menu/menu-con/@c.Id/xoa" data-confirm="Xóa mục menu con?">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </div>
+                }
+                <form method="post" action="/admin/menu/menu-con/luu" class="admin-menu-row__form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="0" />
+                    <input type="hidden" name="parentId" value="@l.Id" />
+                    <input type="text" name="label" placeholder="Nhãn mục con" style="@Ph;flex:1;min-width:100px;" />
+                    <input type="text" name="url" placeholder="/danh-muc/..." style="@Ph;flex:1;min-width:120px;" />
+                    <input type="number" name="sortOrder" value="@l.Children.Count" style="@Ph;width:56px;" />
+                    <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục con</button>
+                </form>
+            </div>
+        }
     }
     <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form" style="margin-top:8px;">
         @Html.AntiForgeryToken()

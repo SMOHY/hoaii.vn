@@ -413,6 +413,10 @@ body.hero-overlay .nav-menu .item.is-open {
    position:absolute so a 0-height panel can never push a sibling panel off-centre.
    "Ease in and out" = cubic-bezier(0.42, 0, 0.58, 1). */
 @media (min-width: 992px) {
+  /* Menu con thêm ở Admin > Menu không nằm trong 4 khoá dưới đây — vẫn cần một tốc độ mặc định,
+     đặt trước để 4 khoá cụ thể (cùng độ đặc trưng, đứng sau) ghi đè được. */
+  .mega-menu-wrap .mega-menu { --menu-duration: 0.1s; }
+
   .mega-menu-wrap [data-menu-panel="qua-tet"] { --menu-duration: 0.8s; }           /* node 1287:56680 */
   .mega-menu-wrap [data-menu-panel="qua-trung-thu"] { --menu-duration: 0.1s; }     /* node 1287:56777 */
   .mega-menu-wrap [data-menu-panel="qua-theo-dip"] { --menu-duration: 0.1s; } /* node 1287:56871 */
@@ -429,10 +433,7 @@ body.hero-overlay .nav-menu .item.is-open {
     transition: height var(--menu-duration) cubic-bezier(0.42, 0, 0.58, 1),
                 visibility 0s linear var(--menu-duration);
   }
-  .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"],
-  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"],
-  .nav-desktop:has([data-menu-trigger="qua-theo-dip"].is-open) [data-menu-panel="qua-theo-dip"],
-  .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] {
+  .mega-menu-wrap .mega-menu.is-open {
     height: 403px;
     visibility: visible;
     transition: height var(--menu-duration) cubic-bezier(0.42, 0, 0.58, 1), visibility 0s;
@@ -452,10 +453,7 @@ body.hero-overlay .nav-menu .item.is-open {
 
 @media (prefers-reduced-motion: reduce) {
   .mega-menu-wrap .mega-menu,
-  .nav-desktop:has([data-menu-trigger="qua-tet"].is-open) [data-menu-panel="qua-tet"],
-  .nav-desktop:has([data-menu-trigger="qua-trung-thu"].is-open) [data-menu-panel="qua-trung-thu"],
-  .nav-desktop:has([data-menu-trigger="qua-theo-dip"].is-open) [data-menu-panel="qua-theo-dip"],
-  .nav-desktop:has([data-menu-trigger="san-pham-chon-loc"].is-open) [data-menu-panel="san-pham-chon-loc"] {
+  .mega-menu-wrap .mega-menu.is-open {
     transition-duration: 0s;
     transition-delay: 0s;
   }
