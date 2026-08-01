@@ -27,7 +27,7 @@ namespace Hoaii.Infrastructure.Migrations
                 column: "ParentId",
                 principalTable: "NavLinks",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />

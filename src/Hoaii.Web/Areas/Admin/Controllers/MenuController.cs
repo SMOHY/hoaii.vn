@@ -69,8 +69,11 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> LinkDelete(int id)
     {
-        var x = await Db.NavLinks.FindAsync(id);
+        // ParentId → self is Restrict at the DB level (SQL Server won't allow a cascading FK on a
+        // self-reference), so any submenu items have to go first or this throws a FK violation.
+        var x = await Db.NavLinks.Include(l => l.Children).FirstOrDefaultAsync(l => l.Id == id);
         if (x is null) return NotFound();
+        Db.NavLinks.RemoveRange(x.Children);
         Db.NavLinks.Remove(x);
         auth.Audit("Xóa liên kết menu", nameof(NavLink), id, x.Label);
         await Db.SaveChangesAsync();

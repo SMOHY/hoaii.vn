@@ -1852,7 +1852,7 @@ namespace Hoaii.Infrastructure.Migrations
                     b.HasOne("Hoaii.Domain.Entities.NavLink", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Parent");
                 });

@@ -258,10 +258,13 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
 
         modelBuilder.Entity<NavLink>(entity =>
         {
+            // SQL Server refuses ON DELETE CASCADE on a self-referencing FK ("may cause cycles or
+            // multiple cascade paths", error 1785) — Restrict at the DB level; MenuController
+            // deletes a parent's Children explicitly before removing the parent itself.
             entity.HasMany(l => l.Children)
                 .WithOne(l => l.Parent)
                 .HasForeignKey(l => l.ParentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         SeedCategories(modelBuilder);
