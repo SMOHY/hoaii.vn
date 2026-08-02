@@ -28,7 +28,13 @@
   --color-grey-200: #DCDCDC;
   --color-grey-300: #BFBFBF;
   --color-grey-400: #9B9B9B;
-  --color-grey-500: #7A7A7A;
+  /* WF-023: trước là #7A7A7A — trên nền trắng chỉ đạt 4.29:1, dưới ngưỡng 4.5:1 của WCAG AA
+     cho chữ thường. Token này là màu chữ phụ dùng chung cho .contact-popup__body-copy,
+     .minicart__empty, .addon-sheet__variant, breadcrumb trang hiện tại và chữ trong ô nhập —
+     nên sửa một chỗ ở đây thay vì vá từng selector.
+     #767676 là xám tối thiểu đạt chuẩn trên nền trắng (4.54:1); lệch 4/255 mỗi kênh so với
+     màu cũ nên không nhìn ra khác biệt. Không phải token Figma nên không lệch thiết kế. */
+  --color-grey-500: #767676;
   --color-grey-600: #5A5A5A;
   --color-grey-700: #3C3C3C;
   --color-grey-800: #1C1C1C;
