@@ -42,7 +42,13 @@
 }
 .blog-card__date { font: 500 16px/20px var(--font-body); color: var(--color-grey-500); }
 
+.blog-body h2 {
+  font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.3;
+  color: #000; margin: 40px 0 16px;
+}
+
 @media (max-width: 767.98px) {
+  .blog-body h2 { font-size: 22px; margin: 32px 0 12px; }
   .blog-hero { padding-top: 100px; gap: 16px; }
   .blog-breadcrumb { padding: 0 16px; font: 400 13px/16px var(--font-body); }
   .blog-heading { font-size: 20px; line-height: 30px; }
