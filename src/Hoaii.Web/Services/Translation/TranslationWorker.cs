@@ -12,6 +12,9 @@ namespace Hoaii.Web.Services.Translation;
 /// </summary>
 public sealed class TranslationWorker : BackgroundService
 {
+    private const string GeminiEndpointPrefix =
+        "https://generativelanguage.googleapis.com/v1beta/models/";
+
     private const int BatchSize = 40;
 
     // Chờ một nhịp sau khi có chuỗi đầu tiên, cho những chuỗi còn lại của cùng trang đó kịp
@@ -133,7 +136,9 @@ public sealed class TranslationWorker : BackgroundService
         var client = _httpFactory.CreateClient();
         client.Timeout = TimeSpan.FromSeconds(90);
 
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent";
+        // Nối chuỗi thường chứ không dùng chuỗi nội suy: URL này chỉ có đúng một chỗ thay đổi,
+        // và viết nội suy đã từng làm lọt cặp ngoặc nhọn thừa vào giữa URL.
+        var url = GeminiEndpointPrefix + model + ":generateContent";
 
         using var request = new HttpRequestMessage(HttpMethod.Post, url)
         {
@@ -217,7 +222,7 @@ public sealed class TranslationWorker : BackgroundService
         if (translations is null) return result;
 
         // Model đôi khi trả thiếu hoặc thừa phần tử. Ghép theo chỉ số và bỏ phần lệch, còn hơn
-        // vt toàn bộ lô; những chuỗi không được ghép sẽ tự xếp hàng lại ở lần render sau.
+        // vứt toàn bộ lô; những chuỗi không được ghép sẽ tự xếp hàng lại ở lần render sau.
         if (translations.Length != batch.Count)
         {
             _log.LogWarning(
