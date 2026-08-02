@@ -1,7 +1,10 @@
+using System.Globalization;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Services;
 using Hoaii.Web.Services.Admin;
+using Hoaii.Web.Services.Translation;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
@@ -17,10 +20,32 @@ builder.Services.Configure<Microsoft.Extensions.WebEncoders.WebEncoderOptions>(o
     options.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(
         System.Text.Unicode.UnicodeRanges.All));
 
+// ---------- Đa ngôn ngữ: tiếng Việt mặc định, tiếng Anh tuỳ chọn ----------
+builder.Services.AddLocalization();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    // SupportedCultures (định dạng số, ngày, tiền) cố ý chỉ có "vi", trong khi
+    // SupportedUICultures (ngôn ngữ chữ hiển thị) mới có thêm "en". Tách hai cái này ra để bật
+    // tiếng Anh thì chữ đổi còn giá vẫn là "1.200.000 ₫" chứ không lật thành "₫1,200,000":
+    // shop bán trong nước và thu VNĐ, nên cách viết tiền không được chạy theo ngôn ngữ hiển thị.
+    options.SupportedCultures = new List<CultureInfo> { new("vi") };
+    options.SupportedUICultures = new List<CultureInfo> { new("vi"), new("en") };
+    options.DefaultRequestCulture = new RequestCulture(culture: "vi", uiCulture: "vi");
+
+    // Chỉ đọc cookie. Mặc định ASP.NET còn cắm thêm provider đọc header Accept-Language, mà phần
+    // lớn trình duyệt gửi "en-US" — để nguyên thì khách Việt vào lần đầu đã thấy tiếng Anh,
+    // ngược hẳn ý đồ. Ngôn ngữ chỉ đổi khi khách tự bấm nút.
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new CookieRequestCultureProvider(),
+    };
+});
+
 builder.Services.AddDbContext<HoaiiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();
 builder.Services.AddSession(options =>
@@ -37,6 +62,11 @@ builder.Services.AddScoped<SiteSettingsService>();
 builder.Services.AddScoped<NavigationService>();
 builder.Services.AddScoped<PageContentService>();
 builder.Services.AddScoped<EmailSender>();
+
+// Cache bản dịch dùng chung cho cả tiến trình nên phải là singleton; worker nền ăn theo hàng đợi
+// của chính singleton đó.
+builder.Services.AddSingleton<GeminiTranslator>();
+builder.Services.AddHostedService<TranslationWorker>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -96,6 +126,11 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseStatusCodePagesWithReExecute("/loi/{0}");
+
+// Phải đứng trước UseRouting: culture cần được chốt xong trước khi controller hay view chạy,
+// vì GeminiTranslator quyết định dịch hay không dựa trên CultureInfo.CurrentUICulture.
+app.UseRequestLocalization();
+
 app.UseRouting();
 
 app.UseSession();
