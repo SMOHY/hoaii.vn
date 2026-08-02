@@ -7,9 +7,11 @@
 
 .blog-featured { display: flex; gap: 24px; padding: 40px var(--page-gutter); border-bottom: 1px solid var(--color-grey-100); }
 .blog-featured__img {
-  flex: 1; height: 486px; border-radius: 4px; background-color: rgba(0, 0, 0, 0.2);
+  display: block; flex: 1; height: 486px; border-radius: 4px; background-color: rgba(0, 0, 0, 0.2);
   background-size: cover; background-position: center;
 }
+.blog-featured__title a { color: inherit; text-decoration: none; }
+.blog-featured__title a:hover { text-decoration: underline; }
 .blog-featured__body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 8px 0; }
 .blog-featured__top { display: flex; flex-direction: column; gap: 16px; }
 .blog-featured__category { font: 500 16px/20px var(--font-body); color: var(--color-brand-gold); }
