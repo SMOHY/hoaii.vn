@@ -1,10 +1,26 @@
 @using Hoaii.Web.Models.Layout
 @using Hoaii.Web.Services
+@using Hoaii.Web.Services.Translation
 @inject SiteSettingsService Settings
 @inject NavigationService Nav
+@inject GeminiTranslator T
 @{
     var mainMenu = Nav.MainMenu;
     var subNav = Nav.SubNavLinks;
+
+    var isEnglish = GeminiTranslator.IsEnglish;
+    // Đổi ngôn ngữ xong phải quay lại đúng trang đang đứng, không đá về trang chủ.
+    var returnUrl = Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString);
+
+    // Gom sẵn các nhãn vào biến: nhét @T.Localize("...") thẳng vào trong aria-label="..." là
+    // lồng dấu nháy kép trong dấu nháy kép, Razor phân tích rất dễ sai.
+    var tSearch = T.Localize("Tìm kiếm");
+    var tAccount = T.Localize("Tài khoản");
+    var tCart = T.Localize("Giỏ hàng");
+    var tMenu = T.Localize("Menu");
+    var tClose = T.Localize("Đóng");
+    var tCloseSearch = T.Localize("Đóng tìm kiếm");
+    var tSearchPlaceholder = T.Localize("Tìm kiếm một sản phẩm");
 }
 
 @* Icons below are inline SVG placeholders — replace with exported Figma assets under wwwroot/images/icons/. *@
@@ -21,12 +37,12 @@
                 <span class="nav-subbar-dot">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#9F1F2F"/></svg>
                 </span>
-                <span>@Settings.Get(SiteSettingKeys.AnnouncementText)</span>
+                <span>@T.Localize(Settings.Get(SiteSettingKeys.AnnouncementText))</span>
             </div>
             <div class="nav-subbar-right">
                 @foreach (var link in subNav)
                 {
-                    <a href="@link.Url">@link.Label</a>
+                    <a href="@link.Url">@T.Localize(link.Label)</a>
                 }
             </div>
         </div>
@@ -47,7 +63,7 @@
                     @* aria-controls points at the panel the MegaMenu view component renders for
                        this key, so screen readers can follow the trigger to the dropdown. *@
                     <button type="button" class="item" data-menu-trigger="@menuKey" aria-expanded="false" aria-controls="mega-menu-@menuKey">
-                        <span>@item.Label</span>
+                        <span>@T.Localize(item.Label)</span>
                         @if (item.HasDropdown)
                         {
                             @* Xnix/Line/Down_Arrow_5 (node 670:3200), mapped into a 16px box. *@
@@ -60,28 +76,38 @@
                 @* Icon geometry exported from Figma (Seach 908:16487, user 908:16488,
                    Shop 908:16489) — a ~18.7px vector centred in a 32px box. Strokes use
                    currentColor so the nav's light/dark variants keep recolouring them. *@
-                <button class="icon-btn" type="button" aria-label="Tìm kiếm" data-search-trigger aria-expanded="false">
+                <button class="icon-btn" type="button" aria-label="@tSearch" data-search-trigger aria-expanded="false">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M6.66663 14.3534C6.66666 10.6862 9.25724 7.5297 12.854 6.81441C16.4508 6.09912 20.0519 8.02423 21.4551 11.4124C22.8582 14.8005 21.6725 18.708 18.6231 20.7451C15.5738 22.7822 11.5101 22.3815 8.91729 19.788C7.47618 18.3465 6.66661 16.3917 6.66663 14.3534Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M22.0386 22.0391L25.3332 25.3337" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                <a class="icon-btn" href="/tai-khoan" aria-label="Tài khoản">
+                <a class="icon-btn" href="/tai-khoan" aria-label="@tAccount">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M21.3333 12.0003C21.3333 14.9458 18.9455 17.3337 16 17.3337C13.0544 17.3337 10.6666 14.9458 10.6666 12.0003C10.6666 9.05481 13.0544 6.66699 16 6.66699C17.4144 6.66699 18.771 7.2289 19.7712 8.22909C20.7714 9.22928 21.3333 10.5858 21.3333 12.0003Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M6.66663 25.333C11.3333 19.9997 20.6666 19.9997 25.3333 25.333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </a>
-                <a class="icon-btn nav-cart-btn" href="/gio-hang" aria-label="Giỏ hàng" data-minicart-open>
+                <a class="icon-btn nav-cart-btn" href="/gio-hang" aria-label="@tCart" data-minicart-open>
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M25.2415 15.9997L23.9215 21.333C22.8228 25.217 21.9215 26.3303 19.9601 26.5943C19.5222 26.6475 19.0812 26.6716 18.6401 26.6663H13.3601C12.919 26.6716 12.478 26.6475 12.0401 26.5943C10.0855 26.3277 9.17745 25.217 8.07879 21.333L6.75879 15.9997C6.10145 12.0183 9.09612 10.6783 12.0001 10.6663V9.49967C11.9547 7.24476 13.7452 5.37966 16.0001 5.33301C18.255 5.37966 20.0455 7.24476 20.0001 9.49967V10.6663C22.9041 10.6783 25.8975 12.017 25.2415 15.9997Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M20.0001 11.416C20.4143 11.416 20.7501 11.0802 20.7501 10.666C20.7501 10.2518 20.4143 9.91602 20.0001 9.91602V10.666V11.416ZM12.0001 9.91602C11.5859 9.91602 11.2501 10.2518 11.2501 10.666C11.2501 11.0802 11.5859 11.416 12.0001 11.416V10.666V9.91602ZM20.7501 13.3327C20.7501 12.9185 20.4143 12.5827 20.0001 12.5827C19.5859 12.5827 19.2501 12.9185 19.2501 13.3327H20.0001H20.7501ZM19.2501 14.666C19.2501 15.0802 19.5859 15.416 20.0001 15.416C20.4143 15.416 20.7501 15.0802 20.7501 14.666H20.0001H19.2501ZM12.7501 13.3327C12.7501 12.9185 12.4143 12.5827 12.0001 12.5827C11.5859 12.5827 11.2501 12.9185 11.2501 13.3327H12.0001H12.7501ZM11.2501 14.666C11.2501 15.0802 11.5859 15.416 12.0001 15.416C12.4143 15.416 12.7501 15.0802 12.7501 14.666H12.0001H11.2501ZM20.0001 10.666V9.91602H12.0001V10.666V11.416H20.0001V10.666ZM20.0001 13.3327H19.2501V14.666H20.0001H20.7501V13.3327H20.0001ZM12.0001 13.3327H11.2501V14.666H12.0001H12.7501V13.3327H12.0001Z" fill="currentColor"/>
                     </svg>
                     <span class="nav-cart-badge" data-cart-badge hidden>0</span>
                 </a>
-                <button class="nav-lang" type="button" aria-label="Ngôn ngữ">
-                    VN/<span class="en">EN</span>
-                </button>
+                @* Trước đây đây là một <button> trống rỗng: không handler, không route, không
+                   cookie — bấm vào không xảy ra gì cả. Giờ là link thật sang /ngon-ngu/{culture}.
+                   Vẫn giữ nguyên hình dạng markup cũ để không phải sửa nav.css: .nav-lang đã có
+                   text-decoration:none, và .nav-lang .en { opacity:.5 } được dùng lại để làm mờ
+                   bên CHƯA chọn thay vì luôn luôn làm mờ EN. *@
+                @if (isEnglish)
+                {
+                    <a class="nav-lang" href="/ngon-ngu/vi?returnUrl=@returnUrl" hreflang="vi" aria-label="Chuyển sang tiếng Việt"><span class="en">VN</span>/EN</a>
+                }
+                else
+                {
+                    <a class="nav-lang" href="/ngon-ngu/en?returnUrl=@returnUrl" hreflang="en" aria-label="Switch to English">VN/<span class="en">EN</span></a>
+                }
             </div>
         </div>
     </div>
@@ -91,8 +117,8 @@
        /tim-kiem. The input still submits a normal GET to that page. *@
     <div class="search-flyout-wrap" data-search-flyout hidden>
         <form class="search-flyout" action="/tim-kiem" method="get" role="search">
-            <input class="search-flyout__input" type="text" name="q" placeholder="Tìm kiếm một sản phẩm" autocomplete="off" data-search-input />
-            <button type="button" class="search-flyout__close" aria-label="Đóng tìm kiếm" data-search-close>
+            <input class="search-flyout__input" type="text" name="q" placeholder="@tSearchPlaceholder" autocomplete="off" data-search-input />
+            <button type="button" class="search-flyout__close" aria-label="@tCloseSearch" data-search-close>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
         </form>
@@ -105,7 +131,7 @@
     </div>
     <div class="nav-m-main">
         <div class="nav-m-main-inner">
-            <button class="nav-m-hamburger" type="button" aria-label="Menu" data-nav-drawer-open aria-expanded="false" aria-controls="nav-drawer">
+            <button class="nav-m-hamburger" type="button" aria-label="@tMenu" data-nav-drawer-open aria-expanded="false" aria-controls="nav-drawer">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2"/></svg>
             </button>
             <a href="/" aria-label="Hoài">
@@ -113,10 +139,10 @@
                 <img class="nav-m-logo nav-logo__light" src="/images/logo-white.svg" alt="" width="36" height="36" aria-hidden="true" />
             </a>
             <div class="nav-m-icons">
-                <button class="icon-btn" type="button" aria-label="Tìm kiếm" onclick="location.href='/tim-kiem'">
+                <button class="icon-btn" type="button" aria-label="@tSearch" onclick="location.href='/tim-kiem'">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M5 10.7653C5.00003 8.01487 6.94296 5.64752 9.64053 5.11105C12.3381 4.57459 15.039 6.01842 16.0913 8.55953C17.1437 11.1006 16.2544 14.0313 13.9674 15.5591C11.6804 17.0869 8.63257 16.7863 6.688 14.8413C5.60716 13.7601 4.99998 12.294 5 10.7653Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5291 16.5293L19.0001 19.0003" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
-                <a class="icon-btn nav-cart-btn" href="/gio-hang" aria-label="Giỏ hàng" data-minicart-open>
+                <a class="icon-btn nav-cart-btn" href="/gio-hang" aria-label="@tCart" data-minicart-open>
                     <svg width="16" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.931 11.9997L17.941 15.9997C17.117 18.9127 16.441 19.7477 14.97 19.9457C14.6416 19.9856 14.3108 20.0037 13.98 19.9997H10.02C9.68917 20.0037 9.35844 19.9856 9.03 19.9457C7.564 19.7457 6.883 18.9127 6.059 15.9997L5.069 11.9997C4.576 9.01373 6.822 8.00872 9 7.99973V7.12473C8.96596 5.43354 10.3088 4.03472 12 3.99973C13.6912 4.03472 15.034 5.43354 15 7.12473V7.99973C17.178 8.00872 19.423 9.01273 18.931 11.9997Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 8.74976C15.4142 8.74976 15.75 8.41397 15.75 7.99976C15.75 7.58554 15.4142 7.24976 15 7.24976V7.99976V8.74976ZM9 7.24976C8.58579 7.24976 8.25 7.58554 8.25 7.99976C8.25 8.41397 8.58579 8.74976 9 8.74976V7.99976V7.24976ZM15.75 9.99976C15.75 9.58554 15.4142 9.24976 15 9.24976C14.5858 9.24976 14.25 9.58554 14.25 9.99976H15H15.75ZM14.25 10.9998C14.25 11.414 14.5858 11.7498 15 11.7498C15.4142 11.7498 15.75 11.414 15.75 10.9998H15H14.25ZM9.75 9.99976C9.75 9.58554 9.41421 9.24976 9 9.24976C8.58579 9.24976 8.25 9.58554 8.25 9.99976H9H9.75ZM8.25 10.9998C8.25 11.414 8.58579 11.7498 9 11.7498C9.41421 11.7498 9.75 11.414 9.75 10.9998H9H8.25ZM15 7.99976V7.24976H9V7.99976V8.74976H15V7.99976ZM15 9.99976H14.25V10.9998H15H15.75V9.99976H15ZM9 9.99976H8.25V10.9998H9H9.75V9.99976H9Z" fill="currentColor"/></svg>
                     <span class="nav-cart-badge" data-cart-badge hidden>0</span>
                 </a>
@@ -128,12 +154,22 @@
 <div class="nav-drawer" id="nav-drawer" data-nav-drawer>
     <div class="nav-drawer__backdrop"></div>
     <div class="nav-drawer__panel">
-        <button class="nav-drawer__close" type="button" aria-label="Đóng" data-nav-drawer-close>&times;</button>
+        <button class="nav-drawer__close" type="button" aria-label="@tClose" data-nav-drawer-close>&times;</button>
         @await Component.InvokeAsync("MegaMenu", new { view = "Drawer" })
         <div class="nav-drawer__links">
             @foreach (var link in subNav)
             {
-                <a href="@link.Url">@link.Label</a>
+                <a href="@link.Url">@T.Localize(link.Label)</a>
+            }
+            @* Bản mobile trước giờ không có nút đổi ngôn ngữ nào cả — nút VN/EN chỉ nằm ở nav
+               desktop, mà nav desktop bị ẩn hẳn dưới 768px. *@
+            @if (isEnglish)
+            {
+                <a href="/ngon-ngu/vi?returnUrl=@returnUrl" hreflang="vi">Tiếng Việt</a>
+            }
+            else
+            {
+                <a href="/ngon-ngu/en?returnUrl=@returnUrl" hreflang="en">English</a>
             }
         </div>
     </div>
