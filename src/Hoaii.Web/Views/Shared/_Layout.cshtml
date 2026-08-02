@@ -73,6 +73,9 @@
     @await RenderSectionAsync("Styles", required: false)
     @* Last, so the touch-target sizes win over the page stylesheets without !important. *@
     <link rel="stylesheet" href="~/css/touch.css" asp-append-version="true" />
+    @* Undoes the banner and body offset the Google Translate widget injects. Loaded after
+       touch.css so its overrides sit at the end of the cascade. *@
+    <link rel="stylesheet" href="~/css/google-translate.css" asp-append-version="true" />
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
@@ -100,11 +103,20 @@
     <partial name="_ContactPopup" />
     @await Component.InvokeAsync("MiniCart")
 
+    @* Mount point for the Google Translate widget. It has to exist in the DOM before
+       element.js runs, and it has to stay visible to CSS — google-translate.css moves it
+       off-screen rather than hiding it, because display:none stops the widget working. *@
+    <div id="google_translate_element" aria-hidden="true"></div>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/overlays.js" asp-append-version="true"></script>
     <script src="~/js/cart-live.js" asp-append-version="true"></script>
     <script src="~/js/addon-sheet.js" asp-append-version="true"></script>
     <script src="~/js/form-validate.js" asp-append-version="true"></script>
+    @* Must load before element.js: it defines the googleTranslateElementInit callback that
+       element.js invokes via its ?cb= parameter. *@
+    <script src="~/js/lang-switch.js" asp-append-version="true"></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

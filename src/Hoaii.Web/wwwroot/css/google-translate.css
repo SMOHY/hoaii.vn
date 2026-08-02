@@ -1,0 +1,51 @@
+/* Dọn giao diện mà Google Website Translator tự chèn vào trang.
+
+   Widget mặc định coi như nó sở hữu phần đỉnh trang: chèn một iframe banner
+   cao 40px và đẩy tài liệu xuống bằng thuộc tính `top` inline trên <body>.
+   Nav của site này là position:absolute; top:0 trên các trang có hero
+   (body.hero-overlay), nên phần đẩy đó khiến nav nằm đè lên banner. */
+
+iframe.skiptranslate,
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+/* Hoàn tác đúng hai dòng inline mà widget ghi vào để chừa chỗ cho banner. */
+body {
+    top: 0 !important;
+}
+
+html {
+    margin-top: 0 !important;
+}
+
+/* Ô select của widget không bao giờ hiển thị, nhưng phải còn trong DOM —
+   đặt display:none lên điểm gắn thì widget ngừng hoạt động. Đẩy ra ngoài
+   khung nhìn thay vì ẩn. */
+#google_translate_element {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Google tô nền vàng lên đoạn đã dịch khi rê chuột và hiện bong bóng gợi ý
+   bản dịch khác. Trên một site có thiết kế riêng thì hai thứ đó trông như lỗi. */
+.goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+}
+
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip {
+    display: none !important;
+}
+
+/* Widget bọc mỗi đoạn văn bản đã dịch trong thẻ <font> kèm style nền. */
+font[style] {
+    background: none !important;
+    box-shadow: none !important;
+}
