@@ -150,10 +150,10 @@ public static class PolicyPageSeeder
                 [
                     P("HOÀI luôn lắng nghe và trân trọng mọi phản ánh, góp ý từ khách hàng để không ngừng hoàn thiện chất lượng sản phẩm và dịch vụ."),
                     H("I. Kênh Tiếp Nhận Phản Ánh, Khiếu Nại"),
-                    B("Hotline/Zalo: 0335006783."),
+                    B("Hotline: 0941686682 / Zalo: 0833598268."),
                     B("Email: hoai@gmail.com."),
                     B("Fanpage Facebook chính thức của HOÀI."),
-                    B("Trực tiếp tại địa chỉ: 945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội."),
+                    B("Trực tiếp tại địa chỉ: Nhà 10 ngõ 32 Sài Đồng, Phường Phúc Lợi, TP. Hà Nội."),
                     H("II. Thời Gian Tiếp Nhận & Phản Hồi"),
                     B("HOÀI tiếp nhận và phản hồi ban đầu trong vòng 24 giờ làm việc kể từ khi nhận được phản ánh, khiếu nại."),
                     B("Thời gian đưa ra phương án giải quyết cụ thể không quá 07 ngày làm việc kể từ ngày tiếp nhận đầy đủ thông tin, minh chứng liên quan."),

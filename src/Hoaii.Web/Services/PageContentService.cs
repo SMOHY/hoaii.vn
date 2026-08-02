@@ -109,7 +109,7 @@ public static class PageContentKeys
         new(Contact, "hero_image_mobile", "Ảnh hero (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(Contact, "hero_caption", "Chú thích hero", "Hãy liên hệ với chúng tôi", FieldKind.Text),
         new(Contact, "address_heading", "Tiêu đề mục địa chỉ", "Địa chỉ", FieldKind.Text),
-        new(Contact, "map_url", "Link bản đồ", "https://maps.google.com/?q=945+Ngô+Gia+Tự,+Việt+Hưng,+Hà+Nội", FieldKind.Text),
+        new(Contact, "map_url", "Link bản đồ", "https://maps.google.com/?q=Nhà+10+ngõ+32+Sài+Đồng,+Phường+Phúc+Lợi,+Hà+Nội", FieldKind.Text),
         new(Contact, "map_image", "Ảnh bản đồ", "/images/contact/map.jpg", FieldKind.Image),
         new(Contact, "map_image_mobile", "Ảnh bản đồ (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
         new(Contact, "map_card_image", "Ảnh thẻ địa điểm", "/images/contact/map-card.png", FieldKind.Image),

@@ -21,6 +21,8 @@ public class PageController(HoaiiDbContext db, SiteSettingsService settings) : C
             TaxCode = settings.Get(SiteSettingKeys.TaxCode),
             Phone = settings.Get(SiteSettingKeys.ContactPhone),
             Email = settings.Get(SiteSettingKeys.ContactEmail),
+            RepresentativeName = settings.Get(SiteSettingKeys.RepresentativeName),
+            RepresentativeTitle = settings.Get(SiteSettingKeys.RepresentativeTitle),
         });
     }
 

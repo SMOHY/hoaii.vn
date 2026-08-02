@@ -21,6 +21,8 @@ public static class SiteSettingKeys
     public const string Address = "address";
     public const string CompanyName = "company_name";
     public const string TaxCode = "tax_code";
+    public const string RepresentativeName = "representative_name";
+    public const string RepresentativeTitle = "representative_title";
     public const string OpeningHours = "opening_hours";
     public const string FacebookUrl = "facebook_url";
     public const string InstagramUrl = "instagram_url";
@@ -54,9 +56,11 @@ public static class SiteSettingKeys
     [
         (Hotline, "Hotline (thanh trên cùng)", "0941.686.682", false, "contact"),
         (AnnouncementText, "Dòng thông báo (thanh phụ)", "Đón đầu xu hướng quà tặng với những vật phẩm thiết kế mới nhất vừa ra mắt!", false, "contact"),
-        (CompanyName, "Tên công ty", "Công ty TNHH MTV Hoài", false, "contact"),
-        (Address, "Địa chỉ", "945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội", false, "contact"),
-        (TaxCode, "Mã số thuế", "0101287214", false, "contact"),
+        (CompanyName, "Tên công ty", "Công ty Cổ phần Thương mại & Dịch vụ Hoài", false, "contact"),
+        (Address, "Địa chỉ", "Nhà 10 ngõ 32 Sài Đồng, Phường Phúc Lợi, TP. Hà Nội", false, "contact"),
+        (TaxCode, "Mã số thuế", "0110471675", false, "contact"),
+        (RepresentativeName, "Người đại diện pháp luật", "Nguyễn Hoài Thương", false, "contact"),
+        (RepresentativeTitle, "Chức vụ người đại diện", "Tổng giám đốc", false, "contact"),
         (ContactPhone, "Số điện thoại liên hệ", "0335006783", false, "contact"),
         (ContactEmail, "Email liên hệ", "hoai@gmail.com", false, "contact"),
         (ZaloPhone, "Số Zalo", "0335006783", false, "contact"),
