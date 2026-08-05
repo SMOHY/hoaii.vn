@@ -17,16 +17,26 @@
     <div class="blog-featured__img" style="height:420px; @(Model.ImageUrl is not null ? $"background-image:url('{Model.ImageUrl}')" : "")"></div>
 
     @* Body first (what the admin writes in the CMS); the excerpt is only a fallback for
-       legacy posts that have no content yet. Paragraphs split on blank lines. *@
+       legacy posts that have no content yet. Blocks split on blank lines; a block starting
+       with "## " renders as an <h2> instead of a <p> — a lightweight markdown convention so
+       long-form SEO articles get real section structure without a full rich-text editor. *@
     @{
         var body = !string.IsNullOrWhiteSpace(Model.Content) ? Model.Content : Model.Excerpt;
     }
     @if (!string.IsNullOrWhiteSpace(body))
     {
-        <div style="margin-top:32px; font:300 20px/1.6 var(--font-body); color:var(--color-grey-700);">
-            @foreach (var para in body.Replace("\r\n", "\n").Split("\n\n", StringSplitOptions.RemoveEmptyEntries))
+        <div class="blog-body" style="margin-top:32px; font:300 20px/1.6 var(--font-body); color:var(--color-grey-700);">
+            @foreach (var block in body.Replace("\r\n", "\n").Split("\n\n", StringSplitOptions.RemoveEmptyEntries))
             {
-                <p style="margin:0 0 20px; white-space:pre-line;">@para.Trim()</p>
+                var trimmed = block.Trim();
+                if (trimmed.StartsWith("## "))
+                {
+                    <h2>@trimmed[3..].Trim()</h2>
+                }
+                else
+                {
+                    <p style="margin:0 0 20px; white-space:pre-line;">@trimmed</p>
+                }
             }
         </div>
     }

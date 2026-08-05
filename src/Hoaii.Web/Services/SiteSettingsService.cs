@@ -21,6 +21,15 @@ public static class SiteSettingKeys
     public const string Address = "address";
     public const string CompanyName = "company_name";
     public const string TaxCode = "tax_code";
+    public const string RepresentativeName = "representative_name";
+    public const string RepresentativeTitle = "representative_title";
+    public const string RepresentativeName2 = "representative_name_2";
+    public const string RepresentativeTitle2 = "representative_title_2";
+    public const string RegistrationNumber = "registration_number";
+    public const string RegistrationFirstDate = "registration_first_date";
+    public const string RegistrationAmendDate = "registration_amend_date";
+    public const string RegistrationIssuedBy = "registration_issued_by";
+    public const string WebsiteOperatorName = "website_operator_name";
     public const string OpeningHours = "opening_hours";
     public const string FacebookUrl = "facebook_url";
     public const string InstagramUrl = "instagram_url";
@@ -54,11 +63,20 @@ public static class SiteSettingKeys
     [
         (Hotline, "Hotline (thanh trên cùng)", "0941.686.682", false, "contact"),
         (AnnouncementText, "Dòng thông báo (thanh phụ)", "Đón đầu xu hướng quà tặng với những vật phẩm thiết kế mới nhất vừa ra mắt!", false, "contact"),
-        (CompanyName, "Tên công ty", "Công ty TNHH MTV Hoài", false, "contact"),
-        (Address, "Địa chỉ", "945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội", false, "contact"),
-        (TaxCode, "Mã số thuế", "0101287214", false, "contact"),
+        (CompanyName, "Tên công ty", "Công ty Cổ phần Thương mại & Dịch vụ Hoài", false, "contact"),
+        (Address, "Địa chỉ", "Số 667 Nguyễn Văn Linh, Phường Phúc Lợi, TP. Hà Nội", false, "contact"),
+        (TaxCode, "Mã số thuế", "0110471675", false, "contact"),
+        (RepresentativeName, "Người đại diện pháp luật", "Nguyễn Hoài Thương", false, "contact"),
+        (RepresentativeTitle, "Chức vụ người đại diện", "Tổng giám đốc", false, "contact"),
+        (RepresentativeName2, "Người đại diện pháp luật (2)", "Nguyễn Hữu Lương", false, "contact"),
+        (RepresentativeTitle2, "Chức vụ người đại diện (2)", "Chủ tịch Hội đồng quản trị", false, "contact"),
+        (RegistrationNumber, "Số Giấy chứng nhận ĐKDN", "0110471675", false, "contact"),
+        (RegistrationFirstDate, "Ngày đăng ký lần đầu", "08/09/2023", false, "contact"),
+        (RegistrationAmendDate, "Ngày đăng ký thay đổi gần nhất", "02/06/2026", false, "contact"),
+        (RegistrationIssuedBy, "Nơi cấp", "Phòng Đăng ký kinh doanh và Tài chính doanh nghiệp — Sở Tài chính Thành phố Hà Nội", false, "contact"),
+        (WebsiteOperatorName, "Người chịu trách nhiệm quản lý, vận hành website", "Nguyễn Hoài Thương", false, "contact"),
         (ContactPhone, "Số điện thoại liên hệ", "0335006783", false, "contact"),
-        (ContactEmail, "Email liên hệ", "hoai@gmail.com", false, "contact"),
+        (ContactEmail, "Email liên hệ", "hoaiquatangthietke@gmail.com", false, "contact"),
         (ZaloPhone, "Số Zalo", "0335006783", false, "contact"),
         (ZaloUrl, "Link Zalo", "https://zalo.me/0335006783", false, "contact"),
         (MessengerUrl, "Link Messenger (widget chat nhanh)", "https://www.facebook.com/messages/t/107456420596977", false, "contact"),

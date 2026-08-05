@@ -141,7 +141,10 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
         // "Sản phẩm chọn lọc" has no literal Category row — it's a cross-category featured view
         // (CategoryController.FeaturedSlug). Its columns (Sản phẩm/Bán chạy nhất/Nổi bật) are
         // MegaMenuColumn rows same as every other panel, seeded once by
-        // MegaMenuColumnMigrationSeeder from what used to be hard-coded here.
+        // MegaMenuColumnMigrationSeeder from what used to be hard-coded here. The seeder (and the
+        // admin's own category checklist) excludes "ruou" — see MenuController's categories
+        // list / CategoriesController — so the conditional alcohol business line stays off the
+        // storefront the same way it used to via the old hard-coded productTypes filter.
         var sanPhamColumns = await ResolveCustomColumnsAsync("san-pham-chon-loc");
 
         // No literal category to pull a photo from here, so use whichever product an admin

@@ -14,11 +14,11 @@
 @if (Model.Featured is not null)
 {
     <div class="blog-featured">
-        <div class="blog-featured__img" style="@(Model.Featured.ImageUrl is not null ? $"background-image:url('{Model.Featured.ImageUrl}')" : "")"></div>
+        <a class="blog-featured__img" href="@Model.Featured.Url" aria-label="@Model.Featured.Title" style="@(Model.Featured.ImageUrl is not null ? $"background-image:url('{Model.Featured.ImageUrl}')" : "")"></a>
         <div class="blog-featured__body">
             <div class="blog-featured__top">
                 <span class="blog-featured__category">@Model.Featured.Category</span>
-                <h2 class="blog-featured__title">@Model.Featured.Title</h2>
+                <h2 class="blog-featured__title"><a href="@Model.Featured.Url">@Model.Featured.Title</a></h2>
                 @if (!string.IsNullOrEmpty(Model.Featured.Excerpt))
                 {
                     <p class="blog-featured__excerpt">@Model.Featured.Excerpt</p>

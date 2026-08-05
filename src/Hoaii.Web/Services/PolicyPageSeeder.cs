@@ -103,18 +103,7 @@ public static class PolicyPageSeeder
                 NavLabel = "Chính sách bảo vệ dữ liệu cá nhân",
                 BreadcrumbLabel = "Trang chủ/Chính sách bảo vệ dữ liệu cá nhân",
                 SortOrder = 4,
-                Blocks =
-                [
-                    P("Tại HOÀI, sự tin tưởng và an tâm của bạn là tài sản trân quý nhất. Khi bạn ghé thăm không gian trực tuyến của chúng tôi, đăng ký tài khoản, gửi gắm thông tin để nhận những chia sẻ hay thực hiện mua sắm, mọi dữ liệu bạn để lại đều được bảo mật tuyệt đối. Văn bản này được lập ra nhằm minh bạch cách HOÀI tiếp nhận, trân trọng và bảo vệ những thông tin cá nhân của bạn."),
-                    H("1. Mục Đích Sử Dụng Thông Tin"),
-                    P("HOÀI chỉ sử dụng thông tin cá nhân do bạn cung cấp trong các trường hợp thật sự cần thiết:"),
-                    B("Đồng hành và hỗ trợ bạn trong suốt quá trình trải nghiệm dịch vụ và sản phẩm trên website."),
-                    B("Lắng nghe, giải đáp các thắc mắc hoặc gửi tới bạn những tài liệu, câu chuyện và thông tin hữu ích mà bạn quan tâm."),
-                    H("2. Cam Kết Bảo Mật & An Toàn Giao Dịch"),
-                    P("Chúng tôi đặt sự an toàn của khách hàng lên hàng đầu. HOÀI áp dụng các biện pháp tối ưu nhất để bảo vệ thông tin cá nhân cũng như các giao dịch thanh toán của bạn trước mọi sự can thiệp trái phép."),
-                    P("Mọi dữ liệu phát sinh từ giao dịch giữa bạn và HOÀI sẽ được bảo mật hoàn toàn, ngoại trừ trường hợp bắt buộc phải cung cấp theo yêu cầu bằng văn bản chính thức từ các cơ quan pháp luật có thẩm quyền."),
-                    P("HOÀI xem việc bảo mật quyền riêng tư là nguyên tắc cốt lõi trong mọi trải nghiệm của khách hàng. Cảm ơn bạn đã tin tưởng trao gửi thông tin để HOÀI có cơ hội kết nối và phục vụ bạn một cách chu đáo nhất!"),
-                ],
+                Blocks = BaoMatV2Blocks(),
             },
             new()
             {
@@ -146,25 +135,34 @@ public static class PolicyPageSeeder
                 NavLabel = "Giải quyết khiếu nại",
                 BreadcrumbLabel = "Trang chủ/Giải quyết khiếu nại",
                 SortOrder = 6,
-                Blocks =
-                [
-                    P("HOÀI luôn lắng nghe và trân trọng mọi phản ánh, góp ý từ khách hàng để không ngừng hoàn thiện chất lượng sản phẩm và dịch vụ."),
-                    H("I. Kênh Tiếp Nhận Phản Ánh, Khiếu Nại"),
-                    B("Hotline/Zalo: 0335006783."),
-                    B("Email: hoai@gmail.com."),
-                    B("Fanpage Facebook chính thức của HOÀI."),
-                    B("Trực tiếp tại địa chỉ: 945 Ngô Gia Tự, P. Việt Hưng, TP. Hà Nội."),
-                    H("II. Thời Gian Tiếp Nhận & Phản Hồi"),
-                    B("HOÀI tiếp nhận và phản hồi ban đầu trong vòng 24 giờ làm việc kể từ khi nhận được phản ánh, khiếu nại."),
-                    B("Thời gian đưa ra phương án giải quyết cụ thể không quá 07 ngày làm việc kể từ ngày tiếp nhận đầy đủ thông tin, minh chứng liên quan."),
-                    H("III. Quy Trình Xử Lý"),
-                    B("Tiếp nhận thông tin qua hotline, email hoặc các kênh mạng xã hội."),
-                    B("Xác minh thông tin đơn hàng và nội dung phản ánh."),
-                    B("Đề xuất phương án xử lý (đổi trả, hoàn tiền, hỗ trợ khác) và trao đổi thống nhất với khách hàng."),
-                    B("Thực hiện phương án đã thống nhất và thông báo kết quả."),
-                    H("IV. Trường Hợp Chưa Thỏa Đáng"),
-                    P("Nếu chưa hài lòng với phương án xử lý, khách hàng có thể yêu cầu chuyển khiếu nại lên cấp quản lý trực tiếp của HOÀI để được xem xét lại. Trường hợp hai bên không đạt được thỏa thuận, khách hàng có quyền yêu cầu cơ quan quản lý nhà nước về bảo vệ quyền lợi người tiêu dùng hoặc tòa án có thẩm quyền giải quyết theo quy định của pháp luật Việt Nam."),
-                ],
+                Blocks = KhieuNaiV2Blocks(),
+            },
+            new()
+            {
+                Slug = "quyen-va-nghia-vu",
+                Title = "QUYỀN VÀ NGHĨA VỤ CỦA CÁC BÊN",
+                NavLabel = "Quyền và nghĩa vụ các bên",
+                BreadcrumbLabel = "Trang chủ/Quyền và nghĩa vụ các bên",
+                SortOrder = 7,
+                Blocks = QuyenNghiaVuBlocks(),
+            },
+            new()
+            {
+                Slug = "uu-tien-hien-thi",
+                Title = "CHÍNH SÁCH VỀ ƯU TIÊN HIỂN THỊ",
+                NavLabel = "Chính sách ưu tiên hiển thị",
+                BreadcrumbLabel = "Trang chủ/Chính sách ưu tiên hiển thị",
+                SortOrder = 8,
+                Blocks = UuTienHienThiBlocks(),
+            },
+            new()
+            {
+                Slug = "dieu-kien-han-che",
+                Title = "CÁC ĐIỀU KIỆN, HẠN CHẾ TRONG VIỆC CUNG CẤP HÀNG HÓA",
+                NavLabel = "Điều kiện, hạn chế cung cấp hàng hóa",
+                BreadcrumbLabel = "Trang chủ/Điều kiện, hạn chế cung cấp hàng hóa",
+                SortOrder = 9,
+                Blocks = DieuKienHanCheBlocks(),
             },
         };
 
@@ -184,6 +182,36 @@ public static class PolicyPageSeeder
         }
 
         await EnsureWarrantySectionAsync(db);
+        await ReplaceBlocksIfOutdatedAsync(db, "bao-mat", "Điều 5 Nghị định 248/2026", BaoMatV2Blocks);
+        await ReplaceBlocksIfOutdatedAsync(db, "khieu-nai", "Điều 7 Nghị định 248/2026", KhieuNaiV2Blocks);
+    }
+
+    /// <summary>
+    /// bao-mat and khieu-nai already existed in the DB before the TMĐT notification-dossier
+    /// rewrite, so the add-if-missing logic above never touches their content. This replaces a
+    /// page's blocks wholesale the first time it runs against a database whose content predates
+    /// the given marker string (unique to the new copy) — safe to leave running forever since it
+    /// no-ops once the marker is present.
+    /// </summary>
+    private static async Task ReplaceBlocksIfOutdatedAsync(HoaiiDbContext db, string slug, string marker, Func<List<PolicyBlock>> newBlocks)
+    {
+        var page = await db.PolicyPages
+            .Include(p => p.Blocks)
+            .FirstOrDefaultAsync(p => p.Slug == slug);
+        if (page is null || page.Blocks.Any(b => b.Text.Contains(marker)))
+        {
+            return;
+        }
+
+        db.PolicyBlocks.RemoveRange(page.Blocks);
+        var blocks = newBlocks();
+        for (var i = 0; i < blocks.Count; i++)
+        {
+            blocks[i].SortOrder = i;
+            blocks[i].PolicyPageId = page.Id;
+        }
+        db.PolicyBlocks.AddRange(blocks);
+        await db.SaveChangesAsync();
     }
 
     /// <summary>
@@ -216,4 +244,200 @@ public static class PolicyPageSeeder
         db.PolicyBlocks.AddRange(warranty.Select(b => { b.PolicyPageId = page.Id; return b; }));
         await db.SaveChangesAsync();
     }
+
+    /// <summary>Điều 5 Nghị định 248/2026 — must cover all 8 items a–h or the TMĐT notification
+    /// dossier gets bounced back for "insufficient content" (this happened once already).</summary>
+    private static List<PolicyBlock> BaoMatV2Blocks() =>
+    [
+        P("Tại HOÀI, sự tin tưởng của bạn là điều chúng tôi trân trọng nhất. Chính sách này minh bạch cách HOÀI thu thập, sử dụng, lưu trữ và bảo vệ dữ liệu cá nhân của bạn, được xây dựng theo quy định của pháp luật Việt Nam về dữ liệu và bảo vệ dữ liệu cá nhân, bao gồm Luật Thương mại điện tử số 122/2025/QH15 và Nghị định 248/2026/NĐ-CP (Điều 5)."),
+
+        H("1. Mục Đích Và Phạm Vi Thu Thập Thông Tin"),
+        P("HOÀI thu thập thông tin của bạn nhằm:"),
+        B("Xác nhận, xử lý và giao đơn hàng bạn đặt trên website;"),
+        B("Liên hệ tư vấn, hỗ trợ và chăm sóc khách hàng, xử lý phản ánh, khiếu nại;"),
+        B("Thực hiện dịch vụ cá nhân hóa sản phẩm (in khắc logo, thiết kế theo yêu cầu, gói quà theo yêu cầu);"),
+        B("Thực hiện nghĩa vụ bảo hành, đổi trả, hoàn tiền theo chính sách đã công bố;"),
+        B("Xuất hóa đơn và thực hiện nghĩa vụ kế toán, thuế theo quy định pháp luật;"),
+        B("Gửi thông tin về sản phẩm mới, chương trình ưu đãi — chỉ khi bạn đã đăng ký nhận tin, và bạn có thể hủy đăng ký bất kỳ lúc nào;"),
+        B("Cải thiện chất lượng sản phẩm, dịch vụ và trải nghiệm trên website."),
+        P("Phạm vi thông tin thu thập: họ và tên, số điện thoại, thư điện tử, địa chỉ nhận hàng (bắt buộc); tên đơn vị/mã số thuế/địa chỉ xuất hóa đơn (khi có yêu cầu); nội dung cá nhân hóa như logo, tên riêng, thông điệp in trên sản phẩm (khi sử dụng dịch vụ cá nhân hóa); lịch sử đơn hàng, sản phẩm đã mua (tự động ghi nhận); địa chỉ IP, loại trình duyệt, thiết bị truy cập (tự động ghi nhận)."),
+        P("HOÀI không thu thập số tài khoản ngân hàng, số thẻ hoặc mã bảo mật thẻ của bạn. Các thông tin này (nếu có) do tổ chức cung ứng dịch vụ thanh toán trực tiếp xử lý theo quy định bảo mật riêng của tổ chức đó."),
+
+        H("2. Phạm Vi Sử Dụng Thông Tin"),
+        P("HOÀI sử dụng thông tin đã thu thập trong phạm vi sau:"),
+        B("Nội bộ HOÀI: các bộ phận bán hàng, chăm sóc khách hàng, thiết kế, kho vận, kế toán truy cập theo đúng chức năng được phân quyền;"),
+        B("Đơn vị vận chuyển: chỉ gồm họ tên, số điện thoại, địa chỉ người nhận, phục vụ mục đích giao hàng;"),
+        B("Tổ chức cung ứng dịch vụ thanh toán: thông tin giao dịch phục vụ xử lý thanh toán;"),
+        B("Cơ quan nhà nước có thẩm quyền: khi có yêu cầu hợp pháp bằng văn bản."),
+        P("HOÀI không mua bán, trao đổi, cho thuê hoặc chuyển giao dữ liệu cá nhân của bạn cho bên thứ ba vì mục đích thương mại khi chưa có sự đồng ý của bạn."),
+
+        H("3. Thời Gian Lưu Trữ Thông Tin"),
+        B("Thông tin tài khoản khách hàng: trong suốt thời gian tài khoản hoạt động và 12 tháng sau khi tài khoản bị hủy;"),
+        B("Thông tin đơn hàng, hợp đồng giao kết: tối thiểu 03 năm kể từ thời điểm giao kết (theo Điều 16 Luật Thương mại điện tử);"),
+        B("File thiết kế, logo khách hàng cung cấp: 24 tháng kể từ ngày hoàn tất đơn hàng, phục vụ đặt lại;"),
+        B("Chứng từ kế toán, hóa đơn: theo pháp luật kế toán — tối thiểu 10 năm;"),
+        B("Nhật ký truy cập kỹ thuật: 12 tháng."),
+        P("Hết thời hạn nêu trên, dữ liệu được xóa hoặc ẩn danh hóa, trừ trường hợp pháp luật yêu cầu lưu trữ dài hơn."),
+
+        H("4. Tổ Chức, Cá Nhân Có Thể Được Tiếp Cận Thông Tin Cá Nhân"),
+        B("Nhân sự HOÀI được phân quyền — theo chức năng, nhiệm vụ được phân công;"),
+        B("Đơn vị vận chuyển hợp tác — chỉ họ tên, số điện thoại, địa chỉ nhận hàng, phục vụ giao hàng;"),
+        B("Tổ chức cung ứng dịch vụ thanh toán (nếu có) — thông tin giao dịch, phục vụ xử lý thanh toán;"),
+        B("Đơn vị cung cấp hạ tầng lưu trữ (hosting) — dữ liệu lưu trên máy chủ, phục vụ vận hành kỹ thuật website;"),
+        B("Cơ quan nhà nước có thẩm quyền — theo phạm vi yêu cầu, phục vụ thanh tra, kiểm tra, điều tra theo quy định."),
+
+        H("5. Biện Pháp Bảo Mật Thông Tin, Dữ Liệu Của Người Sử Dụng"),
+        B("Website sử dụng chứng chỉ bảo mật SSL/TLS, mã hóa dữ liệu trên đường truyền;"),
+        B("Phân quyền truy cập theo vai trò — mỗi nhân sự chỉ tiếp cận dữ liệu trong phạm vi công việc;"),
+        B("Mật khẩu tài khoản được lưu dưới dạng băm (hash) — HOÀI không lưu và không thể xem mật khẩu gốc của bạn;"),
+        B("Sao lưu dữ liệu định kỳ hằng ngày;"),
+        B("Ghi nhật ký truy cập hệ thống quản trị;"),
+        B("Nhân sự tiếp xúc dữ liệu khách hàng được phổ biến quy định bảo mật và cam kết không tiết lộ;"),
+        B("File thiết kế, logo do khách hàng cung cấp chỉ được sử dụng cho đúng đơn hàng của khách, không dùng cho mục đích quảng bá khi chưa có sự đồng ý."),
+        P("Trong trường hợp xảy ra sự cố lộ, lọt dữ liệu, HOÀI sẽ thông báo cho người sử dụng bị ảnh hưởng và cơ quan nhà nước có thẩm quyền theo quy định của pháp luật về bảo vệ dữ liệu cá nhân."),
+
+        H("6. Phương Thức, Quy Trình Để Bạn Xem, Chỉnh Sửa Dữ Liệu Của Mình"),
+        P("Cách 1 — Tự thực hiện trên website: Đăng nhập tại mục \"Tài khoản của tôi\" → \"Thông tin cá nhân\" → chỉnh sửa và lưu. Thay đổi có hiệu lực ngay."),
+        P("Cách 2 — Gửi yêu cầu tới HOÀI:"),
+        B("Gửi yêu cầu qua thư điện tử, Zalo hoặc biểu mẫu tại trang Liên hệ;"),
+        B("Nêu rõ họ tên, số điện thoại/email đã đăng ký và nội dung cần xem hoặc chỉnh sửa;"),
+        B("HOÀI xác minh danh tính người yêu cầu;"),
+        B("HOÀI phản hồi trong 03 ngày làm việc kể từ khi nhận được yêu cầu hợp lệ."),
+
+        H("7. Phương Thức, Quy Trình Tiếp Nhận Yêu Cầu Xóa, Hủy Hoặc Hạn Chế Xử Lý Dữ Liệu"),
+        P("Bạn có quyền yêu cầu HOÀI xóa, hủy hoặc hạn chế xử lý dữ liệu cá nhân đã cung cấp. Quy trình:"),
+        B("Gửi yêu cầu qua thư điện tử với tiêu đề \"Yêu cầu xóa/hạn chế xử lý dữ liệu cá nhân\", hoặc gọi hotline;"),
+        B("Cung cấp thông tin xác minh danh tính (họ tên, số điện thoại/email đã đăng ký);"),
+        B("HOÀI xác nhận đã tiếp nhận trong 02 ngày làm việc;"),
+        B("HOÀI xử lý và phản hồi kết quả trong 07 ngày làm việc kể từ khi xác minh xong danh tính."),
+        P("Trường hợp chưa thể xóa ngay: Với dữ liệu đơn hàng, hợp đồng, chứng từ kế toán mà pháp luật yêu cầu lưu trữ (hợp đồng tối thiểu 03 năm, chứng từ kế toán tối thiểu 10 năm), HOÀI chuyển sang chế độ hạn chế xử lý — chỉ lưu trữ, không sử dụng cho mục đích nào khác — và xóa khi hết thời hạn luật định. HOÀI nêu rõ lý do và thời điểm dự kiến xóa trong văn bản phản hồi."),
+
+        H("8. Tiếp Nhận Và Giải Quyết Khiếu Nại Về Bảo Mật Thông Tin"),
+        P("Đầu mối tiếp nhận: thư điện tử, hotline/Zalo, biểu mẫu trực tuyến tại trang Liên hệ, hoặc trực tiếp tại trụ sở HOÀI."),
+        B("Bước 1: Tiếp nhận và xác nhận đã nhận khiếu nại — 02 ngày làm việc;"),
+        B("Bước 2: Xác minh danh tính và làm rõ nội dung — 03 ngày làm việc;"),
+        B("Bước 3: Xử lý và phản hồi kết quả bằng văn bản/thư điện tử — 07 ngày làm việc;"),
+        B("Bước 4: Áp dụng biện pháp khắc phục (nếu khiếu nại có căn cứ) — theo thỏa thuận với người khiếu nại."),
+        P("Trường hợp không đồng ý với kết quả giải quyết, bạn có quyền phản ánh tới cơ quan nhà nước có thẩm quyền hoặc khởi kiện theo quy định của pháp luật."),
+        P("Chính sách này tuân thủ quy định của pháp luật Việt Nam về dữ liệu và bảo vệ dữ liệu cá nhân, Điều 5 Nghị định 248/2026/NĐ-CP. HOÀI có thể cập nhật chính sách và sẽ công bố phiên bản mới trên trang này."),
+    ];
+
+    /// <summary>Điều 7 Nghị định 248/2026 — 4 required items (channels, procedure, per-issue
+    /// response/resolution timeframes, support tools), matching the level of detail requested in
+    /// the notification-dossier remediation review.</summary>
+    private static List<PolicyBlock> KhieuNaiV2Blocks() =>
+    [
+        P("HOÀI luôn lắng nghe và trân trọng mọi phản ánh, góp ý từ khách hàng để không ngừng hoàn thiện chất lượng sản phẩm và dịch vụ. Cơ chế này được công bố theo Điều 7 Nghị định 248/2026/NĐ-CP."),
+
+        H("I. Các Phương Thức Tiếp Nhận"),
+        B("Biểu mẫu trực tuyến tại trang Liên hệ — tiếp nhận 24/7;"),
+        B("Zalo: 0833598268 — 09:00-18:00, Thứ Hai đến Thứ Bảy;"),
+        B("Thư điện tử: hoaiquatangthietke@gmail.com — tiếp nhận 24/7;"),
+        B("Hotline;"),
+        B("Trực tiếp tại địa chỉ: Số 667 Nguyễn Văn Linh, Phường Phúc Lợi, TP. Hà Nội."),
+
+        H("II. Trình Tự, Thủ Tục Tiếp Nhận Và Xử Lý"),
+        B("Bước 1 — Gửi phản ánh: Khách hàng gửi phản ánh qua một trong các phương thức trên, cung cấp họ tên, số điện thoại/email liên hệ, mã đơn hàng (nếu có), nội dung phản ánh và tài liệu, hình ảnh chứng minh (nếu có)."),
+        B("Bước 2 — Xác nhận tiếp nhận: HOÀI xác nhận đã tiếp nhận và cấp mã theo dõi cho khách hàng."),
+        B("Bước 3 — Xác minh: HOÀI kiểm tra thông tin đơn hàng, liên hệ khách hàng và các bên liên quan (đơn vị vận chuyển, bộ phận kho, bộ phận thiết kế) để làm rõ vụ việc. Trường hợp cần bổ sung thông tin, thời hạn xử lý được tính lại từ khi nhận đủ thông tin."),
+        B("Bước 4 — Đề xuất phương án giải quyết: HOÀI thông báo phương án xử lý (đổi hàng, trả hàng, hoàn tiền, làm lại sản phẩm, bồi thường...) và thống nhất với khách hàng."),
+        B("Bước 5 — Thực hiện và phản hồi kết quả: HOÀI thực hiện phương án đã thống nhất và thông báo kết quả cho khách hàng."),
+        B("Bước 6 — Trường hợp chưa thỏa đáng: Khách hàng có thể yêu cầu chuyển khiếu nại lên cấp quản lý trực tiếp của HOÀI để được xem xét lại. Trường hợp hai bên không đạt được thỏa thuận, việc giải quyết được thực hiện thông qua thương lượng, hòa giải, trọng tài thương mại hoặc tòa án theo quy định của pháp luật. Khách hàng cũng có quyền phản ánh tới cơ quan quản lý nhà nước về thương mại điện tử qua Hệ thống quản lý hoạt động thương mại điện tử tại online.gov.vn, hoặc tới cơ quan quản lý nhà nước về bảo vệ quyền lợi người tiêu dùng."),
+
+        H("III. Thời Hạn Phản Hồi Và Giải Quyết Theo Từng Loại Vấn Đề"),
+        P("Thời hạn phản hồi ban đầu chung: 24 giờ làm việc kể từ khi tiếp nhận."),
+        B("Hỏi đáp về sản phẩm, giá, tình trạng còn hàng — giải quyết trong 01 ngày làm việc;"),
+        B("Tra cứu tình trạng đơn hàng, tình trạng giao hàng — giải quyết trong 02 ngày làm việc;"),
+        B("Giao sai, giao thiếu sản phẩm — giải quyết trong 03 ngày làm việc;"),
+        B("Sản phẩm hư hỏng, vỡ khi nhận hàng — giải quyết trong 03 ngày làm việc;"),
+        B("Sản phẩm không đúng mô tả trên website — giải quyết trong 05 ngày làm việc;"),
+        B("Sản phẩm cá nhân hóa không đúng maket đã duyệt — giải quyết trong 05 ngày làm việc;"),
+        B("Yêu cầu đổi trả hàng — theo Chính sách đổi trả & hoàn tác (trong vòng 14 ngày kể từ ngày nhận hàng);"),
+        B("Yêu cầu hoàn tiền — trong vòng 48 giờ kể từ khi HOÀI xác nhận nhận lại hàng thành công;"),
+        B("Khiếu nại về bảo mật thông tin cá nhân — phản hồi ban đầu 02 ngày làm việc, giải quyết trong 07 ngày làm việc;"),
+        B("Vụ việc phức tạp cần xác minh với bên thứ ba — tối đa 10 ngày làm việc, có thông báo tiến độ."),
+
+        H("IV. Các Biện Pháp, Công Cụ Hỗ Trợ Giải Quyết"),
+        B("Hệ thống quản lý đơn hàng cho phép khách hàng tra cứu toàn bộ lịch sử giao dịch tại mục Tài khoản, làm căn cứ đối chiếu;"),
+        B("Mã theo dõi khiếu nại cấp cho từng vụ việc để khách hàng theo dõi tiến độ;"),
+        B("Lưu trữ hình ảnh đóng gói và bàn giao hàng cho đơn vị vận chuyển;"),
+        B("Lưu trữ maket đã được khách hàng duyệt đối với sản phẩm cá nhân hóa, làm căn cứ đối chiếu khi có khiếu nại;"),
+        B("Phối hợp với đơn vị vận chuyển truy xuất thông tin hành trình đơn hàng;"),
+        B("Bộ phận chăm sóc khách hàng đầu mối, có nhân sự phụ trách theo dõi đến khi vụ việc kết thúc;"),
+        B("Lưu trữ hồ sơ giải quyết khiếu nại phục vụ đối soát và cung cấp cho cơ quan nhà nước khi có yêu cầu."),
+    ];
+
+    /// <summary>Điều 6 Nghị định 248/2026 — new page; HOÀI is both platform owner and the sole
+    /// seller (direct-commerce model, no third-party sellers), so both roles' rights/duties below
+    /// belong to HOÀI, kept in the Điều 6 structure regardless.</summary>
+    private static List<PolicyBlock> QuyenNghiaVuBlocks() =>
+    [
+        P("Nội dung này được công khai theo Điều 11 Luật Thương mại điện tử và Điều 6 Nghị định 248/2026/NĐ-CP. Website hoaii.vn là nền tảng thương mại điện tử kinh doanh trực tiếp — HOÀI vừa là chủ quản nền tảng, vừa là người bán duy nhất trên nền tảng. Không có bên bán thứ ba tham gia bán hàng trên website."),
+
+        H("I. Quyền Và Nghĩa Vụ Của HOÀI Với Tư Cách Chủ Quản Nền Tảng"),
+        B("Ban hành, công khai và tổ chức thực hiện điều kiện hoạt động, điều kiện giao dịch trên website tại vị trí dễ thấy, bằng tiếng Việt; tổ chức thực hiện thống nhất và chịu trách nhiệm về nội dung đã công bố."),
+        B("Xây dựng, công khai tiêu chuẩn dịch vụ và quy trình tham gia hoạt động trên nền tảng — quy trình đăng ký tài khoản, đặt hàng, thanh toán, đặt hàng cá nhân hóa."),
+        B("Thu phí theo chính sách về giá đã công khai — không phát sinh khoản phí nào ngoài các khoản đã công khai trước khi khách hàng đặt hàng."),
+        B("Thông tin về khuyến mại trước khi khách hàng đặt hàng — cung cấp đầy đủ hoặc tóm tắt thông tin về chương trình khuyến mại đang áp dụng tại trang sản phẩm và tại bước xác nhận đơn hàng."),
+        B("Bảo đảm vận hành an toàn, ổn định nền tảng — duy trì hạ tầng kỹ thuật, bảo trì định kỳ và thông báo trước khi có kế hoạch tạm ngừng hệ thống."),
+        B("Quy định các trường hợp tạm ngừng, chấm dứt, hạn chế tài khoản: người sử dụng cung cấp thông tin sai sự thật khi đăng ký; có hành vi gian lận, đặt hàng ảo, gây rối hoặc phá hoại hệ thống; sử dụng website để thực hiện hành vi vi phạm pháp luật; cung cấp nội dung cá nhân hóa xâm phạm quyền sở hữu trí tuệ của bên thứ ba, trái thuần phong mỹ tục hoặc vi phạm điều cấm của pháp luật; theo yêu cầu của cơ quan nhà nước có thẩm quyền. Trước khi chấm dứt tài khoản, HOÀI thông báo và nêu rõ lý do, trừ trường hợp phải xử lý ngay theo yêu cầu của cơ quan nhà nước."),
+        B("Bảo đảm an toàn thông tin về bí mật kinh doanh và thông tin cá nhân người tiêu dùng — thực hiện theo Chính sách bảo vệ dữ liệu cá nhân đã công bố."),
+        B("Tiếp nhận, giải quyết yêu cầu, phản ánh, khiếu nại — thực hiện theo Cơ chế tiếp nhận và giải quyết phản ánh, yêu cầu, khiếu nại đã công bố."),
+        B("Giám sát, ngăn chặn hành vi vi phạm pháp luật; phối hợp với cơ quan nhà nước — rà soát nội dung đăng tải trên website, gỡ bỏ thông tin hàng hóa vi phạm pháp luật hoặc xâm phạm quyền sở hữu trí tuệ trong thời hạn 24 giờ kể từ khi nhận được yêu cầu của cơ quan nhà nước có thẩm quyền."),
+
+        H("II. Quyền Và Nghĩa Vụ Của Người Bán"),
+        P("Trên website hoaii.vn, HOÀI là người bán duy nhất và có các quyền, nghĩa vụ sau."),
+        H("Quyền"),
+        B("Đăng ký, duy trì, tạm ngừng, chấm dứt hoạt động bán hàng hóa; quyết định danh mục hàng hóa, giá bán và chính sách khuyến mại theo quy định của pháp luật;"),
+        B("Sử dụng hạ tầng kỹ thuật và công cụ của nền tảng; tiếp cận dữ liệu liên quan trực tiếp đến hoạt động kinh doanh; được bảo đảm thanh toán đầy đủ, đúng hạn và được giải quyết yêu cầu, phản ánh, khiếu nại theo nguyên tắc công khai, minh bạch."),
+        H("Nghĩa vụ"),
+        B("Cung cấp thông tin chính xác, đầy đủ về hàng hóa; bảo đảm chất lượng đúng như đã công bố; thực hiện đầy đủ nghĩa vụ giao hàng, bảo hành, đổi trả, hoàn tiền theo chính sách đã công khai; không kinh doanh hàng hóa thuộc danh mục ngành, nghề cấm đầu tư kinh doanh, hàng giả, hàng xâm phạm quyền sở hữu trí tuệ;"),
+        B("Cung cấp đầy đủ giấy tờ chứng minh đáp ứng điều kiện đầu tư kinh doanh đối với ngành, nghề kinh doanh có điều kiện trước khi kinh doanh trên nền tảng;"),
+        B("Thực hiện đầy đủ nghĩa vụ tài chính với Nhà nước; bảo vệ dữ liệu và thông tin của người mua; phối hợp với cơ quan nhà nước có thẩm quyền trong việc xử lý vi phạm pháp luật."),
+        P("Trách nhiệm với hàng hóa có khuyết tật: Khi phát hiện hàng hóa có khuyết tật theo quy định của pháp luật về bảo vệ quyền lợi người tiêu dùng, HOÀI công khai thông tin trên website tại vị trí dễ thấy trong 10 ngày liên tục, thông báo trực tiếp đến khách hàng đã mua hàng hóa đó, đồng thời thực hiện thu hồi, xử lý và bồi thường thiệt hại theo quy định."),
+
+        H("III. Quyền Và Nghĩa Vụ Của Người Mua"),
+        H("Quyền"),
+        B("Được bảo đảm đầy đủ quyền lợi của người tiêu dùng theo quy định pháp luật; được cung cấp thông tin đầy đủ, chính xác về hàng hóa và về người bán;"),
+        B("Được tự do lựa chọn hàng hóa, phương thức thanh toán và phương thức giao hàng trong phạm vi HOÀI cung cấp; được bảo vệ dữ liệu cá nhân; được rà soát và sửa đổi nội dung đơn hàng trước khi đặt hàng; được truy cập lại thông tin đơn hàng từ tài khoản của mình sau khi đặt hàng; được giải quyết phản ánh, yêu cầu, khiếu nại theo quy trình đã công bố."),
+        H("Nghĩa vụ"),
+        B("Cung cấp thông tin cần thiết, chính xác khi đăng ký tài khoản và đặt hàng; thanh toán đầy đủ, đúng hạn theo phương thức đã lựa chọn;"),
+        B("Bảo đảm nội dung cá nhân hóa (logo, hình ảnh, thông điệp) cung cấp cho HOÀI không xâm phạm quyền sở hữu trí tuệ của bên thứ ba và không vi phạm điều cấm của pháp luật; chịu trách nhiệm về nội dung đã cung cấp;"),
+        B("Tuân thủ quy định của pháp luật và các điều kiện hoạt động, điều kiện giao dịch đã công bố trên website; không lợi dụng website để thực hiện hành vi vi phạm pháp luật, gian lận, đặt hàng ảo hoặc gây thiệt hại cho HOÀI và bên thứ ba."),
+    ];
+
+    /// <summary>Điều 11 Nghị định 248/2026 — new page; the homepage/mega-menu already surfaces
+    /// "Bán chạy nhất", "Nổi bật", "Phiên bản giới hạn" etc., which counts as a display-priority
+    /// mechanism the dossier review flagged as undisclosed.</summary>
+    private static List<PolicyBlock> UuTienHienThiBlocks() =>
+    [
+        P("Nội dung này được công khai theo Điều 11 Nghị định 248/2026/NĐ-CP."),
+        P("Website hoaii.vn sử dụng các tiêu chí sau để sắp xếp và ưu tiên hiển thị hàng hóa trong các mục \"Bán chạy nhất\", \"Nổi bật\", \"Lựa chọn hàng đầu\", \"Phiên bản giới hạn\" và \"Sản phẩm chọn lọc\":"),
+        B("Mức độ phù hợp với từ khóa tìm kiếm — bao gồm tên sản phẩm, mô tả sản phẩm, danh mục;"),
+        B("Số lượng đơn hàng thành công của sản phẩm trong 30 ngày gần nhất;"),
+        B("Đánh giá và phản hồi của khách hàng về sản phẩm;"),
+        B("Tính mùa vụ — sản phẩm thuộc bộ sưu tập đang trong mùa (Quà Tết, Quà Trung Thu, Quà theo dịp) được ưu tiên hiển thị trong giai đoạn tương ứng;"),
+        B("Sản phẩm mới ra mắt và sản phẩm phiên bản giới hạn — được ưu tiên hiển thị trong thời gian giới thiệu;"),
+        B("Lựa chọn biên tập của HOÀI — một số sản phẩm được đưa vào mục \"Sản phẩm chọn lọc\" dựa trên đánh giá về tính đại diện cho giá trị thiết kế và văn hóa của thương hiệu."),
+        P("HOÀI không áp dụng hình thức trả phí để được hiển thị ưu tiên trên website, do website chỉ bán sản phẩm của chính HOÀI, không có bên bán thứ ba."),
+        P("Khách hàng có thể chủ động thay đổi thứ tự hiển thị bằng bộ lọc và tùy chọn sắp xếp tại thanh công cụ phía trên danh sách sản phẩm trong mỗi trang danh mục."),
+    ];
+
+    /// <summary>Điều 9 Nghị định 248/2026 — new page. The alcohol clause stays generic (no
+    /// specific licence claim baked in) since the retail licence isn't in hand yet; the "ruou"
+    /// category is held back from the storefront in the meantime (see MegaMenuViewComponent).</summary>
+    private static List<PolicyBlock> DieuKienHanCheBlocks() =>
+    [
+        P("Nội dung này được công khai theo Điều 9 Nghị định 248/2026/NĐ-CP."),
+        H("Giới Hạn Về Thời Gian Cung Cấp"),
+        P("Đơn hàng đặt sau 16h00 được xử lý vào ngày làm việc kế tiếp. HOÀI không xử lý đơn vào Chủ nhật và các ngày lễ, Tết. Sản phẩm theo mùa vụ (Quà Trung Thu, Quà Tết) chỉ được cung cấp trong giai đoạn mùa vụ tương ứng hằng năm."),
+        H("Giới Hạn Về Phạm Vi Địa Lý"),
+        P("HOÀI giao hàng trên phạm vi toàn quốc. Khu vực hải đảo, vùng sâu vùng xa có thể kéo dài thêm thời gian giao hàng và chi phí vận chuyển được báo riêng trước khi xác nhận đơn hàng. HOÀI hiện chưa hỗ trợ giao hàng ra nước ngoài."),
+        H("Hạn Chế Về Đối Tượng Khách Hàng"),
+        P("Người sử dụng phải đủ 18 tuổi hoặc truy cập dưới sự giám sát của cha mẹ, người giám hộ hợp pháp, và có đầy đủ năng lực hành vi dân sự."),
+        H("Giới Hạn Về Số Lượng"),
+        P("Đơn hàng cá nhân hóa (in khắc logo, thiết kế riêng theo yêu cầu) có sản phẩm đặt tối thiểu theo từng loại sản phẩm, được thông báo cụ thể tại trang sản phẩm. Đơn hàng số lượng lớn vui lòng liên hệ để nhận báo giá và chính sách chiết khấu riêng."),
+        H("Điều Kiện Về Tính Khả Dụng Của Dịch Vụ"),
+        P("Website có thể tạm ngừng hoặc gián đoạn trong các trường hợp: bảo trì hệ thống định kỳ (có thông báo trước), sự cố kỹ thuật ngoài dự kiến, sự cố hạ tầng của nhà cung cấp dịch vụ, hoặc sự kiện bất khả kháng (thiên tai, hỏa hoạn, mất điện diện rộng, sự cố mạng viễn thông). HOÀI khắc phục trong thời gian sớm nhất và thông báo trên website."),
+    ];
 }

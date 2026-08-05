@@ -30,7 +30,7 @@
                 <div class="footer-brand-info">
                     <span>@Settings.Get(SiteSettingKeys.CompanyName)</span>
                     <span>Địa chỉ : @Settings.Get(SiteSettingKeys.Address)</span>
-                    <a href="https://masothue.com/0101287214" target="_blank" rel="noopener noreferrer">MST : @Settings.Get(SiteSettingKeys.TaxCode)</a>
+                    <a href="https://masothue.com/@Settings.Get(SiteSettingKeys.TaxCode)" target="_blank" rel="noopener noreferrer">MST : @Settings.Get(SiteSettingKeys.TaxCode)</a>
                 </div>
             </div>
 
@@ -74,10 +74,11 @@
                                     </a>
                                 }
                             </div>
-                            @* Official "Đã thông báo Bộ Công Thương" badge (Figma node 683:4434). *@
-                            <a class="footer-badge" href="http://online.gov.vn/" target="_blank" rel="noopener noreferrer" aria-label="Đã thông báo Bộ Công Thương">
-                                <img src="/images/bo-cong-thuong-badge.png" alt="Đã thông báo Bộ Công Thương" width="106" height="40" />
-                            </a>
+                            @* Official "Đã thông báo Bộ Công Thương" badge (Figma node 683:4434) — deliberately
+                               removed until the notification dossier is actually confirmed by Sở Công Thương.
+                               Showing this before confirmation misrepresents the site's legal status; put it
+                               back (with the link pointed at HOÀI's real confirmed listing, not the online.gov.vn
+                               homepage) once the real badge/link is issued. *@
                         </div>
                     }
                 </div>

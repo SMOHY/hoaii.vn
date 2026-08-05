@@ -68,9 +68,11 @@ public static class MegaMenuColumnMigrationSeeder
         }
 
         // "Sản phẩm" (Sản phẩm chọn lọc) used to auto-list every ProductType category. Same
-        // list, now as admin-picked category links instead of an automatic query.
+        // list, now as admin-picked category links instead of an automatic query. "ruou"
+        // (alcohol) stays out — conditional business line held back until the retail licence
+        // is in hand, same reason MenuController's LoadDestinationOptionsAsync excludes it too.
         var productTypeCategories = await db.Categories
-            .Where(c => c.Type == CategoryType.ProductType)
+            .Where(c => c.Type == CategoryType.ProductType && c.Slug != "ruou")
             .OrderBy(c => c.SortOrder).ThenBy(c => c.Id)
             .ToListAsync();
         if (productTypeCategories.Count > 0)

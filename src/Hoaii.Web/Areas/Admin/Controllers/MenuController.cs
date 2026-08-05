@@ -82,7 +82,11 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
 
     private async Task LoadDestinationOptionsAsync()
     {
-        var categories = await Db.Categories.OrderBy(c => c.Type).ThenBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
+        // "ruou" (alcohol) is a conditional business line held back from the storefront until
+        // the retail licence is in hand — same reason MegaMenuColumnMigrationSeeder never seeded
+        // it into "Sản phẩm" and it must not be pickable as a destination/category-link here
+        // either, or an admin could wire it back into the public nav by hand.
+        var categories = await Db.Categories.Where(c => c.Slug != "ruou").OrderBy(c => c.Type).ThenBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
         var policies = await Db.PolicyPages.OrderBy(p => p.SortOrder).ToListAsync();
         ViewBag.Categories = categories;
         ViewBag.Policies = policies;

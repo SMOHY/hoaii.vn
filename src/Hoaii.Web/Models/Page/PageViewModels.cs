@@ -51,6 +51,15 @@ public class OwnerInfoViewModel
     public required string TaxCode { get; init; }
     public required string Phone { get; init; }
     public required string Email { get; init; }
+    public required string RepresentativeName { get; init; }
+    public required string RepresentativeTitle { get; init; }
+    public required string RepresentativeName2 { get; init; }
+    public required string RepresentativeTitle2 { get; init; }
+    public required string RegistrationNumber { get; init; }
+    public required string RegistrationFirstDate { get; init; }
+    public required string RegistrationAmendDate { get; init; }
+    public required string RegistrationIssuedBy { get; init; }
+    public required string WebsiteOperatorName { get; init; }
 }
 
 public class PolicyPageViewModel
