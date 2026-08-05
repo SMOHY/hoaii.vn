@@ -10,14 +10,18 @@
     <h1 class="policy-title">THÔNG TIN CHỦ SỞ HỮU</h1>
 
     <div class="policy-body">
-        <p>Theo quy định về thương mại điện tử, HOÀI công khai thông tin pháp lý của chủ sở hữu website như sau:</p>
+        <p>Theo quy định tại Điều 11 Luật Thương mại điện tử và Điều 4 Nghị định 248/2026/NĐ-CP, HOÀI công khai thông tin pháp lý của chủ sở hữu nền tảng như sau:</p>
         <dl class="owner-info-list">
-            <div><dt>Tên thương nhân</dt><dd>@Model.CompanyName</dd></div>
-            <div><dt>Người đại diện</dt><dd>@Model.RepresentativeName — @Model.RepresentativeTitle</dd></div>
-            <div><dt>Địa chỉ</dt><dd>@Model.Address</dd></div>
-            <div><dt>Mã số thuế</dt><dd>@Model.TaxCode</dd></div>
+            <div><dt>Tên tổ chức</dt><dd>@Model.CompanyName</dd></div>
+            <div><dt>Địa chỉ trụ sở chính</dt><dd>@Model.Address</dd></div>
+            <div><dt>Mã số doanh nghiệp / Mã số thuế</dt><dd>@Model.TaxCode</dd></div>
+            <div><dt>Giấy chứng nhận đăng ký doanh nghiệp</dt><dd>Số @Model.RegistrationNumber — đăng ký lần đầu ngày @Model.RegistrationFirstDate, đăng ký thay đổi gần nhất ngày @Model.RegistrationAmendDate</dd></div>
+            <div><dt>Nơi cấp</dt><dd>@Model.RegistrationIssuedBy</dd></div>
+            <div><dt>Người đại diện theo pháp luật</dt><dd>Ông @Model.RepresentativeName2 — @Model.RepresentativeTitle2<br />Bà @Model.RepresentativeName — @Model.RepresentativeTitle</dd></div>
+            <div><dt>Người chịu trách nhiệm quản lý, vận hành website</dt><dd>@Model.WebsiteOperatorName</dd></div>
             <div><dt>Số điện thoại</dt><dd>@Model.Phone</dd></div>
             <div><dt>Email</dt><dd>@Model.Email</dd></div>
+            <div><dt>Website</dt><dd>https://hoaii.vn</dd></div>
         </dl>
     </div>
 </div>

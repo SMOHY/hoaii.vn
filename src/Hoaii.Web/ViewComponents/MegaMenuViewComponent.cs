@@ -118,7 +118,11 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
         // from the occasion panels above. Headings and order follow Figma node 908:15241:
         // the product types, then best sellers, then the featured picks.
         var productTypes = await db.Categories
-            .Where(c => c.Type == CategoryType.ProductType)
+            // "ruou" is a conditional-business-line category (alcohol) held back from the
+            // storefront until the retail licence is in hand — see the TMĐT notification
+            // dossier. Its products are already IsActive=false; excluding the category itself
+            // here too keeps it out of this listing even though it has no active products.
+            .Where(c => c.Type == CategoryType.ProductType && c.Slug != "ruou")
             .OrderBy(c => c.Id)
             .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
             .ToListAsync();

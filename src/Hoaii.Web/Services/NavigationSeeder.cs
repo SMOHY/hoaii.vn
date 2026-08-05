@@ -45,45 +45,80 @@ public static class NavigationSeeder
                     Links =
                     [
                         new() { Label = "Liên hệ", Url = "/lien-he", SortOrder = 0 },
-                        new() { Label = "Chính sách trao đổi & hoàn tác", Url = "/chinh-sach/trao-doi", SortOrder = 1 },
-                        new() { Label = "Chính sách giao nhận hàng hóa", Url = "/chinh-sach/giao-hang", SortOrder = 2 },
-                        new() { Label = "Chính sách giá & thanh toán", Url = "/chinh-sach/gia-thanh-toan", SortOrder = 3 },
-                        new() { Label = "Giải quyết khiếu nại", Url = "/chinh-sach/khieu-nai", SortOrder = 4 },
                     ],
                 },
                 new FooterMenuColumn
                 {
-                    Title = "CHÍNH SÁCH PHÁP LÝ", SortOrder = 2,
-                    Links =
-                    [
-                        new() { Label = "Điều khoản sử dụng", Url = "/chinh-sach/dieu-khoan-su-dung", SortOrder = 0 },
-                        new() { Label = "Chính sách bảo vệ dữ liệu cá nhân", Url = "/chinh-sach/bao-mat", SortOrder = 1 },
-                        new() { Label = "Thông tin chủ sở hữu", Url = "/chinh-sach/thong-tin-chu-so-huu", SortOrder = 2 },
-                    ],
+                    // Điều 17.1.a Nghị định 248/2026: every required-disclosure page must be
+                    // grouped into one clearly-labelled block, distinct from support/business
+                    // links — not split across "HỖ TRỢ KHÁCH HÀNG" and a generic "pháp lý" column
+                    // the way it was before.
+                    Title = "CHÍNH SÁCH & ĐIỀU KHOẢN", SortOrder = 2,
+                    Links = PolicyFooterLinks(),
                 });
         }
         else
         {
-            await EnsureFooterLinkAsync(db, "HỖ TRỢ KHÁCH HÀNG", "Chính sách giá & thanh toán", "/chinh-sach/gia-thanh-toan", 3);
-            await EnsureFooterLinkAsync(db, "HỖ TRỢ KHÁCH HÀNG", "Giải quyết khiếu nại", "/chinh-sach/khieu-nai", 4);
-            await EnsureFooterLinkAsync(db, "CHÍNH SÁCH PHÁP LÝ", "Thông tin chủ sở hữu", "/chinh-sach/thong-tin-chu-so-huu", 2);
+            await EnsurePolicyColumnAsync(db);
         }
 
         await db.SaveChangesAsync();
     }
 
-    /// <summary>Adds a footer link to an existing column if a link with that URL isn't already
-    /// there — lets new pages reach a footer that was seeded before they existed.</summary>
-    private static async Task EnsureFooterLinkAsync(HoaiiDbContext db, string columnTitle, string label, string url, int sortOrder)
+    private static List<FooterMenuLink> PolicyFooterLinks() =>
+    [
+        new() { Label = "Thông tin chủ sở hữu", Url = "/chinh-sach/thong-tin-chu-so-huu", SortOrder = 0 },
+        new() { Label = "Chính sách bảo vệ dữ liệu cá nhân", Url = "/chinh-sach/bao-mat", SortOrder = 1 },
+        new() { Label = "Quyền và nghĩa vụ các bên", Url = "/chinh-sach/quyen-va-nghia-vu", SortOrder = 2 },
+        new() { Label = "Giải quyết khiếu nại", Url = "/chinh-sach/khieu-nai", SortOrder = 3 },
+        new() { Label = "Chính sách giá & thanh toán", Url = "/chinh-sach/gia-thanh-toan", SortOrder = 4 },
+        new() { Label = "Chính sách ưu tiên hiển thị", Url = "/chinh-sach/uu-tien-hien-thi", SortOrder = 5 },
+        new() { Label = "Điều kiện, hạn chế cung cấp hàng hóa", Url = "/chinh-sach/dieu-kien-han-che", SortOrder = 6 },
+        new() { Label = "Chính sách giao nhận hàng hóa", Url = "/chinh-sach/giao-hang", SortOrder = 7 },
+        new() { Label = "Chính sách trao đổi & hoàn tác", Url = "/chinh-sach/trao-doi", SortOrder = 8 },
+        new() { Label = "Điều khoản sử dụng", Url = "/chinh-sach/dieu-khoan-su-dung", SortOrder = 9 },
+    ];
+
+    /// <summary>
+    /// Migrates a footer that was already seeded under the old layout (policy links split
+    /// between "HỖ TRỢ KHÁCH HÀNG" and "CHÍNH SÁCH PHÁP LÝ") to the single grouped column Điều
+    /// 17.1.a requires. Renames "CHÍNH SÁCH PHÁP LÝ" → "CHÍNH SÁCH & ĐIỀU KHOẢN" if found (keeps
+    /// its Id, so it stays the "last column" the social/badge block attaches to), strips the
+    /// policy links that had leaked into "HỖ TRỢ KHÁCH HÀNG", and adds any policy link still
+    /// missing. Idempotent — every step checks before acting, safe to run on every startup.
+    /// </summary>
+    private static async Task EnsurePolicyColumnAsync(HoaiiDbContext db)
     {
-        var column = await db.FooterMenuColumns
+        var legacyPolicyColumn = await db.FooterMenuColumns
             .Include(c => c.Links)
-            .FirstOrDefaultAsync(c => c.Title == columnTitle);
-        if (column is null || column.Links.Any(l => l.Url == url))
+            .FirstOrDefaultAsync(c => c.Title == "CHÍNH SÁCH PHÁP LÝ");
+        var policyColumn = legacyPolicyColumn
+            ?? await db.FooterMenuColumns.Include(c => c.Links).FirstOrDefaultAsync(c => c.Title == "CHÍNH SÁCH & ĐIỀU KHOẢN");
+        if (policyColumn is null)
         {
-            return;
+            return; // Fresh-seed branch above already created it.
+        }
+        policyColumn.Title = "CHÍNH SÁCH & ĐIỀU KHOẢN";
+
+        var support = await db.FooterMenuColumns
+            .Include(c => c.Links)
+            .FirstOrDefaultAsync(c => c.Title == "HỖ TRỢ KHÁCH HÀNG");
+        if (support is not null)
+        {
+            var strayPolicyLinks = support.Links.Where(l => l.Url.StartsWith("/chinh-sach/")).ToList();
+            foreach (var link in strayPolicyLinks)
+            {
+                support.Links.Remove(link);
+                db.FooterMenuLinks.Remove(link);
+            }
         }
 
-        column.Links.Add(new FooterMenuLink { Label = label, Url = url, SortOrder = sortOrder });
+        foreach (var wanted in PolicyFooterLinks())
+        {
+            if (!policyColumn.Links.Any(l => l.Url == wanted.Url))
+            {
+                policyColumn.Links.Add(new FooterMenuLink { Label = wanted.Label, Url = wanted.Url, SortOrder = wanted.SortOrder });
+            }
+        }
     }
 }

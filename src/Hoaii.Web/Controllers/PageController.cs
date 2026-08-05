@@ -23,6 +23,13 @@ public class PageController(HoaiiDbContext db, SiteSettingsService settings) : C
             Email = settings.Get(SiteSettingKeys.ContactEmail),
             RepresentativeName = settings.Get(SiteSettingKeys.RepresentativeName),
             RepresentativeTitle = settings.Get(SiteSettingKeys.RepresentativeTitle),
+            RepresentativeName2 = settings.Get(SiteSettingKeys.RepresentativeName2),
+            RepresentativeTitle2 = settings.Get(SiteSettingKeys.RepresentativeTitle2),
+            RegistrationNumber = settings.Get(SiteSettingKeys.RegistrationNumber),
+            RegistrationFirstDate = settings.Get(SiteSettingKeys.RegistrationFirstDate),
+            RegistrationAmendDate = settings.Get(SiteSettingKeys.RegistrationAmendDate),
+            RegistrationIssuedBy = settings.Get(SiteSettingKeys.RegistrationIssuedBy),
+            WebsiteOperatorName = settings.Get(SiteSettingKeys.WebsiteOperatorName),
         });
     }
 
