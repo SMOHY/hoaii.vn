@@ -17,8 +17,14 @@
     if (box) box.style.backgroundImage = input.value ? "url('" + input.value + "')" : '';
   }
 
+  // With a target input, fill it directly. Without one (e.g. a gallery's "+ Thêm ảnh"
+  // button, which has no single field to fill), let the page decide what to do via this event.
   function setValue(url) {
-    const input = targetId && document.getElementById(targetId);
+    if (!targetId) {
+      document.dispatchEvent(new CustomEvent('picker:append', { detail: { url: url } }));
+      return;
+    }
+    const input = document.getElementById(targetId);
     if (!input) return;
     input.value = url || '';
     preview(input);
@@ -94,7 +100,14 @@
     try {
       const res = await fetch('/admin/thu-vien-anh/tai-len', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
       const data = await res.json();
-      if (data.uploaded && data.uploaded.length) setValue(data.uploaded[0].url);
+      if (data.uploaded && data.uploaded.length) {
+        if (targetId) {
+          // Single field: only the first upload makes sense.
+          setValue(data.uploaded[0].url);
+        } else {
+          data.uploaded.forEach(function (u) { setValue(u.url); });
+        }
+      }
       if (data.errors && data.errors.length) window.hoaiiToast && window.hoaiiToast(data.errors.join(' · '), 'error');
       e.target.reset();
       load();

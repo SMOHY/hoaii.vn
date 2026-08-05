@@ -1,6 +1,7 @@
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Models.Layout;
+using Hoaii.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,62 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
     /// <summary>Cùng lý do: "Xem tất cả" của panel này phải về trang landing.</summary>
     private static string SeeAll(string slug) => slug == "qua-tang-theo-dip" ? "/qua-theo-dip" : $"/danh-muc/{slug}";
 
+    /// <summary>Every column of every built-in panel is a MegaMenuColumn row — "Bán chạy nhất",
+    /// "Theo bộ sưu tập", "Sản phẩm", and anything an admin added past those, all the same way
+    /// (Areas/Admin/Views/Menu/Index.cshtml → "+ Thêm cột"). The one exception is "Quà tặng" on
+    /// "Quà theo dịp", which points at page groupings (see CategoryGroup) rather than
+    /// products/categories, so it keeps its own dedicated management UI instead of fitting this
+    /// generic Pick/Collection/CategoryLinks shape.</summary>
+    private async Task<List<MegaMenuColumnViewModel>> ResolveCustomColumnsAsync(string panelKey)
+    {
+        var customColumns = await db.MegaMenuColumns
+            .Where(c => c.PanelKey == panelKey)
+            .Include(c => c.Items.OrderBy(i => i.SortOrder))
+            .OrderBy(c => c.SortOrder)
+            .ToListAsync();
+        if (customColumns.Count == 0)
+        {
+            return [];
+        }
+
+        var result = new List<MegaMenuColumnViewModel>();
+        foreach (var col in customColumns)
+        {
+            List<MegaMenuLinkViewModel> links;
+            if (col.Kind == MegaMenuColumnKind.Pick)
+            {
+                var productIds = col.Items.Where(i => i.ProductId != null).Select(i => i.ProductId!.Value).ToList();
+                var products = await db.Products.Where(p => productIds.Contains(p.Id) && p.IsActive).ToDictionaryAsync(p => p.Id);
+                links = productIds.Where(products.ContainsKey).Take(4)
+                    .Select(id => new MegaMenuLinkViewModel { Label = products[id].Name, Url = $"/san-pham/{products[id].Slug}" })
+                    .ToList();
+            }
+            else if (col.Kind == MegaMenuColumnKind.Collection)
+            {
+                links = col.CollectionId is null
+                    ? []
+                    : await db.Products
+                        .Where(p => p.CollectionId == col.CollectionId && p.IsActive)
+                        .OrderBy(p => p.Id).Take(4)
+                        .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
+                        .ToListAsync();
+            }
+            else
+            {
+                // Category links have no thumbnail (just a text row), so they tolerate a taller
+                // column better than the 4-pick product/collection kinds — e.g. "Quà theo dịp"
+                // lists all 5 occasion categories, not just the first 4.
+                var categoryIds = col.Items.Where(i => i.CategoryId != null).Select(i => i.CategoryId!.Value).ToList();
+                var categories = await db.Categories.Where(c => categoryIds.Contains(c.Id)).ToDictionaryAsync(c => c.Id);
+                links = categoryIds.Where(categories.ContainsKey).Take(6)
+                    .Select(id => new MegaMenuLinkViewModel { Label = categories[id].Name, Url = $"/danh-muc/{categories[id].Slug}" })
+                    .ToList();
+            }
+            result.Add(new MegaMenuColumnViewModel { Title = col.Title, Links = links });
+        }
+        return result;
+    }
+
     /// <param name="view">
     /// "Default" renders the desktop hover panels. "Drawer" renders the same links as an
     /// accordion inside the mobile drawer — the panels are hover-only, so on a phone none of
@@ -46,66 +103,34 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
                 continue;
             }
 
-            var products = await db.Products
-                .Where(p => p.CategoryId == category.Id && p.IsActive)
-                .OrderBy(p => p.Id)
-                .ToListAsync();
+            var panelKey = PanelKey(slug);
+            var columns = new List<MegaMenuColumnViewModel>();
 
-            var bestSellers = products.Take(4)
-                .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
-                .ToList();
-            var limited = products.Where(p => p.Badge == ProductBadge.New).Take(4)
-                .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
-                .ToList();
-            var otherOccasions = occasionCategories.Where(c => c.Slug != slug)
-                .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
-                .ToList();
-            var suggested = products.Where(p => p.IsFeatured).Take(4)
-                .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
-                .ToList();
+            // "Quà tặng" trỏ tới các trang gộp nhóm (Quà tặng theo dịp/cá nhân/doanh nghiệp), không
+            // phải sản phẩm/danh mục, nên không nằm trong MegaMenuColumn — quản lý riêng ở khối
+            // "Nhóm danh mục" trong Areas/Admin/Views/Menu/Index.cshtml.
+            if (slug == "qua-tang-theo-dip")
+            {
+                columns.Add(new MegaMenuColumnViewModel
+                {
+                    Title = "Quà tặng",
+                    Links = OccasionRoutes.ChooserRoutes.Select(r => new MegaMenuLinkViewModel { Label = r.Title, Url = r.Route }).ToList(),
+                });
+            }
+            columns.AddRange(await ResolveCustomColumnsAsync(panelKey));
 
-            // "Quà tặng theo dịp" gets its own headings and groupings in Figma (node 908:15209):
-            // a list of the sibling occasions, then curated picks, then best sellers — where the
-            // "Quà tết"/"Quà trung thu" panels (908:15175 / 908:15177) share one layout.
-            // Cột đầu của panel "Quà theo dịp" phải là các dịp con — Valentine, 8-3, Giáng sinh,
-            // Người ấy, Bố mẹ — chứ không phải Quà tết/Quà trung thu như otherOccasions trả về.
-            // Đó mới là đường vào duy nhất tới những trang này từ nav.
-            var occasionChildren = slug == "qua-tang-theo-dip"
-                ? await db.Categories
-                    .Where(c => c.Type == CategoryType.Occasion && !OccasionSlugs.Contains(c.Slug))
-                    .OrderBy(c => c.SortOrder).ThenBy(c => c.Id)
-                    .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
-                    .ToListAsync()
-                : [];
-
-            List<MegaMenuColumnViewModel> columns = slug == "qua-tang-theo-dip"
-                ?
-                [
-                    new MegaMenuColumnViewModel { Title = "Quà tặng", Links = occasionChildren },
-                    new MegaMenuColumnViewModel { Title = "Hoài gợi ý", Links = suggested },
-                    new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = bestSellers },
-                ]
-                :
-                [
-                    new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = bestSellers },
-                    new MegaMenuColumnViewModel { Title = "Phiên bản giới hạn", Links = limited },
-                    new MegaMenuColumnViewModel { Title = "Theo bộ sưu tập", Links = otherOccasions },
-                ];
-
-            // Only "Quà tết" carries a photo. In Figma the other panels' right-hand half is a
-            // flat grey-100 fill with no image placed (nodes 908:15196 / 908:15228 / 908:15260),
-            // so filling it with an arbitrary product shot would not match the design.
-            var panelImage = slug == "qua-tet"
-                ? await db.ProductImages
-                    .Where(i => i.Product.CategoryId == category.Id)
-                    .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
-                    .Select(i => i.Url)
-                    .FirstOrDefaultAsync()
-                : null;
+            // Every panel now gets a real photo — the first product image in its category —
+            // instead of just "Quà tết"; the other three showed as a flat grey block, which read
+            // as a missing image rather than an intentional flat fill.
+            var panelImage = await db.ProductImages
+                .Where(i => i.Product.CategoryId == category.Id)
+                .OrderBy(i => i.ProductId).ThenBy(i => i.SortOrder)
+                .Select(i => i.Url)
+                .FirstOrDefaultAsync();
 
             panels.Add(new MegaMenuPanelViewModel
             {
-                CategoryKey = PanelKey(slug),
+                CategoryKey = panelKey,
                 Title = category.Name,
                 SeeAllUrl = SeeAll(slug),
                 ImageUrl = panelImage,
@@ -113,37 +138,35 @@ public class MegaMenuViewComponent(HoaiiDbContext db) : ViewComponent
             });
         }
 
-        // "Sản phẩm chọn lọc" has no literal Category row — it's a cross-category
-        // featured view (CategoryController.FeaturedSlug), so its columns are sourced differently
-        // from the occasion panels above. Headings and order follow Figma node 908:15241:
-        // the product types, then best sellers, then the featured picks.
-        var productTypes = await db.Categories
-            .Where(c => c.Type == CategoryType.ProductType)
-            .OrderBy(c => c.Id)
-            .Select(c => new MegaMenuLinkViewModel { Label = c.Name, Url = $"/danh-muc/{c.Slug}" })
-            .ToListAsync();
-        // No sales figures exist yet, so "best sellers" is the oldest live products — the same
-        // stand-in the occasion panels use.
-        var topSellers = await db.Products.Where(p => p.IsActive).OrderBy(p => p.Id).Take(4)
-            .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
-            .ToListAsync();
-        var highlighted = await db.Products.Where(p => p.IsFeatured && p.IsActive).Take(4)
-            .Select(p => new MegaMenuLinkViewModel { Label = p.Name, Url = $"/san-pham/{p.Slug}" })
-            .ToListAsync();
-            
+        // "Sản phẩm chọn lọc" has no literal Category row — it's a cross-category featured view
+        // (CategoryController.FeaturedSlug). Its columns (Sản phẩm/Bán chạy nhất/Nổi bật) are
+        // MegaMenuColumn rows same as every other panel, seeded once by
+        // MegaMenuColumnMigrationSeeder from what used to be hard-coded here.
+        var sanPhamColumns = await ResolveCustomColumnsAsync("san-pham-chon-loc");
+
+        // No literal category to pull a photo from here, so use whichever product an admin
+        // picked first for this panel's columns (e.g. "Bán chạy nhất") — same "first real pick"
+        // rule as every other panel, just sourced from MegaMenuColumnItem instead of Category.
+        var sanPhamProductId = await db.MegaMenuColumnItems
+            .Where(i => i.Column!.PanelKey == "san-pham-chon-loc" && i.ProductId != null)
+            .OrderBy(i => i.Column!.SortOrder).ThenBy(i => i.SortOrder)
+            .Select(i => i.ProductId)
+            .FirstOrDefaultAsync();
+        var sanPhamImage = sanPhamProductId is null
+            ? null
+            : await db.ProductImages
+                .Where(i => i.ProductId == sanPhamProductId)
+                .OrderBy(i => i.SortOrder)
+                .Select(i => i.Url)
+                .FirstOrDefaultAsync();
+
         panels.Add(new MegaMenuPanelViewModel
         {
             CategoryKey = "san-pham-chon-loc",
             Title = "Sản phẩm chọn lọc",
             SeeAllUrl = "/danh-muc/san-pham-chon-loc",
-            // Grey panel with no photo, like the other three non-"Quà tết" variants (node 908:15260).
-            ImageUrl = null,
-            Columns =
-            [
-                new MegaMenuColumnViewModel { Title = "Sản phẩm", Links = productTypes },
-                new MegaMenuColumnViewModel { Title = "Bán chạy nhất", Links = topSellers },
-                new MegaMenuColumnViewModel { Title = "Nổi bật", Links = highlighted },
-            ],
+            ImageUrl = sanPhamImage,
+            Columns = sanPhamColumns,
         });
 
         // Any other Main nav item marked "Dropdown" in Admin → Menu isn't one of the four panels

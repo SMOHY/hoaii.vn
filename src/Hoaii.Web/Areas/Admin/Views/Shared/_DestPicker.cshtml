@@ -1,0 +1,35 @@
+@*
+    Renders <select name="dest"> so an admin picks a destination instead of typing a URL —
+    "cat:{id}" / "page:{key}" / "policy:{slug}", resolved server-side in MenuController.
+*@
+@using Hoaii.Domain.Entities
+@using Hoaii.Web.Areas.Admin.Controllers
+@model DestPickerModel
+
+<select name="dest" required>
+    <option value="" disabled selected="@(Model.Selected is null)">— Chọn đích đến —</option>
+    <optgroup label="Danh mục">
+        @foreach (var c in Model.Categories)
+        {
+            var key = $"cat:{c.Id}";
+            <option value="@key" selected="@(Model.Selected == key)">@c.Name</option>
+        }
+    </optgroup>
+    <optgroup label="Trang">
+        @foreach (var p in Model.StaticPages)
+        {
+            var key = $"page:{p.Key}";
+            <option value="@key" selected="@(Model.Selected == key)">@p.Label</option>
+        }
+    </optgroup>
+    @if (Model.Policies.Count > 0)
+    {
+        <optgroup label="Chính sách">
+            @foreach (var p in Model.Policies)
+            {
+                var key = $"policy:{p.Slug}";
+                <option value="@key" selected="@(Model.Selected == key)">@p.NavLabel</option>
+            }
+        </optgroup>
+    }
+</select>

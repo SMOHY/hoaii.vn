@@ -36,6 +36,11 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<NavLink> NavLinks => Set<NavLink>();
     public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
     public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
+    public DbSet<MegaMenuCuratedItem> MegaMenuCuratedItems => Set<MegaMenuCuratedItem>();
+    public DbSet<Collection> Collections => Set<Collection>();
+    public DbSet<CategoryGroup> CategoryGroups => Set<CategoryGroup>();
+    public DbSet<MegaMenuColumn> MegaMenuColumns => Set<MegaMenuColumn>();
+    public DbSet<MegaMenuColumnItem> MegaMenuColumnItems => Set<MegaMenuColumnItem>();
     public DbSet<Voucher> Vouchers => Set<Voucher>();
     public DbSet<PageContent> PageContents => Set<PageContent>();
     public DbSet<PartnerLogo> PartnerLogos => Set<PartnerLogo>();
@@ -265,6 +270,53 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
                 .WithOne(l => l.Parent)
                 .HasForeignKey(l => l.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<MegaMenuCuratedItem>(entity =>
+        {
+            entity.Property(x => x.PanelKey).HasMaxLength(50);
+            entity.Property(x => x.ColumnKey).HasMaxLength(50);
+            entity.HasIndex(x => new { x.PanelKey, x.ColumnKey, x.SortOrder });
+            // A product can only be picked once per column, but the same product may appear in
+            // several columns/panels (e.g. both "Bán chạy nhất" of one panel and another's).
+            entity.HasIndex(x => new { x.PanelKey, x.ColumnKey, x.ProductId }).IsUnique();
+            entity.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Collection>(entity =>
+        {
+            entity.Property(x => x.Name).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasOne(p => p.Collection).WithMany().HasForeignKey(p => p.CollectionId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<CategoryGroup>(entity =>
+        {
+            entity.Property(x => x.Name).HasMaxLength(200);
+            entity.Property(x => x.Route).HasMaxLength(100);
+            entity.HasIndex(x => x.Route).IsUnique();
+        });
+
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasOne(c => c.Group).WithMany(g => g.Categories).HasForeignKey(c => c.GroupId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<MegaMenuColumn>(entity =>
+        {
+            entity.Property(x => x.PanelKey).HasMaxLength(50);
+            entity.Property(x => x.Title).HasMaxLength(200);
+            entity.HasOne(x => x.Collection).WithMany().HasForeignKey(x => x.CollectionId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<MegaMenuColumnItem>(entity =>
+        {
+            entity.HasOne(x => x.Column).WithMany(c => c.Items).HasForeignKey(x => x.MegaMenuColumnId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         });
 
         SeedCategories(modelBuilder);

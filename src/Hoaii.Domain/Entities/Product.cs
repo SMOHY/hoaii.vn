@@ -45,6 +45,13 @@ public class Product
     public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;
 
+    /// <summary>Same product line shipped as a different item for another occasion — e.g.
+    /// "Thiên Điểu Lạc Hồng" as a Tết box and, separately, as a Trung Thu mooncake box. Nullable:
+    /// most products (Trà, Khăn, Rượu, Tượng gốm — the everyday catalog) don't belong to a
+    /// cross-occasion line at all.</summary>
+    public int? CollectionId { get; set; }
+    public Collection? Collection { get; set; }
+
     public ICollection<ProductImage> Images { get; set; } = [];
     public ICollection<ProductVariant> Variants { get; set; } = [];
 }

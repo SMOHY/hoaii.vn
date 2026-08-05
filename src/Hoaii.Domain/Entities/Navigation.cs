@@ -38,3 +38,19 @@ public class FooterMenuLink
     public int SortOrder { get; set; }
     public FooterMenuColumn? Column { get; set; }
 }
+
+/// <summary>One admin-picked product inside one column of one of the 4 built-in mega-menu
+/// panels (see MegaMenuViewComponent's PanelKey/ColumnKey usage). Replaces the old
+/// "auto-pick by IsFeatured/Badge/age" logic for these columns with manual curation — the
+/// client doesn't want "bán chạy nhất"/"nổi bật" tied to real sales figures, they want to
+/// choose. PanelKey/ColumnKey are plain strings rather than an FK/enum because the 4 panels
+/// and their columns are hand-built in code (Figma layout), not database rows.</summary>
+public class MegaMenuCuratedItem
+{
+    public int Id { get; set; }
+    public required string PanelKey { get; set; }
+    public required string ColumnKey { get; set; }
+    public int SortOrder { get; set; }
+    public int ProductId { get; set; }
+    public Product? Product { get; set; }
+}

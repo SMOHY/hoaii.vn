@@ -67,5 +67,12 @@ public class Category
     public string? ParentLabel { get; set; }
     public string? ParentUrl { get; set; }
 
+    /// <summary>Which "Quà theo dịp" chooser landing page's Sections list this Occasion category
+    /// shows up in (see CategoryGroup, OccasionController). Independent of ParentLabel/ParentUrl
+    /// above — those are just breadcrumb text, this is what actually drives the landing page and
+    /// the mega-menu's "Quà tặng" column.</summary>
+    public int? GroupId { get; set; }
+    public CategoryGroup? Group { get; set; }
+
     public ICollection<Product> Products { get; set; } = [];
 }

@@ -3,12 +3,13 @@
     var isNew = Model.Id == 0;
     ViewData["Title"] = isNew ? "Thêm danh mục" : "Sửa danh mục";
     var types = ViewBag.Types as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>;
+    var groups = ViewBag.Groups as List<Hoaii.Domain.Entities.CategoryGroup> ?? [];
 }
 
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/danh-muc">← Danh mục</a></div>
 
 <div class="admin-card">
-    <form method="post" action="/admin/danh-muc/luu" class="admin-form">
+    <form method="post" action="/admin/danh-muc/luu" class="admin-form admin-form--wide">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 
@@ -35,6 +36,17 @@
                 <label>Thứ tự hiển thị</label>
                 <input type="number" name="sortOrder" value="@Model.SortOrder" />
             </div>
+        </div>
+        <div class="admin-field">
+            <label>Nhóm (trang "Quà theo dịp")</label>
+            <select name="groupId">
+                <option value="">— Không thuộc nhóm nào —</option>
+                @foreach (var g in groups)
+                {
+                    <option value="@g.Id" selected="@(Model.GroupId == g.Id)">@g.Name</option>
+                }
+            </select>
+            <span class="admin-field__hint">Chỉ áp dụng cho danh mục "Theo dịp" nhỏ (Valentine, 8/3, Giáng sinh, Người ấy, Bố mẹ) — quyết định danh mục này hiện ở trang landing nào và ở cột "Quà tặng" trong menu.</span>
         </div>
 
         <hr style="border:none;border-top:1px solid var(--color-grey-200);margin:24px 0;" />

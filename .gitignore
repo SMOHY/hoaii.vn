@@ -15,3 +15,6 @@ src/Hoaii.Web/wwwroot/uploads/
 
 # Build/publish output — contains appsettings.Production.json with the VPS DB password
 publish_out/
+
+# Local run logs from run-migration.ps1 / start.ps1
+run-std*.log

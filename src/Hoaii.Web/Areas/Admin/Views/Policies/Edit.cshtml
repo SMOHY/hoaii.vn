@@ -15,7 +15,7 @@
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/chinh-sach">← Chính sách</a></div>
 
 <div class="admin-card">
-    <form method="post" action="/admin/chinh-sach/luu" class="admin-form" data-policy-form>
+    <form method="post" action="/admin/chinh-sach/luu" class="admin-form admin-form--wide" data-policy-form>
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 

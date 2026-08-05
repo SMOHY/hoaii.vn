@@ -1,6 +1,7 @@
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Models.Occasion;
+using Hoaii.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,18 +29,9 @@ public class OccasionController(HoaiiDbContext db) : Controller
         bool IsChildPage,
         IReadOnlyList<SectionDef> Sections);
 
-    /// <summary>The three routes in the chooser (node 769:15244). Order matches Figma.</summary>
-    /// <summary>Figma để trống ảnh cả ba ô chọn (chỉ là khối màu đặc — WF-012). Ba ảnh dưới đây là
-    /// ảnh tạm lấy từ kho ảnh sẵn có trong repo, để trang nhìn đủ như thiết kế cho tới khi khách
-    /// gửi ảnh thật. Đổi ở đây, hoặc để rỗng thì quay lại đúng khối màu Figma vẽ.</summary>
-    private static readonly (string Title, string Route, string Thumb)[] ChooserRoutes =
-    [
-        ("Quà tặng theo dịp", "/qua-theo-dip", "/images/products/tet/ma-dao-thanh-cong.jpg"),
-        ("Quà tặng cá nhân", "/qua-tang-ca-nhan", "/images/products/tet/viet-nam-hoa-thi.jpg"),
-        // No corporate-gift category exists yet, so this points at the real partnership page
-        // rather than inventing a route that would 404. See WF-014.
-        ("Quà tặng doanh nghiệp", "/hop-tac", "/images/category/promo-artist.jpg"),
-    ];
+    /// <summary>The three routes in the chooser (node 769:15244). Order matches Figma. Shared
+    /// with MegaMenuViewComponent's "Quà tặng" column — see OccasionRoutes.</summary>
+    private static readonly (string Title, string Route, string Thumb)[] ChooserRoutes = OccasionRoutes.ChooserRoutes;
 
     /// <summary>Only the active chooser column carries copy in Figma; the other two ship it hidden.</summary>
     private const string UmbrellaChooserCopy =
@@ -88,7 +80,18 @@ public class OccasionController(HoaiiDbContext db) : Controller
             return NotFound();
         }
 
-        var slugs = page.Sections.Select(s => s.CategorySlug).ToList();
+        // Which categories belong on this landing page used to be a hard-coded array — now it's
+        // CategoryGroup, so an admin moving a category between groups actually changes what
+        // renders here, not just the mega-menu. Falls back to the hard-coded list only if the
+        // group row doesn't exist yet (e.g. CategoryGroupSeeder hasn't run).
+        var group = await db.CategoryGroups
+            .Include(g => g.Categories.OrderBy(c => c.SortOrder).ThenBy(c => c.Id))
+            .FirstOrDefaultAsync(g => g.Route == route);
+        var pageSections = group is not null
+            ? group.Categories.Select(c => new SectionDef(c.Slug, c.Name)).ToList()
+            : page.Sections.ToList();
+
+        var slugs = pageSections.Select(s => s.CategorySlug).ToList();
 
         var categories = await db.Categories
             .Where(c => slugs.Contains(c.Slug))
@@ -103,9 +106,9 @@ public class OccasionController(HoaiiDbContext db) : Controller
             .ToListAsync();
 
         var sections = new List<OccasionSectionViewModel>();
-        for (var i = 0; i < page.Sections.Count; i++)
+        for (var i = 0; i < pageSections.Count; i++)
         {
-            var def = page.Sections[i];
+            var def = pageSections[i];
             categories.TryGetValue(def.CategorySlug, out var category);
 
             sections.Add(new OccasionSectionViewModel

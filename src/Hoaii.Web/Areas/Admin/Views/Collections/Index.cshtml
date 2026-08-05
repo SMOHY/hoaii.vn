@@ -1,0 +1,36 @@
+@model List<(int Id, string Name, int SortOrder, int ProductCount)>
+@{
+    ViewData["Title"] = "Bộ sưu tập";
+}
+
+<p style="color:var(--color-grey-500);margin:0 0 24px;">
+    Bộ sưu tập gộp sản phẩm cùng dòng/chủ đề ở nhiều danh mục khác nhau (VD "Thiên Điểu Lạc Hồng" vừa là hộp quà Tết vừa là hộp bánh Trung thu).
+    Gán bộ sưu tập cho sản phẩm ở trang <a class="admin-row-link" href="/admin/san-pham">Sản phẩm</a>.
+</p>
+
+<div class="admin-card">
+    @foreach (var c in Model)
+    {
+        <div class="admin-menu-row">
+            <form method="post" action="/admin/bo-suu-tap/luu" class="admin-menu-row__form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@c.Id" />
+                <input type="text" name="name" value="@c.Name" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--color-grey-300);border-radius:6px;" />
+                <span class="admin-field__hint" style="white-space:nowrap;">@c.ProductCount sản phẩm</span>
+                <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@c.SortOrder" style="width:60px;padding:8px 6px;border:1px solid var(--color-grey-300);border-radius:6px;text-align:center;" /></span>
+                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+            </form>
+            <form method="post" action="/admin/bo-suu-tap/@c.Id/xoa" data-confirm="Xóa bộ sưu tập &quot;@c.Name&quot;? Sản phẩm trong đó sẽ mất gắn nhãn, không bị xoá.">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+            </form>
+        </div>
+    }
+    <form method="post" action="/admin/bo-suu-tap/luu" class="admin-menu-row__form" style="margin-top:8px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="0" />
+        <input type="text" name="name" placeholder="Tên bộ sưu tập mới" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--color-grey-300);border-radius:6px;" />
+        <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@Model.Count" style="width:60px;padding:8px 6px;border:1px solid var(--color-grey-300);border-radius:6px;text-align:center;" /></span>
+        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
+    </form>
+</div>

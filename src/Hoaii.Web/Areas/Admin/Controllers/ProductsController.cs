@@ -68,6 +68,7 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         {
             IsActive = true,
             Categories = await Db.Categories.OrderBy(c => c.Type).ThenBy(c => c.SortOrder).ToListAsync(),
+            Collections = await Db.Collections.OrderBy(c => c.SortOrder).ToListAsync(),
         });
     }
 
@@ -93,6 +94,7 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
             IsActive = p.IsActive,
             SortOrder = p.SortOrder,
             CategoryId = p.CategoryId,
+            CollectionId = p.CollectionId,
             MetaTitle = p.MetaTitle,
             MetaDescription = p.MetaDescription,
             StoryTitle = p.StoryTitle,
@@ -107,6 +109,7 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
                 Id = v.Id, Name = v.Name, PriceModifier = v.PriceModifier, Sku = v.Sku, StockQuantity = v.StockQuantity,
             }).ToList(),
             Categories = await Db.Categories.OrderBy(c => c.Type).ThenBy(c => c.SortOrder).ToListAsync(),
+            Collections = await Db.Collections.OrderBy(c => c.SortOrder).ToListAsync(),
         });
     }
 
@@ -123,6 +126,7 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         public bool IsActive { get; set; }
         public int SortOrder { get; set; }
         public int CategoryId { get; set; }
+        public int? CollectionId { get; set; }
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }
 
@@ -175,6 +179,7 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         product.IsActive = form.IsActive;
         product.SortOrder = form.SortOrder;
         product.CategoryId = form.CategoryId;
+        product.CollectionId = form.CollectionId;
         product.MetaTitle = form.MetaTitle;
         product.MetaDescription = form.MetaDescription;
         product.StoryTitle = Clean(form.StoryTitle);

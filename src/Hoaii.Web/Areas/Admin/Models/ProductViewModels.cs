@@ -40,6 +40,9 @@ public class ProductEditViewModel
     public bool IsActive { get; init; } = true;
     public int SortOrder { get; init; }
     public int CategoryId { get; init; }
+    /// <summary>Cross-category product line (see Collection) — e.g. this product also ships as
+    /// a different item in another occasion's category. Optional; most products have none.</summary>
+    public int? CollectionId { get; init; }
     public string? MetaTitle { get; init; }
     public string? MetaDescription { get; init; }
     public string? StoryTitle { get; init; }
@@ -55,6 +58,7 @@ public class ProductEditViewModel
     public IReadOnlyList<string> ImageUrls { get; init; } = [];
     public IReadOnlyList<VariantRow> Variants { get; init; } = [];
     public IReadOnlyList<Category> Categories { get; init; } = [];
+    public IReadOnlyList<Collection> Collections { get; init; } = [];
 
     public class VariantRow
     {

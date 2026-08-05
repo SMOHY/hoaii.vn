@@ -1,5 +1,6 @@
 @using Hoaii.Domain.Entities
 @using Hoaii.Web.Services
+@using Hoaii.Web.Areas.Admin.Controllers
 @{
     ViewData["Title"] = "Menu điều hướng";
     var textFields = ViewBag.TextFields as IReadOnlyList<PageContentKeys.Field> ?? new List<PageContentKeys.Field>();
@@ -7,181 +8,374 @@
     var main = ViewBag.Main as List<NavLink> ?? [];
     var sub = ViewBag.Sub as List<NavLink> ?? [];
     var columns = ViewBag.Columns as List<FooterMenuColumn> ?? [];
+    var categories = ViewBag.Categories as List<Category> ?? [];
+    var policies = ViewBag.Policies as List<PolicyPage> ?? [];
+    var staticPages = ((string Key, string Label, string Url)[])ViewBag.StaticPages;
+    var destKeyFor = (Func<string, string?>)ViewBag.DestKeyFor;
+    var customColumns = ViewBag.CustomColumns as List<MegaMenuColumn> ?? [];
+    var collectionOptions = ViewBag.CollectionOptions as List<Collection> ?? [];
+    var categoryGroups = ViewBag.CategoryGroups as List<CategoryGroup> ?? [];
+    var occasionCategories = ViewBag.OccasionCategories as List<Category> ?? [];
 }
 
 @functions {
-    const string Ph = "padding:6px 8px;border:1px solid var(--color-grey-300);border-radius:4px;";
-
     // "Quà tết" / "Quà trung thu" / "Quà theo dịp" / "Sản phẩm chọn lọc" render hand-built
     // dropdown panels sourced from Danh mục/Sản phẩm — menu con thêm ở đây sẽ không hiện ra
     // trên site cho bốn mục này, nên UI phải nói rõ thay vì âm thầm bỏ qua.
-    static readonly HashSet<string> BuiltInDropdownKeys = ["qua-tet", "qua-trung-thu", "qua-theo-dip", "san-pham-chon-loc"];
+    // "qua-tang-theo-dip" là slug danh mục thật của "Quà theo dịp" (xem MegaMenuViewComponent);
+    // liên kết trong DB có thể trỏ tới "/qua-theo-dip" (trang landing) hoặc thẳng tới danh mục
+    // đó, nên phải nhận diện cả hai — thiếu alias này từng khiến riêng mục "Quà theo dịp" lộ ra
+    // UI sửa menu con dù sửa cũng không có tác dụng trên site.
+    static readonly HashSet<string> BuiltInDropdownKeys = ["qua-tet", "qua-trung-thu", "qua-theo-dip", "qua-tang-theo-dip", "san-pham-chon-loc"];
     static bool HasBuiltInPanel(string url) => BuiltInDropdownKeys.Contains(url.Split('/').Last());
+    // Same alias as HasBuiltInPanel — the panel key CuratedSlots/MegaMenuViewComponent use is
+    // "qua-theo-dip", not the category slug "qua-tang-theo-dip" some links happen to store.
+    static string BuiltInPanelKey(string url)
+    {
+        var key = url.Split('/').Last();
+        return key == "qua-tang-theo-dip" ? "qua-theo-dip" : key;
+    }
 }
 
 <p style="color:var(--color-grey-500);margin:0 0 24px;">Sửa menu đầu trang (chính + phụ) và các cột chân trang. Thay đổi áp dụng ngay.</p>
 
 @* ---------- Main menu ---------- *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Menu chính (đầu trang)</h2>
-    @foreach (var l in main)
-    {
-        <div class="admin-menu-row">
-            <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="id" value="@l.Id" />
-                <input type="hidden" name="placement" value="@NavPlacement.Main" />
-                <input type="text" name="label" value="@l.Label" style="@Ph;flex:1;min-width:120px;" />
-                <input type="text" name="url" value="@l.Url" style="@Ph;flex:1;min-width:140px;" />
-                <label style="display:flex;align-items:center;gap:4px;font-size:13px;white-space:nowrap;"><input type="checkbox" name="hasDropdown" value="true" @(l.HasDropdown ? "checked" : "") /> Dropdown</label>
-                <input type="number" name="sortOrder" value="@l.SortOrder" style="@Ph;width:60px;" />
-                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
-            </form>
-            <form method="post" action="/admin/menu/lien-ket/@l.Id/xoa" data-confirm="Xóa liên kết?">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
-            </form>
-        </div>
-        @if (l.HasDropdown && HasBuiltInPanel(l.Url))
+    <h2 class="admin-section-title">Menu chính (đầu trang)</h2>
+    <div class="admin-menu-list">
+        @foreach (var l in main)
         {
-            <p style="margin:0 0 12px 24px;color:var(--color-grey-500);font-size:13px;">
-                Dropdown của "@l.Label" lấy dữ liệu từ Danh mục/Sản phẩm, không sửa được ở đây.
-            </p>
-        }
-        else if (l.HasDropdown)
-        {
-            <div style="margin:4px 0 12px 24px;padding:12px;border-left:2px solid var(--color-grey-200);">
-                <p class="admin-field__hint" style="margin:0 0 8px;">
-                    Menu con của "@l.Label" — các mục hiện trong dropdown khi hover/bấm vào mục này.
-                    @if (l.Children.Count == 0)
-                    {
-                        <text>Chưa có mục nào nên dropdown sẽ không hiện gì.</text>
-                    }
-                </p>
-                @foreach (var c in l.Children)
-                {
-                    <div class="admin-menu-row" style="margin-bottom:6px;">
-                        <form method="post" action="/admin/menu/menu-con/luu" class="admin-menu-row__form">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@c.Id" />
-                            <input type="hidden" name="parentId" value="@l.Id" />
-                            <input type="text" name="label" value="@c.Label" style="@Ph;flex:1;min-width:100px;" />
-                            <input type="text" name="url" value="@c.Url" style="@Ph;flex:1;min-width:120px;" />
-                            <input type="number" name="sortOrder" value="@c.SortOrder" style="@Ph;width:56px;" />
+            var isBuiltIn = HasBuiltInPanel(l.Url);
+            var rowPanelKey = isBuiltIn ? BuiltInPanelKey(l.Url) : null;
+            var rowLinkedCategory = rowPanelKey is null ? null : categories.FirstOrDefault(c => c.Slug == (rowPanelKey == "qua-theo-dip" ? "qua-tang-theo-dip" : rowPanelKey));
+            <div class="admin-menu-item @(l.HasDropdown ? "is-collapsed" : "")">
+                <div class="admin-menu-item__row">
+                    <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-item__fields">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@l.Id" />
+                        <input type="hidden" name="placement" value="@NavPlacement.Main" />
+                        <input type="text" name="label" value="@l.Label" placeholder="Nhãn" />
+                        @if (isBuiltIn)
+                        {
+                            <input type="hidden" name="dest" value="@destKeyFor(l.Url)" />
+                            <span class="admin-menu-item__locked-dest">🔒 @l.Url</span>
+                        }
+                        else
+                        {
+                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(l.Url) })" />
+                        }
+                        <label class="admin-menu-item__dropdown"><input type="checkbox" name="hasDropdown" value="true" @(l.HasDropdown ? "checked" : "") /> Dropdown</label>
+                        <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@l.SortOrder" class="admin-menu-item__sort" /></span>
+                        <div class="admin-menu-item__actions">
                             <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
-                        </form>
-                        <form method="post" action="/admin/menu/menu-con/@c.Id/xoa" data-confirm="Xóa mục menu con?">
+                        </div>
+                    </form>
+                    <form method="post" action="/admin/menu/lien-ket/@l.Id/xoa" data-confirm="Xóa liên kết?">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                    </form>
+                    @if (l.HasDropdown)
+                    {
+                        <button type="button" class="admin-menu-item__toggle" data-item-toggle aria-label="Thu gọn/Mở rộng">⌄</button>
+                    }
+                </div>
+                @if (l.HasDropdown && isBuiltIn)
+                {
+                    var panelKey = rowPanelKey!;
+                    <div class="admin-menu-item__note">
+                        <span class="admin-badge admin-badge--blue">Tự động</span>
+                        Dropdown của "@l.Label" lấy dữ liệu từ Danh mục/Sản phẩm — bố cục cột không sửa ở đây, nhưng nội dung từng cột thì có.
+                        @if (rowLinkedCategory is not null)
+                        {
+                            <a href="/admin/danh-muc/@rowLinkedCategory.Id/sua" class="admin-row-link" style="margin-left:auto;white-space:nowrap;">✎ Nội dung trang danh mục</a>
+                        }
+                    </div>
+                    <div class="admin-menu-item__curated">
+                        @if (panelKey == "qua-theo-dip")
+                        {
+                            <div class="admin-curated-slot admin-curated-slot--group">
+                                <div class="admin-curated-slot__head">
+                                    <strong>Quà tặng (nhóm danh mục)</strong>
+                                </div>
+                                <p class="admin-field__hint" style="margin-bottom:8px;">Đây cũng là 3 lựa chọn trên trang <code>/qua-theo-dip</code> — sửa ở đây thì trang đó đổi theo.</p>
+                                @foreach (var group in categoryGroups)
+                                {
+                                    <div class="admin-group">
+                                        <form method="post" action="/admin/nhom-danh-muc/luu" class="admin-group__head">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@group.Id" />
+                                            <input type="text" name="name" value="@group.Name" />
+                                            <input type="hidden" name="sortOrder" value="@group.SortOrder" />
+                                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+                                        </form>
+                                        <div class="admin-group__cats">
+                                            @foreach (var cat in group.Categories)
+                                            {
+                                                <form method="post" action="/admin/nhom-danh-muc/gan" class="admin-cat-chip">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="categoryId" value="@cat.Id" />
+                                                    <input type="hidden" name="groupId" value="" />
+                                                    <span>@cat.Name</span>
+                                                    <button type="submit" aria-label="Bỏ khỏi nhóm">✕</button>
+                                                </form>
+                                            }
+                                            <form method="post" action="/admin/nhom-danh-muc/gan" class="admin-group__add">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="groupId" value="@group.Id" />
+                                                <select name="categoryId">
+                                                    @foreach (var cat in occasionCategories.Where(c => c.GroupId != group.Id))
+                                                    {
+                                                        <option value="@cat.Id">@cat.Name</option>
+                                                    }
+                                                </select>
+                                                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">+ Thêm</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                                <p class="admin-field__hint">"Quà tặng doanh nghiệp" trỏ thẳng sang trang Hợp tác, không phải nhóm danh mục nên không sửa ở đây.</p>
+                            </div>
+                        }
+
+                        @foreach (var col in customColumns.Where(c => c.PanelKey == panelKey))
+                        {
+                            <div class="admin-curated-slot admin-curated-slot--custom">
+                                <form method="post" action="/admin/menu/cot-tuy-chinh/luu" class="admin-curated-slot__head">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@col.Id" />
+                                    <input type="hidden" name="panelKey" value="@panelKey" />
+                                    <input type="hidden" name="kind" value="@col.Kind" />
+                                    <input type="hidden" name="sortOrder" value="@col.SortOrder" />
+                                    <input type="text" name="title" value="@col.Title" class="admin-curated-slot__title-input" />
+                                    <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu tên</button>
+                                    <button type="submit" formaction="/admin/menu/cot-tuy-chinh/@col.Id/xoa" formnovalidate class="admin-btn admin-btn--danger admin-btn--sm" data-confirm="Xóa cột &quot;@col.Title&quot;?">Xóa cột</button>
+                                </form>
+
+                                @if (col.Kind == MegaMenuColumnKind.Pick)
+                                {
+                                    <form method="post" action="/admin/menu/cot-tuy-chinh/@col.Id/items" data-curated-slot>
+                                        @Html.AntiForgeryToken()
+                                        <div class="admin-curated-slot__chips" data-curated-chips>
+                                            @foreach (var item in col.Items)
+                                            {
+                                                <span class="admin-curated-chip" data-curated-chip>
+                                                    <input type="hidden" name="productIds" value="@item.ProductId" />
+                                                    @item.Product?.Name
+                                                    <button type="button" data-curated-remove aria-label="Xoá">✕</button>
+                                                </span>
+                                            }
+                                        </div>
+                                        <p class="admin-field__hint" data-curated-empty-hint style="@(col.Items.Count > 0 ? "display:none;" : "")">Chưa chọn sản phẩm nào.</p>
+                                        <div class="admin-curated-slot__search">
+                                            <input type="text" placeholder="Tìm sản phẩm theo tên, tối đa 4..." data-curated-search autocomplete="off" />
+                                            <div class="admin-curated-slot__results" data-curated-results hidden></div>
+                                        </div>
+                                        <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm" style="margin-top:8px;">Lưu sản phẩm</button>
+                                    </form>
+                                }
+                                else if (col.Kind == MegaMenuColumnKind.Collection)
+                                {
+                                    <form method="post" action="/admin/menu/cot-tuy-chinh/luu" class="admin-collection-picker">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@col.Id" />
+                                        <input type="hidden" name="panelKey" value="@panelKey" />
+                                        <input type="hidden" name="kind" value="@col.Kind" />
+                                        <input type="hidden" name="title" value="@col.Title" />
+                                        <input type="hidden" name="sortOrder" value="@col.SortOrder" />
+                                        <select name="collectionId" class="admin-collection-picker__select">
+                                            <option value="">— Chọn bộ sưu tập —</option>
+                                            @foreach (var c in collectionOptions)
+                                            {
+                                                <option value="@c.Id" selected="@(col.CollectionId == c.Id)">@c.Name</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+                                    </form>
+                                    <p class="admin-field__hint">Cột này tự lấy tối đa 4 sản phẩm mới nhất thuộc bộ sưu tập đã chọn.</p>
+                                }
+                                else
+                                {
+                                    <form method="post" action="/admin/menu/cot-tuy-chinh/@col.Id/items">
+                                        @Html.AntiForgeryToken()
+                                        <div class="admin-cat-checklist">
+                                            @foreach (var cat in categories)
+                                            {
+                                                <label class="admin-cat-checklist__item">
+                                                    <input type="checkbox" name="categoryIds" value="@cat.Id" checked="@(col.Items.Any(i => i.CategoryId == cat.Id))" />
+                                                    @cat.Name
+                                                </label>
+                                            }
+                                        </div>
+                                        <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm" style="margin-top:8px;">Lưu danh mục</button>
+                                    </form>
+                                }
+                            </div>
+                        }
+
+                        <form method="post" action="/admin/menu/cot-tuy-chinh/luu" class="admin-add-column">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                            <input type="hidden" name="id" value="0" />
+                            <input type="hidden" name="panelKey" value="@panelKey" />
+                            <input type="hidden" name="sortOrder" value="@customColumns.Count(c => c.PanelKey == panelKey)" />
+                            <input type="text" name="title" placeholder="Tên cột mới, VD: Quà tặng sinh nhật" required />
+                            <div class="type-toggle" data-kind-toggle>
+                                <input type="hidden" name="kind" value="@MegaMenuColumnKind.Pick" data-kind-value />
+                                <button type="button" class="is-active" data-kind="@MegaMenuColumnKind.Pick">✋ Chọn tay sản phẩm</button>
+                                <button type="button" data-kind="@MegaMenuColumnKind.Collection">🔗 Theo bộ sưu tập</button>
+                                <button type="button" data-kind="@MegaMenuColumnKind.CategoryLinks">🔗 Liên kết sang danh mục</button>
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm cột</button>
                         </form>
                     </div>
                 }
-                <form method="post" action="/admin/menu/menu-con/luu" class="admin-menu-row__form">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="0" />
-                    <input type="hidden" name="parentId" value="@l.Id" />
-                    <input type="text" name="label" placeholder="Nhãn mục con" style="@Ph;flex:1;min-width:100px;" />
-                    <input type="text" name="url" placeholder="/danh-muc/..." style="@Ph;flex:1;min-width:120px;" />
-                    <input type="number" name="sortOrder" value="@l.Children.Count" style="@Ph;width:56px;" />
-                    <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục con</button>
-                </form>
+                else if (l.HasDropdown)
+                {
+                    <div class="admin-menu-item__children">
+                        <p class="admin-menu-item__children-hint">
+                            Menu con của "@l.Label" — hiện trong dropdown khi hover/bấm vào mục này.
+                            @if (l.Children.Count == 0)
+                            {
+                                <text>Chưa có mục nào nên dropdown sẽ không hiện gì.</text>
+                            }
+                        </p>
+                        @foreach (var c in l.Children)
+                        {
+                            <div class="admin-menu-item__child-row">
+                                <form method="post" action="/admin/menu/menu-con/luu" class="admin-menu-item__fields">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <input type="hidden" name="parentId" value="@l.Id" />
+                                    <input type="text" name="label" value="@c.Label" placeholder="Nhãn mục con" />
+                                    <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(c.Url) })" />
+                                    <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@c.SortOrder" class="admin-menu-item__sort" /></span>
+                                    <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+                                </form>
+                                <form method="post" action="/admin/menu/menu-con/@c.Id/xoa" data-confirm="Xóa mục menu con?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                                </form>
+                            </div>
+                        }
+                        <form method="post" action="/admin/menu/menu-con/luu" class="admin-menu-item__child-row">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="0" />
+                            <input type="hidden" name="parentId" value="@l.Id" />
+                            <input type="text" name="label" placeholder="Nhãn mục con" />
+                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                            <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@l.Children.Count" class="admin-menu-item__sort" /></span>
+                            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục con</button>
+                        </form>
+                    </div>
+                }
             </div>
         }
-    }
-    <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form" style="margin-top:8px;">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="0" />
-        <input type="hidden" name="placement" value="@NavPlacement.Main" />
-        <input type="text" name="label" placeholder="Nhãn mới" style="@Ph;flex:1;min-width:120px;" />
-        <input type="text" name="url" placeholder="/danh-muc/..." style="@Ph;flex:1;min-width:140px;" />
-        <label style="display:flex;align-items:center;gap:4px;font-size:13px;white-space:nowrap;"><input type="checkbox" name="hasDropdown" value="true" /> Dropdown</label>
-        <input type="number" name="sortOrder" value="@main.Count" style="@Ph;width:60px;" />
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
-    </form>
+        <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-item admin-menu-item--add admin-menu-item__row">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="0" />
+            <input type="hidden" name="placement" value="@NavPlacement.Main" />
+            <div class="admin-menu-item__fields">
+                <input type="text" name="label" placeholder="Nhãn mới" />
+                <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                <label class="admin-menu-item__dropdown"><input type="checkbox" name="hasDropdown" value="true" /> Dropdown</label>
+                <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@main.Count" class="admin-menu-item__sort" /></span>
+            </div>
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục</button>
+        </form>
+    </div>
 </div>
 
 @* ---------- Sub nav ---------- *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Menu phụ (thanh trên)</h2>
-    @foreach (var l in sub)
-    {
-        <div class="admin-menu-row">
-            <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="id" value="@l.Id" />
-                <input type="hidden" name="placement" value="@NavPlacement.Sub" />
-                <input type="hidden" name="hasDropdown" value="false" />
-                <input type="text" name="label" value="@l.Label" style="@Ph;flex:1;min-width:120px;" />
-                <input type="text" name="url" value="@l.Url" style="@Ph;flex:1;min-width:140px;" />
-                <input type="number" name="sortOrder" value="@l.SortOrder" style="@Ph;width:60px;" />
-                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
-            </form>
-            <form method="post" action="/admin/menu/lien-ket/@l.Id/xoa" data-confirm="Xóa liên kết?">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
-            </form>
-        </div>
-    }
-    <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-row__form" style="margin-top:8px;">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="0" />
-        <input type="hidden" name="placement" value="@NavPlacement.Sub" />
-        <input type="hidden" name="hasDropdown" value="false" />
-        <input type="text" name="label" placeholder="Nhãn mới" style="@Ph;flex:1;min-width:120px;" />
-        <input type="text" name="url" placeholder="/..." style="@Ph;flex:1;min-width:140px;" />
-        <input type="number" name="sortOrder" value="@sub.Count" style="@Ph;width:60px;" />
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
-    </form>
+    <h2 class="admin-section-title">Menu phụ (thanh trên)</h2>
+    <div class="admin-menu-list">
+        @foreach (var l in sub)
+        {
+            <div class="admin-menu-item admin-menu-item__row">
+                <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-item__fields">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@l.Id" />
+                    <input type="hidden" name="placement" value="@NavPlacement.Sub" />
+                    <input type="hidden" name="hasDropdown" value="false" />
+                    <input type="text" name="label" value="@l.Label" placeholder="Nhãn" />
+                    <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(l.Url) })" />
+                    <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@l.SortOrder" class="admin-menu-item__sort" /></span>
+                    <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
+                </form>
+                <form method="post" action="/admin/menu/lien-ket/@l.Id/xoa" data-confirm="Xóa liên kết?">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                </form>
+            </div>
+        }
+        <form method="post" action="/admin/menu/lien-ket/luu" class="admin-menu-item admin-menu-item--add admin-menu-item__row">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="0" />
+            <input type="hidden" name="placement" value="@NavPlacement.Sub" />
+            <input type="hidden" name="hasDropdown" value="false" />
+            <div class="admin-menu-item__fields">
+                <input type="text" name="label" placeholder="Nhãn mới" />
+                <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@sub.Count" class="admin-menu-item__sort" /></span>
+            </div>
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục</button>
+        </form>
+    </div>
 </div>
 
 @* ---------- Footer columns ---------- *@
 <div class="admin-card">
-    <h2 style="font-family:var(--font-display);margin:0 0 16px;font-size:20px;">Chân trang</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+    <h2 class="admin-section-title">Chân trang</h2>
+    <div class="admin-menu-columns">
         @foreach (var col in columns)
         {
-            <div style="border:1px solid var(--color-grey-200);border-radius:8px;padding:16px;background:#fff;">
-                <form method="post" action="/admin/menu/cot/luu" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+            <div class="admin-menu-column">
+                <form method="post" action="/admin/menu/cot/luu" class="admin-menu-column__header">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id" value="@col.Id" />
-                    <input type="text" name="title" value="@col.Title" style="@Ph;flex:1;font-weight:600;" />
-                    <input type="number" name="sortOrder" value="@col.SortOrder" style="@Ph;width:56px;" title="Thứ tự" />
+                    <input type="text" name="title" value="@col.Title" class="admin-menu-column__title" />
+                    <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@col.SortOrder" class="admin-menu-item__sort" /></span>
                     <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
                 </form>
                 @foreach (var link in col.Links)
                 {
-                    <div class="admin-menu-row" style="margin-bottom:6px;">
-                        <form method="post" action="/admin/menu/cot-lien-ket/luu" class="admin-menu-row__form">
+                    <div class="admin-footer-link">
+                        <div class="admin-footer-link__display">
+                            <span class="admin-footer-link__name">@link.Label</span>
+                            <button type="button" class="admin-footer-link__edit-btn" data-footer-link-toggle title="Sửa">✎</button>
+                            <form method="post" action="/admin/menu/cot-lien-ket/@link.Id/xoa">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="admin-footer-link__del-btn" title="Xóa" data-confirm="Xóa link &quot;@link.Label&quot;?">✕</button>
+                            </form>
+                        </div>
+                        <form method="post" action="/admin/menu/cot-lien-ket/luu" class="admin-footer-link__form" data-footer-link-edit hidden>
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@link.Id" />
                             <input type="hidden" name="columnId" value="@col.Id" />
-                            <input type="text" name="label" value="@link.Label" style="@Ph;flex:1;min-width:80px;" />
-                            <input type="text" name="url" value="@link.Url" style="@Ph;width:90px;" />
-                            <input type="number" name="sortOrder" value="@link.SortOrder" style="@Ph;width:48px;" />
-                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">✓</button>
-                        </form>
-                        <form method="post" action="/admin/menu/cot-lien-ket/@link.Id/xoa">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">✕</button>
+                            <input type="text" name="label" value="@link.Label" placeholder="Nhãn" class="admin-footer-link__label" />
+                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(link.Url) })" />
+                            <input type="number" name="sortOrder" value="@link.SortOrder" title="Thứ tự" class="admin-footer-link__sort" />
+                            <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
                         </form>
                     </div>
                 }
-                <form method="post" action="/admin/menu/cot-lien-ket/luu" class="admin-menu-row__form" style="margin:8px 0;">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="0" />
-                    <input type="hidden" name="columnId" value="@col.Id" />
-                    <input type="text" name="label" placeholder="Link mới" style="@Ph;flex:1;min-width:80px;" />
-                    <input type="text" name="url" placeholder="/..." style="@Ph;width:90px;" />
-                    <input type="number" name="sortOrder" value="@col.Links.Count" style="@Ph;width:48px;" />
-                    <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+</button>
-                </form>
-                <form method="post" action="/admin/menu/cot/@col.Id/xoa" data-confirm="Xóa cả cột &quot;@col.Title&quot;?" style="text-align:right;">
+                <div class="admin-footer-link admin-footer-link--add">
+                    <form method="post" action="/admin/menu/cot-lien-ket/luu" class="admin-footer-link__form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="0" />
+                        <input type="hidden" name="columnId" value="@col.Id" />
+                        <input type="text" name="label" placeholder="Link mới" class="admin-footer-link__label" />
+                        <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                        <input type="number" name="sortOrder" value="@col.Links.Count" title="Thứ tự" class="admin-footer-link__sort" />
+                        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
+                    </form>
+                </div>
+                <form method="post" action="/admin/menu/cot/@col.Id/xoa" data-confirm="Xóa cả cột &quot;@col.Title&quot;?" class="admin-menu-column__delete">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa cột</button>
                 </form>
             </div>
         }
-        <div style="border:1px dashed var(--color-grey-300);border-radius:8px;padding:16px;">
+        <div class="admin-menu-column admin-menu-column--add">
             <form method="post" action="/admin/menu/cot/luu">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="0" />
@@ -197,7 +391,7 @@
 @if (textValues is not null)
 {
     <div class="admin-card" style="margin-top:24px;">
-        <h2 style="font-family:var(--font-display);margin:0 0 4px;font-size:20px;">Khối đăng ký nhận tin (chân trang)</h2>
+        <h2 class="admin-section-title" style="margin-bottom:4px;">Khối đăng ký nhận tin (chân trang)</h2>
         <p class="admin-field__hint" style="margin:0 0 16px;">Để trống sẽ dùng nội dung mặc định.</p>
         <form method="post" action="/admin/menu/nhan-tin" class="admin-form">
             @Html.AntiForgeryToken()
@@ -220,4 +414,39 @@
             </div>
         </form>
     </div>
+}
+
+@section Scripts {
+    <script src="~/js/admin-curated-picker.js" asp-append-version="true"></script>
+    <script>
+      // Collapse/expand a menu item's dropdown content (note/curated columns/menu con) — mỗi
+      // mục dropdown thu gọn mặc định để trang không dài, bấm mũi tên để mở ra sửa.
+      document.querySelectorAll('[data-item-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.closest('.admin-menu-item').classList.toggle('is-collapsed');
+        });
+      });
+
+      // Footer link rows show just the label by default — clicking ✎ reveals the
+      // đích đến/thứ tự form below instead of every link's full form always being on screen.
+      document.querySelectorAll('[data-footer-link-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var row = btn.closest('.admin-footer-link');
+          row.querySelector('[data-footer-link-edit]').hidden = false;
+          row.querySelector('.admin-footer-link__display').hidden = true;
+        });
+      });
+
+      // "+ Thêm cột" — 3-way segmented control, mirrors a hidden <input name="kind">.
+      document.querySelectorAll('[data-kind-toggle]').forEach(function (group) {
+        var hidden = group.querySelector('[data-kind-value]');
+        group.querySelectorAll('button[data-kind]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            group.querySelectorAll('button[data-kind]').forEach(function (b) { b.classList.remove('is-active'); });
+            btn.classList.add('is-active');
+            hidden.value = btn.dataset.kind;
+          });
+        });
+      });
+    </script>
 }

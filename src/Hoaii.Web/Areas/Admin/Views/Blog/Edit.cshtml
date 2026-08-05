@@ -7,7 +7,7 @@
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/blog">← Bài viết</a></div>
 
 <div class="admin-card">
-    <form method="post" action="/admin/blog/luu" class="admin-form" data-blog-form>
+    <form method="post" action="/admin/blog/luu" class="admin-form admin-form--wide" data-blog-form>
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 

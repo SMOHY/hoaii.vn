@@ -24,9 +24,10 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
     }
 
     [HttpGet("/admin/danh-muc/them")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
         ViewBag.Types = TypeOptions();
+        ViewBag.Groups = await Db.CategoryGroups.OrderBy(g => g.SortOrder).ToListAsync();
         return View("Edit", new Category { Name = "", Slug = "" });
     }
 
@@ -36,12 +37,13 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
         var category = await Db.Categories.FindAsync(id);
         if (category is null) return NotFound();
         ViewBag.Types = TypeOptions();
+        ViewBag.Groups = await Db.CategoryGroups.OrderBy(g => g.SortOrder).ToListAsync();
         return View(category);
     }
 
     [HttpPost("/admin/danh-muc/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(int id, string name, string? slug, CategoryType type, int sortOrder, CategoryCms cms)
+    public async Task<IActionResult> Save(int id, string name, string? slug, CategoryType type, int sortOrder, int? groupId, CategoryCms cms)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -60,7 +62,7 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
 
         if (id == 0)
         {
-            var category = new Category { Name = name.Trim(), Slug = finalSlug, Type = type, SortOrder = sortOrder };
+            var category = new Category { Name = name.Trim(), Slug = finalSlug, Type = type, SortOrder = sortOrder, GroupId = groupId };
             ApplyCms(category, cms);
             Db.Categories.Add(category);
             auth.Audit("Thêm danh mục", nameof(Category), null, name);
@@ -75,6 +77,7 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
             category.Slug = finalSlug;
             category.Type = type;
             category.SortOrder = sortOrder;
+            category.GroupId = groupId;
             ApplyCms(category, cms);
             auth.Audit("Sửa danh mục", nameof(Category), id, name);
             await Db.SaveChangesAsync();

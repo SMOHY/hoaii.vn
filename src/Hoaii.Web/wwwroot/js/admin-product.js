@@ -1,13 +1,13 @@
-// Product edit form: image picker + reorder, and dynamic variant rows.
-// The image picker modal opens/closes via the `is-open` class, so overlays.js gives it
-// Escape / focus-trap / scroll-lock for free.
+// Product edit form: gallery reorder + dynamic variant rows.
+// The media picker itself (modal, upload, library grid) is shared — see admin-imagefield.js.
+// The gallery's "+ Thêm ảnh" button has no data-target, so picks/uploads land here via
+// the picker:append event instead of filling a single input.
 (function () {
   'use strict';
 
   const form = document.querySelector('[data-product-form]');
   if (!form) return;
 
-  const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value;
   const imageList = form.querySelector('[data-image-list]');
 
   // ---------- image list: add / remove / reorder ----------
@@ -35,6 +35,8 @@
     if (exists) return;
     imageList.appendChild(makeImageItem(url));
   }
+
+  document.addEventListener('picker:append', function (e) { addImage(e.detail.url); });
 
   imageList.addEventListener('click', function (e) {
     const item = e.target.closest('[data-image-item]');
@@ -70,92 +72,4 @@
     }
   });
 
-  // ---------- picker modal ----------
-  const modal = document.querySelector('[data-picker-modal]');
-  const backdrop = document.querySelector('[data-picker-backdrop]');
-  const grid = document.querySelector('[data-picker-grid]');
-
-  function openPicker() {
-    modal.classList.add('is-open');
-    backdrop.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    loadLibrary();
-  }
-  function closePicker() {
-    modal.classList.remove('is-open');
-    backdrop.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-  }
-
-  form.querySelector('[data-open-picker]')?.addEventListener('click', openPicker);
-  modal.querySelector('[data-picker-close]')?.addEventListener('click', closePicker);
-  backdrop.addEventListener('click', closePicker);
-
-  async function loadLibrary() {
-    grid.innerHTML = '<p style="color:var(--color-grey-500);">Đang tải…</p>';
-    try {
-      const res = await fetch('/admin/thu-vien-anh/danh-sach', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-      const items = await res.json();
-      renderLibrary(items);
-    } catch {
-      grid.innerHTML = '<p style="color:var(--color-brand-red);">Không tải được thư viện.</p>';
-    }
-  }
-
-  function renderLibrary(items) {
-    if (!items.length) {
-      grid.innerHTML = '<p style="color:var(--color-grey-500);">Chưa có ảnh nào. Hãy tải lên ở trên.</p>';
-      return;
-    }
-    grid.innerHTML = '';
-    items.forEach(function (it) {
-      const cell = document.createElement('button');
-      cell.type = 'button';
-      cell.className = 'admin-picker-cell';
-      cell.title = it.name;
-      cell.style.backgroundImage = "url('" + it.url + "')";
-      cell.addEventListener('click', function () {
-        addImage(it.url);
-        closePicker();
-      });
-      grid.appendChild(cell);
-    });
-  }
-
-  // Upload straight from the picker, then refresh + auto-add the new images.
-  modal.querySelector('[data-picker-upload]')?.addEventListener('submit', async function (e) {
-    e.preventDefault();
-    // Instant feedback instead of a wasted round-trip; the server enforces the same 5MB cap.
-    var tooBig = [...e.target.querySelectorAll('input[type=file]')]
-      .flatMap(function (i) { return [...i.files]; })
-      .filter(function (f) { return f.size > 5 * 1024 * 1024; });
-    if (tooBig.length) {
-      window.hoaiiToast && window.hoaiiToast('Ảnh vượt quá 5MB: ' + tooBig.map(function (f) { return f.name; }).join(', '), 'error');
-      return;
-    }
-    const fd = new FormData(e.target);
-    fd.append('json', 'true');
-    // Antiforgery reads the token from a form field by default, so send it in the body.
-    if (token) fd.append('__RequestVerificationToken', token);
-    const btn = e.target.querySelector('button');
-    btn.disabled = true;
-    try {
-      const res = await fetch('/admin/thu-vien-anh/tai-len', {
-        method: 'POST',
-        body: fd,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-      });
-      const data = await res.json();
-      (data.uploaded || []).forEach(function (u) { addImage(u.url); });
-      if (data.errors && data.errors.length) {
-        window.hoaiiToast && window.hoaiiToast(data.errors.join(' · '), 'error');
-      }
-      e.target.reset();
-      loadLibrary();
-    } catch {
-      window.hoaiiToast && window.hoaiiToast('Tải ảnh thất bại.', 'error');
-    } finally {
-      btn.disabled = false;
-    }
-  });
 })();

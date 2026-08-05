@@ -44,16 +44,25 @@
                 @foreach (var item in mainMenu)
                 {
                     var menuKey = item.Url.Split('/').Last();
-                    @* aria-controls points at the panel the MegaMenu view component renders for
-                       this key, so screen readers can follow the trigger to the dropdown. *@
-                    <button type="button" class="item" data-menu-trigger="@menuKey" aria-expanded="false" aria-controls="mega-menu-@menuKey">
-                        <span>@item.Label</span>
-                        @if (item.HasDropdown)
-                        {
+                    @if (item.HasDropdown)
+                    {
+                        @* aria-controls points at the panel the MegaMenu view component renders for
+                           this key, so screen readers can follow the trigger to the dropdown. *@
+                        <button type="button" class="item" data-menu-trigger="@menuKey" aria-expanded="false" aria-controls="mega-menu-@menuKey">
+                            <span>@item.Label</span>
                             @* Xnix/Line/Down_Arrow_5 (node 670:3200), mapped into a 16px box. *@
                             <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.6667 6.6667L8 10L11.3333 6.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        }
-                    </button>
+                        </button>
+                    }
+                    else
+                    {
+                        @* Không tick "Dropdown" trong Admin → Menu nghĩa là mục này không có panel
+                           mega-menu nào được dựng — phải là link thật đi thẳng tới trang, không phải
+                           nút chỉ toggle một panel không tồn tại. *@
+                        <a class="item" href="@item.Url">
+                            <span>@item.Label</span>
+                        </a>
+                    }
                 }
             </nav>
             <div class="nav-icons">

@@ -7,7 +7,7 @@
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/tai-khoan">← Tài khoản admin</a></div>
 
 <div class="admin-card">
-    <form method="post" action="/admin/tai-khoan/luu" class="admin-form">
+    <form method="post" action="/admin/tai-khoan/luu" class="admin-form admin-form--wide">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 

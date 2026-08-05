@@ -133,7 +133,7 @@
 }
 .pdp-story__text { width: 702px; }
 .pdp-story__text h2 { font: 500 32px/40px var(--font-body); margin: 0 0 96px; color: var(--color-brand-red); }
-.pdp-story__text p { font: 300 16px/18px var(--font-body); color: var(--color-grey-900); margin: 0; }
+.pdp-story__text p { font: 300 16px/26px var(--font-body); color: var(--color-grey-900); margin: 0; white-space: pre-line; }
 .pdp-story__motif { display: block; width: 100%; max-width: 701px; height: auto; margin-top: 96px; }
 
 .pdp-story__row2 { display: flex; justify-content: space-between; margin-top: 80px; gap: 80px; }

@@ -147,6 +147,7 @@ body.hero-overlay .nav-menu .item.is-open {
   border: none;
   background: none;
   cursor: pointer;
+  text-decoration: none;
 }
 .nav-menu .item span {
   font-family: var(--font-body);
@@ -402,9 +403,9 @@ body.hero-overlay .nav-menu .item.is-open {
 .nav-menu .item.is-open { background: var(--color-grey-50); }
 
 /* ---------- Click-driven dropdowns (all four desktop menus) ----------
-   Every Figma prototype uses ON_CLICK + Smart Animate + Ease in and out; only "Quà tết" runs
-   longer, so the mechanism is shared and just the duration varies per menu. The old
-   hover-to-reveal rules are gone — no menu opens on hover any more.
+   Figma's own per-panel durations (node 1287:56680 = 0.8s for "Quà tết" vs 0.1s for the other
+   three) read as a bug once built — the exact same open action feeling instant on three menus
+   and sluggish on the fourth. One shared duration for every panel now.
 
    The only geometry that differs between the closed and open states is the panel's height
    (0 → 403px), so that is the only property animated — no fade, no scale, no bounce.
@@ -413,14 +414,7 @@ body.hero-overlay .nav-menu .item.is-open {
    position:absolute so a 0-height panel can never push a sibling panel off-centre.
    "Ease in and out" = cubic-bezier(0.42, 0, 0.58, 1). */
 @media (min-width: 992px) {
-  /* Menu con thêm ở Admin > Menu không nằm trong 4 khoá dưới đây — vẫn cần một tốc độ mặc định,
-     đặt trước để 4 khoá cụ thể (cùng độ đặc trưng, đứng sau) ghi đè được. */
-  .mega-menu-wrap .mega-menu { --menu-duration: 0.1s; }
-
-  .mega-menu-wrap [data-menu-panel="qua-tet"] { --menu-duration: 0.8s; }           /* node 1287:56680 */
-  .mega-menu-wrap [data-menu-panel="qua-trung-thu"] { --menu-duration: 0.1s; }     /* node 1287:56777 */
-  .mega-menu-wrap [data-menu-panel="qua-theo-dip"] { --menu-duration: 0.1s; } /* node 1287:56871 */
-  .mega-menu-wrap [data-menu-panel="san-pham-chon-loc"] { --menu-duration: 0.1s; } /* node 1287:56965 */
+  .mega-menu-wrap .mega-menu { --menu-duration: 0.2s; }
 
   .mega-menu-wrap .mega-menu {
     display: flex;

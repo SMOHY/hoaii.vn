@@ -299,6 +299,8 @@ using (var scope = app.Services.CreateScope())
     await NavigationSeeder.EnsureSeedAsync(db);
     await VoucherSeeder.EnsureSeedAsync(db);
     await PartnerLogoSeeder.EnsureSeedAsync(db);
+    await CategoryGroupSeeder.EnsureSeedAsync(db);
+    await MegaMenuColumnMigrationSeeder.EnsureSeedAsync(db);
 }
 
 app.Run();

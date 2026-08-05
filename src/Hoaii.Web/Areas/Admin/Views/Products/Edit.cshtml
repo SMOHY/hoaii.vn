@@ -111,10 +111,7 @@
                     <label>Nội dung</label>
                     <textarea name="StoryBody" rows="4">@Model.StoryBody</textarea>
                 </div>
-                <div class="admin-field">
-                    <label>Ảnh câu chuyện</label>
-                    <input type="text" name="StoryImageUrl" value="@Model.StoryImageUrl" placeholder="/images/pdp/story.jpg" />
-                </div>
+                <partial name="_ImageField" model="@(("Ảnh câu chuyện", "StoryImageUrl", "story-img", Model.StoryImageUrl))" />
 
                 <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Đặc điểm</h4>
                 <div class="admin-field">
@@ -125,10 +122,7 @@
                     <label>Nội dung (mỗi dòng một ý)</label>
                     <textarea name="FeatureBody" rows="5">@Model.FeatureBody</textarea>
                 </div>
-                <div class="admin-field">
-                    <label>Ảnh đặc điểm</label>
-                    <input type="text" name="FeatureImageUrl" value="@Model.FeatureImageUrl" placeholder="/images/pdp/feature.jpg" />
-                </div>
+                <partial name="_ImageField" model="@(("Ảnh đặc điểm", "FeatureImageUrl", "feature-img", Model.FeatureImageUrl))" />
             </div>
         </div>
 
@@ -143,6 +137,17 @@
                             <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option>
                         }
                     </select>
+                </div>
+                <div class="admin-field">
+                    <label>Bộ sưu tập</label>
+                    <select name="CollectionId">
+                        <option value="">— Không thuộc bộ sưu tập nào —</option>
+                        @foreach (var c in Model.Collections)
+                        {
+                            <option value="@c.Id" selected="@(Model.CollectionId == c.Id)">@c.Name</option>
+                        }
+                    </select>
+                    <span class="admin-field__hint">Cùng dòng sản phẩm ở danh mục khác — VD sản phẩm Tết và hộp bánh Trung thu cùng tên/chủ đề. Quản lý ở trang <a href="/admin/bo-suu-tap">Bộ sưu tập</a>.</span>
                 </div>
                 <div class="admin-field">
                     <label>Nhãn</label>
@@ -188,23 +193,9 @@
     </form>
 }
 
-@* Image picker modal — reuses overlays.js (Escape / focus trap via the is-open class). *@
-<div class="modal-backdrop" data-picker-backdrop></div>
-<div class="voucher-modal" data-picker-modal data-image-picker aria-hidden="true">
-    <div class="voucher-modal__panel" style="max-width:720px;">
-        <div class="voucher-modal__header">
-            <h2>Chọn ảnh</h2>
-            <button type="button" class="voucher-modal__close" data-picker-close aria-label="Đóng">✕</button>
-        </div>
-        <form data-picker-upload enctype="multipart/form-data" style="margin:16px 0;">
-            <input type="file" name="files" accept="image/jpeg,image/png,image/webp,image/svg+xml" multiple />
-            <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">Tải lên</button>
-            <span class="admin-field__hint" style="display:block;margin-top:6px;">Tối đa 5MB mỗi ảnh.</span>
-        </form>
-        <div class="admin-picker-grid" data-picker-grid></div>
-    </div>
-</div>
+<partial name="_PickerModal" />
 
 @section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
     <script src="~/js/admin-product.js" asp-append-version="true"></script>
 }

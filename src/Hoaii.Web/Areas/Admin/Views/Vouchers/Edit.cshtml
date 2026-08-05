@@ -14,7 +14,7 @@
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/voucher">← Voucher</a></div>
 
 <div class="admin-card">
-    <form method="post" action="/admin/voucher/luu" class="admin-form">
+    <form method="post" action="/admin/voucher/luu" class="admin-form admin-form--wide">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 

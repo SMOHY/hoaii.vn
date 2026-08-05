@@ -4,6 +4,7 @@ using Hoaii.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hoaii.Infrastructure.Migrations
 {
     [DbContext(typeof(HoaiiDbContext))]
-    partial class HoaiiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260805180624_AddMegaMenuCuratedItem")]
+    partial class AddMegaMenuCuratedItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,9 +275,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
                     b.Property<string>("HeroEyebrow")
                         .HasColumnType("nvarchar(max)");
 
@@ -328,8 +328,6 @@ namespace Hoaii.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -457,56 +455,6 @@ namespace Hoaii.Infrastructure.Migrations
                             SortOrder = 12,
                             Type = 1
                         });
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.CategoryGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Route")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Route")
-                        .IsUnique();
-
-                    b.ToTable("CategoryGroups");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.Collection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Collections");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.ContactSubmission", b =>
@@ -886,71 +834,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.HasIndex("UploadedByAdminUserId");
 
                     b.ToTable("MediaAssets");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuColumn", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CollectionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Kind")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PanelKey")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CollectionId");
-
-                    b.ToTable("MegaMenuColumns");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuColumnItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MegaMenuColumnId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("MegaMenuColumnId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("MegaMenuColumnItems");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuCuratedItem", b =>
@@ -1358,9 +1241,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CollectionId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("CompareAtPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -1422,8 +1302,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CollectionId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -1987,16 +1865,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Navigation("AdminUser");
                 });
 
-            modelBuilder.Entity("Hoaii.Domain.Entities.Category", b =>
-                {
-                    b.HasOne("Hoaii.Domain.Entities.CategoryGroup", "Group")
-                        .WithMany("Categories")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Group");
-                });
-
             modelBuilder.Entity("Hoaii.Domain.Entities.FooterMenuLink", b =>
                 {
                     b.HasOne("Hoaii.Domain.Entities.FooterMenuColumn", "Column")
@@ -2016,41 +1884,6 @@ namespace Hoaii.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("UploadedByAdminUser");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuColumn", b =>
-                {
-                    b.HasOne("Hoaii.Domain.Entities.Collection", "Collection")
-                        .WithMany()
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Collection");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuColumnItem", b =>
-                {
-                    b.HasOne("Hoaii.Domain.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Hoaii.Domain.Entities.MegaMenuColumn", "Column")
-                        .WithMany("Items")
-                        .HasForeignKey("MegaMenuColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hoaii.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Column");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuCuratedItem", b =>
@@ -2132,14 +1965,7 @@ namespace Hoaii.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hoaii.Domain.Entities.Collection", "Collection")
-                        .WithMany()
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Category");
-
-                    b.Navigation("Collection");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.ProductImage", b =>
@@ -2180,11 +2006,6 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Hoaii.Domain.Entities.CategoryGroup", b =>
-                {
-                    b.Navigation("Categories");
-                });
-
             modelBuilder.Entity("Hoaii.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Addresses");
@@ -2193,11 +2014,6 @@ namespace Hoaii.Infrastructure.Migrations
             modelBuilder.Entity("Hoaii.Domain.Entities.FooterMenuColumn", b =>
                 {
                     b.Navigation("Links");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuColumn", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.NavLink", b =>

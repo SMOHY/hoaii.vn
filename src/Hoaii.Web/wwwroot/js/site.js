@@ -120,9 +120,9 @@
   /**
    * @param instant Close without the open animation playing in reverse. Used when the user
    *   switches straight to another menu: the panels are stacked in the same spot, so letting the
-   *   outgoing one animate shut would leave two dropdowns overlapping (and "Quà tết" closes over
-   *   0.8s, far longer than the other three take to open). Dismissing the menu outright — cross,
-   *   Escape, click outside — keeps the normal animated close.
+   *   outgoing one animate shut would leave two dropdowns overlapping while the incoming one
+   *   opens. Dismissing the menu outright — cross, Escape, click outside — keeps the normal
+   *   animated close.
    */
   function closeAll(instant) {
     pinned = null;
