@@ -37,6 +37,11 @@ public class SitemapController(HoaiiDbContext db) : Controller
             .ToListAsync();
         urls.AddRange(categorySlugs.Select(slug => (baseUrl + "/danh-muc/" + slug, (DateTime?)null)));
 
+        var collectionSlugs = await db.Collections
+            .Select(c => c.Slug)
+            .ToListAsync();
+        urls.AddRange(collectionSlugs.Select(slug => (baseUrl + "/bo-suu-tap/" + slug, (DateTime?)null)));
+
         var products = await db.Products
             .Where(p => p.IsActive)
             .Select(p => new { p.Slug, p.UpdatedAt, p.CreatedAt })

@@ -38,6 +38,10 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
         if (category is null) return NotFound();
         ViewBag.Types = TypeOptions();
         ViewBag.Groups = await Db.CategoryGroups.OrderBy(g => g.SortOrder).ToListAsync();
+        ViewBag.HeroSlides = await Db.CategoryHeroSlides
+            .Where(s => s.CategoryId == id)
+            .OrderBy(s => s.SortOrder).ThenBy(s => s.Id)
+            .ToListAsync();
         return View(category);
     }
 
@@ -144,6 +148,60 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
         await Db.SaveChangesAsync();
         Ok("Đã xóa danh mục.");
         return RedirectToAction(nameof(Index));
+    }
+
+    // ---------- Hero slide (per-category, see CategoryController.Index) ----------
+    [HttpGet("/admin/danh-muc/{categoryId:int}/slide/them")]
+    public async Task<IActionResult> HeroSlideCreate(int categoryId)
+    {
+        var category = await Db.Categories.FindAsync(categoryId);
+        if (category is null) return NotFound();
+        ViewBag.Category = category;
+        return View("HeroSlideEdit", new CategoryHeroSlide { CategoryId = categoryId, ImageUrl = "" });
+    }
+
+    [HttpGet("/admin/danh-muc/slide/{id:int}/sua")]
+    public async Task<IActionResult> HeroSlideEdit(int id)
+    {
+        var slide = await Db.CategoryHeroSlides.FindAsync(id);
+        if (slide is null) return NotFound();
+        ViewBag.Category = await Db.Categories.FindAsync(slide.CategoryId);
+        return View(slide);
+    }
+
+    [HttpPost("/admin/danh-muc/slide/luu")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HeroSlideSave(int id, int categoryId, string imageUrl, string? name, string? linkUrl, int sortOrder, bool isActive)
+    {
+        if (await Db.Categories.FindAsync(categoryId) is null) return NotFound();
+
+        var slide = id == 0 ? new CategoryHeroSlide { CategoryId = categoryId, ImageUrl = "" } : await Db.CategoryHeroSlides.FindAsync(id);
+        if (slide is null) return NotFound();
+        slide.CategoryId = categoryId;
+        slide.ImageUrl = imageUrl?.Trim() ?? "";
+        slide.Name = name?.Trim() ?? "";
+        slide.LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? "#" : linkUrl.Trim();
+        slide.SortOrder = sortOrder;
+        slide.IsActive = isActive;
+        if (id == 0) Db.CategoryHeroSlides.Add(slide);
+        auth.Audit(id == 0 ? "Thêm slide hero danh mục" : "Sửa slide hero danh mục", nameof(CategoryHeroSlide), id == 0 ? null : id);
+        await Db.SaveChangesAsync();
+        Ok("Đã lưu slide.");
+        return RedirectToAction(nameof(Edit), new { id = categoryId });
+    }
+
+    [HttpPost("/admin/danh-muc/slide/{id:int}/xoa")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HeroSlideDelete(int id)
+    {
+        var slide = await Db.CategoryHeroSlides.FindAsync(id);
+        if (slide is null) return NotFound();
+        var categoryId = slide.CategoryId;
+        Db.CategoryHeroSlides.Remove(slide);
+        auth.Audit("Xóa slide hero danh mục", nameof(CategoryHeroSlide), id);
+        await Db.SaveChangesAsync();
+        Ok("Đã xóa slide.");
+        return RedirectToAction(nameof(Edit), new { id = categoryId });
     }
 
     private static List<SelectListItem> TypeOptions() =>

@@ -1,10 +1,8 @@
-@model Hoaii.Domain.Entities.Category
+@model Hoaii.Domain.Entities.Collection
 @{
     var isNew = Model.Id == 0;
-    ViewData["Title"] = isNew ? "Thêm danh mục" : "Sửa danh mục";
-    var types = ViewBag.Types as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>;
-    var groups = ViewBag.Groups as List<Hoaii.Domain.Entities.CategoryGroup> ?? [];
-    var heroSlides = ViewBag.HeroSlides as List<Hoaii.Domain.Entities.CategoryHeroSlide> ?? [];
+    ViewData["Title"] = isNew ? "Thêm bộ sưu tập" : "Sửa bộ sưu tập";
+    var heroSlides = ViewBag.HeroSlides as List<Hoaii.Domain.Entities.CollectionHeroSlide> ?? [];
 }
 
 @functions {
@@ -13,51 +11,29 @@
         : $"background:var(--color-grey-50) center/cover no-repeat url('{url}');";
 }
 
-<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/danh-muc">← Danh mục</a></div>
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/bo-suu-tap">← Bộ sưu tập</a></div>
 
 <div class="admin-card">
-    <form method="post" action="/admin/danh-muc/luu" class="admin-form admin-form--wide">
+    <form method="post" action="/admin/bo-suu-tap/luu" class="admin-form admin-form--wide">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 
         <div class="admin-field">
-            <label>Tên danh mục</label>
+            <label>Tên bộ sưu tập</label>
             <input type="text" name="name" value="@Model.Name" required autofocus />
         </div>
         <div class="admin-field">
             <label>Slug</label>
             <input type="text" name="slug" value="@Model.Slug" placeholder="Để trống sẽ tự sinh từ tên" />
-            <span class="admin-field__hint">Địa chỉ trang: /danh-muc/&lt;slug&gt;</span>
-        </div>
-        <div class="admin-form-row">
-            <div class="admin-field">
-                <label>Loại</label>
-                <select name="type">
-                    @foreach (var t in types!)
-                    {
-                        <option value="@t.Value" selected="@(Model.Type.ToString() == t.Value)">@t.Text</option>
-                    }
-                </select>
-            </div>
-            <div class="admin-field">
-                <label>Thứ tự hiển thị</label>
-                <input type="number" name="sortOrder" value="@Model.SortOrder" />
-            </div>
+            <span class="admin-field__hint">Địa chỉ trang: /bo-suu-tap/&lt;slug&gt;</span>
         </div>
         <div class="admin-field">
-            <label>Nhóm (trang "Quà theo dịp")</label>
-            <select name="groupId">
-                <option value="">— Không thuộc nhóm nào —</option>
-                @foreach (var g in groups)
-                {
-                    <option value="@g.Id" selected="@(Model.GroupId == g.Id)">@g.Name</option>
-                }
-            </select>
-            <span class="admin-field__hint">Chỉ áp dụng cho danh mục "Theo dịp" nhỏ (Valentine, 8/3, Giáng sinh, Người ấy, Bố mẹ) — quyết định danh mục này hiện ở trang landing nào và ở cột "Quà tặng" trong menu.</span>
+            <label>Thứ tự hiển thị</label>
+            <input type="number" name="sortOrder" value="@Model.SortOrder" />
         </div>
 
         <hr style="border:none;border-top:1px solid var(--color-grey-200);margin:24px 0;" />
-        <h3 style="font-family:var(--font-display);font-size:18px;margin:0 0 4px;">Nội dung trang danh mục</h3>
+        <h3 style="font-family:var(--font-display);font-size:18px;margin:0 0 4px;">Nội dung trang bộ sưu tập</h3>
         <p class="admin-field__hint" style="margin:0 0 16px;">Để trống sẽ dùng nội dung mặc định.</p>
 
         <div class="admin-field">
@@ -67,7 +43,7 @@
         <div class="admin-form-row">
             <div class="admin-field">
                 <label>Eyebrow hero</label>
-                <input type="text" name="cms.HeroEyebrow" value="@Model.HeroEyebrow" placeholder="VD: Quà tết đặc sắc" />
+                <input type="text" name="cms.HeroEyebrow" value="@Model.HeroEyebrow" placeholder="VD: Thiên Điểu Lạc Hồng đặc sắc" />
             </div>
             <div class="admin-field">
                 <label>Dòng dưới ảnh hero</label>
@@ -75,10 +51,6 @@
                 <span class="admin-field__hint">Để trống thì ẩn dòng này.</span>
             </div>
         </div>
-
-        @* Hai ảnh này quyết định phần đầu trang danh mục và ô cover trên trang "Quà theo dịp". *@
-        <partial name="_ImageField" model="@(("Ảnh banner đầu trang", "cms.BannerImageUrl", "cat-banner-img", Model.BannerImageUrl))" />
-        <partial name="_ImageField" model="@(("Ảnh cover (dùng ở trang Quà theo dịp)", "cms.CoverImageUrl", "cat-cover-img", Model.CoverImageUrl))" />
 
         <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Banner khuyến mãi</h4>
         <div class="admin-form-row">
@@ -97,49 +69,46 @@
         </div>
         <div class="admin-field">
             <label>Nút — liên kết</label>
-            <input type="text" name="cms.PromoCtaUrl" value="@Model.PromoCtaUrl" placeholder="/danh-muc/qua-tet" />
+            <input type="text" name="cms.PromoCtaUrl" value="@Model.PromoCtaUrl" placeholder="/bo-suu-tap/@Model.Slug" />
         </div>
-        <partial name="_ImageField" model="@(("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "cat-promo-img", Model.PromoImageUrl))" />
+        <partial name="_ImageField" model="@(("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "col-promo-img", Model.PromoImageUrl))" />
 
         <div class="admin-form-row">
             <div class="admin-field">
                 <label>Màu nền banner</label>
                 <input type="text" name="cms.PromoBackground" value="@Model.PromoBackground"
                        placeholder="#E5D9CB" pattern="^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" />
-                <span class="admin-field__hint">
-                    Chỉ nhận mã hex, VD <code>#AA8656</code>. Để trống dùng màu mặc định.
-                    Thiết kế: Quà tết #AA8656, Quà trung thu #AF2234, còn lại #E5D9CB.
-                </span>
+                <span class="admin-field__hint">Chỉ nhận mã hex, VD <code>#AA8656</code>. Để trống dùng màu mặc định.</span>
             </div>
             <div class="admin-field">
                 <label>Bố cục banner</label>
                 <select name="cms.PromoWide">
-                    <option value="false" selected="@(!Model.PromoWide)">Hẹp — chữ 760, ảnh 760 (Quà tết, Trung thu)</option>
-                    <option value="true" selected="@Model.PromoWide">Rộng — ảnh 840 (các trang còn lại)</option>
+                    <option value="false" selected="@(!Model.PromoWide)">Hẹp — chữ 760, ảnh 760</option>
+                    <option value="true" selected="@Model.PromoWide">Rộng — ảnh 840</option>
                 </select>
             </div>
         </div>
 
         <div class="admin-form-actions">
             <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
-            <a class="admin-btn admin-btn--secondary" href="/admin/danh-muc">Hủy</a>
+            <a class="admin-btn admin-btn--secondary" href="/admin/bo-suu-tap">Hủy</a>
         </div>
     </form>
 </div>
 
 @if (!isNew)
 {
-    @* Nếu danh mục chưa có dòng nào ở đây, trang danh mục vẫn tự lấy ảnh từ 6 sản phẩm đầu tiên
-       (xem CategoryController.Index) — thêm 1 slide bên dưới là đủ để chuyển sang danh sách tự
-       quản lý này. *@
+    @* Nếu bộ sưu tập chưa có dòng nào ở đây, trang bộ sưu tập vẫn tự lấy ảnh từ 6 sản phẩm đầu
+       tiên (xem CollectionController.Index) — thêm 1 slide bên dưới là đủ để chuyển sang danh
+       sách tự quản lý này. *@
     <div class="admin-card" style="margin-top:24px;">
         <div class="admin-toolbar" style="margin-bottom:16px;">
             <h2 style="font-family:var(--font-display);margin:0;font-size:20px;">Slide hero</h2>
             <div class="spacer"></div>
-            <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/danh-muc/@Model.Id/slide/them">+ Thêm</a>
+            <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/bo-suu-tap/@Model.Id/slide/them">+ Thêm</a>
         </div>
         <p class="admin-field__hint" style="margin:0 0 16px;">
-            Chưa thêm slide nào thì ảnh carousel đầu trang tự lấy từ 6 sản phẩm đầu của danh mục này.
+            Chưa thêm slide nào thì ảnh carousel đầu trang tự lấy từ 6 sản phẩm đầu của bộ sưu tập này.
             Thêm 1 slide bên dưới sẽ chuyển hẳn sang danh sách bạn tự quản lý.
         </p>
         <div class="admin-table-wrap">
@@ -150,11 +119,11 @@
                     {
                         <tr>
                             <td><div style="width:64px;height:40px;border-radius:4px;@Thumb(s.ImageUrl)"></div></td>
-                            <td><a class="admin-row-link" href="/admin/danh-muc/slide/@s.Id/sua">@s.Name</a></td>
+                            <td><a class="admin-row-link" href="/admin/bo-suu-tap/slide/@s.Id/sua">@s.Name</a></td>
                             <td class="num">@s.SortOrder</td>
                             <td>@(s.IsActive ? "✓" : "—")</td>
                             <td class="num">
-                                <form method="post" action="/admin/danh-muc/slide/@s.Id/xoa" data-confirm="Xóa slide này?" style="display:inline;">
+                                <form method="post" action="/admin/bo-suu-tap/slide/@s.Id/xoa" data-confirm="Xóa slide này?" style="display:inline;">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
                                 </form>

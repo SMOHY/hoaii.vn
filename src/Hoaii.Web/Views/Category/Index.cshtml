@@ -60,7 +60,7 @@ else
             @for (var i = 0; i < Model.HeroSlides.Count; i++)
             {
                 var slide = Model.HeroSlides[i];
-                <a class="cat-hero__slide" href="/san-pham/@slide.Slug" data-cat-slide data-name="@slide.Name">
+                <a class="cat-hero__slide" href="@slide.LinkUrl" data-cat-slide data-name="@slide.Name">
                     <img src="@slide.ImageUrl" alt="@slide.Name"
                          loading="@(i == 0 ? "eager" : "lazy")"
                          fetchpriority="@(i == 0 ? "high" : "auto")" />
@@ -130,7 +130,7 @@ else
             var activeSort = sortOptions.First(o => o.Key == Model.Sort);
             // Changing sort must not silently drop the filters the shopper already picked.
             string FilterUrl2(string sortKey) =>
-                $"/danh-muc/{Model.Slug}?sort={sortKey}"
+                $"{Model.BasePath}/{Model.Slug}?sort={sortKey}"
                 + (Model.PriceFilter.Length > 0 ? $"&price={Model.PriceFilter}" : "")
                 + (Model.InStockOnly ? "&inStock=true" : "");
         }
@@ -160,7 +160,7 @@ else
             @{
                 var priceFilters = Hoaii.Web.Controllers.CategoryController.PriceFilters;
                 string FilterUrl(string priceKey, bool stock) =>
-                    $"/danh-muc/{Model.Slug}?sort={Model.Sort}"
+                    $"{Model.BasePath}/{Model.Slug}?sort={Model.Sort}"
                     + (priceKey.Length > 0 ? $"&price={priceKey}" : "")
                     + (stock ? "&inStock=true" : "");
             }
@@ -186,7 +186,7 @@ else
                     </li>
                     @if (Model.ActiveFilterCount > 0)
                     {
-                        <li><a href="/danh-muc/@Model.Slug?sort=@Model.Sort">Xóa bộ lọc</a></li>
+                        <li><a href="@Model.BasePath/@Model.Slug?sort=@Model.Sort">Xóa bộ lọc</a></li>
                     }
                 </ul>
             </div>

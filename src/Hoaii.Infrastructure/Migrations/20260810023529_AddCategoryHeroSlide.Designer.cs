@@ -4,6 +4,7 @@ using Hoaii.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hoaii.Infrastructure.Migrations
 {
     [DbContext(typeof(HoaiiDbContext))]
-    partial class HoaiiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260810023529_AddCategoryHeroSlide")]
+    partial class AddCategoryHeroSlide
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -532,90 +535,17 @@ namespace Hoaii.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeroEyebrow")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeroKicker")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("PromoBackground")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PromoCtaText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PromoCtaUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PromoEyebrow")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PromoImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PromoTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PromoWide")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Slug")
-                        .IsUnique();
 
                     b.ToTable("Collections");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.CollectionHeroSlide", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CollectionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CollectionId");
-
-                    b.ToTable("CollectionHeroSlides");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.ContactSubmission", b =>
@@ -2115,17 +2045,6 @@ namespace Hoaii.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Hoaii.Domain.Entities.CollectionHeroSlide", b =>
-                {
-                    b.HasOne("Hoaii.Domain.Entities.Collection", "Collection")
-                        .WithMany()
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Collection");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.FooterMenuLink", b =>

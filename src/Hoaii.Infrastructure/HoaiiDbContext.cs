@@ -33,6 +33,8 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<HomeServiceTab> HomeServiceTabs => Set<HomeServiceTab>();
     public DbSet<HomeAboutCard> HomeAboutCards => Set<HomeAboutCard>();
     public DbSet<HomeCustomerLogo> HomeCustomerLogos => Set<HomeCustomerLogo>();
+    public DbSet<CategoryHeroSlide> CategoryHeroSlides => Set<CategoryHeroSlide>();
+    public DbSet<CollectionHeroSlide> CollectionHeroSlides => Set<CollectionHeroSlide>();
     public DbSet<NavLink> NavLinks => Set<NavLink>();
     public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
     public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
@@ -286,6 +288,12 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
         modelBuilder.Entity<Collection>(entity =>
         {
             entity.Property(x => x.Name).HasMaxLength(200);
+            entity.HasIndex(x => x.Slug).IsUnique();
+        });
+
+        modelBuilder.Entity<CollectionHeroSlide>(entity =>
+        {
+            entity.HasOne(x => x.Collection).WithMany().HasForeignKey(x => x.CollectionId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -316,6 +324,11 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
         {
             entity.HasOne(x => x.Column).WithMany(c => c.Items).HasForeignKey(x => x.MegaMenuColumnId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CategoryHeroSlide>(entity =>
+        {
             entity.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         });
 

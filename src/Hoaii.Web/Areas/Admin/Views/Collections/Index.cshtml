@@ -1,36 +1,37 @@
-@model List<(int Id, string Name, int SortOrder, int ProductCount)>
+@model List<(int Id, string Name, string Slug, int SortOrder, int ProductCount)>
 @{
     ViewData["Title"] = "Bộ sưu tập";
 }
 
 <p style="color:var(--color-grey-500);margin:0 0 24px;">
-    Bộ sưu tập gộp sản phẩm cùng dòng/chủ đề ở nhiều danh mục khác nhau (VD "Thiên Điểu Lạc Hồng" vừa là hộp quà Tết vừa là hộp bánh Trung thu).
-    Gán bộ sưu tập cho sản phẩm ở trang <a class="admin-row-link" href="/admin/san-pham">Sản phẩm</a>.
+    Bộ sưu tập gộp sản phẩm cùng dòng/chủ đề ở nhiều danh mục khác nhau (VD "Thiên Điểu Lạc Hồng" vừa là hộp quà Tết vừa là hộp bánh Trung thu),
+    mỗi bộ sưu tập có trang riêng trên web tại /bo-suu-tap/&lt;slug&gt;. Gán bộ sưu tập cho sản phẩm ở trang <a class="admin-row-link" href="/admin/san-pham">Sản phẩm</a>.
 </p>
 
-<div class="admin-card">
-    @foreach (var c in Model)
-    {
-        <div class="admin-menu-row">
-            <form method="post" action="/admin/bo-suu-tap/luu" class="admin-menu-row__form">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="id" value="@c.Id" />
-                <input type="text" name="name" value="@c.Name" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--color-grey-300);border-radius:6px;" />
-                <span class="admin-field__hint" style="white-space:nowrap;">@c.ProductCount sản phẩm</span>
-                <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@c.SortOrder" style="width:60px;padding:8px 6px;border:1px solid var(--color-grey-300);border-radius:6px;text-align:center;" /></span>
-                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
-            </form>
-            <form method="post" action="/admin/bo-suu-tap/@c.Id/xoa" data-confirm="Xóa bộ sưu tập &quot;@c.Name&quot;? Sản phẩm trong đó sẽ mất gắn nhãn, không bị xoá.">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
-            </form>
-        </div>
-    }
-    <form method="post" action="/admin/bo-suu-tap/luu" class="admin-menu-row__form" style="margin-top:8px;">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="0" />
-        <input type="text" name="name" placeholder="Tên bộ sưu tập mới" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--color-grey-300);border-radius:6px;" />
-        <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@Model.Count" style="width:60px;padding:8px 6px;border:1px solid var(--color-grey-300);border-radius:6px;text-align:center;" /></span>
-        <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
-    </form>
+<div class="admin-toolbar" style="margin-bottom:16px;">
+    <div class="spacer"></div>
+    <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/bo-suu-tap/them">+ Thêm bộ sưu tập</a>
+</div>
+
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Tên</th><th>Slug</th><th class="num">Thứ tự</th><th class="num">Sản phẩm</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td><a class="admin-row-link" href="/admin/bo-suu-tap/@c.Id/sua">@c.Name</a></td>
+                    <td style="color:var(--color-grey-500);">@c.Slug</td>
+                    <td class="num">@c.SortOrder</td>
+                    <td class="num">@c.ProductCount</td>
+                    <td class="num">
+                        <form method="post" action="/admin/bo-suu-tap/@c.Id/xoa" data-confirm="Xóa bộ sưu tập &quot;@c.Name&quot;? Sản phẩm trong đó sẽ mất gắn nhãn, không bị xoá." style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

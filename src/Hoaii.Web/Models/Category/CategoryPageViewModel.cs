@@ -19,8 +19,12 @@ public class CategoryPageViewModel
     public int TotalPages { get; init; } = 1;
     public required PromoBannerViewModel Promo { get; init; }
 
-    /// <summary>Category slug, so the sort links can rebuild this page's URL.</summary>
+    /// <summary>Category (or collection) slug, so the sort links can rebuild this page's URL.</summary>
     public string Slug { get; init; } = "";
+
+    /// <summary>URL prefix the sort/filter links are built under — "/danh-muc" for
+    /// CategoryController, "/bo-suu-tap" for CollectionController (both render this same view).</summary>
+    public string BasePath { get; init; } = "/danh-muc";
 
     /// <summary>Active sort key — one of CategoryController.SortOptions.</summary>
     public string Sort { get; init; } = "noi-bat";
@@ -53,7 +57,7 @@ public class HeroSlideViewModel
 {
     public required string ImageUrl { get; init; }
     public required string Name { get; init; }
-    public required string Slug { get; init; }
+    public required string LinkUrl { get; init; }
 }
 
 public class ProductCardViewModel

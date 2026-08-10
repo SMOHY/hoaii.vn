@@ -1,0 +1,50 @@
+@model Hoaii.Domain.Entities.CategoryHeroSlide
+@{
+    var isNew = Model.Id == 0;
+    var category = ViewBag.Category as Hoaii.Domain.Entities.Category;
+    ViewData["Title"] = isNew ? "Thêm slide hero" : "Sửa slide hero";
+}
+
+<div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/danh-muc/@Model.CategoryId/sua">← @category?.Name</a></div>
+
+<div class="admin-card">
+    <form method="post" action="/admin/danh-muc/slide/luu" class="admin-form admin-form--wide">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+
+        <partial name="_ImageField" model="@(("Ảnh slide", "imageUrl", "cat-hero-slide-img", Model.ImageUrl))" />
+
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Tên hiển thị</label>
+                <input type="text" name="name" value="@Model.Name" placeholder="VD: Hộp bánh tinh hoa Bắc Bộ" />
+            </div>
+            <div class="admin-field">
+                <label>Link khi bấm vào</label>
+                <input type="text" name="linkUrl" value="@Model.LinkUrl" placeholder="/san-pham/hop-banh-tinh-hoa-bac-bo" />
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="@Model.SortOrder" />
+            </div>
+            <label class="admin-checkbox" style="align-self:end;">
+                <input type="checkbox" name="isActive" value="true" @(isNew || Model.IsActive ? "checked" : "") />
+                Hiển thị
+            </label>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Lưu</button>
+            <a class="admin-btn admin-btn--secondary" href="/admin/danh-muc/@Model.CategoryId/sua">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<partial name="_PickerModal" />
+
+@section Scripts {
+    <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+}

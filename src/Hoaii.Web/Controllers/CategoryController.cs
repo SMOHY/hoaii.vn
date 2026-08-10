@@ -100,23 +100,38 @@ public class CategoryController(HoaiiDbContext db) : Controller
         // The banner hero has no carousel, so skip the extra query for the eight pages that use it.
         var heroStyle = category?.HeroStyle ?? Domain.Entities.CategoryHeroStyle.Carousel;
 
-        // The hero carousel shows this view's own products, not a separate asset set.
+        // The hero carousel shows this view's own products by default, but an admin can curate a
+        // dedicated slide list per category (Areas/Admin/Views/Categories/Edit.cshtml) — once one
+        // exists for this category, it fully replaces the auto-built slides below rather than
+        // merging with them.
         var heroSlides = new List<HeroSlideViewModel>();
         if (heroStyle != Domain.Entities.CategoryHeroStyle.Banner)
         {
-            heroSlides = await (isFeaturedView
-                    ? db.Products.Where(p => p.IsFeatured && p.IsActive && p.Images.Any())
-                    : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive && p.Images.Any()))
-                .Include(p => p.Images)
-                .OrderBy(p => p.SortOrder).ThenBy(p => p.Id)
-                .Take(6)
-                .Select(p => new HeroSlideViewModel
-                {
-                    ImageUrl = p.Images.OrderBy(i => i.SortOrder).First().Url,
-                    Name = p.Name,
-                    Slug = p.Slug,
-                })
-                .ToListAsync();
+            if (!isFeaturedView)
+            {
+                heroSlides = await db.CategoryHeroSlides
+                    .Where(s => s.CategoryId == category!.Id && s.IsActive)
+                    .OrderBy(s => s.SortOrder).ThenBy(s => s.Id)
+                    .Select(s => new HeroSlideViewModel { ImageUrl = s.ImageUrl, Name = s.Name, LinkUrl = s.LinkUrl })
+                    .ToListAsync();
+            }
+
+            if (heroSlides.Count == 0)
+            {
+                heroSlides = await (isFeaturedView
+                        ? db.Products.Where(p => p.IsFeatured && p.IsActive && p.Images.Any())
+                        : db.Products.Where(p => p.CategoryId == category!.Id && p.IsActive && p.Images.Any()))
+                    .Include(p => p.Images)
+                    .OrderBy(p => p.SortOrder).ThenBy(p => p.Id)
+                    .Take(6)
+                    .Select(p => new HeroSlideViewModel
+                    {
+                        ImageUrl = p.Images.OrderBy(i => i.SortOrder).First().Url,
+                        Name = p.Name,
+                        LinkUrl = $"/san-pham/{p.Slug}",
+                    })
+                    .ToListAsync();
+            }
         }
 
         // Per-category CMS copy overrides these defaults; the cross-category "featured" view has no

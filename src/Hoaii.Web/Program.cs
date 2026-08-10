@@ -137,6 +137,12 @@ app.MapControllerRoute(
     defaults: new { controller = "Category", action = "Index" })
     .WithStaticAssets();
 
+app.MapControllerRoute(
+    name: "collection",
+    pattern: "bo-suu-tap/{slug}",
+    defaults: new { controller = "Collection", action = "Index" })
+    .WithStaticAssets();
+
 // The "Quà theo dịp" landing pages. These sit at the top level rather than under danh-muc/
 // because they are not category grids — OccasionController owns the list of valid routes.
 app.MapControllerRoute(
