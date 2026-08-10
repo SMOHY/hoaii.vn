@@ -23,12 +23,42 @@ public class ProductController(HoaiiDbContext db) : Controller
             return NotFound();
         }
 
-        var related = await db.Products
-            .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id && p.IsActive)
-            .Include(p => p.Images)
-            .Include(p => p.Variants)
-            .Take(4)
+        // Admin-picked related products (Areas/Admin/Views/Products/Edit.cshtml, "Sản phẩm liên
+        // quan") take priority, in the order the admin chose. No picks → random same-category
+        // products instead of a fixed/deterministic list, per how the shop owner wants it.
+        var relatedIds = await db.RelatedProducts
+            .Where(r => r.ProductId == product.Id)
+            .OrderBy(r => r.SortOrder)
+            .Select(r => r.RelatedProductId)
             .ToListAsync();
+
+        List<Domain.Entities.Product> related;
+        if (relatedIds.Count > 0)
+        {
+            var picked = await db.Products
+                .Where(p => relatedIds.Contains(p.Id) && p.IsActive)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                .ToListAsync();
+            // EF doesn't preserve the Contains() list order, so re-sort to match the admin's pick order.
+            related = relatedIds
+                .Select(id => picked.FirstOrDefault(p => p.Id == id))
+                .Where(p => p is not null)
+                .Cast<Domain.Entities.Product>()
+                .ToList();
+        }
+        else
+        {
+            // Guid.NewGuid() here is EF Core's documented way to get a server-side ORDER BY
+            // NEWID() — a fresh random order on every request, not one random pick reused forever.
+            related = await db.Products
+                .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id && p.IsActive)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                .OrderBy(p => Guid.NewGuid())
+                .Take(4)
+                .ToListAsync();
+        }
 
         // Only real shots — padding the strip out to five left grey squares on the page.
         var galleryImages = product.Images

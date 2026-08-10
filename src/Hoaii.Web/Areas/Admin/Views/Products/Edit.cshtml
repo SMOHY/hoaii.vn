@@ -87,6 +87,28 @@
             </div>
 
             <div class="admin-card">
+                <h3 class="admin-section-title">Sản phẩm liên quan</h3>
+                <span class="admin-field__hint">Tối đa 4, hiển thị ở trang chi tiết sản phẩm này. Để trống thì trang tự lấy ngẫu nhiên sản phẩm cùng danh mục.</span>
+                <div data-curated-slot data-curated-field="RelatedProductIds" data-curated-search-url="/admin/san-pham/tim-kiem?excludeId=@Model.Id" style="margin-top:8px;">
+                    <div class="admin-curated-slot__chips" data-curated-chips>
+                        @foreach (var item in Model.RelatedProducts)
+                        {
+                            <span class="admin-curated-chip" data-curated-chip>
+                                <input type="hidden" name="RelatedProductIds" value="@item.Id" />
+                                @item.Name
+                                <button type="button" data-curated-remove aria-label="Xoá">✕</button>
+                            </span>
+                        }
+                    </div>
+                    <p class="admin-field__hint" data-curated-empty-hint style="@(Model.RelatedProducts.Count > 0 ? "display:none;" : "")">Chưa chọn sản phẩm nào.</p>
+                    <div class="admin-curated-slot__search">
+                        <input type="text" placeholder="Tìm sản phẩm theo tên, tối đa 4..." data-curated-search autocomplete="off" />
+                        <div class="admin-curated-slot__results" data-curated-results hidden></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
                 <h3 class="admin-section-title">SEO</h3>
                 <div class="admin-field">
                     <label>Tiêu đề trang (meta title)</label>
@@ -198,4 +220,5 @@
 @section Scripts {
     <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
     <script src="~/js/admin-product.js" asp-append-version="true"></script>
+    <script src="~/js/admin-curated-picker.js" asp-append-version="true"></script>
 }

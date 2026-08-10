@@ -35,6 +35,7 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<HomeCustomerLogo> HomeCustomerLogos => Set<HomeCustomerLogo>();
     public DbSet<CategoryHeroSlide> CategoryHeroSlides => Set<CategoryHeroSlide>();
     public DbSet<CollectionHeroSlide> CollectionHeroSlides => Set<CollectionHeroSlide>();
+    public DbSet<RelatedProduct> RelatedProducts => Set<RelatedProduct>();
     public DbSet<NavLink> NavLinks => Set<NavLink>();
     public DbSet<FooterMenuColumn> FooterMenuColumns => Set<FooterMenuColumn>();
     public DbSet<FooterMenuLink> FooterMenuLinks => Set<FooterMenuLink>();
@@ -294,6 +295,17 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
         modelBuilder.Entity<CollectionHeroSlide>(entity =>
         {
             entity.HasOne(x => x.Collection).WithMany().HasForeignKey(x => x.CollectionId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<RelatedProduct>(entity =>
+        {
+            entity.HasIndex(x => new { x.ProductId, x.RelatedProductId }).IsUnique();
+            entity.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            // Restrict, not Cascade — two FKs from this table both pointing at Product would hit
+            // SQL Server's "may cause cycles or multiple cascade paths" rejection otherwise (same
+            // class of error as NavLink.ParentId earlier). ProductsController.Delete removes rows
+            // referencing the deleted product on this side by hand instead.
+            entity.HasOne(x => x.RelatedTo).WithMany().HasForeignKey(x => x.RelatedProductId).OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Product>(entity =>

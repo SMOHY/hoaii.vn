@@ -60,6 +60,10 @@ public class ProductEditViewModel
     public IReadOnlyList<Category> Categories { get; init; } = [];
     public IReadOnlyList<Collection> Collections { get; init; } = [];
 
+    /// <summary>Admin-picked "sản phẩm liên quan" (max 4) for the detail page's related-products
+    /// strip. Empty means ProductController.Details falls back to random same-category picks.</summary>
+    public IReadOnlyList<RelatedProductRow> RelatedProducts { get; init; } = [];
+
     public class VariantRow
     {
         public int Id { get; init; }
@@ -67,5 +71,11 @@ public class ProductEditViewModel
         public decimal PriceModifier { get; init; }
         public string? Sku { get; init; }
         public int StockQuantity { get; init; }
+    }
+
+    public class RelatedProductRow
+    {
+        public int Id { get; init; }
+        public string Name { get; init; } = "";
     }
 }

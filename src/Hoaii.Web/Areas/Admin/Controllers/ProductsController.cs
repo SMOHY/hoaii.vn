@@ -81,8 +81,15 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
             .FirstOrDefaultAsync(x => x.Id == id);
         if (p is null) return NotFound();
 
+        var relatedProducts = await Db.RelatedProducts
+            .Where(r => r.ProductId == id)
+            .OrderBy(r => r.SortOrder)
+            .Select(r => new ProductEditViewModel.RelatedProductRow { Id = r.RelatedProductId, Name = r.RelatedTo!.Name })
+            .ToListAsync();
+
         return View(new ProductEditViewModel
         {
+            RelatedProducts = relatedProducts,
             Id = p.Id,
             Name = p.Name,
             Slug = p.Slug,
@@ -145,6 +152,8 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         public List<decimal>? VariantPrices { get; set; }
         public List<string>? VariantSkus { get; set; }
         public List<int>? VariantStocks { get; set; }
+
+        public List<int>? RelatedProductIds { get; set; }
     }
 
     [HttpPost("/admin/san-pham/luu")]
@@ -201,6 +210,7 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
 
         SyncImages(product, form.ImageUrls ?? []);
         SyncVariants(product, form);
+        SyncRelatedProducts(product, form.RelatedProductIds ?? []);
 
         auth.Audit(form.Id == 0 ? "Thêm sản phẩm" : "Sửa sản phẩm", nameof(Product), form.Id == 0 ? null : form.Id, form.Name);
         await Db.SaveChangesAsync();
@@ -254,6 +264,51 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         }
     }
 
+    /// <summary>Replaces the whole pick list, same "form always posts the current, ordered list"
+    /// rule as SyncImages. Uses the Product navigation rather than product.Id so this still works
+    /// when product is a brand-new, not-yet-saved row (Id is 0 until SaveChangesAsync — EF's
+    /// relationship fixup resolves the real FK from the tracked Product instead).</summary>
+    private void SyncRelatedProducts(Product product, List<int> relatedIds)
+    {
+        var ids = relatedIds.Where(id => id > 0 && id != product.Id).Distinct().Take(4).ToList();
+
+        if (product.Id != 0)
+        {
+            var existing = Db.RelatedProducts.Where(r => r.ProductId == product.Id);
+            Db.RelatedProducts.RemoveRange(existing);
+        }
+
+        for (var i = 0; i < ids.Count; i++)
+        {
+            Db.RelatedProducts.Add(new RelatedProduct { Product = product, RelatedProductId = ids[i], SortOrder = i });
+        }
+    }
+
+    [HttpGet("/admin/san-pham/tim-kiem")]
+    public async Task<IActionResult> SearchProducts(string? q, int? excludeId)
+    {
+        var query = Db.Products.Include(p => p.Images).Include(p => p.Category).Where(p => p.IsActive);
+        if (excludeId is > 0)
+        {
+            query = query.Where(p => p.Id != excludeId);
+        }
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            var term = q.Trim();
+            query = query.Where(p => p.Name.Contains(term));
+        }
+        var items = await query.OrderBy(p => p.Name).Take(20)
+            .Select(p => new
+            {
+                p.Id,
+                p.Name,
+                category = p.Category.Name,
+                imageUrl = p.Images.OrderBy(i => i.SortOrder).Select(i => i.Url).FirstOrDefault(),
+            })
+            .ToListAsync();
+        return Json(items);
+    }
+
     [HttpPost("/admin/san-pham/{id:int}/an-hien")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleActive(int id)
@@ -277,7 +332,10 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         if (product is null) return NotFound();
 
         // OrderItem keeps a name/price snapshot (no FK), so removing a product never breaks past
-        // orders. Images and variants cascade.
+        // orders. Images, variants, and this product's own related-picks (ProductId side) cascade;
+        // rows where it's picked as someone ELSE's related product (RelatedProductId side) are
+        // Restrict — see HoaiiDbContext — so they need removing by hand or the delete would fail.
+        Db.RelatedProducts.RemoveRange(Db.RelatedProducts.Where(r => r.RelatedProductId == id));
         Db.Products.Remove(product);
         auth.Audit("Xóa sản phẩm", nameof(Product), id, product.Name);
         await Db.SaveChangesAsync();

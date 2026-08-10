@@ -1,7 +1,12 @@
-// Menu editor: search-and-pick products for the 8 hand-curated mega-menu columns
-// (Bán chạy nhất / Phiên bản giới hạn / Hoài gợi ý / Nổi bật). Each [data-curated-slot] form is
-// independent — its own chip list, search box, and Lưu button, submitted separately from the
-// rest of the menu editor.
+// Search-and-pick products for a fixed-size chip list. Originally built for the 8 hand-curated
+// mega-menu columns (Bán chạy nhất / Phiên bản giới hạn / Hoài gợi ý / Nổi bật) — each
+// [data-curated-slot] there is its own <form>, submitted separately from the rest of the menu
+// editor. Reused (Products/Edit.cshtml, "Sản phẩm liên quan") as a plain <div data-curated-slot>
+// nested inside the product's own form instead, submitting together with it — the script only
+// ever calls form.querySelector/contains, never form-specific APIs, so either tag works. Field
+// name and search endpoint are configurable per slot (data-curated-field /
+// data-curated-search-url) so the two call sites don't collide; both default to the menu editor's
+// original values for backward compatibility.
 (function () {
   'use strict';
 
@@ -12,10 +17,12 @@
     const emptyHint = form.querySelector('[data-curated-empty-hint]');
     const search = form.querySelector('[data-curated-search]');
     const results = form.querySelector('[data-curated-results]');
+    const fieldName = form.dataset.curatedField || 'productIds';
+    const searchUrl = form.dataset.curatedSearchUrl || '/admin/menu/tim-san-pham';
     let debounceTimer = null;
 
     function pickedIds() {
-      return [...chips.querySelectorAll('input[name="productIds"]')].map(function (i) { return i.value; });
+      return [...chips.querySelectorAll('input[name="' + fieldName + '"]')].map(function (i) { return i.value; });
     }
 
     function syncEmptyHint() {
@@ -28,7 +35,7 @@
       chip.className = 'admin-curated-chip';
       chip.setAttribute('data-curated-chip', '');
       chip.innerHTML =
-        '<input type="hidden" name="productIds" value="' + product.id + '">' +
+        '<input type="hidden" name="' + fieldName + '" value="' + product.id + '">' +
         product.name +
         '<button type="button" data-curated-remove aria-label="Xoá">✕</button>';
       chips.appendChild(chip);
@@ -49,7 +56,8 @@
 
     async function runSearch(q) {
       try {
-        const res = await fetch('/admin/menu/tim-san-pham?q=' + encodeURIComponent(q), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const sep = searchUrl.indexOf('?') === -1 ? '?' : '&';
+        const res = await fetch(searchUrl + sep + 'q=' + encodeURIComponent(q), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
         const items = await res.json();
         renderResults(items);
       } catch {
