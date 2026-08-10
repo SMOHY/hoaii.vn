@@ -34,11 +34,26 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         Session.SetString(SessionKey, JsonSerializer.Serialize(lines));
     }
 
-    public void AddItem(int productId, int? variantId, int quantity)
+    /// <summary>
+    /// Cửa duy nhất quyết định một sản phẩm có bán được hay không. Badge "Hết hàng" trước đây chỉ
+    /// ẩn nút "+" trên thẻ sản phẩm, nên trang chi tiết — và bất kỳ ai POST thẳng vào
+    /// /gio-hang/them — vẫn đặt hàng bình thường. Mọi truy vấn dựng giỏ đều lọc qua đây.
+    /// </summary>
+    private static IQueryable<Product> Buyable(IQueryable<Product> products) =>
+        products.Where(p => p.IsActive && p.Badge != ProductBadge.OutOfStock);
+
+    /// <summary>Trả về false khi sản phẩm đã ẩn hoặc đang hết hàng — giỏ không đổi.</summary>
+    public async Task<bool> AddItemAsync(int productId, int? variantId, int quantity)
     {
         if (quantity <= 0)
         {
-            return;
+            return false;
+        }
+
+        // Ẩn nút ở view chỉ là rào chắn ngoài mặt tiền; kiểm tra ở server mới thực sự chặn.
+        if (!await Buyable(db.Products).AnyAsync(p => p.Id == productId))
+        {
+            return false;
         }
 
         var lines = GetLines();
@@ -54,6 +69,7 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         }
 
         SaveLines(lines);
+        return true;
     }
 
     public void UpdateQuantity(int productId, int? variantId, int quantity)
@@ -123,8 +139,8 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         if (lines.Count == 0) return 0m;
 
         var productIds = lines.Select(l => l.ProductId).Distinct().ToList();
-        var products = await db.Products
-            .Where(p => productIds.Contains(p.Id) && p.IsActive)
+        var products = await Buyable(db.Products)
+            .Where(p => productIds.Contains(p.Id))
             .Include(p => p.Variants)
             .ToDictionaryAsync(p => p.Id);
 
@@ -154,8 +170,8 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         }
 
         var productIds = lines.Select(l => l.ProductId).Distinct().ToList();
-        var products = await db.Products
-            .Where(p => productIds.Contains(p.Id) && p.IsActive)
+        var products = await Buyable(db.Products)
+            .Where(p => productIds.Contains(p.Id))
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .ToDictionaryAsync(p => p.Id);
@@ -165,8 +181,10 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
         {
             if (!products.TryGetValue(line.ProductId, out var product))
             {
-                // Removed, or hidden by the shop since it was added — either way it drops out of
-                // the cart instead of staying buyable.
+                // Removed, hidden, or marked out of stock by the shop since it was added — either
+                // way it drops out of the cart instead of staying buyable. Checkout inherits this:
+                // PlaceOrder builds its order lines from exactly this list, so an item that went
+                // out of stock while sitting in someone's cart can no longer be ordered.
                 continue;
             }
 
@@ -226,8 +244,9 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
     private async Task<IReadOnlyList<CartAddOnViewModel>> GetAddOnSuggestionsAsync(
         List<int>? categoryIds, List<int>? excludeProductIds = null)
     {
-        // Never suggest something the shop has hidden.
-        var query = db.Products.Where(p => p.IsActive)
+        // Never suggest something the shop has hidden or run out of — the add-on tiles carry their
+        // own "thêm vào giỏ" form, so an unavailable suggestion is a dead button.
+        var query = Buyable(db.Products)
             .Include(p => p.Images)
             .Include(p => p.Variants)
             .AsQueryable();

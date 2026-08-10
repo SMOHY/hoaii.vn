@@ -95,6 +95,12 @@
     <partial name="_Nav" />
 
     <main id="main" tabindex="-1">
+        @* Giỏ hàng từ chối thầm lặng thì khách tưởng nút hỏng và bấm lại mãi. Đặt ở layout vì
+           /gio-hang/them quay về đúng trang đã bấm, có thể là bất kỳ trang nào. *@
+        @if (TempData["CartError"] is string cartError)
+        {
+            <p class="site-notice site-notice--error" role="alert">@cartError</p>
+        }
         @RenderBody()
     </main>
 

@@ -117,7 +117,10 @@
       }
 
       if (!res.ok) {
-        toast('Không cập nhật được giỏ hàng, vui lòng thử lại.', 'error');
+        // 409 mang theo lý do cụ thể (ví dụ sản phẩm vừa hết hàng) — nói lý do đó ra thay vì
+        // câu "thử lại" chung chung, vì thử lại sẽ không bao giờ thành công.
+        const data = await res.json().catch(function () { return {}; });
+        toast(data.message || 'Không cập nhật được giỏ hàng, vui lòng thử lại.', 'error');
         return;
       }
 

@@ -12,6 +12,10 @@ public class ProductDetailsViewModel
     public required string CategorySlug { get; init; }
     public string? MetaDescription { get; init; }
 
+    /// <summary>Badge "Hết hàng" của sản phẩm. Trang chi tiết từng bỏ qua hoàn toàn cờ này, nên
+    /// thẻ trên lưới ghi "Hết hàng" mà bấm vào trang vẫn đặt mua được như thường.</summary>
+    public required bool IsOutOfStock { get; init; }
+
     public required IReadOnlyList<string?> GalleryImages { get; init; } // null entries render as placeholder tiles
 
     // No colour axis: Figma ships the colour picker hidden (node 826:20630).

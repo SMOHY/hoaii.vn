@@ -55,7 +55,14 @@
 .pdp-info { width: 466px; max-width: 100%; display: flex; flex-direction: column; }
 .pdp-title-block { display: flex; flex-direction: column; gap: 16px; }
 .pdp-title { font: 600 24px/32px var(--font-body); color: var(--color-black); margin: 0; }
+.pdp-price-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .pdp-price { font: 500 20px/23px var(--font-body); color: var(--color-black); margin: 0; }
+/* Cùng tông xám với pill "Hết hàng" trên thẻ sản phẩm (.product-card__badge--out-of-stock),
+   để lưới và trang chi tiết nói cùng một ngôn ngữ. */
+.pdp-stock-badge {
+  padding: 4px 12px; border-radius: var(--radius-sm); background: var(--color-grey-400);
+  color: #fff; font: 400 13px/18px var(--font-body);
+}
 .pdp-price-note { font: 300 16px/18px var(--font-body); color: var(--color-brand-red); margin: 0; }
 
 .pdp-option-group { display: flex; flex-direction: column; gap: 16px; margin-top: 48px; }
@@ -70,6 +77,8 @@
 .pdp-box-option.selected { border-color: var(--color-grey-600); }
 
 .pdp-qty-share-row { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; }
+/* Hết hàng thì bộ đếm số lượng không render, nên space-between sẽ kéo nút chia sẻ về sát lề trái. */
+.pdp-qty-share-row--share-only { justify-content: flex-end; }
 .pdp-qty-stepper { display: flex; align-items: center; gap: 8px; }
 .pdp-qty-stepper__btn {
   width: 60px; height: 45px; border-radius: 7.5px; border: 1.86px solid #DCDCDC;
@@ -85,6 +94,8 @@
   font: 500 16px/20px var(--font-body); text-align: center;
 }
 .pdp-cta-primary { background: var(--color-brand-red-deep); color: #fff; }
+/* Xám và không bấm được — nút đỏ mờ đi vẫn trông như đang chờ tải, khách sẽ bấm mãi. */
+.pdp-cta-primary--disabled { background: var(--color-grey-400); color: #fff; cursor: not-allowed; }
 .pdp-cta-secondary { background: var(--color-brand-red-tint); color: var(--color-brand-red-deep); }
 
 .pdp-ingredients {

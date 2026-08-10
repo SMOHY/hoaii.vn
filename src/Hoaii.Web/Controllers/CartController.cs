@@ -13,9 +13,22 @@ public class CartController(CartService cart) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Add(int productId, int? variantId, int quantity = 1, string? returnUrl = null)
+    public async Task<IActionResult> Add(int productId, int? variantId, int quantity = 1, string? returnUrl = null)
     {
-        cart.AddItem(productId, variantId, quantity);
+        if (!await cart.AddItemAsync(productId, variantId, quantity))
+        {
+            // Hết hàng / đã ẩn. Phải nói thẳng: im lặng bỏ qua thì khách bấm lại mãi vì tưởng nút
+            // hỏng. Với JS bật, SafeRedirect trả 204 — mà 204 là res.ok, nên cart-live.js sẽ khoe
+            // "Đã thêm vào giỏ hàng" cho một cú thêm vừa bị từ chối. 409 mới là sự thật.
+            const string message = "Sản phẩm này hiện đã hết hàng nên chưa thể thêm vào giỏ.";
+            if (IsAjax)
+            {
+                return Conflict(new { message });
+            }
+
+            TempData["CartError"] = message;
+        }
+
         return SafeRedirect(returnUrl);
     }
 
@@ -60,9 +73,11 @@ public class CartController(CartService cart) : Controller
     /// swap the cart regions in place, so there is nothing to redirect to. Without JS the forms
     /// still post normally and land back where they came from.
     /// </summary>
+    private bool IsAjax => Request.Headers.XRequestedWith == "XMLHttpRequest";
+
     private IActionResult SafeRedirect(string? returnUrl)
     {
-        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        if (IsAjax)
         {
             return NoContent();
         }

@@ -69,6 +69,7 @@ public class ProductController(HoaiiDbContext db) : Controller
             Price = product.Price,
             BreadcrumbLabel = $"Trang chủ/{product.Category.Name}",
             CategorySlug = product.Category.Slug,
+            IsOutOfStock = product.Badge == Domain.Entities.ProductBadge.OutOfStock,
             MetaDescription = product.MetaDescription is { Length: > 0 } md ? md
                 : product.Description is { Length: > 0 } desc && desc.Length > 160 ? desc[..157] + "..."
                 : product.Description,

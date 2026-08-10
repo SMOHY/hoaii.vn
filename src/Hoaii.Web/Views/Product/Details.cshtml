@@ -26,7 +26,10 @@
             type = "Offer",
             priceCurrency = "VND",
             price = Model.Price,
-            availability = "https://schema.org/InStock",
+            // Từng hard-code InStock, nên Google vẫn quảng cáo "còn hàng" cho sản phẩm đã hết.
+            availability = Model.IsOutOfStock
+                ? "https://schema.org/OutOfStock"
+                : "https://schema.org/InStock",
             url = origin + Context.Request.Path,
         },
     };
@@ -83,7 +86,15 @@
             <h1 class="pdp-title">@Model.Name.ToUpperInvariant()</h1>
             @* Khởi tạo theo giá của hộp đầu tiên (hộp được chọn mặc định), không phải giá gốc
                thuần — nếu biến thể đầu có giá chênh thì lúc tải trang giá đã đúng ngay. *@
-            <p class="pdp-price">@((Model.BoxOptions.Count > 0 ? Model.BoxOptions[0].Price : Model.Price).ToString("N0")) VNĐ</p>
+            @* Badge phải nằm NGOÀI .pdp-price: pdp.js ghi đè textContent của phần tử đó mỗi lần
+               khách đổi loại hộp, nên đặt bên trong thì badge biến mất sau cú bấm đầu tiên. *@
+            <div class="pdp-price-row">
+                <p class="pdp-price">@((Model.BoxOptions.Count > 0 ? Model.BoxOptions[0].Price : Model.Price).ToString("N0")) VNĐ</p>
+                @if (Model.IsOutOfStock)
+                {
+                    <span class="pdp-stock-badge">Hết hàng</span>
+                }
+            </div>
             <p class="pdp-price-note">@PageC.Get(PageContentKeys.Shop, "pdp_price_note")</p>
         </div>
 
@@ -106,26 +117,41 @@
             </div>
         }
 
-        <div class="pdp-qty-share-row">
-            <div class="pdp-qty-stepper">
-                <button type="button" class="pdp-qty-stepper__btn" data-qty-decrease aria-label="Giảm số lượng">−</button>
-                <span class="pdp-qty-stepper__value" id="pdp-qty-value">1</span>
-                <button type="button" class="pdp-qty-stepper__btn" data-qty-increase aria-label="Tăng số lượng">+</button>
-            </div>
+        @* Chọn số lượng cho món không mua được là vô nghĩa — bỏ hẳn bộ đếm, giữ lại nút chia sẻ
+           (khách vẫn hay gửi sản phẩm hết hàng cho nhau để hỏi khi nào có lại). *@
+        <div class="pdp-qty-share-row @(Model.IsOutOfStock ? "pdp-qty-share-row--share-only" : "")">
+            @if (!Model.IsOutOfStock)
+            {
+                <div class="pdp-qty-stepper">
+                    <button type="button" class="pdp-qty-stepper__btn" data-qty-decrease aria-label="Giảm số lượng">−</button>
+                    <span class="pdp-qty-stepper__value" id="pdp-qty-value">1</span>
+                    <button type="button" class="pdp-qty-stepper__btn" data-qty-increase aria-label="Tăng số lượng">+</button>
+                </div>
+            }
             <button type="button" class="pdp-share-btn" aria-label="Chia sẻ">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M8.6 10.5l6.8-3.7M8.6 13.5l6.8 3.7" stroke="currentColor" stroke-width="1.5"/></svg>
             </button>
         </div>
 
         <div class="pdp-cta-group">
-            <form method="post" action="/gio-hang/them" id="pdp-add-to-cart-form">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="productId" value="@Model.ProductId" />
-                <input type="hidden" name="variantId" id="pdp-variant-id-input" value="@(Model.BoxOptions.Count > 0 ? Model.BoxOptions[0].Id.ToString() : "")" />
-                <input type="hidden" name="quantity" id="pdp-qty-input" value="1" />
-                <input type="hidden" name="returnUrl" value="/san-pham/@Model.Slug" />
-                <button type="submit" class="pdp-cta-primary">THÊM VÀO GIỎ HÀNG</button>
-            </form>
+            @* Hết hàng thì không render form nữa: một nút disabled vẫn nằm trong form là thứ mà
+               autofill, phím Enter hay extension đều có thể submit hộ. Không có form thì không có
+               gì để submit. Server vẫn tự chặn thêm một lớp trong CartService. *@
+            @if (Model.IsOutOfStock)
+            {
+                <button type="button" class="pdp-cta-primary pdp-cta-primary--disabled" disabled>HẾT HÀNG</button>
+            }
+            else
+            {
+                <form method="post" action="/gio-hang/them" id="pdp-add-to-cart-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.ProductId" />
+                    <input type="hidden" name="variantId" id="pdp-variant-id-input" value="@(Model.BoxOptions.Count > 0 ? Model.BoxOptions[0].Id.ToString() : "")" />
+                    <input type="hidden" name="quantity" id="pdp-qty-input" value="1" />
+                    <input type="hidden" name="returnUrl" value="/san-pham/@Model.Slug" />
+                    <button type="submit" class="pdp-cta-primary">THÊM VÀO GIỎ HÀNG</button>
+                </form>
+            }
             <button type="button" class="pdp-cta-secondary" data-contact-popup-open>NHẬN ƯU ĐÃI MUA SỐ LƯỢNG LỚN</button>
         </div>
 

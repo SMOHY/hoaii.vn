@@ -186,6 +186,13 @@ main {
   .skip-link { transition: none; }
 }
 
+/* Thông báo cấp trang cho luồng không có JavaScript — có JS thì cart-live.js đã hiện toast rồi. */
+.site-notice {
+  max-width: 1440px; margin: 16px auto 0; padding: 12px 20px;
+  border-radius: var(--radius-sm); font: 400 16px/22px var(--font-body);
+}
+.site-notice--error { background: #FBE9EB; color: #8A1220; }
+
 /* For headings a page needs for structure but the design does not draw — the cart and the auth
    pages lead straight into their panel, so their h1 exists only for assistive tech and search. */
 .visually-hidden {
