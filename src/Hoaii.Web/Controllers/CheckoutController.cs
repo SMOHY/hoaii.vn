@@ -143,21 +143,8 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         // Order confirmation email (log-mode until SMTP is configured — never blocks checkout).
         try
         {
-            var itemsHtml = string.Join("", order.Items.Select(i =>
-                $"<li>{System.Net.WebUtility.HtmlEncode(i.ProductName)}" +
-                (string.IsNullOrEmpty(i.VariantName) ? "" : $" ({System.Net.WebUtility.HtmlEncode(i.VariantName)})") +
-                $" × {i.Quantity} — {(i.UnitPrice * i.Quantity):N0}đ</li>"));
-            var body = $"""
-                <p>Cảm ơn bạn đã đặt hàng tại HOÀI!</p>
-                <p>Mã đơn hàng: <strong>{order.OrderNumber}</strong></p>
-                <ul>{itemsHtml}</ul>
-                <p>Tạm tính: {order.Subtotal:N0}đ<br/>
-                {(order.Discount > 0 ? $"Giảm giá: -{order.Discount:N0}đ<br/>" : "")}
-                Vận chuyển: {(order.ShippingFee > 0 ? $"{order.ShippingFee:N0}đ" : "Miễn phí")}<br/>
-                <strong>Tổng cộng: {order.Total:N0}đ</strong></p>
-                <p>Chúng tôi sẽ liên hệ để xác nhận và giao hàng sớm nhất.</p>
-                """;
-            await email.SendAsync(order.Email, $"Xác nhận đơn hàng {order.OrderNumber} — HOÀI", body);
+            var (subject, html) = OrderEmailTemplates.CustomerConfirmation(order);
+            await email.SendAsync(order.Email, subject, html);
         }
         catch { /* email must never break order placement */ }
 
@@ -171,28 +158,11 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
                 .ToList();
             if (notifyEmails.Count > 0)
             {
-                var itemsHtml = string.Join("", order.Items.Select(i =>
-                    $"<li>{System.Net.WebUtility.HtmlEncode(i.ProductName)}" +
-                    (string.IsNullOrEmpty(i.VariantName) ? "" : $" ({System.Net.WebUtility.HtmlEncode(i.VariantName)})") +
-                    $" × {i.Quantity} — {(i.UnitPrice * i.Quantity):N0}đ</li>"));
                 var adminUrl = $"{Request.Scheme}://{Request.Host}/admin/don-hang/{order.Id}";
-                var notifyBody = $"""
-                    <p>Có đơn hàng mới trên HOÀI.vn.</p>
-                    <p>Mã đơn: <strong>{order.OrderNumber}</strong><br/>
-                    Khách hàng: {System.Net.WebUtility.HtmlEncode($"{order.FirstName} {order.LastName}")}<br/>
-                    SĐT: {System.Net.WebUtility.HtmlEncode(order.Phone)}<br/>
-                    Email: {System.Net.WebUtility.HtmlEncode(order.Email)}<br/>
-                    Địa chỉ: {System.Net.WebUtility.HtmlEncode(order.Address)}, {System.Net.WebUtility.HtmlEncode(order.ProvinceDistrictWard)}<br/>
-                    {(string.IsNullOrWhiteSpace(order.Notes) ? "" : $"Ghi chú: {System.Net.WebUtility.HtmlEncode(order.Notes)}<br/>")}
-                    Thanh toán: {order.PaymentMethod}<br/>
-                    Vận chuyển: {order.ShippingMethod}</p>
-                    <ul>{itemsHtml}</ul>
-                    <p><strong>Tổng cộng: {order.Total:N0}đ</strong></p>
-                    <p><a href="{adminUrl}">Xem đơn trong trang quản trị</a></p>
-                    """;
+                var (subject, html) = OrderEmailTemplates.InternalNotification(order, adminUrl);
                 foreach (var to in notifyEmails)
                 {
-                    await email.SendAsync(to, $"[Đơn mới] {order.OrderNumber} — {order.FirstName} {order.LastName}", notifyBody);
+                    await email.SendAsync(to, subject, html);
                 }
             }
         }
