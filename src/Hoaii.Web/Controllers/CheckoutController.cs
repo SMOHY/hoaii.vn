@@ -161,6 +161,43 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         }
         catch { /* email must never break order placement */ }
 
+        // Nội bộ HOÀI: team Sales không đăng nhập /admin nên đây là kênh duy nhất họ biết có đơn
+        // mới — cần đủ thông tin để liên hệ khách ngay, không phải mở admin ra mới xem được.
+        try
+        {
+            var notifyEmails = settings.Get(SiteSettingKeys.OrderNotifyEmails)
+                .Split([',', ';', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            if (notifyEmails.Count > 0)
+            {
+                var itemsHtml = string.Join("", order.Items.Select(i =>
+                    $"<li>{System.Net.WebUtility.HtmlEncode(i.ProductName)}" +
+                    (string.IsNullOrEmpty(i.VariantName) ? "" : $" ({System.Net.WebUtility.HtmlEncode(i.VariantName)})") +
+                    $" × {i.Quantity} — {(i.UnitPrice * i.Quantity):N0}đ</li>"));
+                var adminUrl = $"{Request.Scheme}://{Request.Host}/admin/don-hang/{order.Id}";
+                var notifyBody = $"""
+                    <p>Có đơn hàng mới trên HOÀI.vn.</p>
+                    <p>Mã đơn: <strong>{order.OrderNumber}</strong><br/>
+                    Khách hàng: {System.Net.WebUtility.HtmlEncode($"{order.FirstName} {order.LastName}")}<br/>
+                    SĐT: {System.Net.WebUtility.HtmlEncode(order.Phone)}<br/>
+                    Email: {System.Net.WebUtility.HtmlEncode(order.Email)}<br/>
+                    Địa chỉ: {System.Net.WebUtility.HtmlEncode(order.Address)}, {System.Net.WebUtility.HtmlEncode(order.ProvinceDistrictWard)}<br/>
+                    {(string.IsNullOrWhiteSpace(order.Notes) ? "" : $"Ghi chú: {System.Net.WebUtility.HtmlEncode(order.Notes)}<br/>")}
+                    Thanh toán: {order.PaymentMethod}<br/>
+                    Vận chuyển: {order.ShippingMethod}</p>
+                    <ul>{itemsHtml}</ul>
+                    <p><strong>Tổng cộng: {order.Total:N0}đ</strong></p>
+                    <p><a href="{adminUrl}">Xem đơn trong trang quản trị</a></p>
+                    """;
+                foreach (var to in notifyEmails)
+                {
+                    await email.SendAsync(to, $"[Đơn mới] {order.OrderNumber} — {order.FirstName} {order.LastName}", notifyBody);
+                }
+            }
+        }
+        catch { /* email must never break order placement */ }
+
         return RedirectToAction(nameof(Confirmation), new { orderNumber = order.OrderNumber });
     }
 

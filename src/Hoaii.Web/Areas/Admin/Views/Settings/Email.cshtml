@@ -58,6 +58,11 @@
             <input type="checkbox" name="settings_[@SiteSettingKeys.SmtpUseSsl]" value="true" @(Ssl() ? "checked" : "") />
             Dùng SSL/TLS (khuyến nghị)
         </label>
+        <div class="admin-field" style="margin-bottom:16px;">
+            <label>Email nội bộ nhận thông báo đơn mới</label>
+            <input type="text" name="settings_[@SiteSettingKeys.OrderNotifyEmails]" value="@Model[SiteSettingKeys.OrderNotifyEmails]" placeholder="email1@gmail.com, email2@gmail.com" />
+            <span class="admin-field__hint">Cách nhau bởi dấu phẩy. Mỗi khi có đơn hàng mới, các email này sẽ nhận thông báo kèm chi tiết đơn. Để trống = không gửi.</span>
+        </div>
         <div class="admin-form-actions">
             <button type="submit" class="admin-btn admin-btn--primary">Lưu cấu hình</button>
         </div>

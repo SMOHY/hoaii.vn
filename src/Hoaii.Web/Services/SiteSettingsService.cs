@@ -57,6 +57,7 @@ public static class SiteSettingKeys
     public const string SmtpFromEmail = "smtp_from_email";
     public const string SmtpFromName = "smtp_from_name";
     public const string SmtpUseSsl = "smtp_use_ssl";
+    public const string OrderNotifyEmails = "order_notify_emails";
 
     /// <summary>Ordered for the admin forms; label + which admin screen (group) each field belongs to.</summary>
     public static readonly IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> All =
@@ -104,6 +105,9 @@ public static class SiteSettingKeys
         (SmtpFromEmail, "Email gửi đi (From)", "", false, "email"),
         (SmtpFromName, "Tên hiển thị người gửi", "HOÀI", false, "email"),
         (SmtpUseSsl, "Dùng SSL/TLS", "true", false, "email"),
+        // TODO: giá trị test tạm — đổi sang email thật của HOÀI ở /admin/email khi lên thật:
+        // hoaiquatangvanhoa@gmail.com,hoaiquatangvanhoa.website@gmail.com
+        (OrderNotifyEmails, "Email nội bộ nhận thông báo đơn mới (cách nhau bởi dấu phẩy)", "longpham141003@gmail.com", false, "email"),
     ];
 
     public static IReadOnlyList<(string Key, string Label, string Default, bool Multiline, string Group)> InGroup(string group) =>
