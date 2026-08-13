@@ -3,6 +3,7 @@ using Hoaii.Infrastructure;
 using Hoaii.Web.Services;
 using Hoaii.Web.Services.Admin;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -89,6 +90,17 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+// Production runs behind an Nginx reverse proxy on the VPS, so Kestrel only ever sees the
+// proxy's own http://127.0.0.1:{port} hop — Request.Scheme/Request.Host would report that
+// instead of the real https://hoaii.vn a visitor typed. Must run first, before anything (HTTPS
+// redirect, HSTS, or CheckoutController building the order-notification email's admin link)
+// reads either. Nginx and Kestrel run on the same box, so the default loopback-only trust is
+// enough — no KnownProxies list to keep in sync with infra.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
