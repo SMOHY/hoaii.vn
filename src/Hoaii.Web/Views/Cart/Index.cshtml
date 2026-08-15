@@ -54,6 +54,14 @@
                 <span class="cart-discount__value">@Model.Discount.ToString("N0")đ</span>
             </div>
 
+            @if (Model.Vat > 0)
+            {
+                <div class="cart-discount">
+                    <span>Thuế VAT (@Model.VatRatePercent.ToString("0.#")%)</span>
+                    <span class="cart-discount__value">@Model.Vat.ToString("N0")đ</span>
+                </div>
+            }
+
             <div class="cart-summary">
                 <div class="cart-summary__totals">
                     <span class="cart-summary__label">Tổng cộng</span>

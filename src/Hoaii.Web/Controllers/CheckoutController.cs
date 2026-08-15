@@ -99,6 +99,7 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
             // after the fact — the voucher used to disappear the moment the order was placed.
             Discount = cartModel.Discount,
             VoucherCode = cartModel.AppliedVoucherCode,
+            Vat = cartModel.Vat,
             Total = cartModel.Total + shippingFee,
             Status = OrderStatus.Pending,
             PaymentStatus = PaymentStatus.Unpaid,

@@ -36,6 +36,10 @@
                         {
                             <tr><td colspan="4" class="num">Giảm giá@(o.VoucherCode is not null ? $" ({o.VoucherCode})" : "")</td><td class="num">-@AdminDisplay.Money(o.Discount)</td></tr>
                         }
+                        @if (o.Vat > 0)
+                        {
+                            <tr><td colspan="4" class="num">Thuế VAT</td><td class="num">@AdminDisplay.Money(o.Vat)</td></tr>
+                        }
                         <tr><td colspan="4" class="num">Vận chuyển</td><td class="num">@(o.ShippingFee > 0 ? AdminDisplay.Money(o.ShippingFee) : "Miễn phí")</td></tr>
                         <tr><td colspan="4" class="num"><strong>Tổng cộng</strong></td><td class="num"><strong>@AdminDisplay.Money(o.Total)</strong></td></tr>
                     </tfoot>

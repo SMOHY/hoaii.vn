@@ -68,6 +68,7 @@ public static class OrderEmailTemplates
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
               <tr><td style="padding:4px 0;color:{GreyText};">Tạm tính</td><td style="padding:4px 0;text-align:right;">{order.Subtotal:N0}đ</td></tr>
               {(order.Discount > 0 ? $"""<tr><td style="padding:4px 0;color:{GreyText};">Giảm giá</td><td style="padding:4px 0;text-align:right;">-{order.Discount:N0}đ</td></tr>""" : "")}
+              {(order.Vat > 0 ? $"""<tr><td style="padding:4px 0;color:{GreyText};">Thuế VAT</td><td style="padding:4px 0;text-align:right;">{order.Vat:N0}đ</td></tr>""" : "")}
               <tr><td style="padding:4px 0;color:{GreyText};">Vận chuyển</td><td style="padding:4px 0;text-align:right;">{(order.ShippingFee > 0 ? $"{order.ShippingFee:N0}đ" : "Miễn phí")}</td></tr>
               <tr><td style="padding:14px 0 0;font-weight:bold;font-size:18px;border-top:1px solid {Border};">Tổng cộng</td><td style="padding:14px 0 0;font-weight:bold;font-size:18px;text-align:right;color:{Red};border-top:1px solid {Border};">{order.Total:N0}đ</td></tr>
             </table>

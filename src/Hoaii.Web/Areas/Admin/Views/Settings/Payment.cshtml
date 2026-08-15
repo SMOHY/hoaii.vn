@@ -24,6 +24,13 @@
             Cổng VNPay <span class="admin-field__hint" style="display:inline;">(sếp tích hợp sau — để tắt nếu chưa nối)</span>
         </label>
 
+        <h3 style="font-family:var(--font-display);font-size:18px;margin:8px 0 12px;">Thuế</h3>
+        <div class="admin-field" style="margin-bottom:20px;">
+            <label>Thuế VAT (%)</label>
+            <input type="number" name="settings_[@SiteSettingKeys.VatRate]" value="@Model[SiteSettingKeys.VatRate]" step="0.1" min="0" max="100" style="max-width:120px;" />
+            <span class="admin-field__hint">Cộng thêm vào tiền hàng sau giảm giá ở bước thanh toán — không áp cho phí vận chuyển. Để 0 để tắt.</span>
+        </div>
+
         <h3 style="font-family:var(--font-display);font-size:18px;margin:8px 0 12px;">Thông tin chuyển khoản</h3>
         <div class="admin-form-row">
             <div class="admin-field">

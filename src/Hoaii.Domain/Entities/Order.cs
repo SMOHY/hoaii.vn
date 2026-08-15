@@ -59,6 +59,12 @@ public class Order
     public decimal Discount { get; set; }
     public string? VoucherCode { get; set; }
 
+    /// <summary>VAT amount in VND, computed at order time from (Subtotal - Discount) × the VAT
+    /// rate configured in Admin > Thanh toán (SiteSettingKeys.VatRate) — not applied to
+    /// ShippingFee. Stored as an amount rather than just the rate so a later rate change never
+    /// rewrites what a past order actually charged.</summary>
+    public decimal Vat { get; set; }
+
     public decimal Total { get; set; }
 
     public OrderStatus Status { get; set; } = OrderStatus.Pending;

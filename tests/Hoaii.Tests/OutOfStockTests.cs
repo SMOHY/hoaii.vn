@@ -54,7 +54,8 @@ public class OutOfStockTests
     private static CartService NewCart(HoaiiDbContext db)
     {
         var http = new DefaultHttpContext { Session = new FakeSession() };
-        return new CartService(new HttpContextAccessor { HttpContext = http }, db);
+        var settings = new SiteSettingsService(db, new Microsoft.Extensions.Caching.Memory.MemoryCache(new Microsoft.Extensions.Caching.Memory.MemoryCacheOptions()));
+        return new CartService(new HttpContextAccessor { HttpContext = http }, db, settings);
     }
 
     [Fact]
