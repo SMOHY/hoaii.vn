@@ -112,21 +112,7 @@ public static class PolicyPageSeeder
                 NavLabel = "Chính sách giá & thanh toán",
                 BreadcrumbLabel = "Trang chủ/Chính sách giá & thanh toán",
                 SortOrder = 5,
-                Blocks =
-                [
-                    H("I. Chính Sách Giá"),
-                    B("Giá bán sản phẩm niêm yết trên website đã bao gồm thuế giá trị gia tăng (nếu có) và được thể hiện bằng đồng Việt Nam (VNĐ)."),
-                    B("Giá có thể được điều chỉnh theo chương trình khuyến mãi hoặc biến động thị trường mà không cần báo trước; tuy nhiên đơn hàng đã được xác nhận sẽ giữ nguyên mức giá tại thời điểm đặt hàng."),
-                    B("Trường hợp phát sinh sai lệch giá do lỗi kỹ thuật hiển thị, HOÀI sẽ chủ động liên hệ để thông báo và cùng khách hàng thống nhất phương án xử lý (tiếp tục giao dịch theo giá đúng hoặc hủy đơn, hoàn tiền nếu đã thanh toán) trước khi giao hàng."),
-                    H("II. Phương Thức Thanh Toán"),
-                    P("Quý khách có thể lựa chọn một trong các hình thức thanh toán sau khi đặt hàng trên website:"),
-                    B("Thanh toán khi nhận hàng (COD)."),
-                    B("Chuyển khoản ngân hàng — thông tin tài khoản cụ thể được cung cấp tại bước thanh toán hoặc theo yêu cầu qua hotline."),
-                    B("Thanh toán trực tiếp tại cửa hàng/văn phòng của HOÀI."),
-                    B("Thanh toán qua cổng thanh toán trực tuyến (nếu được kích hoạt trên website)."),
-                    H("III. Xác Nhận Đơn Hàng & Hóa Đơn"),
-                    P("Đơn hàng được xem là hoàn tất khi quý khách nhận được xác nhận từ HOÀI qua email, điện thoại hoặc tin nhắn. Trường hợp cần xuất hóa đơn hoặc chứng từ kế toán, quý khách vui lòng cung cấp đầy đủ thông tin trước khi đơn hàng được giao."),
-                ],
+                Blocks = GiaThanhToanV2Blocks(),
             },
             new()
             {
@@ -184,7 +170,27 @@ public static class PolicyPageSeeder
         await EnsureWarrantySectionAsync(db);
         await ReplaceBlocksIfOutdatedAsync(db, "bao-mat", "Điều 5 Nghị định 248/2026", BaoMatV2Blocks);
         await ReplaceBlocksIfOutdatedAsync(db, "khieu-nai", "Điều 7 Nghị định 248/2026", KhieuNaiV2Blocks);
+        await ReplaceBlocksIfOutdatedAsync(db, "gia-thanh-toan", "chưa bao gồm thuế giá trị gia tăng (VAT)", GiaThanhToanV2Blocks);
     }
+
+    /// <summary>Was seeded saying prices "already include VAT" — true when written, but wrong once
+    /// checkout actually started adding 8% VAT on top of the listed price (see CartService.Vat).
+    /// Corrects the one bullet to match the real behavior.</summary>
+    private static List<PolicyBlock> GiaThanhToanV2Blocks() =>
+    [
+        H("I. Chính Sách Giá"),
+        B("Giá bán sản phẩm niêm yết trên website là giá chưa bao gồm thuế giá trị gia tăng (VAT). Thuế VAT (theo tỷ lệ % hiện hành, xem tại bước thanh toán) được cộng thêm vào tiền hàng và thể hiện rõ trước khi Quý khách xác nhận đặt hàng. Giá được thể hiện bằng đồng Việt Nam (VNĐ)."),
+        B("Giá có thể được điều chỉnh theo chương trình khuyến mãi hoặc biến động thị trường mà không cần báo trước; tuy nhiên đơn hàng đã được xác nhận sẽ giữ nguyên mức giá tại thời điểm đặt hàng."),
+        B("Trường hợp phát sinh sai lệch giá do lỗi kỹ thuật hiển thị, HOÀI sẽ chủ động liên hệ để thông báo và cùng khách hàng thống nhất phương án xử lý (tiếp tục giao dịch theo giá đúng hoặc hủy đơn, hoàn tiền nếu đã thanh toán) trước khi giao hàng."),
+        H("II. Phương Thức Thanh Toán"),
+        P("Quý khách có thể lựa chọn một trong các hình thức thanh toán sau khi đặt hàng trên website:"),
+        B("Thanh toán khi nhận hàng (COD)."),
+        B("Chuyển khoản ngân hàng — thông tin tài khoản cụ thể được cung cấp tại bước thanh toán hoặc theo yêu cầu qua hotline."),
+        B("Thanh toán trực tiếp tại cửa hàng/văn phòng của HOÀI."),
+        B("Thanh toán qua cổng thanh toán trực tuyến (nếu được kích hoạt trên website)."),
+        H("III. Xác Nhận Đơn Hàng & Hóa Đơn"),
+        P("Đơn hàng được xem là hoàn tất khi quý khách nhận được xác nhận từ HOÀI qua email, điện thoại hoặc tin nhắn. Trường hợp cần xuất hóa đơn hoặc chứng từ kế toán, quý khách vui lòng cung cấp đầy đủ thông tin trước khi đơn hàng được giao."),
+    ];
 
     /// <summary>
     /// bao-mat and khieu-nai already existed in the DB before the TMĐT notification-dossier

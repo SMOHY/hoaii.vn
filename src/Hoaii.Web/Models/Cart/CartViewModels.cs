@@ -40,6 +40,13 @@ public class CartViewModel
     public required IReadOnlyList<CartAddOnViewModel> AddOnSuggestions { get; init; }
     public required decimal Subtotal { get; init; }
     public required decimal Discount { get; init; }
+
+    /// <summary>VAT amount in VND — CartService computes this as VatRatePercent% of
+    /// (Subtotal - Discount), never touching shipping (that's added later, at checkout).</summary>
+    public required decimal Vat { get; init; }
+
+    /// <summary>The configured rate itself (e.g. 8), just for the "Thuế VAT (8%)" label text.</summary>
+    public decimal VatRatePercent { get; init; }
     public string? AppliedVoucherCode { get; init; }
     public string? AppliedVoucherLabel { get; init; }
 
@@ -49,7 +56,7 @@ public class CartViewModel
     /// <summary>Codes shown in the voucher modal (only those usable for the current cart).</summary>
     public IReadOnlyList<VoucherOption> AvailableVouchers { get; init; } = [];
 
-    public decimal Total => Subtotal - Discount;
+    public decimal Total => Subtotal - Discount + Vat;
     public int ItemCount => Items.Sum(i => i.Quantity);
 }
 

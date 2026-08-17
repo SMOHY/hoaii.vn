@@ -11,7 +11,7 @@ namespace Hoaii.Web.Services;
 /// Cart contents are just (productId, variantId, quantity) lines; product/price data
 /// is always re-hydrated live from the DB so prices/availability stay current.
 /// </summary>
-public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContext db)
+public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContext db, SiteSettingsService settings)
 {
     private const string SessionKey = "cart_v1";
     private const string VoucherSessionKey = "cart_voucher_v1";
@@ -158,6 +158,8 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
     {
         var lines = GetLines();
 
+        var vatRatePercent = settings.GetDecimal(SiteSettingKeys.VatRate);
+
         if (lines.Count == 0)
         {
             return new CartViewModel
@@ -166,6 +168,8 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
                 AddOnSuggestions = await GetAddOnSuggestionsAsync(null),
                 Subtotal = 0,
                 Discount = 0,
+                Vat = 0,
+                VatRatePercent = vatRatePercent,
             };
         }
 
@@ -221,12 +225,18 @@ public class CartService(IHttpContextAccessor httpContextAccessor, HoaiiDbContex
 
         var discount = appliedVoucher?.DiscountFor(subtotal) ?? 0m;
 
+        // VAT applies to the goods after discount, never to shipping (added separately at
+        // checkout) — see SiteSettingKeys.VatRate.
+        var vat = Math.Round((subtotal - discount) * vatRatePercent / 100m, 0, MidpointRounding.AwayFromZero);
+
         return new CartViewModel
         {
             Items = items,
             AddOnSuggestions = await GetAddOnSuggestionsAsync(categoryIds, productIds),
             Subtotal = subtotal,
             Discount = discount,
+            Vat = vat,
+            VatRatePercent = vatRatePercent,
             AppliedVoucherCode = appliedVoucher?.Code,
             AppliedVoucherLabel = appliedVoucher?.Label,
             FreeShipping = appliedVoucher?.Type == VoucherType.FreeShipping,

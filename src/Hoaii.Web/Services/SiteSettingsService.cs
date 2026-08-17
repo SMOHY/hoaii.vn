@@ -49,6 +49,10 @@ public static class SiteSettingKeys
     public const string BankAccountHolder = "pay_bank_holder";
     public const string BankTransferNote = "pay_bank_note";
 
+    /// <summary>Percent, e.g. "8" — not a fraction. CartService reads this via GetDecimal and
+    /// divides by 100 itself.</summary>
+    public const string VatRate = "vat_rate";
+
     // Email / SMTP (group "email").
     public const string SmtpHost = "smtp_host";
     public const string SmtpPort = "smtp_port";
@@ -97,6 +101,7 @@ public static class SiteSettingKeys
         (BankAccountNumber, "Số tài khoản", "", false, "payment"),
         (BankAccountHolder, "Chủ tài khoản", "", false, "payment"),
         (BankTransferNote, "Ghi chú chuyển khoản (cú pháp)", "", true, "payment"),
+        (VatRate, "Thuế VAT (%, áp trên tiền hàng sau giảm giá, không tính phí ship)", "8", false, "payment"),
 
         (SmtpHost, "Máy chủ SMTP", "", false, "email"),
         (SmtpPort, "Cổng SMTP", "587", false, "email"),

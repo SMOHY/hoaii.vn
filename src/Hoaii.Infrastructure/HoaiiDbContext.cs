@@ -97,6 +97,7 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
             entity.Property(o => o.Subtotal).HasColumnType("decimal(18,2)");
             entity.Property(o => o.ShippingFee).HasColumnType("decimal(18,2)");
             entity.Property(o => o.Discount).HasColumnType("decimal(18,2)");
+            entity.Property(o => o.Vat).HasColumnType("decimal(18,2)");
             entity.Property(o => o.Total).HasColumnType("decimal(18,2)");
             entity.Property(o => o.VoucherCode).HasMaxLength(50);
             entity.Property(o => o.TrackingNumber).HasMaxLength(100);

@@ -233,6 +233,13 @@
                     <span>Tổng : @cart.ItemCount mặt hàng</span>
                     <span>@cart.Subtotal.ToString("N0")</span>
                 </div>
+                @if (cart.Vat > 0)
+                {
+                    <div class="checkout-totals__row">
+                        <span>Thuế VAT (@cart.VatRatePercent.ToString("0.#")%)</span>
+                        <span>@cart.Vat.ToString("N0")đ</span>
+                    </div>
+                }
                 <div class="checkout-totals__row"
                      data-inner-fee="@Model.InnerCityFee" data-inter-fee="@Model.IntercityFee"
                      data-free-threshold="@Model.FreeShipThreshold" data-free-ship="@(Model.Cart.FreeShipping ? "1" : "0")"
@@ -272,8 +279,10 @@
   var threshold = parseFloat(row.dataset.freeThreshold) || 0;
   var freeShip = row.dataset.freeShip === '1';
   var subtotal = parseFloat(row.dataset.subtotal) || 0;
-  var discountEl = subtotal; // grand = subtotal - discount + fee; compute discount from current grand
-  // Derive current discount so we can re-add fee: grandInit = subtotal - discount + feeInit.
+  var discountEl = subtotal; // grand = subtotal - discount + vat + fee; compute discount from current grand
+  // Derive current discount so we can re-add fee: grandInit = subtotal - discount + vat + feeInit.
+  // VAT doesn't depend on shipping method, so it just rides along inside this constant unchanged —
+  // no separate term needed here.
   var vnd = function (n) { return n.toLocaleString('vi-VN'); };
   function feeFor(method) {
     if (freeShip) return 0;
