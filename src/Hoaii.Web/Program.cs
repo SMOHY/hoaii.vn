@@ -55,6 +55,7 @@ builder.Services.AddScoped<SiteSettingsService>();
 builder.Services.AddScoped<NavigationService>();
 builder.Services.AddScoped<PageContentService>();
 builder.Services.AddScoped<EmailSender>();
+builder.Services.AddScoped<DestinationLinkService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -335,6 +336,7 @@ using (var scope = app.Services.CreateScope())
     await AdminAuthService.EnsureSeedAdminAsync(db, app.Configuration);
     await PolicyPageSeeder.EnsureSeedAsync(db);
     await HomeContentSeeder.EnsureSeedAsync(db);
+    await HomeFeaturedTileImageSeeder.EnsureSeedAsync(db);
     await NavigationSeeder.EnsureSeedAsync(db);
     await VoucherSeeder.EnsureSeedAsync(db);
     await PartnerLogoSeeder.EnsureSeedAsync(db);

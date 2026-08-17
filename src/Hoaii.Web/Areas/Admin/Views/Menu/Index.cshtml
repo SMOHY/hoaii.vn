@@ -9,6 +9,7 @@
     var sub = ViewBag.Sub as List<NavLink> ?? [];
     var columns = ViewBag.Columns as List<FooterMenuColumn> ?? [];
     var categories = ViewBag.Categories as List<Category> ?? [];
+    var destPickerCollections = ViewBag.Collections as List<Collection> ?? [];
     var policies = ViewBag.Policies as List<PolicyPage> ?? [];
     var staticPages = ((string Key, string Label, string Url)[])ViewBag.StaticPages;
     var destKeyFor = (Func<string, string?>)ViewBag.DestKeyFor;
@@ -62,7 +63,7 @@
                         }
                         else
                         {
-                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(l.Url) })" />
+                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(l.Url) })" />
                         }
                         <label class="admin-menu-item__dropdown"><input type="checkbox" name="hasDropdown" value="true" @(l.HasDropdown ? "checked" : "") /> Dropdown</label>
                         <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@l.SortOrder" class="admin-menu-item__sort" /></span>
@@ -246,7 +247,7 @@
                                     <input type="hidden" name="id" value="@c.Id" />
                                     <input type="hidden" name="parentId" value="@l.Id" />
                                     <input type="text" name="label" value="@c.Label" placeholder="Nhãn mục con" />
-                                    <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(c.Url) })" />
+                                    <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(c.Url) })" />
                                     <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@c.SortOrder" class="admin-menu-item__sort" /></span>
                                     <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
                                 </form>
@@ -261,7 +262,7 @@
                             <input type="hidden" name="id" value="0" />
                             <input type="hidden" name="parentId" value="@l.Id" />
                             <input type="text" name="label" placeholder="Nhãn mục con" />
-                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
                             <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@l.Children.Count" class="admin-menu-item__sort" /></span>
                             <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục con</button>
                         </form>
@@ -275,7 +276,7 @@
             <input type="hidden" name="placement" value="@NavPlacement.Main" />
             <div class="admin-menu-item__fields">
                 <input type="text" name="label" placeholder="Nhãn mới" />
-                <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
                 <label class="admin-menu-item__dropdown"><input type="checkbox" name="hasDropdown" value="true" /> Dropdown</label>
                 <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@main.Count" class="admin-menu-item__sort" /></span>
             </div>
@@ -297,7 +298,7 @@
                     <input type="hidden" name="placement" value="@NavPlacement.Sub" />
                     <input type="hidden" name="hasDropdown" value="false" />
                     <input type="text" name="label" value="@l.Label" placeholder="Nhãn" />
-                    <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(l.Url) })" />
+                    <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(l.Url) })" />
                     <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@l.SortOrder" class="admin-menu-item__sort" /></span>
                     <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
                 </form>
@@ -314,7 +315,7 @@
             <input type="hidden" name="hasDropdown" value="false" />
             <div class="admin-menu-item__fields">
                 <input type="text" name="label" placeholder="Nhãn mới" />
-                <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
                 <span class="admin-menu-item__sort-wrap"><span class="admin-menu-item__sort-label">Thứ tự</span><input type="number" name="sortOrder" value="@sub.Count" class="admin-menu-item__sort" /></span>
             </div>
             <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm mục</button>
@@ -352,7 +353,7 @@
                             <input type="hidden" name="id" value="@link.Id" />
                             <input type="hidden" name="columnId" value="@col.Id" />
                             <input type="text" name="label" value="@link.Label" placeholder="Nhãn" class="admin-footer-link__label" />
-                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(link.Url) })" />
+                            <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = destKeyFor(link.Url) })" />
                             <input type="number" name="sortOrder" value="@link.SortOrder" title="Thứ tự" class="admin-footer-link__sort" />
                             <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">Lưu</button>
                         </form>
@@ -364,7 +365,7 @@
                         <input type="hidden" name="id" value="0" />
                         <input type="hidden" name="columnId" value="@col.Id" />
                         <input type="text" name="label" placeholder="Link mới" class="admin-footer-link__label" />
-                        <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
+                        <partial name="_DestPicker" model="@(new DestPickerModel { Categories = categories, Collections = destPickerCollections, Policies = policies, StaticPages = staticPages, Selected = (string?)null })" />
                         <input type="number" name="sortOrder" value="@col.Links.Count" title="Thứ tự" class="admin-footer-link__sort" />
                         <button type="submit" class="admin-btn admin-btn--primary admin-btn--sm">+ Thêm</button>
                     </form>

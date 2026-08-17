@@ -13,7 +13,7 @@ public class HomeIndexViewModel
     public required IReadOnlyList<FeaturedTileViewModel> FeaturedTiles { get; init; }
     public required IReadOnlyList<CustomServiceTabViewModel> CustomServiceTabs { get; init; }
     public required IReadOnlyList<AboutCardViewModel> AboutCards { get; init; }
-    public required IReadOnlyList<string> CustomerLogos { get; init; }
+    public required IReadOnlyList<Hoaii.Domain.Entities.HomeCustomerLogo> CustomerLogos { get; init; }
     public required IReadOnlyList<BlogPostViewModel> BlogPosts { get; init; }
 }
 

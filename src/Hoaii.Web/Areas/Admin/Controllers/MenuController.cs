@@ -12,6 +12,7 @@ namespace Hoaii.Web.Areas.Admin.Controllers;
 public class DestPickerModel
 {
     public required List<Category> Categories { get; init; }
+    public required List<Collection> Collections { get; init; }
     public required List<PolicyPage> Policies { get; init; }
     public required (string Key, string Label, string Url)[] StaticPages { get; init; }
     public string? Selected { get; init; }
@@ -19,79 +20,16 @@ public class DestPickerModel
 
 /// <summary>Edits the header menus (main + sub) and the footer columns/links. Every write drops
 /// the NavigationService cache so the storefront updates immediately.</summary>
-public class MenuController(HoaiiDbContext db, AdminAuthService auth, NavigationService nav, PageContentService content) : BaseAdminController(db)
+public class MenuController(HoaiiDbContext db, AdminAuthService auth, NavigationService nav, PageContentService content, DestinationLinkService destLink) : BaseAdminController(db)
 {
-    /// <summary>Every internal page an admin might want to link to that isn't a Category. A
-    /// fixed, known-good list rather than free text — the "Quà theo dịp" mega-menu bug (an admin
-    /// typed a URL one character off from the real route and nothing on the site caught it) only
-    /// happened because the old form let anyone type any string. Picking from this list can't
-    /// produce a URL that doesn't exist.</summary>
-    private static readonly (string Key, string Label, string Url)[] StaticPages =
-    [
-        ("trang-chu", "Trang chủ", "/"),
-        ("lien-he", "Liên hệ", "/lien-he"),
-        ("ve-chung-toi", "Về chúng tôi", "/ve-chung-toi"),
-        ("hop-tac", "Đối tác / Hợp tác", "/hop-tac"),
-        ("blog", "Blog", "/blog"),
-        ("qua-theo-dip", "Quà theo dịp (trang landing)", "/qua-theo-dip"),
-        ("qua-tang-ca-nhan", "Quà tặng cá nhân (trang landing)", "/qua-tang-ca-nhan"),
-    ];
-
-    /// <summary>"cat:5" / "page:blog" from the destination picker → the real URL + a human label
-    /// for the audit log. Never trusts a URL typed by hand.</summary>
-    private async Task<(string Url, string Label)?> ResolveDestinationAsync(string? dest)
-    {
-        if (string.IsNullOrWhiteSpace(dest)) return null;
-        var parts = dest.Split(':', 2);
-        if (parts.Length != 2) return null;
-
-        if (parts[0] == "cat")
-        {
-            if (!int.TryParse(parts[1], out var catId)) return null;
-            var cat = await Db.Categories.FindAsync(catId);
-            return cat is null ? null : ($"/danh-muc/{cat.Slug}", cat.Name);
-        }
-        if (parts[0] == "page")
-        {
-            var page = StaticPages.FirstOrDefault(p => p.Key == parts[1]);
-            return page.Key is null ? null : (page.Url, page.Label);
-        }
-        if (parts[0] == "policy")
-        {
-            var policy = await Db.PolicyPages.FirstOrDefaultAsync(p => p.Slug == parts[1]);
-            return policy is null ? null : ($"/chinh-sach/{policy.Slug}", policy.NavLabel);
-        }
-        return null;
-    }
-
-    /// <summary>The reverse of <see cref="ResolveDestinationAsync"/> — given a URL already saved
-    /// on a link, which option in the picker should show as selected. Falls back to null (picker
-    /// shows "chưa gán" and the admin has to actively repoint it) for the rare URL that predates
-    /// this picker and matches nothing — better than silently guessing wrong.</summary>
-    private static string? ComputeDestKey(string url, List<Category> categories, List<PolicyPage> policies)
-    {
-        var page = StaticPages.FirstOrDefault(p => p.Url == url);
-        if (page.Key is not null) return $"page:{page.Key}";
-
-        var catMatch = categories.FirstOrDefault(c => $"/danh-muc/{c.Slug}" == url);
-        if (catMatch is not null) return $"cat:{catMatch.Id}";
-
-        var policyMatch = policies.FirstOrDefault(p => $"/chinh-sach/{p.Slug}" == url);
-        return policyMatch is not null ? $"policy:{policyMatch.Slug}" : null;
-    }
-
     private async Task LoadDestinationOptionsAsync()
     {
-        // "ruou" (alcohol) is a conditional business line held back from the storefront until
-        // the retail licence is in hand — same reason MegaMenuColumnMigrationSeeder never seeded
-        // it into "Sản phẩm" and it must not be pickable as a destination/category-link here
-        // either, or an admin could wire it back into the public nav by hand.
-        var categories = await Db.Categories.Where(c => c.Slug != "ruou").OrderBy(c => c.Type).ThenBy(c => c.SortOrder).ThenBy(c => c.Id).ToListAsync();
-        var policies = await Db.PolicyPages.OrderBy(p => p.SortOrder).ToListAsync();
-        ViewBag.Categories = categories;
-        ViewBag.Policies = policies;
-        ViewBag.StaticPages = StaticPages;
-        ViewBag.DestKeyFor = (Func<string, string?>)(url => ComputeDestKey(url, categories, policies));
+        var options = await destLink.LoadOptionsAsync();
+        ViewBag.Categories = options.Categories;
+        ViewBag.Collections = options.Collections;
+        ViewBag.Policies = options.Policies;
+        ViewBag.StaticPages = DestinationLinkService.StaticPages;
+        ViewBag.DestKeyFor = (Func<string, string?>)(url => DestinationLinkService.ComputeKey(url, options));
     }
 
     /// <summary>The 8 product columns across the 4 built-in panels that the client wants
@@ -259,7 +197,7 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> LinkSave(int id, NavPlacement placement, string label, string dest, bool hasDropdown, int sortOrder)
     {
-        var resolved = await ResolveDestinationAsync(dest);
+        var resolved = await destLink.ResolveAsync(dest);
         if (string.IsNullOrWhiteSpace(label) || resolved is null)
         {
             Fail("Nhãn không được để trống và phải chọn 1 đích đến hợp lệ.");
@@ -300,7 +238,7 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SubLinkSave(int id, int parentId, string label, string dest, int sortOrder)
     {
-        var resolved = await ResolveDestinationAsync(dest);
+        var resolved = await destLink.ResolveAsync(dest);
         if (string.IsNullOrWhiteSpace(label) || resolved is null)
         {
             Fail("Nhãn không được để trống và phải chọn 1 đích đến hợp lệ.");
@@ -375,7 +313,7 @@ public class MenuController(HoaiiDbContext db, AdminAuthService auth, Navigation
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ColumnLinkSave(int id, int columnId, string label, string dest, int sortOrder)
     {
-        var resolved = await ResolveDestinationAsync(dest);
+        var resolved = await destLink.ResolveAsync(dest);
         if (string.IsNullOrWhiteSpace(label) || resolved is null)
         {
             Fail("Nhãn không được để trống và phải chọn 1 đích đến hợp lệ.");

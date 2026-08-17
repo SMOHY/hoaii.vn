@@ -98,7 +98,6 @@ public class HomeController(HoaiiDbContext db) : Controller
 
             CustomerLogos = await db.HomeCustomerLogos
                 .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
-                .Select(l => l.LogoKey)
                 .ToListAsync(),
 
             BlogPosts = recent,

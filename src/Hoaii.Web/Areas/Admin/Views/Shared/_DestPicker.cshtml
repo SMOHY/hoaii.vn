@@ -15,6 +15,16 @@
             <option value="@key" selected="@(Model.Selected == key)">@c.Name</option>
         }
     </optgroup>
+    @if (Model.Collections.Count > 0)
+    {
+        <optgroup label="Bộ sưu tập">
+            @foreach (var c in Model.Collections)
+            {
+                var key = $"col:{c.Id}";
+                <option value="@key" selected="@(Model.Selected == key)">@c.Name</option>
+            }
+        </optgroup>
+    }
     <optgroup label="Trang">
         @foreach (var p in Model.StaticPages)
         {

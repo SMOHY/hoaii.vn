@@ -1,8 +1,18 @@
 @model Hoaii.Domain.Entities.HomeFeaturedTile
+@using Hoaii.Domain.Entities
+@using Hoaii.Web.Areas.Admin.Controllers
 @{
     var isNew = Model.Id == 0;
     ViewData["Title"] = isNew ? "Thêm ô nổi bật" : "Sửa ô nổi bật";
     var accents = new[] { ("", "— (ảnh)"), ("red", "Đỏ"), ("teal", "Xanh ngọc"), ("yellow", "Vàng") };
+    var destModel = new DestPickerModel
+    {
+        Categories = ViewBag.Categories as List<Category> ?? [],
+        Collections = ViewBag.Collections as List<Collection> ?? [],
+        Policies = ViewBag.Policies as List<PolicyPage> ?? [],
+        StaticPages = ((string Key, string Label, string Url)[])ViewBag.StaticPages,
+        Selected = isNew ? null : ((Func<string, string?>)ViewBag.DestKeyFor)(Model.LinkUrl),
+    };
 }
 
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/trang-chu">← Trang chủ</a></div>
@@ -52,7 +62,7 @@
         <div class="admin-form-row">
             <div class="admin-field">
                 <label>Liên kết</label>
-                <input type="text" name="linkUrl" value="@Model.LinkUrl" placeholder="/danh-muc/..." />
+                <partial name="_DestPicker" model="destModel" />
             </div>
             <div class="admin-field">
                 <label>Thứ tự</label>

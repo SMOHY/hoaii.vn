@@ -38,7 +38,6 @@ public class PageController(HoaiiDbContext db, SiteSettingsService settings) : C
         // The customer-logo strip reuses the same list the homepage manages (no more duplicate).
         ViewBag.CustomerLogos = await db.HomeCustomerLogos
             .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
-            .Select(l => l.LogoKey)
             .ToListAsync();
         return View();
     }

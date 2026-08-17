@@ -11,8 +11,20 @@ namespace Hoaii.Web.Areas.Admin.Controllers;
 /// Edits the six homepage sections. One controller, one dashboard, a small edit form per section
 /// type. Customer logos are simple enough to manage inline on the dashboard.
 /// </summary>
-public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageContentService content) : BaseAdminController(db)
+public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageContentService content, DestinationLinkService destLink) : BaseAdminController(db)
 {
+    /// <summary>Loads picker options for _DestPicker.cshtml — used by the tile/service edit
+    /// forms (mirrors MenuController's own copy of this call).</summary>
+    private async Task LoadDestinationOptionsAsync()
+    {
+        var options = await destLink.LoadOptionsAsync();
+        ViewBag.Categories = options.Categories;
+        ViewBag.Collections = options.Collections;
+        ViewBag.Policies = options.Policies;
+        ViewBag.StaticPages = DestinationLinkService.StaticPages;
+        ViewBag.DestKeyFor = (Func<string, string?>)(url => DestinationLinkService.ComputeKey(url, options));
+    }
+
     [HttpGet("/admin/trang-chu")]
     public async Task<IActionResult> Index()
     {
@@ -110,18 +122,24 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
 
     // ---------- Featured tile ----------
     [HttpGet("/admin/trang-chu/o-noi-bat/them")]
-    public IActionResult TileCreate() => View("TileEdit", new HomeFeaturedTile());
+    public async Task<IActionResult> TileCreate()
+    {
+        await LoadDestinationOptionsAsync();
+        return View("TileEdit", new HomeFeaturedTile());
+    }
 
     [HttpGet("/admin/trang-chu/o-noi-bat/{id:int}/sua")]
     public async Task<IActionResult> TileEdit(int id)
     {
         var x = await Db.HomeFeaturedTiles.FindAsync(id);
-        return x is null ? NotFound() : View(x);
+        if (x is null) return NotFound();
+        await LoadDestinationOptionsAsync();
+        return View(x);
     }
 
     [HttpPost("/admin/trang-chu/o-noi-bat/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> TileSave(int id, bool isCard, string? accentColor, string? collectionLabel, string? titleLine1, string? titleLine2, string? editionLabel, bool hideOnMobile, string? imageUrl, string? linkUrl, int sortOrder)
+    public async Task<IActionResult> TileSave(int id, bool isCard, string? accentColor, string? collectionLabel, string? titleLine1, string? titleLine2, string? editionLabel, bool hideOnMobile, string? imageUrl, string? dest, int sortOrder)
     {
         var x = id == 0 ? new HomeFeaturedTile() : await Db.HomeFeaturedTiles.FindAsync(id);
         if (x is null) return NotFound();
@@ -133,7 +151,8 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
         x.EditionLabel = editionLabel?.Trim();
         x.HideOnMobile = hideOnMobile;
         x.ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl.Trim();
-        x.LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? "#" : linkUrl.Trim();
+        var resolved = await destLink.ResolveAsync(dest);
+        x.LinkUrl = resolved?.Url ?? "#";
         x.SortOrder = sortOrder;
         if (id == 0) Db.HomeFeaturedTiles.Add(x);
         auth.Audit(id == 0 ? "Thêm ô nổi bật" : "Sửa ô nổi bật", nameof(HomeFeaturedTile), id == 0 ? null : id);
@@ -148,18 +167,24 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
 
     // ---------- Service tab ----------
     [HttpGet("/admin/trang-chu/dich-vu/them")]
-    public IActionResult ServiceCreate() => View("ServiceEdit", new HomeServiceTab { Key = "" });
+    public async Task<IActionResult> ServiceCreate()
+    {
+        await LoadDestinationOptionsAsync();
+        return View("ServiceEdit", new HomeServiceTab { Key = "" });
+    }
 
     [HttpGet("/admin/trang-chu/dich-vu/{id:int}/sua")]
     public async Task<IActionResult> ServiceEdit(int id)
     {
         var x = await Db.HomeServiceTabs.FindAsync(id);
-        return x is null ? NotFound() : View(x);
+        if (x is null) return NotFound();
+        await LoadDestinationOptionsAsync();
+        return View(x);
     }
 
     [HttpPost("/admin/trang-chu/dich-vu/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ServiceSave(int id, string key, string? label, string? iconSvg, string? panelImageUrl, string? caption, string? captionColorHex, string? ctaText, string? ctaUrl, int sortOrder)
+    public async Task<IActionResult> ServiceSave(int id, string key, string? label, string? iconSvg, string? panelImageUrl, string? caption, string? captionColorHex, string? ctaText, string? dest, int sortOrder)
     {
         if (string.IsNullOrWhiteSpace(key))
         {
@@ -175,7 +200,8 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
         x.Caption = caption?.Trim() ?? "";
         x.CaptionColorHex = string.IsNullOrWhiteSpace(captionColorHex) ? "#F2F2F2" : captionColorHex.Trim();
         x.CtaText = string.IsNullOrWhiteSpace(ctaText) ? "Bắt đầu" : ctaText.Trim();
-        x.CtaUrl = string.IsNullOrWhiteSpace(ctaUrl) ? "#" : ctaUrl.Trim();
+        var resolved = await destLink.ResolveAsync(dest);
+        x.CtaUrl = resolved?.Url ?? "#";
         x.SortOrder = sortOrder;
         if (id == 0) Db.HomeServiceTabs.Add(x);
         auth.Audit(id == 0 ? "Thêm dịch vụ" : "Sửa dịch vụ", nameof(HomeServiceTab), id == 0 ? null : id);
@@ -223,13 +249,19 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
     // ---------- Customer logos (managed inline on the dashboard) ----------
     [HttpPost("/admin/trang-chu/logo/them")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> LogoAdd(string logoKey)
+    public async Task<IActionResult> LogoAdd(string? logoKey, string? imageUrl)
     {
-        if (!string.IsNullOrWhiteSpace(logoKey))
+        if (!string.IsNullOrWhiteSpace(imageUrl) || !string.IsNullOrWhiteSpace(logoKey))
         {
             var max = await Db.HomeCustomerLogos.MaxAsync(l => (int?)l.SortOrder) ?? -1;
-            Db.HomeCustomerLogos.Add(new HomeCustomerLogo { LogoKey = logoKey.Trim(), SortOrder = max + 1 });
-            auth.Audit("Thêm logo KH", nameof(HomeCustomerLogo), null, logoKey);
+            var label = string.IsNullOrWhiteSpace(logoKey) ? "logo" : logoKey.Trim();
+            Db.HomeCustomerLogos.Add(new HomeCustomerLogo
+            {
+                LogoKey = string.IsNullOrWhiteSpace(logoKey) ? label : logoKey.Trim(),
+                ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl.Trim(),
+                SortOrder = max + 1,
+            });
+            auth.Audit("Thêm logo KH", nameof(HomeCustomerLogo), null, label);
             await Db.SaveChangesAsync();
             Ok("Đã thêm logo.");
         }

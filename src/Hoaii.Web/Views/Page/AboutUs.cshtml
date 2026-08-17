@@ -4,7 +4,7 @@
     ViewData["Title"] = "Về chúng tôi";
     ViewData["MetaDescription"] = "Câu chuyện thương hiệu HOÀI — hành trình gìn giữ và lan tỏa tinh thần văn hóa Việt qua từng món quà.";
     string T(string k) => Page.Get(PageContentKeys.About, k);
-    var customerLogos = ViewBag.CustomerLogos as IReadOnlyList<string> ?? new List<string>();
+    var customerLogos = ViewBag.CustomerLogos as IReadOnlyList<Hoaii.Domain.Entities.HomeCustomerLogo> ?? new List<Hoaii.Domain.Entities.HomeCustomerLogo>();
 }
 
 @* Section tabs (node 778:24899). Anchor links into the sections below. *@

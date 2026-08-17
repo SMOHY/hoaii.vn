@@ -3,22 +3,22 @@
 @inject PageContentService Page
 @* Danh sách sản phẩm đặc biệt — see design-specs/home/02-featured-products.md
 
-   The six photos and their crops come from Figma node 1214:38736. Each slot uses a different
-   crop, and HomeFeaturedTiles has no crop columns, so the campaign artwork is configured here
-   rather than in the CMS — extending the model just for this would be a bigger change than the
-   section warrants. The DB still drives everything else (order, card copy, colours, links).
-   Sources: Excel "MEDIA TRUNG THU 2026", Drive folders LAYOUT LẺ 6B / CONCEPT hộp xanh /
-   hộp cam / Ảnh thiên điểu hộp mềm. See the step-8 report for the file-by-file mapping. *@
+   The grid's crop shape per slot comes from Figma node 1214:38736 (each position uses a
+   different aspect-ratio crop class) — that's layout, fixed by position, and stays here. The
+   actual photo used to be hardcoded per slot too ("Trung Thu 2026" campaign files), which
+   silently overrode whatever image an admin set on the tile in /admin/trang-chu — the CMS field
+   existed but editing it visibly did nothing. Photo is now always tile.ImageUrl; only the crop
+   class + fallback alt text stay keyed by position. *@
 @{
-    // Keyed by the tile's position in the 3×3 grid.
-    var artwork = new Dictionary<int, (string File, string Crop, string Alt)>
+    // Keyed by the tile's position in the 3×3 grid — crop shape only, not the image itself.
+    var artwork = new Dictionary<int, (string Crop, string Alt)>
     {
-        [1] = ("tinh-hoa-bac-bo-01", "cover", "Hộp quà Tinh Hoa Bắc Bộ"),
-        [2] = ("tinh-hoa-bac-bo-02", "cover", "Bộ sưu tập Tinh Hoa Bắc Bộ"),
-        [3] = ("thien-dieu-lux-01", "cover", "Hộp quà Thiên Điểu Lạc Hồng phiên bản cao cấp"),
-        [4] = ("thien-dieu-lux-02", "r2c2", "Chi tiết hộp quà Thiên Điểu Lạc Hồng cao cấp"),
-        [7] = ("thien-dieu-standard-01", "r3c2", "Hộp quà Thiên Điểu Lạc Hồng phiên bản thường"),
-        [8] = ("thien-dieu-standard-02", "r3c3", "Chi tiết hộp quà Thiên Điểu Lạc Hồng phiên bản thường"),
+        [1] = ("cover", "Hộp quà Tinh Hoa Bắc Bộ"),
+        [2] = ("cover", "Bộ sưu tập Tinh Hoa Bắc Bộ"),
+        [3] = ("cover", "Hộp quà Thiên Điểu Lạc Hồng phiên bản cao cấp"),
+        [4] = ("r2c2", "Chi tiết hộp quà Thiên Điểu Lạc Hồng cao cấp"),
+        [7] = ("r3c2", "Hộp quà Thiên Điểu Lạc Hồng phiên bản thường"),
+        [8] = ("r3c3", "Chi tiết hộp quà Thiên Điểu Lạc Hồng phiên bản thường"),
     };
 }
 <section class="featured-section">
@@ -62,8 +62,8 @@
             }
             else
             {
-                var art = artwork.TryGetValue(i, out var a) ? a : (File: (string?)null, Crop: "cover", Alt: "Sản phẩm");
-                var src = art.File is null ? tile.ImageUrl : $"/images/home/featured/{art.File}.webp";
+                var art = artwork.TryGetValue(i, out var a) ? a : (Crop: "cover", Alt: "Sản phẩm");
+                var src = tile.ImageUrl;
                 @* A real <img> rather than a background so the photo can be lazy-loaded and
                    described; the crop lives in CSS so the stored file is never cropped. *@
                 <a class="featured-tile featured-tile--@art.Crop @(tile.HideOnMobile ? "featured-tile--desktop-only" : "")"

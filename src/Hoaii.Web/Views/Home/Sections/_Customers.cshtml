@@ -1,7 +1,13 @@
-@model IReadOnlyList<string>
+@model IReadOnlyList<Hoaii.Domain.Entities.HomeCustomerLogo>
 @using Hoaii.Web.Services
 @inject PageContentService Page
 @* Khách hàng — see design-specs/home/03-about-and-customers.md *@
+@functions {
+    // Logos added before the image picker existed only have LogoKey — fall back to the old
+    // /images/customers/{key}.png naming convention for those; anything added since has ImageUrl.
+    string Src(Hoaii.Domain.Entities.HomeCustomerLogo logo) =>
+        string.IsNullOrEmpty(logo.ImageUrl) ? $"/images/customers/{logo.LogoKey}.png" : logo.ImageUrl;
+}
 <section class="customers-section">
     <h2 class="customers-heading">@Page.Get(PageContentKeys.Home, "customers_heading")</h2>
     <div class="customers-marquee">
@@ -23,7 +29,7 @@
                         @foreach (var logo in rowLogos)
                         {
                             <div class="logo-card">
-                                <img src="/images/customers/@(logo).png" alt="@System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(logo.Replace('-', ' '))" decoding="async" />
+                                <img src="@Src(logo)" alt="@System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(logo.LogoKey.Replace('-', ' '))" decoding="async" />
                             </div>
                         }
                     }

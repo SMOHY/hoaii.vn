@@ -67,7 +67,10 @@ public class HomeAboutCard
 public class HomeCustomerLogo
 {
     public int Id { get; set; }
-    /// <summary>Basename of the logo asset under /images/customers/, e.g. "truong-thanh".</summary>
+    /// <summary>Basename of the logo asset under /images/customers/, e.g. "truong-thanh". Kept
+    /// as a fallback for rows seeded before ImageUrl existed — a logo added since always has
+    /// ImageUrl set and this is unused for it.</summary>
     public required string LogoKey { get; set; }
+    public string? ImageUrl { get; set; }
     public int SortOrder { get; set; }
 }
