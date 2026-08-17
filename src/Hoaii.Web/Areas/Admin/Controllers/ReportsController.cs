@@ -11,8 +11,10 @@ public class ReportsController(HoaiiDbContext db) : BaseAdminController(db)
     [HttpGet("/admin/bao-cao")]
     public async Task<IActionResult> Index()
     {
-        // "Realized" revenue excludes cancelled and returned orders.
-        var realized = Db.Orders.Where(o => o.Status != OrderStatus.Cancelled && o.Status != OrderStatus.Returned);
+        // "Realized" revenue = đã thanh toán VÀ đã giao — theo yêu cầu team HOÀI (Zalo): một đơn
+        // Pending/Confirmed/Shipping chưa chắc chắn sẽ hoàn tất (khách hủy, hoàn hàng, chưa trả
+        // tiền...), tính vào doanh thu ngay dễ "loạn doanh thu" cho ngành nhạy cảm này.
+        var realized = Db.Orders.Where(o => o.PaymentStatus == PaymentStatus.Paid && o.Status == OrderStatus.Delivered);
 
         var now = DateTime.UtcNow;
         var monthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -31,7 +33,7 @@ public class ReportsController(HoaiiDbContext db) : BaseAdminController(db)
                 .ToListAsync(),
 
             TopProducts = await Db.OrderItems
-                .Where(i => i.Order!.Status != OrderStatus.Cancelled && i.Order.Status != OrderStatus.Returned)
+                .Where(i => i.Order!.PaymentStatus == PaymentStatus.Paid && i.Order.Status == OrderStatus.Delivered)
                 .GroupBy(i => i.ProductName)
                 .Select(g => new ReportsViewModel.ProductRow
                 {

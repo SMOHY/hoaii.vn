@@ -9,12 +9,12 @@
     <div class="admin-stat">
         <span class="admin-stat__label">Doanh thu tháng này</span>
         <span class="admin-stat__value">@AdminDisplay.Money(Model.RevenueThisMonth)</span>
-        <span class="admin-stat__sub">@Model.OrdersThisMonth đơn</span>
+        <span class="admin-stat__sub">@Model.OrdersThisMonth đơn đã thanh toán &amp; đã giao</span>
     </div>
     <div class="admin-stat">
         <span class="admin-stat__label">Doanh thu tất cả</span>
         <span class="admin-stat__value">@AdminDisplay.Money(Model.RevenueAllTime)</span>
-        <span class="admin-stat__sub">@Model.OrdersAllTime đơn (trừ hủy/hoàn)</span>
+        <span class="admin-stat__sub">@Model.OrdersAllTime đơn đã thanh toán &amp; đã giao</span>
     </div>
     <div class="admin-stat">
         <span class="admin-stat__label">Đã thanh toán</span>

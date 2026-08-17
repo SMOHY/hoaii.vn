@@ -14,10 +14,10 @@ public class DashboardController(HoaiiDbContext db) : BaseAdminController(db)
         var today = DateTime.UtcNow.Date;
         var monthStart = new DateTime(today.Year, today.Month, 1);
 
-        // Revenue counts paid, non-cancelled orders only.
-        bool CountsAsRevenue(Order o) => o.Status != OrderStatus.Cancelled;
-
-        var paidOrders = Db.Orders.Where(o => o.Status != OrderStatus.Cancelled);
+        // Doanh thu chỉ tính đơn đã thanh toán VÀ đã giao — cùng quy tắc với /admin/bao-cao
+        // (yêu cầu team HOÀI qua Zalo): đơn Pending/Confirmed/Shipping chưa chắc chắn hoàn tất
+        // nên chưa nên tính là doanh thu.
+        var paidOrders = Db.Orders.Where(o => o.PaymentStatus == PaymentStatus.Paid && o.Status == OrderStatus.Delivered);
 
         var model = new DashboardViewModel
         {
