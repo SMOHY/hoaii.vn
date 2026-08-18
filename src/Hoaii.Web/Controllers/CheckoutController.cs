@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hoaii.Web.Controllers;
 
-public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSettingsService settings, EmailSender email) : Controller
+public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSettingsService settings, EmailSender email, VnpayService vnpay) : Controller
 {
     private CheckoutViewModel BuildViewModel(CheckoutFormModel form, Models.Cart.CartViewModel cartModel) => new()
     {
@@ -19,7 +19,9 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         FreeShipThreshold = settings.GetDecimal(SiteSettingKeys.FreeShipThreshold),
         CodEnabled = settings.GetBool(SiteSettingKeys.PayCodEnabled),
         BankEnabled = settings.GetBool(SiteSettingKeys.PayBankEnabled),
-        VnpayEnabled = settings.GetBool(SiteSettingKeys.PayVnpayEnabled),
+        // The admin flag alone isn't enough — showing the option with no TmnCode/HashSecret set
+        // would build a payment URL VNPAY rejects outright.
+        VnpayEnabled = settings.GetBool(SiteSettingKeys.PayVnpayEnabled) && vnpay.IsConfigured,
         BankName = settings.Get(SiteSettingKeys.BankName),
         BankAccountNumber = settings.Get(SiteSettingKeys.BankAccountNumber),
         BankAccountHolder = settings.Get(SiteSettingKeys.BankAccountHolder),
@@ -57,10 +59,14 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         // Never accept a payment method the shop has switched off — fall back to whatever is on.
         var codEnabled = settings.GetBool(SiteSettingKeys.PayCodEnabled);
         var bankEnabled = settings.GetBool(SiteSettingKeys.PayBankEnabled);
-        var wantsCod = form.PaymentMethod == "CashOnDelivery";
-        if (wantsCod && !codEnabled) wantsCod = false;
-        else if (!wantsCod && !bankEnabled && codEnabled) wantsCod = true;
-        var paymentMethod = wantsCod ? PaymentMethod.CashOnDelivery : PaymentMethod.BankTransfer;
+        var vnpayEnabled = settings.GetBool(SiteSettingKeys.PayVnpayEnabled) && vnpay.IsConfigured;
+        PaymentMethod paymentMethod = form.PaymentMethod switch
+        {
+            "CashOnDelivery" when codEnabled => PaymentMethod.CashOnDelivery,
+            "Vnpay" when vnpayEnabled => PaymentMethod.Vnpay,
+            "BankTransfer" when bankEnabled => PaymentMethod.BankTransfer,
+            _ => bankEnabled ? PaymentMethod.BankTransfer : codEnabled ? PaymentMethod.CashOnDelivery : PaymentMethod.Vnpay,
+        };
 
         // Recompute the shipping fee server-side from admin config — never trust a posted amount.
         var shippingFee = ShippingCalculator.Fee(
@@ -169,6 +175,15 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         }
         catch { /* email must never break order placement */ }
 
+        // Never mark this order Paid here — only VnpayController, once it has verified a real
+        // signed callback from VNPAY, is allowed to do that (see WF-037).
+        if (paymentMethod == PaymentMethod.Vnpay)
+        {
+            var returnUrl = $"{Request.Scheme}://{Request.Host}/thanh-toan/vnpay/tra-ve";
+            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+            return Redirect(vnpay.BuildPaymentUrl(order, clientIp, returnUrl));
+        }
+
         return RedirectToAction(nameof(Confirmation), new { orderNumber = order.OrderNumber });
     }
 
@@ -183,7 +198,7 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
         return $"{prefix}-{todayCount + 1:D4}";
     }
 
-    public async Task<IActionResult> Confirmation(string orderNumber)
+    public async Task<IActionResult> Confirmation(string orderNumber, string? vnpay)
     {
         var order = await db.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
         if (order is null)
@@ -196,6 +211,9 @@ public class CheckoutController(CartService cart, HoaiiDbContext db, SiteSetting
             OrderNumber = order.OrderNumber,
             Total = order.Total,
             Email = order.Email,
+            // Set only by VnpayController.Return — "failed" means a valid, signed VNPAY callback
+            // reported the payment as unsuccessful (declined, cancelled, timed out, etc).
+            VnpayPaymentFailed = vnpay == "failed",
         });
     }
 }

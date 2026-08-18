@@ -20,6 +20,7 @@ public enum PaymentMethod
 {
     BankTransfer,
     CashOnDelivery,
+    Vnpay,
 }
 
 public enum PaymentStatus

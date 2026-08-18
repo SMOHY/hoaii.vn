@@ -21,7 +21,23 @@
         </label>
         <label class="admin-checkbox" style="margin-bottom:20px;">
             <input type="checkbox" name="settings_[@SiteSettingKeys.PayVnpayEnabled]" value="true" @(Flag(SiteSettingKeys.PayVnpayEnabled) ? "checked" : "") />
-            Cổng VNPay <span class="admin-field__hint" style="display:inline;">(sếp tích hợp sau — để tắt nếu chưa nối)</span>
+            Cổng VNPAY <span class="admin-field__hint" style="display:inline;">(chỉ hiện cho khách khi đã điền đủ Mã website + Chuỗi bí mật bên dưới)</span>
+        </label>
+
+        <h3 style="font-family:var(--font-display);font-size:18px;margin:8px 0 12px;">Cổng VNPAY</h3>
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Mã website (vnp_TmnCode)</label>
+                <input type="text" name="settings_[@SiteSettingKeys.VnpayTmnCode]" value="@Model[SiteSettingKeys.VnpayTmnCode]" autocomplete="off" />
+            </div>
+            <div class="admin-field">
+                <label>Chuỗi bí mật (vnp_HashSecret)</label>
+                <input type="password" name="settings_[@SiteSettingKeys.VnpayHashSecret]" value="@Model[SiteSettingKeys.VnpayHashSecret]" autocomplete="new-password" />
+            </div>
+        </div>
+        <label class="admin-checkbox" style="margin-bottom:20px;">
+            <input type="checkbox" name="settings_[@SiteSettingKeys.VnpaySandbox]" value="true" @(Flag(SiteSettingKeys.VnpaySandbox) ? "checked" : "") />
+            Dùng môi trường sandbox (thử nghiệm — bỏ tick khi VNPAY duyệt merchant thật)
         </label>
 
         <h3 style="font-family:var(--font-display);font-size:18px;margin:8px 0 12px;">Thuế</h3>

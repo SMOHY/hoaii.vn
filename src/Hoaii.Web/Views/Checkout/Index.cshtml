@@ -3,8 +3,11 @@
     ViewData["Title"] = "Thanh toán";
     Layout = "_CheckoutLayout";
     var cart = Model.Cart;
-    // VNPay isn't wired yet; only show its label when the shop turns the gateway on.
-    var placeOrderLabel = Model.VnpayEnabled ? "Thanh toán với VN PAY" : "Hoàn tất đặt hàng";
+    // Bank/COD default-check ahead of Vnpay (see the radio list below), so the label only needs
+    // to start as "VN PAY" when neither of those is even offered — data-place-order-label lets the
+    // script below flip it back and forth as the shopper actually changes their selection.
+    var placeOrderLabel = (!Model.BankEnabled && !Model.CodEnabled && Model.VnpayEnabled)
+        ? "Thanh toán với VN PAY" : "Hoàn tất đặt hàng";
 }
 
 @* The checkout shell shows only a logo and a cart icon (node 887:15476), so the page heading is
@@ -99,42 +102,20 @@
                             <span class="option-row__label">Thanh toán khi giao hàng</span>
                         </label>
                     }
+                    @if (Model.VnpayEnabled)
+                    {
+                        <label class="option-row">
+                            <input type="radio" asp-for="Form.PaymentMethod" value="Vnpay" />
+                            <span class="option-row__radio"></span>
+                            <span class="option-row__label">Thanh toán qua VNPAY (ATM/QR/thẻ quốc tế)</span>
+                        </label>
+                    }
                 </div>
 
-                @* Thẻ quốc tế (node 1680:39838).
-
-                   Figma vẽ bốn ô Số thẻ / Ngày hết hạn / Mã bảo mật / Tên trên thẻ ngay trên trang
-                   này. Chúng được dựng đúng hình nhưng KHÔNG thu dữ liệu: không có thuộc tính
-                   `name` nên không bao giờ được gửi lên server, và luôn `disabled`.
-
-                   Lý do không phải thẩm mỹ mà là an toàn: nhận số thẻ và mã CVV thô trên máy chủ
-                   của mình đẩy cửa hàng vào mức tuân thủ PCI-DSS cao nhất, và bản thân VNPay cũng
-                   không nhận luồng đó — đúng chuẩn là chuyển hướng sang trang thanh toán của họ.
-                   Khi có thông tin tích hợp thật, bật cờ pay_vnpay_enabled trong admin: nút chính
-                   đổi nhãn thành "Thanh toán với VN PAY" và đơn được tạo ở trạng thái chờ thanh
-                   toán trước khi chuyển hướng. Xem WF-037. *@
-                <div class="pay-card @(Model.VnpayEnabled ? "" : "pay-card--off")">
-                    <div class="pay-card__head">
-                        <span class="option-row__radio" aria-hidden="true"></span>
-                        <span class="pay-card__label">Credit card</span>
-                        <span class="pay-card__brands">
-                            <img src="~/images/payment/visa.png" alt="Visa" width="49" height="16" />
-                            <img src="~/images/payment/mastercard.png" alt="Mastercard" width="29" height="16" />
-                        </span>
-                    </div>
-                    <div class="pay-card__fields">
-                        <input class="pay-card__input" placeholder="Số thẻ *" disabled aria-hidden="true" />
-                        <div class="pay-card__row">
-                            <input class="pay-card__input" placeholder="Ngày hết hạn *" disabled aria-hidden="true" />
-                            <input class="pay-card__input" placeholder="Mã bảo mật *" disabled aria-hidden="true" />
-                        </div>
-                        <input class="pay-card__input" placeholder="Tên trên thẻ *" disabled aria-hidden="true" />
-                    </div>
-                    <p class="pay-card__note">
-                        Thanh toán thẻ sẽ mở khi cổng thanh toán được kết nối. Hiện tại vui lòng chọn
-                        chuyển khoản hoặc thanh toán khi nhận hàng.
-                    </p>
-                </div>
+                @* The disabled "Credit card" mockup (node 1680:39838, WF-037) stood in for card
+                   payments while there was no gateway at all — VNPAY's own hosted page already
+                   covers ATM/QR/international cards (see the Vnpay radio above), so the mockup is
+                   redundant now and would only read as a second, broken card option. *@
                 @if (Model.BankEnabled && Model.HasBankInfo)
                 {
                     <div class="checkout-bank-info" data-bank-info style="@(bankChecked ? "" : "display:none;")">
@@ -156,7 +137,7 @@
                 </div>
             </section>
 
-            <button type="submit" class="checkout-submit-mobile btn-checkout-primary">@placeOrderLabel</button>
+            <button type="submit" class="checkout-submit-mobile btn-checkout-primary" data-place-order-label>@placeOrderLabel</button>
 
             <footer class="checkout-policy-strip">
                 <a href="/chinh-sach/giao-hang">Chính sách vận chuyển</a>
@@ -257,7 +238,7 @@
                 }
             </div>
 
-            <button type="submit" form="checkout-form" class="btn-checkout-primary checkout-summary__cta">
+            <button type="submit" form="checkout-form" class="btn-checkout-primary checkout-summary__cta" data-place-order-label>
                 @placeOrderLabel
             </button>
         </div>
@@ -311,6 +292,17 @@
       });
     });
   }
+
+  // The button only says "Thanh toán với VN PAY" while that method is the one actually selected —
+  // otherwise the customer would be told they're about to leave for VNPAY when they picked COD.
+  var placeOrderButtons = document.querySelectorAll('[data-place-order-label]');
+  document.querySelectorAll('input[name="Form.PaymentMethod"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      if (!r.checked) return;
+      var label = r.value === 'Vnpay' ? 'Thanh toán với VN PAY' : 'Hoàn tất đặt hàng';
+      placeOrderButtons.forEach(function (btn) { btn.textContent = label; });
+    });
+  });
 })();
 </script>
 

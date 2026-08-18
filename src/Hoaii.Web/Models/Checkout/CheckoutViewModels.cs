@@ -83,4 +83,8 @@ public class OrderConfirmationViewModel
     public required string OrderNumber { get; init; }
     public required decimal Total { get; init; }
     public required string Email { get; init; }
+
+    /// <summary>True only when VnpayController.Return verified a signed callback reporting the
+    /// payment as unsuccessful. The order itself still exists (Pending/Unpaid) either way.</summary>
+    public bool VnpayPaymentFailed { get; init; }
 }

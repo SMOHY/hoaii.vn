@@ -53,6 +53,12 @@ public static class SiteSettingKeys
     /// divides by 100 itself.</summary>
     public const string VatRate = "vat_rate";
 
+    // VNPAY gateway (group "payment"). TmnCode/HashSecret come from VNPAY when the merchant
+    // account is created — see VnpayService. Never logged, never echoed back to the browser.
+    public const string VnpayTmnCode = "vnp_tmn_code";
+    public const string VnpayHashSecret = "vnp_hash_secret";
+    public const string VnpaySandbox = "vnp_sandbox";
+
     // Email / SMTP (group "email").
     public const string SmtpHost = "smtp_host";
     public const string SmtpPort = "smtp_port";
@@ -102,6 +108,10 @@ public static class SiteSettingKeys
         (BankAccountHolder, "Chủ tài khoản", "", false, "payment"),
         (BankTransferNote, "Ghi chú chuyển khoản (cú pháp)", "", true, "payment"),
         (VatRate, "Thuế VAT (%, áp trên tiền hàng sau giảm giá, không tính phí ship)", "8", false, "payment"),
+
+        (VnpayTmnCode, "VNPAY — Mã website (vnp_TmnCode)", "", false, "payment"),
+        (VnpayHashSecret, "VNPAY — Chuỗi bí mật (vnp_HashSecret)", "", false, "payment"),
+        (VnpaySandbox, "VNPAY — Dùng môi trường sandbox (thử nghiệm)", "true", false, "payment"),
 
         (SmtpHost, "Máy chủ SMTP", "", false, "email"),
         (SmtpPort, "Cổng SMTP", "587", false, "email"),

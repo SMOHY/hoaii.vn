@@ -56,6 +56,7 @@ builder.Services.AddScoped<NavigationService>();
 builder.Services.AddScoped<PageContentService>();
 builder.Services.AddScoped<EmailSender>();
 builder.Services.AddScoped<DestinationLinkService>();
+builder.Services.AddScoped<VnpayService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -270,6 +271,21 @@ app.MapControllerRoute(
     name: "checkout-confirmation",
     pattern: "thanh-toan/xac-nhan/{orderNumber}",
     defaults: new { controller = "Checkout", action = "Confirmation" })
+    .WithStaticAssets();
+
+// vnp_ReturnUrl — the customer's browser lands here after paying (or cancelling) at VNPAY.
+app.MapControllerRoute(
+    name: "vnpay-return",
+    pattern: "thanh-toan/vnpay/tra-ve",
+    defaults: new { controller = "Vnpay", action = "Return" })
+    .WithStaticAssets();
+
+// IPN — VNPAY's server calls this directly (never the customer's browser). This is the
+// authoritative confirmation; the Return URL above is UX only and must never be trusted alone.
+app.MapControllerRoute(
+    name: "vnpay-ipn",
+    pattern: "thanh-toan/vnpay/ipn",
+    defaults: new { controller = "Vnpay", action = "Ipn" })
     .WithStaticAssets();
 
 app.MapControllerRoute(

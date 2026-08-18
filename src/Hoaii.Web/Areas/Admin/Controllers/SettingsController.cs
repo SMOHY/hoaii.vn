@@ -62,8 +62,8 @@ public class SettingsController(HoaiiDbContext db, SiteSettingsService settings,
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SavePayment(Dictionary<string, string?> settings_)
     {
-        // Unchecked checkboxes don't post — force the three flags to explicit true/false.
-        foreach (var flag in new[] { SiteSettingKeys.PayCodEnabled, SiteSettingKeys.PayBankEnabled, SiteSettingKeys.PayVnpayEnabled })
+        // Unchecked checkboxes don't post — force these flags to explicit true/false.
+        foreach (var flag in new[] { SiteSettingKeys.PayCodEnabled, SiteSettingKeys.PayBankEnabled, SiteSettingKeys.PayVnpayEnabled, SiteSettingKeys.VnpaySandbox })
         {
             settings_[flag] = settings_.TryGetValue(flag, out var v) && v == "true" ? "true" : "false";
         }
