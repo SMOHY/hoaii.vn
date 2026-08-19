@@ -38,6 +38,7 @@ public class DashboardController(HoaiiDbContext db) : BaseAdminController(db)
                     CustomerName = o.LastName + " " + o.FirstName,
                     Total = o.Total,
                     Status = o.Status,
+                    PaymentStatus = o.PaymentStatus,
                     CreatedAt = o.CreatedAt,
                 })
                 .ToListAsync(),

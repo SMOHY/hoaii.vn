@@ -34,12 +34,12 @@
         <div class="admin-table-wrap" style="border:none;">
             <table class="admin-table">
                 <thead>
-                    <tr><th>Mã đơn</th><th>Khách hàng</th><th class="num">Tổng</th><th>Trạng thái</th></tr>
+                    <tr><th>Mã đơn</th><th>Khách hàng</th><th class="num">Tổng</th><th>Trạng thái</th><th>Thanh toán</th></tr>
                 </thead>
                 <tbody>
                     @if (Model.RecentOrders.Count == 0)
                     {
-                        <tr><td colspan="4" class="admin-table__empty">Chưa có đơn hàng nào.</td></tr>
+                        <tr><td colspan="5" class="admin-table__empty">Chưa có đơn hàng nào.</td></tr>
                     }
                     @foreach (var o in Model.RecentOrders)
                     {
@@ -48,6 +48,7 @@
                             <td>@o.CustomerName</td>
                             <td class="num">@AdminDisplay.Money(o.Total)</td>
                             <td><span class="admin-badge admin-badge--@AdminDisplay.OrderStatusBadge(o.Status)">@AdminDisplay.OrderStatusLabel(o.Status)</span></td>
+                            <td><span class="admin-badge admin-badge--@AdminDisplay.PaymentStatusBadge(o.PaymentStatus)">@AdminDisplay.PaymentStatusLabel(o.PaymentStatus)</span></td>
                         </tr>
                     }
                 </tbody>
