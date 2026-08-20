@@ -383,11 +383,15 @@
 
 /* ---------- Collapse/expand a menu item's dropdown content ---------- */
 .admin-menu-item__toggle {
-  border: none; background: transparent; color: var(--color-grey-500); cursor: pointer;
-  font-size: 16px; padding: 4px 6px; transition: transform .15s;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--color-grey-300); border-radius: var(--radius-sm);
+  background: #fff; color: var(--color-grey-600); cursor: pointer;
+  font: 400 13px/1 var(--font-body); padding: 7px 10px; white-space: nowrap;
 }
-.admin-menu-item__toggle:hover { color: var(--color-brand-red); }
-.admin-menu-item.is-collapsed .admin-menu-item__toggle { transform: rotate(-90deg); }
+.admin-menu-item__toggle:hover { color: var(--color-brand-red); border-color: var(--color-brand-red); }
+/* Chỉ mũi tên xoay, không xoay cả nút — nút giờ có chữ. */
+.admin-menu-item__toggle-caret { display: inline-block; transition: transform .15s; }
+.admin-menu-item.is-collapsed .admin-menu-item__toggle-caret { transform: rotate(-90deg); }
 .admin-menu-item.is-collapsed .admin-menu-item__note,
 .admin-menu-item.is-collapsed .admin-menu-item__curated,
 .admin-menu-item.is-collapsed .admin-menu-item__children {
@@ -510,3 +514,47 @@
   display: none;
 }
 @media (max-width: 900px) { .admin-menu-toggle { display: inline-flex; } }
+
+/* ---- CMS image slot: Desktop/Mobile tabs + focal point ---- */
+.admin-imgslot__tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.admin-imgslot__tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border: 1px solid var(--color-grey-300); border-radius: var(--radius-sm);
+  background: #fff; color: var(--color-grey-500); font-size: 13px; cursor: pointer;
+}
+.admin-imgslot__tab.is-active { background: var(--color-brand-gold-bg); color: var(--color-grey-900); border-color: var(--color-brand-gold); }
+.admin-imgslot__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-brand-gold); }
+.admin-imgslot__pane { display: none; }
+.admin-imgslot__pane.is-active { display: block; }
+.admin-imgslot__row { display: flex; gap: 16px; align-items: flex-start; }
+.admin-imgslot__controls { flex: 1; }
+.admin-imgslot__controls input[type="text"] { margin-bottom: 8px; }
+.admin-imgslot__thumb {
+  position: relative; width: 150px; height: 100px; flex: none;
+  border: 1px solid var(--color-grey-300); border-radius: 6px;
+  background-size: cover; background-position: center;
+}
+/* Mobile previews are portrait so the admin sees roughly the crop the phone will get. */
+.admin-imgslot__thumb--mobile { width: 88px; height: 150px; }
+.admin-imgslot__thumb--focal { cursor: crosshair; }
+.admin-imgslot__focal {
+  position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border: 2px solid #fff; border-radius: 50%; background: var(--color-brand-gold);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); pointer-events: none;
+}
+.admin-imgslot__link {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  color: var(--color-grey-900); text-decoration: underline; font-size: inherit;
+}
+@media (max-width: 600px) {
+  .admin-imgslot__row { flex-direction: column; }
+}
+
+/* ---- Thanh hành động khi chọn nhiều dòng ---- */
+.admin-bulkbar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 12px; padding: 10px 14px;
+  background: var(--color-brand-gold-bg); border: 1px solid var(--color-brand-gold-pale);
+  border-radius: var(--radius-sm); font-size: 14px;
+}
+.admin-bulkbar > span { margin-right: auto; }

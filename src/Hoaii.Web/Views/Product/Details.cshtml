@@ -61,15 +61,54 @@
 
 <section class="pdp-main">
     <div class="pdp-gallery">
-        <div class="pdp-gallery__main" id="pdp-main-image" style="@(Model.GalleryImages.Count > 0 ? $"background-image:url('{Model.GalleryImages[0]}')" : "")"></div>
-        @* Only show the thumb strip / dots when there is more than one shot. *@
-        @if (Model.GalleryImages.Count > 1)
+        <div class="pdp-gallery__stage">
+            <div class="pdp-gallery__main" id="pdp-main-image" style="@(Model.GalleryImages.Count > 0 ? $"background-image:url('{Model.GalleryImages[0]}')" : "")"></div>
+            @* Ô video nằm chồng lên khung ảnh chính và chỉ hiện khi bấm ô video ở dải dưới.
+               Sản phẩm không có video thì khối này không được dựng ra chút nào. *@
+            @* Dải ảnh nhỏ bị ẩn dưới 768px (điện thoại vuốt ảnh thay vì bấm), nên nút video
+               trong dải đó cũng biến mất. Nút nổi này là lối vào video trên điện thoại. *@
+            @if (Model.HasVideo)
+            {
+                <button type="button" class="pdp-gallery__video-fab" data-video-open aria-label="Xem video sản phẩm">
+                    <span class="pdp-gallery__play" aria-hidden="true"></span>
+                    <span>Video</span>
+                </button>
+            }
+            @if (Model.HasVideo)
+            {
+                <div class="pdp-gallery__video" data-video-panel hidden>
+                    @if (!string.IsNullOrWhiteSpace(Model.VideoFileUrl))
+                    {
+                        <video src="@Model.VideoFileUrl" controls playsinline preload="none"
+                               poster="@(Model.VideoPosterUrl ?? Model.GalleryImages.FirstOrDefault())"></video>
+                    }
+                    else
+                    {
+                        @* Chỉ nạp iframe khi người xem thực sự mở video — YouTube nặng và theo dõi người dùng. *@
+                        <iframe data-video-src="@Model.VideoEmbedUrl" title="Video sản phẩm @Model.Name"
+                                allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
+                                allowfullscreen loading="lazy"></iframe>
+                    }
+                </div>
+            }
+        </div>
+        @* Dải ảnh nhỏ hiện khi có nhiều hơn một ảnh — hoặc khi có video, vì ô video cũng nằm
+           trong dải này và một sản phẩm có thể chỉ có một ảnh kèm một video. *@
+        @if (Model.GalleryImages.Count > 1 || Model.HasVideo)
         {
             <div class="pdp-gallery__thumbs">
                 @for (var i = 0; i < Model.GalleryImages.Count; i++)
                 {
                     <button type="button" class="pdp-gallery__thumb @(i == 0 ? "active" : "")" data-image="@Model.GalleryImages[i]"
                             style="background-image:url('@Model.GalleryImages[i]')" aria-label="Ảnh @(i + 1)"></button>
+                }
+                @if (Model.HasVideo)
+                {
+                    <button type="button" class="pdp-gallery__thumb pdp-gallery__thumb--video" data-video-open
+                            style="background-image:url('@(Model.VideoPosterUrl ?? Model.GalleryImages.FirstOrDefault())')"
+                            aria-label="Xem video sản phẩm">
+                        <span class="pdp-gallery__play" aria-hidden="true"></span>
+                    </button>
                 }
             </div>
             <div class="pdp-dots">
@@ -171,7 +210,7 @@
 <section class="pdp-story">
     <div class="pdp-story__container">
         <div class="pdp-story__row1">
-            <div class="pdp-story__image" style="@(Model.StoryImageUrl is not null ? $"background-image:url('{Model.StoryImageUrl}')" : "")"></div>
+            <div class="pdp-story__image" style="@CssImage.Background(Model.StoryImageUrl, Model.StoryImageUrlMobile, Model.StoryImageFocal)"></div>
             <div class="pdp-story__text">
                 <h2>@Model.StoryTitle</h2>
                 <p>@Model.StoryBody</p>
@@ -204,7 +243,7 @@
                         }
                     </div>
                 </div>
-                <div class="image" style="@(Model.FeatureImageUrl is not null ? $"background-image:url('{Model.FeatureImageUrl}')" : "")"></div>
+                <div class="image" style="@CssImage.Background(Model.FeatureImageUrl, Model.FeatureImageUrlMobile, Model.FeatureImageFocal)"></div>
             </div>
         }
     </div>
@@ -245,4 +284,5 @@
 }
 @section Scripts {
     <script src="~/js/pdp.js" asp-append-version="true"></script>
+    <script src="~/js/pdp-video.js" asp-append-version="true"></script>
 }

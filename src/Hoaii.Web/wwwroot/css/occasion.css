@@ -198,3 +198,8 @@
 }
 
 }
+
+
+/* Nội dung do admin gõ trong CMS: giữ nguyên chỗ xuống dòng. Chữ không có xuống dòng
+   hiển thị y như trước, nên quy tắc này không đổi trang nào đang chạy. */
+.occ-section__desc { white-space: pre-line; }

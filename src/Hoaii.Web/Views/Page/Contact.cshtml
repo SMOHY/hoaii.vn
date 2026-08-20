@@ -24,7 +24,7 @@
         </div>
         <div class="contact-hero__aside">
             <div class="contact-hero__img">
-                <partial name="_ResponsiveImg" model="@((C("hero_image"), C("hero_image_mobile"), "Hộp quà HOÀI", (string?)null, false))" />
+                <partial name="_ResponsiveImg" model="@(new ResponsiveImage(C("hero_image"), "Hộp quà HOÀI") { MobileSrc = C("hero_image_mobile"), Focal = C("hero_image_focal"), Loading = null })" />
             </div>
             <p class="contact-hero__caption">@C("hero_caption")</p>
         </div>
@@ -35,9 +35,9 @@
     <h2 class="contact-section__heading">@C("address_heading")</h2>
     <div class="contact-address__row">
         <a class="contact-address__img" href="@C("map_url")" target="_blank" rel="noopener">
-            <partial name="_ResponsiveImg" model="@((C("map_image"), C("map_image_mobile"), "Bản đồ tới HOÀI", (string?)null, true))" />
+            <partial name="_ResponsiveImg" model="@(new ResponsiveImage(C("map_image"), "Bản đồ tới HOÀI") { MobileSrc = C("map_image_mobile"), Focal = C("map_image_focal") })" />
             @* Google Maps place card, overlaid top-left of the map (node 970:20952). *@
-            <partial name="_ResponsiveImg" model="@((C("map_card_image"), C("map_card_image_mobile"), "", "contact-address__map-card", true))" />
+            <partial name="_ResponsiveImg" model="@(new ResponsiveImage(C("map_card_image"), "") { MobileSrc = C("map_card_image_mobile"), Focal = C("map_card_image_focal"), CssClass = "contact-address__map-card" })" />
         </a>
         <p class="contact-address__text">@contactAddress</p>
     </div>

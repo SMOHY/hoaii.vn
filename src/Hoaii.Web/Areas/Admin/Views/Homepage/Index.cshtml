@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @using Hoaii.Domain.Entities
 @using Hoaii.Web.Services
 @{
@@ -213,7 +214,7 @@
     <p style="color:var(--color-grey-500);margin:0 0 16px;">Chọn ảnh logo từ thư viện. Muốn đổi ảnh của 1 logo đã thêm thì xóa rồi thêm lại.</p>
     <form method="post" action="/admin/trang-chu/logo/them" class="admin-form" style="max-width:420px;margin-bottom:16px;">
         @Html.AntiForgeryToken()
-        <partial name="_ImageField" model="@(("Ảnh logo", "imageUrl", "new-logo-img", (string?)null))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh logo", "imageUrl", "new-logo-img", (string?)null))" />
         <div class="admin-field" style="margin:0 0 12px;">
             <label>Tên nhãn (nội bộ, không hiện trên web)</label>
             <input type="text" name="logoKey" placeholder="truong-thanh" />

@@ -26,17 +26,33 @@
     <a class="admin-btn admin-btn--primary" href="/admin/san-pham/them">+ Thêm sản phẩm</a>
 </div>
 
+@* Form hành động hàng loạt nằm NGOÀI bảng: mỗi dòng đã có form ẩn/hiện riêng, mà form lồng
+   trong form là markup hỏng. Ô tick và nút bấm nối vào form này qua thuộc tính form="...". *@
+<form id="bulk-form" method="post" action="/admin/san-pham/an-hien-nhieu">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+    <input type="hidden" name="active" value="false" data-bulk-active />
+</form>
+
+<div class="admin-bulkbar" data-bulkbar hidden>
+    <span><strong data-bulk-count>0</strong> sản phẩm đã chọn</span>
+    <button type="submit" form="bulk-form" class="admin-btn admin-btn--secondary admin-btn--sm" data-bulk-do="false">Ẩn</button>
+    <button type="submit" form="bulk-form" class="admin-btn admin-btn--primary admin-btn--sm" data-bulk-do="true">Hiện</button>
+    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-bulk-clear>Bỏ chọn</button>
+</div>
+
 <div class="admin-table-wrap">
     <table class="admin-table">
-        <thead><tr><th></th><th>Tên</th><th>Danh mục</th><th class="num">Giá</th><th class="num">Tồn</th><th>Nhãn</th><th>Trạng thái</th><th></th></tr></thead>
+        <thead><tr><th style="width:36px;"><input type="checkbox" data-bulk-all aria-label="Chọn tất cả" /></th><th></th><th>Tên</th><th>Danh mục</th><th class="num">Giá</th><th class="num">Tồn</th><th>Nhãn</th><th>Trạng thái</th><th></th></tr></thead>
         <tbody>
             @if (Model.Products.Count == 0)
             {
-                <tr><td colspan="8" class="admin-table__empty">Không có sản phẩm nào.</td></tr>
+                <tr><td colspan="9" class="admin-table__empty">Không có sản phẩm nào.</td></tr>
             }
             @foreach (var p in Model.Products)
             {
                 <tr>
+                    <td><input type="checkbox" form="bulk-form" name="ids" value="@p.Id" data-bulk-item aria-label="Chọn @p.Name" /></td>
                     <td><div class="admin-table__thumb" style="background:var(--color-grey-50) url('@p.ImageUrl') center/cover;"></div></td>
                     <td><a class="admin-row-link" href="/admin/san-pham/@p.Id/sua">@p.Name</a>@if (p.IsFeatured) { <span class="admin-badge admin-badge--red" style="margin-left:6px;">Nổi bật</span> }</td>
                     <td>@p.CategoryName</td>
@@ -57,3 +73,5 @@
 </div>
 
 <partial name="_Pager" model="@((Model.Page, Model.TotalPages, (Func<int,string>)BuildUrl))" />
+
+<script src="~/js/admin-bulk.js" asp-append-version="true"></script>

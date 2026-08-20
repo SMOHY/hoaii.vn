@@ -48,8 +48,16 @@ public class PageController(HoaiiDbContext db, SiteSettingsService settings) : C
             .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
             .Select(l => l.LogoKey)
             .ToListAsync();
+        ViewBag.PartnerDocuments = await LoadPartnerDocumentsAsync();
         return View(new WholesaleFormModel());
     }
+
+    /// <summary>Chỉ tài liệu đang hiện, theo thứ tự admin đặt.</summary>
+    private Task<List<PartnerDocument>> LoadPartnerDocumentsAsync() =>
+        db.PartnerDocuments
+            .Where(d => d.IsPublished)
+            .OrderBy(d => d.SortOrder).ThenByDescending(d => d.CreatedAt)
+            .ToListAsync();
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -57,6 +65,13 @@ public class PageController(HoaiiDbContext db, SiteSettingsService settings) : C
     {
         if (!ModelState.IsValid)
         {
+            // Dựng lại những gì trang cần: form sai một ô mà cả dải logo lẫn mục tài liệu biến
+            // mất thì trông như trang hỏng.
+            ViewBag.PartnerLogos = await db.PartnerLogos
+                .OrderBy(l => l.SortOrder).ThenBy(l => l.Id)
+                .Select(l => l.LogoKey)
+                .ToListAsync();
+            ViewBag.PartnerDocuments = await LoadPartnerDocumentsAsync();
             return View(form);
         }
 

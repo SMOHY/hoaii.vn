@@ -64,11 +64,13 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
 
     [HttpPost("/admin/trang-chu/hero/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HeroSave(int id, string imageUrl, string? title, string? subtitle, string? mobileTitle, string? mobileSubtitle, int sortOrder, bool isActive)
+    public async Task<IActionResult> HeroSave(int id, string imageUrl, string? mobileImageUrl, string? imageFocal, string? title, string? subtitle, string? mobileTitle, string? mobileSubtitle, int sortOrder, bool isActive)
     {
         var x = id == 0 ? new HomeHeroSlide { ImageUrl = "" } : await Db.HomeHeroSlides.FindAsync(id);
         if (x is null) return NotFound();
         x.ImageUrl = imageUrl?.Trim() ?? "";
+        x.MobileImageUrl = Clean(mobileImageUrl);
+        x.ImageFocal = Focal(imageFocal);
         x.Title = title?.Trim() ?? "";
         x.Subtitle = subtitle?.Trim() ?? "";
         x.MobileTitle = mobileTitle?.Trim() ?? "";
@@ -176,7 +178,9 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
     [HttpGet("/admin/trang-chu/dich-vu/{id:int}/sua")]
     public async Task<IActionResult> ServiceEdit(int id)
     {
-        var x = await Db.HomeServiceTabs.FindAsync(id);
+        var x = await Db.HomeServiceTabs
+            .Include(t => t.Images.OrderBy(i => i.SortOrder))
+            .FirstOrDefaultAsync(t => t.Id == id);
         if (x is null) return NotFound();
         await LoadDestinationOptionsAsync();
         return View(x);
@@ -184,14 +188,16 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
 
     [HttpPost("/admin/trang-chu/dich-vu/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ServiceSave(int id, string key, string? label, string? iconSvg, string? panelImageUrl, string? caption, string? captionColorHex, string? ctaText, string? dest, int sortOrder)
+    public async Task<IActionResult> ServiceSave(int id, string key, string? label, string? iconSvg, string? panelImageUrl, string? caption, string? captionColorHex, string? ctaText, string? dest, int sortOrder, [FromForm] string[]? imageUrls)
     {
         if (string.IsNullOrWhiteSpace(key))
         {
             Fail("Mã (key) không được để trống.");
             return RedirectToAction(id == 0 ? nameof(ServiceCreate) : nameof(ServiceEdit), id == 0 ? null : new { id });
         }
-        var x = id == 0 ? new HomeServiceTab { Key = "" } : await Db.HomeServiceTabs.FindAsync(id);
+        var x = id == 0
+            ? new HomeServiceTab { Key = "" }
+            : await Db.HomeServiceTabs.Include(t => t.Images).FirstOrDefaultAsync(t => t.Id == id);
         if (x is null) return NotFound();
         x.Key = key.Trim();
         x.Label = label?.Trim() ?? "";
@@ -203,6 +209,20 @@ public class HomepageController(HoaiiDbContext db, AdminAuthService auth, PageCo
         var resolved = await destLink.ResolveAsync(dest);
         x.CtaUrl = resolved?.Url ?? "#";
         x.SortOrder = sortOrder;
+
+        // Thay cả bộ ảnh phụ: biểu mẫu luôn gửi lên đúng danh sách hiện tại, theo đúng thứ tự —
+        // cùng cách dải ảnh sản phẩm đang làm, nên không phải dò xem ảnh nào vừa bị bỏ.
+        x.Images.Clear();
+        var keep = (imageUrls ?? [])
+            .Select(u => u?.Trim())
+            .Where(u => !string.IsNullOrEmpty(u))
+            .Distinct()
+            .ToList();
+        for (var i = 0; i < keep.Count; i++)
+        {
+            x.Images.Add(new HomeServiceImage { Url = keep[i]!, SortOrder = i });
+        }
+
         if (id == 0) Db.HomeServiceTabs.Add(x);
         auth.Audit(id == 0 ? "Thêm dịch vụ" : "Sửa dịch vụ", nameof(HomeServiceTab), id == 0 ? null : id);
         await Db.SaveChangesAsync();

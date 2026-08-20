@@ -1,57 +1,14 @@
-// Product edit form: gallery reorder + dynamic variant rows.
-// The media picker itself (modal, upload, library grid) is shared — see admin-imagefield.js.
-// The gallery's "+ Thêm ảnh" button has no data-target, so picks/uploads land here via
-// the picker:append event instead of filling a single input.
+// Product edit form: dynamic variant rows.
+// Bộ chọn ảnh nằm ở admin-imagefield.js, dải ảnh ở admin-imagelist.js — trang này chỉ còn
+// phần biến thể (loại hộp).
 (function () {
   'use strict';
 
   const form = document.querySelector('[data-product-form]');
   if (!form) return;
 
-  const imageList = form.querySelector('[data-image-list]');
+  // Danh sách ảnh do admin-imagelist.js lo — xem file đó.
 
-  // ---------- image list: add / remove / reorder ----------
-  function makeImageItem(url) {
-    const item = document.createElement('div');
-    item.className = 'admin-image-item';
-    item.setAttribute('data-image-item', '');
-    item.innerHTML =
-      '<input type="hidden" name="ImageUrls">' +
-      '<div class="admin-image-item__thumb"></div>' +
-      '<div class="admin-image-item__controls">' +
-        '<button type="button" data-move="-1" aria-label="Trái">◀</button>' +
-        '<button type="button" data-move="1" aria-label="Phải">▶</button>' +
-        '<button type="button" data-remove aria-label="Xóa">✕</button>' +
-      '</div>';
-    item.querySelector('input').value = url;
-    item.querySelector('.admin-image-item__thumb').style.backgroundImage = "url('" + url + "')";
-    return item;
-  }
-
-  function addImage(url) {
-    if (!url) return;
-    // Skip duplicates.
-    const exists = [...imageList.querySelectorAll('input[name="ImageUrls"]')].some(i => i.value === url);
-    if (exists) return;
-    imageList.appendChild(makeImageItem(url));
-  }
-
-  document.addEventListener('picker:append', function (e) { addImage(e.detail.url); });
-
-  imageList.addEventListener('click', function (e) {
-    const item = e.target.closest('[data-image-item]');
-    if (!item) return;
-    if (e.target.hasAttribute('data-remove')) {
-      item.remove();
-    } else if (e.target.hasAttribute('data-move')) {
-      const dir = parseInt(e.target.getAttribute('data-move'), 10);
-      if (dir < 0 && item.previousElementSibling) {
-        item.parentNode.insertBefore(item, item.previousElementSibling);
-      } else if (dir > 0 && item.nextElementSibling) {
-        item.parentNode.insertBefore(item.nextElementSibling, item);
-      }
-    }
-  });
 
   // ---------- variant rows ----------
   const variantBody = form.querySelector('[data-variant-body]');

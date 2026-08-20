@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.HomeServiceTab
 @using Hoaii.Domain.Entities
 @using Hoaii.Web.Areas.Admin.Controllers
@@ -43,7 +44,33 @@
             <span class="admin-field__hint">Biểu tượng dựng sẵn trong giao diện.</span>
         </div>
 
-        <partial name="_ImageField" model="@(("Ảnh panel", "panelImageUrl", "svc-img", Model.PanelImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh panel", "panelImageUrl", "svc-img", Model.PanelImageUrl))" />
+
+        <div class="admin-field">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <label style="margin:0;">Ảnh chạy luân phiên (tuỳ chọn)</label>
+                <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm"
+                        data-open-picker data-image-list-add="imageUrls">+ Thêm ảnh</button>
+            </div>
+            <span class="admin-field__hint">
+                Ảnh panel ở trên luôn là ảnh đầu tiên. Thêm 4–5 ảnh ở đây thì chúng tự đổi qua lại
+                trong đúng khung ảnh đó. Không thêm ảnh nào thì trang chủ giữ nguyên như cũ.
+            </span>
+            <div class="admin-image-list" data-image-list="imageUrls" style="margin-top:10px;">
+                @foreach (var img in Model.Images.OrderBy(i => i.SortOrder))
+                {
+                    <div class="admin-image-item" data-image-item>
+                        <input type="hidden" name="imageUrls" value="@img.Url" />
+                        <div class="admin-image-item__thumb" style="background-image:url('@img.Url')"></div>
+                        <div class="admin-image-item__controls">
+                            <button type="button" data-move="-1" aria-label="Trái">◀</button>
+                            <button type="button" data-move="1" aria-label="Phải">▶</button>
+                            <button type="button" data-remove aria-label="Xóa">✕</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
 
         <div class="admin-field">
             <label>Chú thích</label>
@@ -81,4 +108,5 @@
 
 @section Scripts {
     <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+    <script src="~/js/admin-imagelist.js" asp-append-version="true"></script>
 }

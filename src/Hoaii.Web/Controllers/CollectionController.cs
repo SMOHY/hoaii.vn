@@ -70,7 +70,14 @@ public class CollectionController(HoaiiDbContext db) : Controller
         var heroSlides = await db.CollectionHeroSlides
             .Where(s => s.CollectionId == collection.Id && s.IsActive)
             .OrderBy(s => s.SortOrder).ThenBy(s => s.Id)
-            .Select(s => new HeroSlideViewModel { ImageUrl = s.ImageUrl, Name = s.Name, LinkUrl = s.LinkUrl })
+            .Select(s => new HeroSlideViewModel
+            {
+                ImageUrl = s.ImageUrl,
+                MobileImageUrl = s.MobileImageUrl,
+                ImageFocal = s.ImageFocal,
+                Name = s.Name,
+                LinkUrl = s.LinkUrl,
+            })
             .ToListAsync();
 
         if (heroSlides.Count == 0)
@@ -118,6 +125,8 @@ public class CollectionController(HoaiiDbContext db) : Controller
                 CtaText = collection.PromoCtaText is { Length: > 0 } pct ? pct : "Mua ngay",
                 CtaUrl = collection.PromoCtaUrl is { Length: > 0 } pcu ? pcu : $"/bo-suu-tap/{slug}",
                 ImageUrl = collection.PromoImageUrl is { Length: > 0 } pi ? pi : "/images/category/promo-artist.jpg",
+                MobileImageUrl = collection.PromoImageUrlMobile,
+                ImageFocal = collection.PromoImageFocal,
                 Background = collection.PromoBackground,
                 Wide = collection.PromoWide,
             },

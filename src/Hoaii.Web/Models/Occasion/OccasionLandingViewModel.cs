@@ -49,6 +49,12 @@ public class OccasionSectionViewModel
     /// <summary>Null renders the grey-200 block Figma draws (node 769:15371).</summary>
     public string? CoverImageUrl { get; init; }
 
+    /// <summary>Admin-set replacement for the cover below 768px; null keeps the desktop one.</summary>
+    public string? CoverImageUrlMobile { get; init; }
+
+    /// <summary>Admin-set focal point for the cover ("50% 30%"); null centres as before.</summary>
+    public string? CoverImageFocal { get; init; }
+
     /// <summary>Which side the cover sits on. Figma alternates down the page, so this is the only
     /// thing that differs between the three sections' markup.</summary>
     public bool CoverOnLeft { get; init; }

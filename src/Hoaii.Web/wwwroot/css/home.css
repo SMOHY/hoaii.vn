@@ -712,3 +712,28 @@
   .blog-cards--mobile .blog-card__category { font-weight: 400; font-size: 13px; line-height: 16px; }
   .blog-cards--mobile .blog-card__title { font-weight: 500; font-size: 16px; line-height: 20px; }
 }
+
+
+/* Ảnh riêng cho mobile do admin đặt. Không đặt thì biến không tồn tại, selector không khớp,
+   và trang giữ nguyên ảnh desktop như trước. */
+@media (max-width: 767.98px) {
+  .home-hero__slide[style*="--mobile-img"] { background-image: var(--mobile-img); }
+}
+
+
+/* Nội dung do admin gõ trong CMS: giữ nguyên chỗ xuống dòng. Chữ không có xuống dòng
+   hiển thị y như trước, nên quy tắc này không đổi trang nào đang chạy. */
+.benefit-desc { white-space: pre-line; }
+
+/* Ảnh dịch vụ chạy luân phiên. Một ảnh thì lớp bọc và lớp ảnh trùng khít ô cũ, nên trang giữ
+   nguyên bố cục cho tới khi admin thêm ảnh thứ hai. */
+.custom-services__panel-imgs { position: absolute; inset: 0; }
+.custom-services__panel-imgs .custom-services__panel-img {
+  opacity: 0;
+  transition: opacity .8s ease;
+}
+.custom-services__panel-imgs .custom-services__panel-img.is-active { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-services__panel-imgs .custom-services__panel-img { transition: none; }
+}

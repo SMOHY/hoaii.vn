@@ -48,9 +48,17 @@ public class ProductEditViewModel
     public string? StoryTitle { get; init; }
     public string? StoryBody { get; init; }
     public string? StoryImageUrl { get; init; }
+    public string? StoryImageUrlMobile { get; init; }
+    public string? StoryImageFocal { get; init; }
     public string? FeatureTitle { get; init; }
     public string? FeatureBody { get; init; }
     public string? FeatureImageUrl { get; init; }
+    public string? FeatureImageUrlMobile { get; init; }
+    public string? FeatureImageFocal { get; init; }
+
+    public string? VideoFileUrl { get; init; }
+    public string? VideoEmbedUrl { get; init; }
+    public string? VideoPosterUrl { get; init; }
 
     // Story / feature copy moves into the DB in phase 2 (CMS); for now the storefront still
     // templates it in ProductController.

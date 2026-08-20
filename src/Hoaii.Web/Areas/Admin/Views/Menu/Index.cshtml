@@ -77,7 +77,14 @@
                     </form>
                     @if (l.HasDropdown)
                     {
-                        <button type="button" class="admin-menu-item__toggle" data-item-toggle aria-label="Thu gọn/Mở rộng">⌄</button>
+                        @* Trước đây nút này chỉ là dấu ⌄ trần, mà khối sửa dropdown lại thu gọn sẵn —
+                           khách báo "chỉnh rồi vẫn không tìm được phần sửa dropdown". Ghi thẳng
+                           việc nó làm lên nút. *@
+                        <button type="button" class="admin-menu-item__toggle" data-item-toggle
+                                aria-label="Mở phần sửa nội dung dropdown">
+                            <span class="admin-menu-item__toggle-text">Sửa nội dung dropdown</span>
+                            <span class="admin-menu-item__toggle-caret" aria-hidden="true">⌄</span>
+                        </button>
                     }
                 </div>
                 @if (l.HasDropdown && isBuiltIn)

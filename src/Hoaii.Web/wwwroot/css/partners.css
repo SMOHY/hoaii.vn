@@ -137,3 +137,39 @@
   .wholesale__image, .wholesale__form { flex: none; width: 100%; }
   .wholesale__image { height: 380px; }
 }
+
+/* ---- Tài liệu cho đại lý / CTV ---- */
+/* Chỉ được dựng ra khi admin đã thêm tài liệu, nên không ảnh hưởng trang khi chưa có gì. */
+.partners-docs { margin-top: 56px; }
+.partners-docs__heading {
+  font: 400 28px/36px var(--font-display);
+  color: var(--color-brand-red);
+  margin: 0 0 20px;
+  text-align: center;
+}
+.partners-docs__list { list-style: none; margin: 0 auto; padding: 0; max-width: 720px; display: grid; gap: 12px; }
+.partners-docs__link {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; text-decoration: none;
+  border: 1px solid var(--color-grey-200); border-radius: var(--radius-md);
+  background: #fff; color: var(--color-grey-900);
+  transition: border-color .2s ease;
+}
+.partners-docs__link:hover { border-color: var(--color-brand-red); }
+.partners-docs__icon {
+  flex: none; width: 44px; height: 44px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-brand-red); color: #fff;
+  font: 600 12px/1 var(--font-body); letter-spacing: .04em;
+}
+.partners-docs__text { flex: 1; min-width: 0; }
+.partners-docs__title { display: block; font: 500 16px/22px var(--font-body); }
+.partners-docs__meta { display: block; font: 300 13px/18px var(--font-body); color: var(--color-grey-500); }
+.partners-docs__cta { flex: none; font: 500 14px/1 var(--font-body); color: var(--color-brand-red); }
+
+@media (max-width: 767.98px) {
+  .partners-docs { margin-top: 40px; }
+  .partners-docs__heading { font-size: 20px; line-height: 28px; }
+  .partners-docs__link { padding: 12px 14px; gap: 10px; }
+  .partners-docs__cta { display: none; }
+}

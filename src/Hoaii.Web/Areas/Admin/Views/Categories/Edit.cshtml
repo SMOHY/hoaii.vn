@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.Category
 @{
     var isNew = Model.Id == 0;
@@ -62,7 +63,10 @@
 
         <div class="admin-field">
             <label>Mô tả (dưới tiêu đề)</label>
-            <input type="text" name="cms.Description" value="@Model.Description" />
+            @* Ô nhiều dòng chứ không phải ô một dòng: web giữ nguyên chỗ xuống dòng
+               (.filter-bar__desc có white-space: pre-line), nhưng ô một dòng thì không gõ
+               Enter được, nên tính năng đó vô dụng. *@
+            <textarea name="cms.Description" rows="3">@Model.Description</textarea>
         </div>
         <div class="admin-form-row">
             <div class="admin-field">
@@ -77,8 +81,8 @@
         </div>
 
         @* Hai ảnh này quyết định phần đầu trang danh mục và ô cover trên trang "Quà theo dịp". *@
-        <partial name="_ImageField" model="@(("Ảnh banner đầu trang", "cms.BannerImageUrl", "cat-banner-img", Model.BannerImageUrl))" />
-        <partial name="_ImageField" model="@(("Ảnh cover (dùng ở trang Quà theo dịp)", "cms.CoverImageUrl", "cat-cover-img", Model.CoverImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh banner đầu trang", "cms.BannerImageUrl", "cat-banner-img", Model.BannerImageUrl) { MobileName = "cms.BannerImageUrlMobile", MobileId = "cat-banner-img-mb", MobileValue = Model.BannerImageUrlMobile, FocalName = "cms.BannerImageFocal", FocalId = "cat-banner-img-fc", FocalValue = Model.BannerImageFocal })" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh cover (dùng ở trang Quà theo dịp)", "cms.CoverImageUrl", "cat-cover-img", Model.CoverImageUrl) { MobileName = "cms.CoverImageUrlMobile", MobileId = "cat-cover-img-mb", MobileValue = Model.CoverImageUrlMobile, FocalName = "cms.CoverImageFocal", FocalId = "cat-cover-img-fc", FocalValue = Model.CoverImageFocal })" />
 
         <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Banner khuyến mãi</h4>
         <div class="admin-form-row">
@@ -99,7 +103,7 @@
             <label>Nút — liên kết</label>
             <input type="text" name="cms.PromoCtaUrl" value="@Model.PromoCtaUrl" placeholder="/danh-muc/qua-tet" />
         </div>
-        <partial name="_ImageField" model="@(("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "cat-promo-img", Model.PromoImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "cat-promo-img", Model.PromoImageUrl) { MobileName = "cms.PromoImageUrlMobile", MobileId = "cat-promo-img-mb", MobileValue = Model.PromoImageUrlMobile, FocalName = "cms.PromoImageFocal", FocalId = "cat-promo-img-fc", FocalValue = Model.PromoImageFocal })" />
 
         <div class="admin-form-row">
             <div class="admin-field">

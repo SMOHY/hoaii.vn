@@ -6,7 +6,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Hoaii.Web.Services;
 
-public enum FieldKind { Text, Multiline, Image }
+public enum FieldKind
+{
+    Text,
+    Multiline,
+    Image,
+
+    /// <summary>The focal point that belongs to an Image field. Stored like any other block so it
+    /// needs no schema change, but never rendered as a row of its own — the image field's own
+    /// block owns it.</summary>
+    Focal
+}
 
 /// <summary>Renders admin-entered multiline text safely: escape the HTML-significant characters,
 /// turn <c>[cụm từ](/duong-dan)</c> into a real link, then turn newlines into &lt;br&gt;. Never
@@ -61,7 +71,7 @@ public static class PageContentKeys
     public const string Contact = "contact";
     public const string Shop = "shop";
 
-    public static readonly IReadOnlyList<Field> All =
+    private static readonly IReadOnlyList<Field> Declared =
     [
         // ---------- Nội dung dùng chung ở trang bán hàng / blog ----------
         new(Shop, "blog_page_heading", "Trang Blog — tiêu đề", "HOÀI MÁCH BẠN", FieldKind.Text),
@@ -182,8 +192,26 @@ public static class PageContentKeys
         new(Partners, "stat_3_label", "Số liệu 3 — nhãn", "Sản phẩm đã được gửi trao", FieldKind.Text),
         new(Partners, "wholesale_heading", "Tiêu đề mục mua sỉ", "Yêu cầu mua sỉ", FieldKind.Text),
         new(Partners, "wholesale_image", "Ảnh mục mua sỉ", "/images/partners/wholesale.jpg", FieldKind.Image),
-        new(Partners, "wholesale_image_mobile", "Ảnh mục mua sỉ (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
+        new(Partners, "docs_heading", "Tiêu đề mục tài liệu đại lý", "TÀI LIỆU DÀNH CHO ĐẠI LÝ", FieldKind.Text),
+                new(Partners, "wholesale_image_mobile", "Ảnh mục mua sỉ (mobile — để trống nếu dùng chung ảnh trên)", "", FieldKind.Image),
     ];
+
+    /// <summary>True for the mobile half of an image pair — the field the image block absorbs
+    /// into its "Mobile" tab instead of listing separately.</summary>
+    public static bool IsMobileKey(string key) => key.EndsWith("_mobile", StringComparison.Ordinal);
+
+    public static string MobileKeyFor(string key) => key + "_mobile";
+
+    public static string FocalKeyFor(string key) => key + "_focal";
+
+    /// <summary>Every declared field plus one focal-point block per desktop image, generated here
+    /// so nobody has to remember to add the pair by hand when a new image field appears.</summary>
+    public static readonly IReadOnlyList<Field> All =
+        Declared.Concat(
+            Declared
+                .Where(f => f.Kind == FieldKind.Image && !IsMobileKey(f.Key))
+                .Select(f => new Field(f.Page, FocalKeyFor(f.Key), f.Label + " — điểm neo", "", FieldKind.Focal)))
+        .ToList();
 
     public static IReadOnlyList<Field> ForPage(string page) => All.Where(f => f.Page == page).ToList();
 }

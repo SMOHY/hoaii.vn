@@ -761,3 +761,291 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   cụm tụt xuống nguyên khối chứ không tách lẻ; breakpoint 992px cho cụm xếp dọc.
 - **Kiểm chứng:** đo 8 bề rộng 1920→430, không chỗ nào tràn, cột không bao giờ rớt lẻ.
   ≥1600px brand+cụm nằm cạnh nhau đúng Figma; 992–1519px cụm tụt xuống dưới brand nguyên khối.
+
+---
+
+## Đợt 20/08/2026 — Ảnh riêng cho mobile + 7 mục khách phản hồi
+
+### WF-024 — CMS: mỗi ảnh có tab Desktop/Mobile và điểm neo
+
+- **Khu vực:** `Areas/Admin/Views/Shared/_ImageField.cshtml`, `Areas/Admin/Models/ImageFieldModel.cs`,
+  `wwwroot/js/admin-imagefield.js`, `wwwroot/css/admin.css`, `Views/Shared/_ResponsiveImg.cshtml`,
+  `Services/FocalPoint.cs`, `Services/CssImage.cs`, migration `AnhRiengChoMobileVaDiemNeo`.
+- **Vấn đề khách nêu:** ảnh đẹp trên desktop nhưng vào mobile bị cắt mất chủ thể; muốn tự chỉnh
+  riêng cho mobile mà không rối.
+- **Cách làm:** một ô ảnh duy nhất, hai tab. Tab Mobile mặc định "dùng chung ảnh desktop", chỉ
+  hiện ô thứ hai khi bấm "Đặt ảnh riêng cho mobile" — số ô trong admin không tăng. Thêm điểm neo
+  (bấm vào ảnh xem trước) để chữa phần lớn ca bị cắt mà không cần ảnh thứ hai.
+- **Không đổi giao diện đang chạy:** `_ResponsiveImg` chỉ bọc `<picture>` khi đã có ảnh mobile;
+  quy tắc CSS `--mobile-img` (home.css, pdp.css) không khớp selector khi biến chưa được đặt.
+- **Phạm vi:** 10 vị trí trang tĩnh (sẵn có) + 9 ô ảnh khổ lớn. **Chưa** áp cho biểu tượng,
+  logo đối tác, ảnh ô/panel trang chủ — cố ý, vì ảnh nhỏ không dính lỗi cắt xén.
+
+### WF-025 — Xuống dòng admin gõ bị mất trên web
+
+- **Khu vực:** `wwwroot/css/category.css`, `occasion.css`, `home.css`.
+- **Gốc rễ:** trong toàn bộ storefront chỉ có **một** chỗ giữ xuống dòng (`.pdp-story__text p`
+  có `white-space: pre-line`). Mọi khối chữ nhiều dòng khác — mô tả danh mục, mô tả mục quà
+  theo dịp, mô tả tiện ích trang chủ, tiêu đề dải khuyến mãi — đổ về `white-space: normal`,
+  nên mỗi lần admin gõ Enter thì trên web thành dấu cách.
+- **Đã kiểm:** lưu xuống dòng **không** hỏng — POST form sản phẩm với `\n\n` rồi đọc lại thấy
+  đủ 2 ký tự xuống dòng. Dữ liệu của "Tinh hoa bắc bộ" trong DB máy này không có ký tự xuống
+  dòng nào (790 ký tự, 0 LF), nên nội dung đó vào DB qua đường khác chứ không phải bị cắt lúc lưu.
+- **Chưa áp `pre-line` cho:** tóm tắt bài viết (`.blog-card__excerpt`) — thẻ bài viết cắt dòng
+  theo chiều cao cố định, giữ xuống dòng ở đó dễ vỡ lưới. Cần quyết định riêng.
+
+### WF-026 — /uploads có thể trỏ sai thư mục (ảnh tải lên trắng xoá)
+
+- **Khu vực:** `Program.cs`, `Services/Admin/MediaService.cs`, `Services/SiteWebRoot.cs` (mới).
+- **Gốc rễ:** hai nơi giải quyết đường dẫn wwwroot **khác nhau**. `MediaService` có nhánh dự
+  phòng khi `WebRootPath` rỗng, `Program.cs` thì không — `Path.Combine(null, "uploads")` ném
+  `ArgumentNullException` và app **chết ngay lúc khởi động** (đã dựng lại được, stack trace ở
+  `Program.cs:125`). Khi `WebRootPath` là chuỗi rỗng thì tệ hơn: `/uploads` bị phục vụ từ thư
+  mục làm việc hiện tại, ảnh tải lên vẫn ghi đúng chỗ nhưng URL trả 404 → **thumbnail trắng**.
+- **Đã sửa:** một hàm chung `SiteWebRoot` cho cả hai nơi. Xác minh: chạy app với
+  `ASPNETCORE_WEBROOT` rỗng — trước đây chết, giờ lên và ảnh `/uploads/...` trả 200.
+- **CHƯA xác nhận đây là lỗi khách gặp:** trên máy này ảnh tải lên hiển thị bình thường ở mọi
+  cách kiểm (có/không gzip). Cần khách cho biết địa chỉ web đang dùng và mở thẳng một ảnh
+  trắng trong tab mới để phân biệt 404 với file hỏng.
+
+### WF-027 — Email xác thực không tới: chưa cấu hình SMTP (không phải lỗi)
+
+- **Khu vực:** `Services/EmailSender.cs`, Cài đặt → nhóm Email.
+- **Trạng thái:** `smtp_host`, `smtp_user`, `smtp_password`, `smtp_from_email` đều **trống**
+  trong DB. `EmailSender.IsConfigured` false → chạy "log mode": ghi thư vào log ứng dụng và
+  trả về Ok, **không gửi đi đâu cả**.
+- **Rủi ro đang mở:** màn hình vẫn báo "đã gửi mã" nên người dùng tưởng hệ thống hỏng. Nên
+  hiện cảnh báo trong admin khi chưa cấu hình SMTP — **chưa làm**, chờ khách quyết.
+
+### WF-028 — Chọn nhiều dòng để ẩn/hiện hàng loạt: chưa có
+
+- **Khu vực:** `Areas/Admin/Views/Products/Index.cshtml` và các trang danh sách khác.
+- **Trạng thái:** mỗi dòng chỉ có nút Ẩn/Hiện riêng, không có ô tick chọn nhiều. Khách hỏi đúng
+  một tính năng **chưa từng được xây**. Cần quyết định phạm vi (những màn nào, những thao tác
+  hàng loạt nào) trước khi làm.
+
+### WF-029 — Hai bộ test giỏ hàng sai vì tổng đã gồm VAT (không phải lỗi sản phẩm)
+
+- **Khu vực:** `tests/e2e/storefront.test.js`.
+- **Chẩn đoán sai lúc đầu:** tôi đã báo hai lỗi này là do biến thể "4 Bánh" hết hàng. **Sai.**
+  Thử lại với biến thể còn 50 hàng vẫn hỏng y hệt, nên tồn kho không liên quan.
+- **Nguyên nhân thật:** số lượng cập nhật **đúng** thành 3, nhưng "Tổng cộng" trên trang giỏ nay
+  là 2.912.760đ chứ không phải 2.697.000đ — chênh đúng 215.760đ = **VAT 8%** trên tiền hàng
+  (`CartService` dòng 230, tỷ lệ lấy từ `SiteSettingKeys.VatRate`, sửa được trong admin).
+  Hai bộ test được viết trước khi có VAT nên so với con số chưa thuế.
+- **Đã sửa test:** kiểm số lượng dòng giỏ thay vì tổng tiền; bài voucher đọc tỷ lệ VAT thẳng từ
+  trang rồi mới tính tổng, để đổi VAT trong admin không làm test đỏ. Sau sửa: **22/22 PASS**.
+- **Bài học:** một `has(body, "899.000")` có thể xanh nhầm vì sản phẩm gợi ý cùng giá cũng nằm
+  trên trang. Đo bằng phần tử của đúng dòng cần kiểm, đừng đo bằng chuỗi tiền.
+
+### WF-030 — Thư viện ảnh: nói rõ thiếu tệp thay vì để ô trắng
+
+- **Khu vực:** `Areas/Admin/Controllers/MediaController.cs`, `Areas/Admin/Views/Media/Index.cshtml`.
+- **Vì sao:** ô trắng trông giống hệt nhau ở hai lỗi rất khác nhau — mất tệp trên đĩa, hay
+  `/uploads` trỏ sai thư mục. Nay trang tự kiểm tệp trên đĩa: thiếu thì ghi "Không tìm thấy tệp
+  trên máy chủ"; nếu **không** báo thiếu mà ảnh vẫn trắng thì chắc chắn là lỗi đường dẫn.
+- **Liên quan:** WF-026.
+
+### WF-031 — Cảnh báo chưa cấu hình SMTP ở trang Tổng quan
+
+- **Khu vực:** `Areas/Admin/Views/Shared/_SmtpWarning.cshtml` (mới), `Dashboard/Index.cshtml`.
+- **Vì sao:** trang Email vốn đã có nhãn trạng thái, nhưng không ai vào đó trước khi bán hàng.
+  Nay Tổng quan báo đỏ khi chưa cấu hình, kèm nút đi thẳng tới trang điền SMTP.
+- **Không đặt ở trang Email:** trùng với nhãn sẵn có.
+
+### WF-032 — Chọn nhiều sản phẩm để ẩn/hiện hàng loạt
+
+- **Khu vực:** `Areas/Admin/Controllers/ProductsController.cs` (`BulkToggleActive`),
+  `Areas/Admin/Views/Products/Index.cshtml`, `wwwroot/js/admin-bulk.js`, `admin.css`.
+- **Cách làm:** ô tick từng dòng + ô chọn tất cả; thanh hành động chỉ hiện khi đã chọn.
+  Hai nút **Ẩn** và **Hiện** đặt hẳn trạng thái — không "đảo", vì đảo trên một nhóm lẫn cả ẩn lẫn
+  hiện cho ra kết quả không ai đoán được. `returnUrl` chỉ nhận đường dẫn nội bộ.
+- **Chỉ làm ở màn Sản phẩm.** Chưa có xoá hàng loạt (không hoàn tác được), chưa áp cho Bài viết /
+  Danh mục — chờ khách xác nhận có cần không.
+
+### WF-033 — Ảnh trắng ở Thư viện ảnh: bản khách đang chạy KHÁC bản mã nguồn
+
+- **Đã kiểm trên bản hiện tại, bằng trình duyệt thật, không phải suy đoán:**
+  tải lên một ảnh JPG qua đúng form admin → ảnh hiện ngay, `0` request lỗi, thẻ `<img>` tải được
+  hết (`naturalWidth != 0` cho cả 145 ảnh). Bộ chọn ảnh ở ô "Ảnh câu chuyện" cũng mở được,
+  liệt kê 145 ảnh, chọn xong điền đúng đường dẫn vào ô.
+- **Hai bằng chứng cho thấy khách chạy bản cũ:** (1) ảnh khách chụp ô "Ảnh câu chuyện" chỉ có một
+  ô chữ chiếm hết bề ngang — không ảnh xem trước, không nút "Chọn từ thư viện", trong khi
+  `_ImageField` hiện tại luôn dựng đủ ba thứ; (2) thư viện ảnh của khách trắng toàn bộ, đúng
+  triệu chứng thiếu `UseStaticFiles` riêng cho `/uploads` — thứ đã có trong `Program.cs` từ lâu.
+- **Việc cần làm không phải sửa code mà là TRIỂN KHAI LẠI** bản mới nhất cho khách.
+- **Đã làm để lần sau không mò lại:** thư viện ảnh dùng `<img>` kèm `onerror` thay cho
+  `background-image` (ảnh nền hỏng thì im lặng tuyệt đối), hiện thêm dung lượng từng tệp — tệp
+  `0 B` tô đỏ — và báo "Không tìm thấy tệp trên máy chủ" khi tệp không còn trên đĩa (WF-030).
+  Ba dấu hiệu này phân biệt được: mất tệp · ghi hỏng lúc tải lên · sai đường dẫn.
+
+---
+
+## Đợt 21/08/2026 — Ảnh dịch vụ · Video sản phẩm · Tài liệu đại lý
+
+Migration `VideoAnhDichVuVaTaiLieuDaiLy` (đã áp lên LocalDB). `Up()` chỉ thêm cột và bảng, mọi
+`DropColumn`/`DropTable` đều nằm trong `Down()`.
+
+### WF-034 — Ảnh dịch vụ chạy luân phiên
+
+- **Khu vực:** `HomeServiceImage` (bảng mới), `HomepageController.ServiceSave/ServiceEdit`,
+  `ServiceEdit.cshtml`, `_CustomServices.cshtml`, `service-slides.js`, `home.css`.
+- **Bẫy đã dính và cách thoát:** nhịp đổi ảnh ban đầu đặt 4 giây thì **không bao giờ thấy ảnh thứ
+  hai** — `home.js` cũng tự chuyển sang tab dịch vụ kế tiếp mỗi 4 giây (theo prototype Figma), nên
+  mỗi lần tới lượt đổi ảnh thì tab đó vừa bị ẩn. Đổi xuống 2,5 giây và bỏ điều kiện "chỉ đổi khi
+  tab đang hiện". Đo lại: giây 0→ảnh 0, giây 3→ảnh 1, giây 6→ảnh 2, giây 9→ảnh 3.
+- **Không thêm ảnh nào thì trang chủ y như cũ:** slider chỉ chạy khi có từ 2 ảnh, và ảnh panel cũ
+  vẫn là ảnh đầu tiên.
+
+### WF-035 — Video sản phẩm: tải tệp lên HOẶC dán link YouTube/Vimeo
+
+- **Khu vực:** `Product.VideoFileUrl/VideoEmbedUrl/VideoPosterUrl`, `MediaService.UploadVideoAsync`,
+  `Services/VideoLink.cs`, `Products/Edit.cshtml`, `Product/Details.cshtml`, `pdp-video.js`, `pdp.css`.
+- **Hai cách, tệp thắng khi có cả hai** — trang chỉ hiện được một video.
+- **Giới hạn:** video 60MB, chỉ MP4/WebM, nhận dạng bằng byte đầu tệp chứ không tin phần mở rộng.
+  Tệp không đọc hết vào RAM (chép thẳng ra đĩa), nên video 60MB không thổi bộ nhớ máy chủ.
+- **Link nhúng chỉ nhận YouTube và Vimeo.** Link khác bị bỏ — không để ai dán một đường dẫn tuỳ ý
+  vào thẻ iframe của trang bán hàng. Iframe chỉ được nạp khi người xem bấm mở video.
+- **Bẫy đã dính:** dải ảnh nhỏ bị `display:none` dưới 768px nên ô video trong đó biến mất trên điện
+  thoại → thêm nút "Video" nổi ở góc khung ảnh, chỉ hiện ở mobile.
+- **Bẫy thứ hai:** `.pdp-gallery__stage` là flex item, không nêu chiều rộng nên co về **0px** ở
+  mobile — video có chiều cao 460px mà rộng 0, nhìn ra là một khung trắng. Đã đo lại sau khi sửa:
+  rộng 398px, cao 460px, video hiện đúng.
+
+### WF-036 — Tài liệu PDF cho đại lý / CTV
+
+- **Khu vực:** `PartnerDocument` (bảng mới), `PartnerDocsController`, `PartnerDocs/Index.cshtml`,
+  `_AdminSidebar.cshtml`, `PageController.Partners`, `Page/Partners.cshtml`, `partners.css`.
+- **Ẩn/hiện thay vì xoá** để giữ tài liệu mùa cũ. Xoá thì gỡ luôn tệp trên đĩa.
+- **Giới hạn:** PDF, tối đa 20MB, nhận dạng bằng byte đầu tệp.
+- Tiêu đề mục sửa được ở CMS (`docs_heading`, trang Hợp tác). Chưa có tài liệu nào thì cả mục
+  không được dựng ra.
+
+### WF-037 — CẦN DỌN TRƯỚC KHI BÀN GIAO: dữ liệu thử còn trong DB máy này
+
+Ba thứ dựng lên để kiểm tính năng, **phải xoá trước khi giao cho khách**:
+
+1. Sản phẩm 20 (Thiên điểu lạc hồng) đang gắn video mẫu `Big_Buck_Bunny` đã tải lên máy chủ.
+2. Tài liệu "Chính sách hoa hồng đại lý — Trung thu 2026" là **PDF rỗng do máy tạo**, không phải
+   tài liệu thật.
+3. Dịch vụ đầu tiên ở trang chủ đang gắn 3 ảnh phụ chọn đại từ thư viện.
+
+Giữ lại để xem giao diện; xoá bằng chính màn admin tương ứng, không cần chạy SQL.
+
+---
+
+## Đợt 21/08/2026 (chiều) — Soát lại toàn bộ 12 mục trong "Web HOÀI.xlsx"
+
+Bộ kiểm chạy trên trình duyệt thật: `tests/e2e/kiem-yeu-cau-khach.js` — **13/13 đạt**, 0 lỗi JS.
+
+### WF-038 — Mô tả danh mục / bộ sưu tập là ô MỘT DÒNG nên không gõ xuống dòng được
+
+- **Khu vực:** `Areas/Admin/Views/Categories/Edit.cshtml`, `Collections/Edit.cshtml`.
+- **Gốc rễ:** WF-025 đã bật `white-space: pre-line` cho `.filter-bar__desc`, nhưng ô nhập lại là
+  `<input type="text">` — **không gõ Enter được**, nên tính năng giữ xuống dòng vô dụng ở chính
+  chỗ khách cần. Chỉ lộ ra khi thử gõ thật, không lộ khi đọc CSS.
+- **Đã sửa:** đổi cả hai sang `<textarea rows="3">`. Kiểm lại: lưu giữ đủ ký tự xuống dòng, web
+  render với `white-space: pre-line`.
+
+### WF-039 — Chỗ sửa dropdown menu bị thu gọn sau một mũi tên không tên
+
+- **Khu vực:** `Areas/Admin/Views/Menu/Index.cshtml`, `admin.css`.
+- **Gốc rễ đúng như khách kêu ("chỉnh rồi vẫn chưa tìm được phần sửa"):** cả 4 khối sửa cột
+  dropdown đều **thu gọn mặc định** (đo được: chiều cao 0px), và nút mở chỉ là ký tự `⌄` xám nhỏ
+  ở góc phải. Tính năng luôn có đủ — bấm vào là hiện "Bán chạy nhất", "Phiên bản giới hạn",
+  "Theo bộ sưu tập" kèm chip sản phẩm.
+- **Đã sửa:** nút ghi thẳng **"Sửa nội dung dropdown ⌄"**, có viền, chỉ mũi tên xoay khi mở.
+
+### WF-040 — Ba lần "hỏng" trong bộ kiểm là lỗi của chính bộ kiểm, không phải của web
+
+Ghi lại để lần sau không mất công đuổi theo:
+
+1. Trang Về chúng tôi ở `/ve-chung-toi`, không phải `/gioi-thieu`; và `<source>` dùng
+   `max-width: 767.98px` chứ không phải `767px`.
+2. Trang sửa ô ảnh trang chủ là `/admin/trang-chu/o-noi-bat/{id}/sua`, không phải `/o-anh/`.
+3. Phép thử ẩn/hiện hàng loạt và phép thử ảnh mobile **ăn theo kết quả lần chạy trước** — dòng
+   đã ẩn sẵn thì "Ẩn" không đổi gì, ô ảnh đã đặt ảnh riêng thì không còn nút "Đặt ảnh riêng".
+   Nay mỗi phép thử tự đưa dữ liệu về trạng thái đầu trước khi chạy.
+
+---
+
+## Đợt 21/08/2026 (tối) — Soi bug sau khi làm xong tính năng
+
+Sáu lỗi tìm bằng đọc diff rồi **tái hiện bằng chạy thật**, không suy đoán. Bộ kiểm giữ lại ở
+`tests/e2e/kiem-6-bug-da-sua.js` — chạy lại được bất cứ lúc nào, **6/6 đạt**.
+
+### WF-041 — Nhân viên xoá được tài liệu đại lý kèm tệp trên đĩa
+
+- **Khu vực:** `Areas/Admin/Controllers/PartnerDocsController.cs`.
+- **Đo được trước khi sửa:** tài khoản `Staff` POST `/admin/tai-lieu-dai-ly/1/xoa` → 302, tài liệu
+  biến mất, tệp PDF bị xoá. Cùng lúc `POST /admin/san-pham/20/xoa` bị chặn về
+  `/admin/khong-co-quyen` — tức quy ước có, chỉ màn mới là quên.
+- **Gốc:** quy ước "hành động phá huỷ phải gắn `[Authorize(Policy = PolicyOwner)]`" sống bằng trí
+  nhớ. `ProductsController`, `BlogController`, `CategoriesController`, `PoliciesController` đều có;
+  màn mới thì không, và không có gì bắt buộc.
+- **Sau khi sửa:** nhân viên bị đá về `/admin/khong-co-quyen`, tài liệu còn nguyên. Ẩn/hiện vẫn cho
+  nhân viên làm (không mất gì, hoàn tác được).
+
+### WF-042 — Video 29MB làm trình duyệt treo rồi đứt, giao diện hứa 60MB
+
+- **Khu vực:** `Areas/Admin/Filters/GioiHanTepAttribute.cs` (mới), `ProductsController`,
+  `MediaController`, `PartnerDocsController`, `wwwroot/js/admin-file-limit.js` (mới).
+- **Đo được trước khi sửa:** 10MB → 302 · 25MB → 302 · **29MB → không một phản hồi nào, treo 60
+  giây**. Trần thật là 30.000.000 byte, mặc định của Kestrel.
+- **Gốc:** giới hạn khai ở **ba nơi độc lập, không nơi nào là nguồn sự thật** — trần mặc định của
+  Kestrel, `[RequestSizeLimit]` gõ tay trên từng action (Media 6MB, tài liệu 21MB, sản phẩm
+  **không có gì**), và hằng `MaxVideoBytes` mà câu chữ trên màn hình dựa vào.
+- **Sai lầm khi sửa, ghi lại để không lặp:** lần đầu viết bộ lọc dạng `IResourceFilter` — **không
+  ăn**, 29MB vẫn treo. Vì `[ValidateAntiForgeryToken]` là *authorization* filter, chạy trước và đã
+  ĐỌC thân request để lấy token. Phải chuyển sang `IAuthorizationFilter` với `Order = int.MinValue`.
+- **Sau khi sửa:** 29MB và 45MB lưu bình thường. Trên 60MB thì trình duyệt chặn ngay khi chọn tệp
+  ("Tệp vượt quá 60MB: thu-70.mp4 (70.0MB)") — không phải tải lên rồi mới biết hỏng.
+- **Sửa kèm:** thư viện ảnh trước đây giới hạn 6MB cho **cả request** trong khi màn hình ghi "5MB
+  mỗi ảnh" — chọn hai ảnh 4MB là đứt. Nay tính theo lô 50MB, mỗi ảnh vẫn bị kiểm riêng 5MB.
+
+### WF-043 — Mọi lỗi hợp lệ hoá trên form sản phẩm đều vứt sạch chữ đã gõ
+
+- **Khu vực:** `ProductsController.QuayLaiForm` (mới), ba nhánh lỗi trong `Save`.
+- **Đo được trước khi sửa:** đổi tên sản phẩm + viết lại mô tả, rồi chọn nhầm một tệp ảnh đặt tên
+  `.mp4` → báo đúng lỗi nhưng **tên quay về giá trị cũ, mô tả mất trắng**.
+- **Gốc:** `Fail(...) + RedirectToAction(Edit)` nạp lại trang từ CSDL. Không phải lỗi riêng của
+  video — "Tên không được để trống" và "Slug đã tồn tại" dùng chung mẫu đó, nên **mọi lỗi đều vứt
+  dữ liệu**. Nhánh video chỉ làm lộ ra một lỗ có sẵn.
+- **Sau khi sửa:** dựng view-model thẳng từ dữ liệu vừa gửi lên; chữ, ảnh, biến thể còn nguyên.
+
+### WF-044 — Link video dán từ điện thoại xoá mất video đang chạy
+
+- **Khu vực:** `Services/VideoLink.cs`, `ProductsController`.
+- **Đo được trước khi sửa:** sản phẩm đang có link YouTube chạy tốt; dán
+  `m.youtube.com/watch?v=...` → **ô trống trơn, video biến mất, màn hình báo "Đã lưu sản phẩm"**.
+- **Gốc:** `Sanitise()` trả `null` cho link không khớp, `Save` gán thẳng `null` vào CSDL — đúng
+  điều CLAUDE.md cấm: *"dịch vụ ngoài lỗi → KHÔNG ghi gì, không bao giờ ghi rỗng đè lên dữ liệu"*.
+  Thiếu `m.` chỉ là bề mặt; gốc là **gộp "ô để trống" với "gõ không nhận ra" làm một**.
+- **Sau khi sửa:** `VideoLink.Doc()` trả ba trạng thái. Link lạ → giữ nguyên link cũ + báo lỗi rõ.
+  Nhận thêm `m.`, `music.`, `/live/`, `/v/`, `youtube-nocookie`, `player.vimeo`.
+
+### WF-045 — Nhãn "Tải ảnh hỏng" không bao giờ hiện được
+
+- **Khu vực:** `Areas/Admin/Views/Media/Index.cshtml`.
+- **Đo được trước khi sửa:** trình duyệt ném `missing ) after argument list`; ép ảnh 404 thì
+  `img.style.display` không đổi, chữ không xuất hiện. Đoạn code sinh ra để chống ô trắng câm lại
+  im lặng y hệt.
+- **Gốc:** dựng HTML bằng chuỗi JS đặt trong thuộc tính `onerror` của Razor — ba lớp thoát ký tự
+  lồng nhau, dấu nháy trong `style='...'` đóng chuỗi JS sớm. Build không báo, test không báo.
+- **Sau khi sửa:** thẻ `<span hidden>` dựng sẵn trong markup, `onerror` chỉ đảo `hidden`.
+
+### WF-046 — Trang sản phẩm: tràn ngang 768–1023px và bóp chết cột chữ 1024–1919px
+
+- **Khu vực:** `wwwroot/css/pdp.css`. **Lỗi có sẵn, không do đợt tính năng này** — `git diff` xác
+  nhận đợt trước chỉ thêm đúng một dòng `--mobile-img` vào vùng đó.
+- **Đo được trước khi sửa, hai lỗi chồng nhau:**
+  - Tràn ngang: 768px tràn 125px · 820px tràn 102px · 900px tràn 32px · từ 1024px thì không.
+  - **Không tràn nhưng vẫn vỡ:** cột chữ 1920 → 702px (đúng Figma) · 1600 → 481 · 1440 → 361 ·
+    1280 → 241 · 1100 → 106 · **1024 → 49px**, mỗi dòng một chữ, đoạn văn cao **3874px**. Phép
+    kiểm tràn ngang không bắt được vì trang không hề tràn — phải nhìn ảnh mới thấy.
+- **Gốc (một nguyên nhân cho cả hai):** `.pdp-story__image { width: 599px; flex-shrink: 0 }` giữ
+  cứng 599px ở mọi bề rộng, còn `.pdp-story__text` gánh hết phần thiếu. Dưới 1024px thì chính
+  599px cứng đó vượt khung và đẩy cả trang tràn.
+- **Sau khi sửa:** 768–1023px dùng lại bố cục xếp dọc đã có của điện thoại (giữ cỡ chữ desktop);
+  1024–1919px giữ hai cột nhưng cùng co theo tỉ lệ Figma 42/58. Cột chữ nay 422–702px ở mọi khổ,
+  54 phép đo tràn ngang (9 bề rộng × 6 trang) đều sạch. 1920px giữ nguyên số đo Figma tuyệt đối.

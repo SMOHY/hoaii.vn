@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.Collection
 @{
     var isNew = Model.Id == 0;
@@ -38,7 +39,8 @@
 
         <div class="admin-field">
             <label>Mô tả (dưới tiêu đề)</label>
-            <input type="text" name="cms.Description" value="@Model.Description" />
+            @* Xem ghi chú ở Categories/Edit: mô tả giữ được xuống dòng nên phải là ô nhiều dòng. *@
+            <textarea name="cms.Description" rows="3">@Model.Description</textarea>
         </div>
         <div class="admin-form-row">
             <div class="admin-field">
@@ -71,7 +73,7 @@
             <label>Nút — liên kết</label>
             <input type="text" name="cms.PromoCtaUrl" value="@Model.PromoCtaUrl" placeholder="/bo-suu-tap/@Model.Slug" />
         </div>
-        <partial name="_ImageField" model="@(("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "col-promo-img", Model.PromoImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh banner khuyến mãi", "cms.PromoImageUrl", "col-promo-img", Model.PromoImageUrl) { MobileName = "cms.PromoImageUrlMobile", MobileId = "col-promo-img-mb", MobileValue = Model.PromoImageUrlMobile, FocalName = "cms.PromoImageFocal", FocalId = "col-promo-img-fc", FocalValue = Model.PromoImageFocal })" />
 
         <div class="admin-form-row">
             <div class="admin-field">

@@ -97,11 +97,11 @@ public partial class CollectionsController(HoaiiDbContext db, AdminAuthService a
         public string? PromoCtaText { get; set; }
         public string? PromoCtaUrl { get; set; }
         public string? PromoImageUrl { get; set; }
+        public string? PromoImageUrlMobile { get; set; }
+        public string? PromoImageFocal { get; set; }
         public string? PromoBackground { get; set; }
         public bool PromoWide { get; set; }
     }
-
-    private static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
 
     private static void ApplyCms(Collection c, CollectionCms cms)
     {
@@ -113,6 +113,8 @@ public partial class CollectionsController(HoaiiDbContext db, AdminAuthService a
         c.PromoCtaText = Clean(cms.PromoCtaText);
         c.PromoCtaUrl = Clean(cms.PromoCtaUrl);
         c.PromoImageUrl = Clean(cms.PromoImageUrl);
+        c.PromoImageUrlMobile = Clean(cms.PromoImageUrlMobile);
+        c.PromoImageFocal = Focal(cms.PromoImageFocal);
         // Chỉ nhận mã hex — xem CategoriesController.ApplyCms cho lý do (giá trị này ghi thẳng
         // vào style attribute của dải campaign).
         var bg = Clean(cms.PromoBackground);
@@ -155,7 +157,7 @@ public partial class CollectionsController(HoaiiDbContext db, AdminAuthService a
 
     [HttpPost("/admin/bo-suu-tap/slide/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HeroSlideSave(int id, int collectionId, string imageUrl, string? name, string? linkUrl, int sortOrder, bool isActive)
+    public async Task<IActionResult> HeroSlideSave(int id, int collectionId, string imageUrl, string? mobileImageUrl, string? imageFocal, string? name, string? linkUrl, int sortOrder, bool isActive)
     {
         if (await Db.Collections.FindAsync(collectionId) is null) return NotFound();
 
@@ -163,6 +165,8 @@ public partial class CollectionsController(HoaiiDbContext db, AdminAuthService a
         if (slide is null) return NotFound();
         slide.CollectionId = collectionId;
         slide.ImageUrl = imageUrl?.Trim() ?? "";
+        slide.MobileImageUrl = Clean(mobileImageUrl);
+        slide.ImageFocal = Focal(imageFocal);
         slide.Name = name?.Trim() ?? "";
         slide.LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? "#" : linkUrl.Trim();
         slide.SortOrder = sortOrder;

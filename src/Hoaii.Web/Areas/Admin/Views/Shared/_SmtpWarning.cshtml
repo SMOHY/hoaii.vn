@@ -1,0 +1,19 @@
+@*
+    Cảnh báo khi chưa cấu hình SMTP. Không có nó, EmailSender chạy "log mode": mã xác thực và
+    thư xác nhận đơn chỉ được ghi vào log máy chủ, còn màn hình vẫn báo "đã gửi" — người dùng
+    tưởng web hỏng. Hiện ở Tổng quan và trang Email để không ai bỏ lỡ.
+*@
+@using Hoaii.Web.Services
+@inject EmailSender EmailSender
+
+@if (!EmailSender.IsConfigured)
+{
+    <div class="admin-card" style="border-left:4px solid var(--color-brand-red);margin-bottom:16px;">
+        <h2 class="admin-card__title" style="color:var(--color-brand-red);">Chưa cấu hình email gửi đi</h2>
+        <p style="margin:0 0 12px;">
+            Hệ thống <strong>chưa gửi được thư nào ra ngoài</strong>: mã xác thực đăng nhập và thư xác nhận
+            đơn hàng chỉ được ghi vào nhật ký máy chủ. Khách đặt hàng sẽ không nhận được email nào.
+        </p>
+        <a class="admin-btn admin-btn--primary admin-btn--sm" href="/admin/email">Điền thông tin SMTP</a>
+    </div>
+}

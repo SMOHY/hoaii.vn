@@ -116,6 +116,8 @@ public class OccasionController(HoaiiDbContext db) : Controller
                 Title = def.Title,
                 Description = category?.Description ?? "",
                 CoverImageUrl = category?.CoverImageUrl,
+                CoverImageUrlMobile = category?.CoverImageUrlMobile,
+                CoverImageFocal = category?.CoverImageFocal,
                 // Figma alternates: cover right, cover left, cover right (nodes 769:15389,
                 // 769:15390, 771:21270).
                 CoverOnLeft = i % 2 == 1,

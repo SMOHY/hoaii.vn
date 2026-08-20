@@ -32,7 +32,19 @@
             {
                 var tab = Model[i];
                 <div class="custom-services__panel-item @(i == 0 ? "is-active" : "")" data-panel="@tab.Key">
-                    <div class="custom-services__panel-img" style="background-image:url('@tab.PanelImageUrl')"></div>
+                    @{
+                        // Ảnh panel luôn đứng đầu; ảnh phụ do admin thêm nối tiếp phía sau. Một
+                        // ảnh thì không có gì để đổi, và markup ra đúng như trước khi có tính năng.
+                        var slides = new List<string> { tab.PanelImageUrl };
+                        slides.AddRange(tab.ExtraImageUrls.Where(u => !string.IsNullOrWhiteSpace(u)));
+                    }
+                    <div class="custom-services__panel-imgs" data-service-slides="@slides.Count">
+                        @for (var s = 0; s < slides.Count; s++)
+                        {
+                            <div class="custom-services__panel-img @(s == 0 ? "is-active" : "")"
+                                 style="background-image:url('@slides[s]')"></div>
+                        }
+                    </div>
                     <div class="custom-services__panel-overlay">
                         <p class="custom-services__panel-caption" style="color:@tab.CaptionColorHex">@tab.Caption</p>
                         <a href="@tab.CtaUrl" class="custom-services__cta">

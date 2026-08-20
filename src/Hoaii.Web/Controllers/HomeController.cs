@@ -36,6 +36,8 @@ public class HomeController(HoaiiDbContext db) : Controller
                 .Select(h => new HeroSlideViewModel
                 {
                     ImageUrl = h.ImageUrl,
+                    MobileImageUrl = h.MobileImageUrl,
+                    ImageFocal = h.ImageFocal,
                     Title = h.Title,
                     Subtitle = h.Subtitle,
                     MobileTitle = h.MobileTitle,
@@ -83,6 +85,7 @@ public class HomeController(HoaiiDbContext db) : Controller
                     CaptionColorHex = s.CaptionColorHex,
                     CtaText = s.CtaText,
                     CtaUrl = s.CtaUrl,
+                    ExtraImageUrls = s.Images.OrderBy(i => i.SortOrder).Select(i => i.Url).ToList(),
                 })
                 .ToListAsync(),
 

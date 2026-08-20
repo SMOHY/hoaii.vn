@@ -97,17 +97,21 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
         public string? HeroEyebrow { get; set; }
         public string? HeroKicker { get; set; }
         public string? BannerImageUrl { get; set; }
+        public string? BannerImageUrlMobile { get; set; }
+        public string? BannerImageFocal { get; set; }
         public string? CoverImageUrl { get; set; }
+        public string? CoverImageUrlMobile { get; set; }
+        public string? CoverImageFocal { get; set; }
         public string? PromoEyebrow { get; set; }
         public string? PromoTitle { get; set; }
         public string? PromoCtaText { get; set; }
         public string? PromoCtaUrl { get; set; }
         public string? PromoImageUrl { get; set; }
+        public string? PromoImageUrlMobile { get; set; }
+        public string? PromoImageFocal { get; set; }
         public string? PromoBackground { get; set; }
         public bool PromoWide { get; set; }
     }
-
-    private static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
 
     private static void ApplyCms(Category c, CategoryCms cms)
     {
@@ -115,12 +119,18 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
         c.HeroEyebrow = Clean(cms.HeroEyebrow);
         c.HeroKicker = Clean(cms.HeroKicker);
         c.BannerImageUrl = Clean(cms.BannerImageUrl);
+        c.BannerImageUrlMobile = Clean(cms.BannerImageUrlMobile);
+        c.BannerImageFocal = Focal(cms.BannerImageFocal);
         c.CoverImageUrl = Clean(cms.CoverImageUrl);
+        c.CoverImageUrlMobile = Clean(cms.CoverImageUrlMobile);
+        c.CoverImageFocal = Focal(cms.CoverImageFocal);
         c.PromoEyebrow = Clean(cms.PromoEyebrow);
         c.PromoTitle = Clean(cms.PromoTitle);
         c.PromoCtaText = Clean(cms.PromoCtaText);
         c.PromoCtaUrl = Clean(cms.PromoCtaUrl);
         c.PromoImageUrl = Clean(cms.PromoImageUrl);
+        c.PromoImageUrlMobile = Clean(cms.PromoImageUrlMobile);
+        c.PromoImageFocal = Focal(cms.PromoImageFocal);
         // Chỉ nhận mã hex. Giá trị này được ghi thẳng vào thuộc tính style của dải campaign, nên
         // một chuỗi kiểu "red;background-image:url(...)" sẽ chèn được CSS lạ vào trang.
         var bg = Clean(cms.PromoBackground);
@@ -171,7 +181,7 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
 
     [HttpPost("/admin/danh-muc/slide/luu")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HeroSlideSave(int id, int categoryId, string imageUrl, string? name, string? linkUrl, int sortOrder, bool isActive)
+    public async Task<IActionResult> HeroSlideSave(int id, int categoryId, string imageUrl, string? mobileImageUrl, string? imageFocal, string? name, string? linkUrl, int sortOrder, bool isActive)
     {
         if (await Db.Categories.FindAsync(categoryId) is null) return NotFound();
 
@@ -179,6 +189,8 @@ public partial class CategoriesController(HoaiiDbContext db, AdminAuthService au
         if (slide is null) return NotFound();
         slide.CategoryId = categoryId;
         slide.ImageUrl = imageUrl?.Trim() ?? "";
+        slide.MobileImageUrl = Clean(mobileImageUrl);
+        slide.ImageFocal = Focal(imageFocal);
         slide.Name = name?.Trim() ?? "";
         slide.LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? "#" : linkUrl.Trim();
         slide.SortOrder = sortOrder;

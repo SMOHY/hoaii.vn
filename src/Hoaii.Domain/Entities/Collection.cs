@@ -28,6 +28,13 @@ public class Collection
     public string? PromoCtaText { get; set; }
     public string? PromoCtaUrl { get; set; }
     public string? PromoImageUrl { get; set; }
+
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? PromoImageUrlMobile { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? PromoImageFocal { get; set; }
     public string? PromoBackground { get; set; }
     public bool PromoWide { get; set; }
 }

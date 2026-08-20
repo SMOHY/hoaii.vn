@@ -1,18 +1,26 @@
 @*
-    A CMS image field with an optional separate mobile crop. Pass (Src, MobileSrc, Alt, CssClass,
-    Lazy). MobileSrc is null/empty when the admin hasn't set one — in that case this renders a
-    plain <img>, identical to before; a <picture> wrapper is only added once a mobile override
-    actually exists, so it never changes markup for fields nobody has customised.
+    A storefront image with an optional mobile replacement and an optional focal point.
+
+    With neither set — the state every image starts in — this renders exactly the <img> the view
+    used to write by hand. The <picture> wrapper appears only once an admin has actually chosen a
+    separate mobile image, so the rendered page is unchanged until someone asks for a change.
 *@
-@model (string Src, string? MobileSrc, string Alt, string? CssClass, bool Lazy)
+@using Hoaii.Web.Models
+@using Hoaii.Web.Services
+@model ResponsiveImage
+@{
+    // Validated in FocalPoint, never trusted here: a value that isn't a percentage pair is
+    // dropped rather than written into the style attribute.
+    var focal = FocalPoint.Style(Model.Focal);
+}
 @if (string.IsNullOrWhiteSpace(Model.MobileSrc))
 {
-    <img src="@Model.Src" alt="@Model.Alt" class="@Model.CssClass" loading="@(Model.Lazy ? "lazy" : null)" />
+    <img src="@Model.Src" alt="@Model.Alt" class="@Model.CssClass" loading="@Model.Loading" fetchpriority="@Model.FetchPriority" style="@focal" />
 }
 else
 {
     <picture>
-        <source media="(max-width: 767px)" srcset="@Model.MobileSrc" />
-        <img src="@Model.Src" alt="@Model.Alt" class="@Model.CssClass" loading="@(Model.Lazy ? "lazy" : null)" />
+        <source media="(max-width: 767.98px)" srcset="@Model.MobileSrc" />
+        <img src="@Model.Src" alt="@Model.Alt" class="@Model.CssClass" loading="@Model.Loading" fetchpriority="@Model.FetchPriority" style="@focal" />
     </picture>
 }

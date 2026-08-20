@@ -6,6 +6,7 @@
     ViewData["MetaDescription"] = "Hợp tác cùng HOÀI — đăng ký làm đại lý, đặt hàng sỉ và quà tặng doanh nghiệp.";
     string T(string k) => Page.Get(PageContentKeys.Partners, k);
     var partnerLogos = ViewBag.PartnerLogos as IReadOnlyList<string> ?? new List<string>();
+    var partnerDocs = ViewBag.PartnerDocuments as List<Hoaii.Domain.Entities.PartnerDocument> ?? new();
 }
 
 @* Figma's desktop frame still reads "Mua quà tết" here while its mobile frame reads
@@ -39,13 +40,40 @@
             </div>
         }
     </div>
+
+    @* Tài liệu cho đại lý / CTV. Chưa có tài liệu nào thì cả mục này không được dựng ra, nên
+       trang giữ nguyên như trước. *@
+    @if (partnerDocs.Count > 0)
+    {
+        <div class="partners-docs">
+            <h2 class="partners-docs__heading">@T("docs_heading")</h2>
+            <ul class="partners-docs__list">
+                @foreach (var doc in partnerDocs)
+                {
+                    <li class="partners-docs__item">
+                        <a class="partners-docs__link" href="@doc.FileUrl" download="@doc.FileName" target="_blank" rel="noopener">
+                            <span class="partners-docs__icon" aria-hidden="true">PDF</span>
+                            <span class="partners-docs__text">
+                                <span class="partners-docs__title">@doc.Title</span>
+                                @if (!string.IsNullOrEmpty(doc.Season))
+                                {
+                                    <span class="partners-docs__meta">@doc.Season</span>
+                                }
+                            </span>
+                            <span class="partners-docs__cta">Tải về</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 </section>
 
 <section class="wholesale">
     <h2 class="wholesale__heading">@T("wholesale_heading")</h2>
     <div class="wholesale__panel">
         <div class="wholesale__image">
-            <partial name="_ResponsiveImg" model="@((T("wholesale_image"), T("wholesale_image_mobile"), "Hộp quà HOÀI", (string?)null, true))" />
+            <partial name="_ResponsiveImg" model="@(new ResponsiveImage(T("wholesale_image"), "Hộp quà HOÀI") { MobileSrc = T("wholesale_image_mobile"), Focal = T("wholesale_image_focal") })" />
         </div>
         <form method="post" asp-action="Partners" class="wholesale__form">
             @Html.AntiForgeryToken()

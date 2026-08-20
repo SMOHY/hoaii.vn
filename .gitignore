@@ -18,3 +18,8 @@ publish_out/
 
 # Local run logs from run-migration.ps1 / start.ps1
 run-std*.log
+
+# Ảnh chụp màn hình dùng để tự kiểm và để dựng file báo cáo gửi khách — sinh lại được
+# bằng tests/e2e/, không phải mã nguồn (53MB).
+anh-kiem-tra/
+anh-bao-cao/

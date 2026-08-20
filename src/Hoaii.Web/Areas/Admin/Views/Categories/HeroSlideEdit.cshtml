@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.CategoryHeroSlide
 @{
     var isNew = Model.Id == 0;
@@ -13,7 +14,7 @@
         <input type="hidden" name="id" value="@Model.Id" />
         <input type="hidden" name="categoryId" value="@Model.CategoryId" />
 
-        <partial name="_ImageField" model="@(("Ảnh slide", "imageUrl", "cat-hero-slide-img", Model.ImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh slide", "imageUrl", "cat-hero-slide-img", Model.ImageUrl) { MobileName = "mobileImageUrl", MobileId = "cat-hero-slide-img-mb", MobileValue = Model.MobileImageUrl, FocalName = "imageFocal", FocalId = "cat-hero-slide-img-fc", FocalValue = Model.ImageFocal })" />
 
         <div class="admin-form-row">
             <div class="admin-field">

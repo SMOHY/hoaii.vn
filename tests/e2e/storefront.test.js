@@ -89,7 +89,9 @@ const PRODUCT = { slug: 'thien-dieu-lac-hong', id: 20, variant: 100, price: 8990
     const t2 = await s.token('/gio-hang');
     await s.post('/gio-hang/cap-nhat', { productId: PRODUCT.id, variantId: PRODUCT.variant, quantity: 3, returnUrl: '/gio-hang', __RequestVerificationToken: t2 });
     cart = await s.get('/gio-hang');
-    has(cart.body, (PRODUCT.price * 3).toLocaleString('vi-VN'), 'cập nhật số lượng = 3 -> tổng đúng');
+    // Đọc số lượng thật trên dòng giỏ thay vì so tổng tiền: tổng đã gồm VAT nên phụ thuộc
+    // cấu hình thuế, còn số lượng thì không.
+    has(cart.body, 'qty-stepper__value">3<', 'cập nhật số lượng = 3');
 
     const t3 = await s.token('/gio-hang');
     await s.post('/gio-hang/xoa', { productId: PRODUCT.id, variantId: PRODUCT.variant, returnUrl: '/gio-hang', __RequestVerificationToken: t3 });
@@ -114,8 +116,15 @@ const PRODUCT = { slug: 'thien-dieu-lac-hong', id: 20, variant: 100, price: 8990
     await s.post('/gio-hang/ap-dung-ma', { code: 'GIAM20', returnUrl: '/thanh-toan', __RequestVerificationToken: tc });
     const co = await s.get('/thanh-toan');
     const sub = PRODUCT.price * 2;
-    has(co.body, Math.round(sub * 0.2).toLocaleString('vi-VN'), 'giảm 20% đúng số tiền');
-    has(co.body, (sub - sub * 0.2).toLocaleString('vi-VN'), 'tổng sau giảm đúng');
+    const discount = Math.round(sub * 0.2);
+    has(co.body, discount.toLocaleString('vi-VN'), 'giảm 20% đúng số tiền');
+
+    // "Tổng cộng" = tiền hàng sau giảm + VAT. Tỷ lệ VAT sửa được trong admin nên lấy thẳng
+    // từ trang thay vì viết cứng 8% vào test.
+    const vatPercent = parseFloat((co.body.match(/Thuế VAT \((\d+(?:[.,]\d+)?)%\)/) || [, '0'])[1].replace(',', '.'));
+    const afterDiscount = sub - discount;
+    const total = afterDiscount + Math.round(afterDiscount * vatPercent / 100);
+    has(co.body, total.toLocaleString('vi-VN'), `tổng cộng đúng (đã gồm VAT ${vatPercent}%)`);
   });
 
   await test('Voucher: mã sai bị từ chối', async () => {

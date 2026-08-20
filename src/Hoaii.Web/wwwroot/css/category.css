@@ -448,3 +448,9 @@
   .promo-banner--wide .promo-banner__text { max-width: none; padding-left: 0; }
   .promo-banner--wide .promo-banner__image { flex: none; height: 340px; }
 }
+
+
+/* Nội dung do admin gõ trong CMS: giữ nguyên chỗ xuống dòng. Chữ không có xuống dòng
+   hiển thị y như trước, nên quy tắc này không đổi trang nào đang chạy. */
+.filter-bar__desc,
+.promo-banner__title { white-space: pre-line; }

@@ -18,6 +18,17 @@ public class ProductDetailsViewModel
 
     public required IReadOnlyList<string?> GalleryImages { get; init; } // null entries render as placeholder tiles
 
+    /// <summary>Video giới thiệu: tệp trên máy chủ. Ưu tiên hơn link nhúng khi có cả hai.</summary>
+    public string? VideoFileUrl { get; init; }
+
+    /// <summary>Video giới thiệu: đường dẫn nhúng YouTube/Vimeo đã đổi dạng sẵn.</summary>
+    public string? VideoEmbedUrl { get; init; }
+
+    /// <summary>Ảnh cho ô video trong dải ảnh. Rỗng thì lấy ảnh đầu tiên.</summary>
+    public string? VideoPosterUrl { get; init; }
+
+    public bool HasVideo => !string.IsNullOrWhiteSpace(VideoFileUrl) || !string.IsNullOrWhiteSpace(VideoEmbedUrl);
+
     // No colour axis: Figma ships the colour picker hidden (node 826:20630).
     public required IReadOnlyList<BoxOptionViewModel> BoxOptions { get; init; }
 
@@ -27,9 +38,21 @@ public class ProductDetailsViewModel
     public required string StoryBody { get; init; }
     public string? StoryImageUrl { get; init; }
 
+    /// <summary>Admin-set replacement below 768px; null keeps the desktop image.</summary>
+    public string? StoryImageUrlMobile { get; init; }
+
+    /// <summary>Admin-set focal point ("50% 30%"); null centres as before.</summary>
+    public string? StoryImageFocal { get; init; }
+
     public required string FeatureTitle { get; init; }
     public required string FeatureBody { get; init; }
     public string? FeatureImageUrl { get; init; }
+
+    /// <summary>Admin-set replacement below 768px; null keeps the desktop image.</summary>
+    public string? FeatureImageUrlMobile { get; init; }
+
+    /// <summary>Admin-set focal point ("50% 30%"); null centres as before.</summary>
+    public string? FeatureImageFocal { get; init; }
 
     public CollectionSectionViewModel? Collection { get; init; }
     public required IReadOnlyList<ProductCardViewModel> RelatedProducts { get; init; }

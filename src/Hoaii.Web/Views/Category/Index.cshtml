@@ -40,7 +40,8 @@
         <div class="cat-banner__inner @(Model.BannerImageUrl is null ? "cat-banner__inner--empty" : "")">
             @if (Model.BannerImageUrl is not null)
             {
-                <img src="@Model.BannerImageUrl" alt="@Model.Title" fetchpriority="high" />
+                <partial name="_ResponsiveImg" model="@(new ResponsiveImage(Model.BannerImageUrl, Model.Title)
+                    { MobileSrc = Model.BannerImageUrlMobile, Focal = Model.BannerImageFocal, Loading = null, FetchPriority = "high" })" />
             }
             <p class="cat-banner__title">@Model.Title.ToUpperInvariant()</p>
         </div>
@@ -61,9 +62,9 @@ else
             {
                 var slide = Model.HeroSlides[i];
                 <a class="cat-hero__slide" href="@slide.LinkUrl" data-cat-slide data-name="@slide.Name">
-                    <img src="@slide.ImageUrl" alt="@slide.Name"
-                         loading="@(i == 0 ? "eager" : "lazy")"
-                         fetchpriority="@(i == 0 ? "high" : "auto")" />
+                    <partial name="_ResponsiveImg" model="@(new ResponsiveImage(slide.ImageUrl, slide.Name)
+                        { MobileSrc = slide.MobileImageUrl, Focal = slide.ImageFocal,
+                          Loading = i == 0 ? "eager" : "lazy", FetchPriority = i == 0 ? "high" : "auto" })" />
                 </a>
             }
         </div>
@@ -246,7 +247,8 @@ else
     @if (Model.Promo.ImageUrl is not null)
     {
         <div class="promo-banner__image">
-            <img src="@Model.Promo.ImageUrl" alt="@Model.Promo.Eyebrow" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@(new ResponsiveImage(Model.Promo.ImageUrl, Model.Promo.Eyebrow)
+                { MobileSrc = Model.Promo.MobileImageUrl, Focal = Model.Promo.ImageFocal })" />
         </div>
     }
 </section>

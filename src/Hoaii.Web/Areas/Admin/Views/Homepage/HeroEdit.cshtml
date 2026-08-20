@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.HomeHeroSlide
 @{
     var isNew = Model.Id == 0;
@@ -11,7 +12,7 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 
-        <partial name="_ImageField" model="@(("Ảnh nền hero", "imageUrl", "hero-img", Model.ImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh nền hero", "imageUrl", "hero-img", Model.ImageUrl) { MobileName = "mobileImageUrl", MobileId = "hero-img-mb", MobileValue = Model.MobileImageUrl, FocalName = "imageFocal", FocalId = "hero-img-fc", FocalValue = Model.ImageFocal })" />
 
         <div class="admin-form-row">
             <div class="admin-field">

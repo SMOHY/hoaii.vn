@@ -118,3 +118,93 @@
     }
   });
 })();
+
+// Image slot: the Desktop/Mobile tab pair and the focal-point picker. Kept separate from the
+// picker modal above so a page without the modal (or a slot without either extra) still works.
+(function () {
+  'use strict';
+
+  function parseFocal(value) {
+    var m = /^\s*(-?[\d.]+)%\s+(-?[\d.]+)%\s*$/.exec(value || '');
+    return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : { x: 50, y: 50 };
+  }
+
+  function clamp(n) { return Math.max(0, Math.min(100, n)); }
+
+  document.querySelectorAll('[data-imgslot]').forEach(function (slot) {
+    // --- Desktop / Mobile tabs -------------------------------------------------
+    var tabs = slot.querySelectorAll('[data-imgtab]');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var want = tab.getAttribute('data-imgtab');
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.classList.toggle('is-active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        slot.querySelectorAll('[data-imgpane]').forEach(function (pane) {
+          pane.classList.toggle('is-active', pane.getAttribute('data-imgpane') === want);
+        });
+      });
+    });
+
+    // --- Mobile override: share <-> own image ----------------------------------
+    var shared = slot.querySelector('[data-imgslot-shared]');
+    var box = slot.querySelector('[data-imgslot-override-box]');
+    var badge = slot.querySelector('[data-imgslot-badge]');
+    var mobileInput = box && box.querySelector('[data-image-input]');
+
+    function showOverride(on) {
+      if (!shared || !box) return;
+      shared.style.display = on ? 'none' : '';
+      box.style.display = on ? '' : 'none';
+      if (badge) badge.style.display = on ? '' : 'none';
+    }
+
+    slot.querySelector('[data-imgslot-override]')?.addEventListener('click', function () {
+      showOverride(true);
+      // Open the library straight away — the only reason to click this button is to pick an image.
+      box.querySelector('[data-open-picker]')?.click();
+    });
+
+    slot.querySelector('[data-imgslot-share]')?.addEventListener('click', function () {
+      // Clearing the field is what makes the storefront fall back to the desktop image.
+      if (mobileInput) {
+        mobileInput.value = '';
+        mobileInput.dispatchEvent(new Event('change'));
+      }
+      showOverride(false);
+    });
+
+    // --- Focal point -----------------------------------------------------------
+    var thumb = slot.querySelector('[data-focal-target]');
+    var focalInput = slot.querySelector('[data-focal-input]');
+    var dot = slot.querySelector('[data-focal-dot]');
+    if (!thumb || !focalInput) return;
+
+    function paint() {
+      var p = parseFocal(focalInput.value);
+      thumb.style.backgroundPosition = p.x + '% ' + p.y + '%';
+      if (dot) {
+        dot.style.left = p.x + '%';
+        dot.style.top = p.y + '%';
+      }
+    }
+
+    thumb.addEventListener('click', function (e) {
+      var r = thumb.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      var x = clamp(Math.round(((e.clientX - r.left) / r.width) * 100));
+      var y = clamp(Math.round(((e.clientY - r.top) / r.height) * 100));
+      focalInput.value = x + '% ' + y + '%';
+      paint();
+    });
+
+    slot.querySelector('[data-focal-reset]')?.addEventListener('click', function () {
+      focalInput.value = '';
+      paint();
+    });
+
+    paint();
+  });
+})();

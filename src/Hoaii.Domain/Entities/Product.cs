@@ -35,9 +35,35 @@ public class Product
     public string? StoryTitle { get; set; }
     public string? StoryBody { get; set; }
     public string? StoryImageUrl { get; set; }
+
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? StoryImageUrlMobile { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? StoryImageFocal { get; set; }
+    /// <summary>Video giới thiệu/unbox. Hai cách điền, ưu tiên tệp tải lên nếu có cả hai:
+    /// <see cref="VideoFileUrl"/> là tệp nằm trên máy chủ, <see cref="VideoEmbedUrl"/> là link
+    /// YouTube/Vimeo. Cả hai rỗng thì trang sản phẩm không có gì thay đổi so với trước.</summary>
+    public string? VideoFileUrl { get; set; }
+
+    /// <summary>Link YouTube hoặc Vimeo do admin dán vào, ở dạng người dùng copy từ thanh địa chỉ.
+    /// Việc đổi sang dạng nhúng được làm lúc hiển thị, để admin không phải hiểu "embed" là gì.</summary>
+    public string? VideoEmbedUrl { get; set; }
+
+    /// <summary>Ảnh đại diện cho ô video trong dải ảnh sản phẩm. Rỗng thì dùng ảnh đầu tiên.</summary>
+    public string? VideoPosterUrl { get; set; }
+
     public string? FeatureTitle { get; set; }
     public string? FeatureBody { get; set; }
     public string? FeatureImageUrl { get; set; }
+
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? FeatureImageUrlMobile { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? FeatureImageFocal { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

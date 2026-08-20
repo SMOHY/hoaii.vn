@@ -112,7 +112,14 @@ public class CategoryController(HoaiiDbContext db) : Controller
                 heroSlides = await db.CategoryHeroSlides
                     .Where(s => s.CategoryId == category!.Id && s.IsActive)
                     .OrderBy(s => s.SortOrder).ThenBy(s => s.Id)
-                    .Select(s => new HeroSlideViewModel { ImageUrl = s.ImageUrl, Name = s.Name, LinkUrl = s.LinkUrl })
+                    .Select(s => new HeroSlideViewModel
+                    {
+                        ImageUrl = s.ImageUrl,
+                        MobileImageUrl = s.MobileImageUrl,
+                        ImageFocal = s.ImageFocal,
+                        Name = s.Name,
+                        LinkUrl = s.LinkUrl,
+                    })
                     .ToListAsync();
             }
 
@@ -162,6 +169,8 @@ public class CategoryController(HoaiiDbContext db) : Controller
             HeroKicker = heroKicker,
             HeroStyle = heroStyle,
             BannerImageUrl = category?.BannerImageUrl,
+            BannerImageUrlMobile = category?.BannerImageUrlMobile,
+            BannerImageFocal = category?.BannerImageFocal,
             Parent = category is { ParentLabel: { Length: > 0 } pl, ParentUrl: { Length: > 0 } pu }
                 ? new BreadcrumbCrumb(pl, pu)
                 : null,
@@ -174,6 +183,8 @@ public class CategoryController(HoaiiDbContext db) : Controller
                 CtaText = category?.PromoCtaText is { Length: > 0 } pct ? pct : "Mua ngay",
                 CtaUrl = category?.PromoCtaUrl is { Length: > 0 } pcu ? pcu : "/danh-muc/qua-tet",
                 ImageUrl = category?.PromoImageUrl is { Length: > 0 } pi ? pi : "/images/category/promo-artist.jpg",
+                MobileImageUrl = category?.PromoImageUrlMobile,
+                ImageFocal = category?.PromoImageFocal,
                 Background = category?.PromoBackground,
                 Wide = category?.PromoWide ?? false,
             },

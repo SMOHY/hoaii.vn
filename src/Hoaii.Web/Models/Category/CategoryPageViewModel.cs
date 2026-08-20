@@ -47,6 +47,12 @@ public class CategoryPageViewModel
     /// <summary>Backdrop for the banner hero. Null renders the flat block Figma draws.</summary>
     public string? BannerImageUrl { get; init; }
 
+    /// <summary>Admin-set replacement for the banner below 768px; null keeps the desktop one.</summary>
+    public string? BannerImageUrlMobile { get; init; }
+
+    /// <summary>Admin-set focal point for the banner ("50% 30%"); null centres as before.</summary>
+    public string? BannerImageFocal { get; init; }
+
     /// <summary>Crumb between "Trang chủ" and this category, when it sits under a landing page.</summary>
     public BreadcrumbCrumb? Parent { get; init; }
 }
@@ -56,6 +62,14 @@ public record BreadcrumbCrumb(string Label, string Url);
 public class HeroSlideViewModel
 {
     public required string ImageUrl { get; init; }
+
+    /// <summary>Admin-set replacement used below 768px; null means the desktop image is used at
+    /// every width.</summary>
+    public string? MobileImageUrl { get; init; }
+
+    /// <summary>Admin-set focal point ("50%% 30%%"); null centres as before.</summary>
+    public string? ImageFocal { get; init; }
+
     public required string Name { get; init; }
     public required string LinkUrl { get; init; }
 }
@@ -85,6 +99,14 @@ public partial class PromoBannerViewModel
     public required string CtaText { get; init; }
     public required string CtaUrl { get; init; }
     public string? ImageUrl { get; init; }
+
+    /// <summary>Admin-set replacement used below 768px; null means the desktop image is used at
+    /// every width.</summary>
+    public string? MobileImageUrl { get; init; }
+
+    /// <summary>Admin-set focal point ("50%% 30%%"); null centres as before.</summary>
+    public string? ImageFocal { get; init; }
+
 
     /// <summary>Hex background from the category; null keeps the stylesheet default. This value
     /// is written into a style attribute, so anything that is not a plain hex colour is dropped —

@@ -203,3 +203,96 @@
   .pdp-related .product-card__name { font: 500 20px/23px var(--font-body); }
   .pdp-related .product-card__price { font: 500 16px/20px var(--font-body); }
 }
+
+
+/* Ảnh riêng cho mobile do admin đặt. Không đặt thì biến không tồn tại, selector không khớp,
+   và trang giữ nguyên ảnh desktop như trước. */
+@media (max-width: 767.98px) {
+  .pdp-story__image[style*="--mobile-img"],
+  .pdp-story__row2 .image[style*="--mobile-img"] { background-image: var(--mobile-img); }
+}
+
+/* ---- Ô video trong dải ảnh sản phẩm ---- */
+/* Khung chứa ảnh chính và video. Sản phẩm không có video thì bên trong chỉ có đúng
+   .pdp-gallery__main như trước, nên kích thước và bố cục không đổi. */
+.pdp-gallery__stage { position: relative; }
+.pdp-gallery__video { position: absolute; inset: 0; background: #000; border-radius: inherit; overflow: hidden; }
+.pdp-gallery__video video,
+.pdp-gallery__video iframe { width: 100%; height: 100%; border: 0; display: block; object-fit: contain; }
+
+.pdp-gallery__thumb--video { position: relative; }
+.pdp-gallery__play {
+  position: absolute; inset: 0; margin: auto; width: 28px; height: 28px;
+  border-radius: 50%; background: rgba(0, 0, 0, .55);
+}
+.pdp-gallery__play::after {
+  content: ""; position: absolute; top: 50%; left: 54%; transform: translate(-50%, -50%);
+  border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent #fff;
+}
+
+/* Nút video nổi: chỉ dùng trên điện thoại, nơi dải ảnh nhỏ (và ô video trong đó) bị ẩn. */
+.pdp-gallery__video-fab { display: none; }
+@media (max-width: 767.98px) {
+  .pdp-gallery__video-fab {
+    position: absolute; right: 12px; bottom: 12px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px 8px 34px; border: 0; border-radius: 999px;
+    background: rgba(0, 0, 0, .6); color: #fff;
+    font: 500 13px/1 var(--font-body); cursor: pointer;
+  }
+  .pdp-gallery__video-fab .pdp-gallery__play {
+    inset: auto; left: 8px; top: 50%; transform: translateY(-50%);
+    width: 20px; height: 20px; margin: 0; background: rgba(255, 255, 255, .25);
+  }
+  /* Video đang mở thì nút không còn việc gì, mà lại che mất nút điều khiển của trình phát. */
+  .pdp-gallery__stage:has([data-video-panel]:not([hidden])) .pdp-gallery__video-fab { display: none; }
+}
+
+@media (max-width: 767.98px) {
+  /* Khung ảnh/video là flex item trong .pdp-gallery: không nêu chiều rộng thì nó co theo nội
+     dung, mà nội dung lại lấy width:100% của chính nó — thành ra rộng 0 và video không hiện. */
+  .pdp-gallery__stage { width: 100%; }
+}
+
+/* ---- Dải 1024–1919px: ảnh và chữ phải cùng co ----
+   Figma vẽ khối này ở đúng 1920: ảnh 599 + khoảng cách 120 + chữ 702 = 1421, vừa khít vùng nội
+   dung. Nhưng ảnh khai flex-shrink: 0 nên nó giữ nguyên 599px ở mọi bề rộng, còn cột chữ gánh
+   hết phần thiếu. Đo cột chữ trước khi sửa: 1920 → 702px (đúng Figma), 1600 → 481, 1440 → 361,
+   1280 → 241, 1100 → 106, và 1024 → 49px, tức mỗi dòng một chữ, đoạn văn cao 3874px.
+   Trang không hề tràn ngang nên phép kiểm tràn không bắt được — chỉ nhìn mới thấy.
+
+   Giữ đúng tỉ lệ Figma (ảnh ~42%, chữ ~58%) và cho cả hai cùng co. Ở 1920 số đo tuyệt đối của
+   Figma vẫn được dùng nguyên. */
+@media (min-width: 1024px) and (max-width: 1919.98px) {
+  .pdp-story__row1 { gap: 40px; }
+  .pdp-story__image {
+    width: auto; flex: 0 1 42%; min-width: 0; height: auto; aspect-ratio: 599 / 561;
+  }
+  .pdp-story__text { width: auto; flex: 1 1 58%; min-width: 0; }
+  .pdp-story__text h2 { margin-bottom: 48px; }
+
+  .pdp-story__row2 { gap: 40px; }
+  .pdp-story__row2 .text { padding-left: 0; }
+  .pdp-story__row2 .image { width: auto; flex: 0 1 42%; min-width: 0; height: auto; aspect-ratio: 599 / 561; }
+}
+
+/* ---- Khoảng chết 768–1023px (máy tính bảng dựng đứng) ----
+   Bố cục "Câu chuyện sản phẩm" dựng theo Figma bằng số đo cứng: ảnh 599px với flex-shrink: 0,
+   chữ 702px, cách nhau 120px. Bố cục xếp dọc lại chỉ bật dưới 767.98px, nên cả dải 768–1023px
+   không có luật nào: ảnh 599px cứng nằm trong khung chỉ 576px và đẩy cả trang tràn ngang.
+   Đo được trước khi sửa: 768px tràn 125px, 820px tràn 102px, 900px tràn 32px, từ 1024px thì không.
+
+   Thử ép hai cột co lại theo tỉ lệ thì hết tràn nhưng mỗi cột chỉ còn ~340px: ảnh teo lại, và
+   tiêu đề "Đặc điểm" vỡ làm hai dòng. Nên dùng lại đúng bố cục xếp dọc của điện thoại — nó đã
+   được kiểm chứng và vốn sinh ra cho khung hẹp — chỉ giữ nguyên cỡ chữ của desktop.
+   Từ 1024px trở lên mọi thứ vẫn đúng số đo Figma. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .pdp-story__row1 { flex-direction: column; gap: 32px; }
+  .pdp-story__image { width: 100%; height: auto; aspect-ratio: 599 / 561; order: 2; }
+  .pdp-story__text { width: 100%; order: 1; }
+  .pdp-story__text h2 { margin-bottom: 24px; }
+
+  .pdp-story__row2 { flex-direction: column; gap: 32px; }
+  .pdp-story__row2 .text { width: 100%; padding-left: 0; }
+  .pdp-story__row2 .image { width: 100%; height: auto; aspect-ratio: 599 / 561; }
+}

@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.HomeFeaturedTile
 @using Hoaii.Domain.Entities
 @using Hoaii.Web.Areas.Admin.Controllers
@@ -57,7 +58,7 @@
             <input type="text" name="editionLabel" value="@Model.EditionLabel" placeholder="VD: (Phiên bản thường)" />
         </div>
 
-        <partial name="_ImageField" model="@(("Ảnh (ô ảnh)", "imageUrl", "tile-img", Model.ImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh (ô ảnh)", "imageUrl", "tile-img", Model.ImageUrl))" />
 
         <div class="admin-form-row">
             <div class="admin-field">

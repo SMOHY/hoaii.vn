@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model ProductEditViewModel
 @{
     var isNew = Model.Id == 0;
@@ -6,7 +7,7 @@
 
 <div style="margin-bottom:20px;"><a class="admin-row-link" href="/admin/san-pham">← Sản phẩm</a></div>
 
-<form method="post" action="/admin/san-pham/luu" class="admin-form admin-form--wide" data-product-form>
+<form method="post" action="/admin/san-pham/luu" class="admin-form admin-form--wide" enctype="multipart/form-data" data-product-form>
     @Html.AntiForgeryToken()
     <input type="hidden" name="Id" value="@Model.Id" />
 
@@ -42,10 +43,10 @@
             <div class="admin-card">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                     <h3 class="admin-section-title" style="margin:0;">Hình ảnh</h3>
-                    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker>+ Thêm ảnh</button>
+                    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker data-image-list-add="ImageUrls">+ Thêm ảnh</button>
                 </div>
                 <span class="admin-field__hint">Ảnh đầu tiên là ảnh bìa. Dùng nút ◀ ▶ để đổi thứ tự.</span>
-                <div class="admin-image-list" data-image-list>
+                <div class="admin-image-list" data-image-list="ImageUrls">
                     @foreach (var url in Model.ImageUrls)
                     {
                         <div class="admin-image-item" data-image-item>
@@ -121,6 +122,34 @@
             </div>
 
             <div class="admin-card">
+                <h3 class="admin-section-title">Video giới thiệu</h3>
+                <p class="admin-field__hint" style="margin:0 0 16px;">
+                    Video hiện thành một ô trong dải ảnh sản phẩm. Điền <strong>một trong hai</strong> cách dưới —
+                    nếu điền cả hai thì tệp tải lên được ưu tiên. Để trống cả hai thì trang sản phẩm giữ nguyên như cũ.
+                </p>
+                <div class="admin-field">
+                    <label>Cách 1 — Tải tệp video lên (MP4 hoặc WebM, tối đa 60MB)</label>
+                    @if (!string.IsNullOrWhiteSpace(Model.VideoFileUrl))
+                    {
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                            <video src="@Model.VideoFileUrl" style="width:200px;border-radius:6px;" muted playsinline preload="metadata"></video>
+                            <label style="display:flex;align-items:center;gap:6px;">
+                                <input type="checkbox" name="RemoveVideoFile" value="true" /> Xoá video này
+                            </label>
+                        </div>
+                    }
+                    <input type="file" name="VideoFile" accept="video/mp4,video/webm"
+                           data-max-bytes="@Hoaii.Web.Services.Admin.MediaService.MaxVideoBytes"
+                           data-max-label="@Hoaii.Web.Services.Admin.MediaService.MaxVideoLabel" />
+                    <span class="admin-field__hint">Video 30–45 giây nên nằm dưới 60MB. Dài hơn thì nên dùng cách 2.</span>
+                </div>
+                <div class="admin-field">
+                    <label>Cách 2 — Dán link YouTube hoặc Vimeo</label>
+                    <input type="text" name="VideoEmbedUrl" value="@Model.VideoEmbedUrl" placeholder="https://www.youtube.com/watch?v=..." />
+                    <span class="admin-field__hint">Dán thẳng đường dẫn trên thanh địa chỉ, không cần lấy mã nhúng.</span>
+                </div>
+                <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh đại diện ô video (để trống thì dùng ảnh đầu tiên)", "VideoPosterUrl", "video-poster", Model.VideoPosterUrl))" />
+
                 <h3 class="admin-section-title">Nội dung trang sản phẩm</h3>
                 <p class="admin-field__hint" style="margin:0 0 16px;">Để trống sẽ dùng nội dung mặc định. Dán đường dẫn ảnh từ Thư viện ảnh.</p>
 
@@ -133,7 +162,7 @@
                     <label>Nội dung</label>
                     <textarea name="StoryBody" rows="4">@Model.StoryBody</textarea>
                 </div>
-                <partial name="_ImageField" model="@(("Ảnh câu chuyện", "StoryImageUrl", "story-img", Model.StoryImageUrl))" />
+                <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh câu chuyện", "StoryImageUrl", "story-img", Model.StoryImageUrl) { MobileName = "StoryImageUrlMobile", MobileId = "story-img-mb", MobileValue = Model.StoryImageUrlMobile, FocalName = "StoryImageFocal", FocalId = "story-img-fc", FocalValue = Model.StoryImageFocal })" />
 
                 <h4 style="margin:16px 0 8px;font:600 14px var(--font-body);">Đặc điểm</h4>
                 <div class="admin-field">
@@ -144,7 +173,7 @@
                     <label>Nội dung (mỗi dòng một ý)</label>
                     <textarea name="FeatureBody" rows="5">@Model.FeatureBody</textarea>
                 </div>
-                <partial name="_ImageField" model="@(("Ảnh đặc điểm", "FeatureImageUrl", "feature-img", Model.FeatureImageUrl))" />
+                <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh đặc điểm", "FeatureImageUrl", "feature-img", Model.FeatureImageUrl) { MobileName = "FeatureImageUrlMobile", MobileId = "feature-img-mb", MobileValue = Model.FeatureImageUrlMobile, FocalName = "FeatureImageFocal", FocalId = "feature-img-fc", FocalValue = Model.FeatureImageFocal })" />
             </div>
         </div>
 
@@ -219,6 +248,8 @@
 
 @section Scripts {
     <script src="~/js/admin-imagefield.js" asp-append-version="true"></script>
+    <script src="~/js/admin-imagelist.js" asp-append-version="true"></script>
+    <script src="~/js/admin-file-limit.js" asp-append-version="true"></script>
     <script src="~/js/admin-product.js" asp-append-version="true"></script>
     <script src="~/js/admin-curated-picker.js" asp-append-version="true"></script>
 }

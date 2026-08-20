@@ -21,6 +21,12 @@ public class HeroSlideViewModel
 {
     public required string ImageUrl { get; init; }
 
+    /// <summary>Admin-set replacement below 768px; null keeps the desktop image.</summary>
+    public string? MobileImageUrl { get; init; }
+
+    /// <summary>Admin-set focal point ("50% 30%"); null centres as before.</summary>
+    public string? ImageFocal { get; init; }
+
     // Figma ships different copy per breakpoint (desktop 1214:38726 / mobile 1062:12563).
     public required string Title { get; init; }
     public required string Subtitle { get; init; }
@@ -66,6 +72,9 @@ public class CustomServiceTabViewModel
     public required string CaptionColorHex { get; init; }
     public string CtaText { get; init; } = "Bắt đầu";
     public string CtaUrl { get; init; } = "#";
+
+    /// <summary>Ảnh chạy luân phiên sau ảnh panel. Rỗng thì ô ảnh đứng yên đúng như trước.</summary>
+    public IReadOnlyList<string> ExtraImageUrls { get; init; } = [];
 }
 
 public class AboutCardViewModel

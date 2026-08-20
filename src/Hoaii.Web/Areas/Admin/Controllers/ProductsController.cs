@@ -6,10 +6,11 @@ using Hoaii.Web.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Hoaii.Web.Areas.Admin.Filters;
 
 namespace Hoaii.Web.Areas.Admin.Controllers;
 
-public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : BaseAdminController(db)
+public class ProductsController(HoaiiDbContext db, AdminAuthService auth, MediaService media) : BaseAdminController(db)
 {
     private const int PageSize = 20;
 
@@ -107,9 +108,16 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
             StoryTitle = p.StoryTitle,
             StoryBody = p.StoryBody,
             StoryImageUrl = p.StoryImageUrl,
+            StoryImageUrlMobile = p.StoryImageUrlMobile,
+            StoryImageFocal = p.StoryImageFocal,
             FeatureTitle = p.FeatureTitle,
             FeatureBody = p.FeatureBody,
             FeatureImageUrl = p.FeatureImageUrl,
+            FeatureImageUrlMobile = p.FeatureImageUrlMobile,
+            FeatureImageFocal = p.FeatureImageFocal,
+            VideoFileUrl = p.VideoFileUrl,
+            VideoEmbedUrl = p.VideoEmbedUrl,
+            VideoPosterUrl = p.VideoPosterUrl,
             ImageUrls = p.Images.OrderBy(i => i.SortOrder).Select(i => i.Url).ToList(),
             Variants = p.Variants.Select(v => new ProductEditViewModel.VariantRow
             {
@@ -141,9 +149,22 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         public string? StoryTitle { get; set; }
         public string? StoryBody { get; set; }
         public string? StoryImageUrl { get; set; }
+        public string? StoryImageUrlMobile { get; set; }
+        public string? StoryImageFocal { get; set; }
         public string? FeatureTitle { get; set; }
         public string? FeatureBody { get; set; }
         public string? FeatureImageUrl { get; set; }
+        public string? FeatureImageUrlMobile { get; set; }
+        public string? FeatureImageFocal { get; set; }
+
+        /// <summary>Tệp video admin chọn từ máy. Rỗng nghĩa là giữ nguyên video đang có.</summary>
+        public IFormFile? VideoFile { get; set; }
+
+        public bool RemoveVideoFile { get; set; }
+
+        public string? VideoEmbedUrl { get; set; }
+
+        public string? VideoPosterUrl { get; set; }
 
         // Parallel arrays from the dynamic form rows.
         public List<string>? ImageUrls { get; set; }
@@ -156,21 +177,101 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         public List<int>? RelatedProductIds { get; set; }
     }
 
+    /// <summary>
+    /// Trả người dùng về đúng cái form họ vừa gõ, kèm lời báo lỗi.
+    ///
+    /// Trước đây mọi nhánh lỗi đều <c>Fail(...) + RedirectToAction(Edit)</c>. Redirect nạp lại
+    /// trang từ CSDL, nên toàn bộ chữ vừa gõ — tên, mô tả, câu chuyện, đặc điểm, thứ tự ảnh,
+    /// biến thể — biến mất sạch, chỉ còn một dòng báo lỗi. Đo được: đổi tên sản phẩm rồi chọn
+    /// nhầm một tệp không phải video, tên quay về giá trị cũ. Người dùng mất công gõ lại từ đầu
+    /// mà không hiểu vì sao.
+    ///
+    /// Ở đây dựng thẳng view-model từ <paramref name="form"/> nên chữ còn nguyên; chỉ những thứ
+    /// không nằm trong form (danh sách danh mục, bộ sưu tập) mới lấy lại từ CSDL.
+    /// </summary>
+    private async Task<IActionResult> QuayLaiForm(ProductForm form, string loi)
+    {
+        Fail(loi);
+
+        var tenLienQuan = form.RelatedProductIds is { Count: > 0 }
+            ? await Db.Products.Where(p => form.RelatedProductIds.Contains(p.Id))
+                .Select(p => new { p.Id, p.Name }).ToListAsync()
+            : [];
+
+        var bienThe = new List<ProductEditViewModel.VariantRow>();
+        var ten = form.VariantNames ?? [];
+        for (var i = 0; i < ten.Count; i++)
+        {
+            bienThe.Add(new ProductEditViewModel.VariantRow
+            {
+                Id = form.VariantIds is { } vid && i < vid.Count ? vid[i] : 0,
+                Name = ten[i],
+                PriceModifier = form.VariantPrices is { } vp && i < vp.Count ? vp[i] : 0,
+                Sku = form.VariantSkus is { } vs && i < vs.Count ? vs[i] : null,
+                StockQuantity = form.VariantStocks is { } vst && i < vst.Count ? vst[i] : 0,
+            });
+        }
+
+        return View("Edit", new ProductEditViewModel
+        {
+            Id = form.Id,
+            Name = form.Name ?? "",
+            Slug = form.Slug,
+            Description = form.Description,
+            Price = form.Price,
+            CompareAtPrice = form.CompareAtPrice,
+            Badge = form.Badge,
+            IsFeatured = form.IsFeatured,
+            IsActive = form.IsActive,
+            SortOrder = form.SortOrder,
+            CategoryId = form.CategoryId,
+            CollectionId = form.CollectionId,
+            MetaTitle = form.MetaTitle,
+            MetaDescription = form.MetaDescription,
+            StoryTitle = form.StoryTitle,
+            StoryBody = form.StoryBody,
+            StoryImageUrl = form.StoryImageUrl,
+            StoryImageUrlMobile = form.StoryImageUrlMobile,
+            StoryImageFocal = form.StoryImageFocal,
+            FeatureTitle = form.FeatureTitle,
+            FeatureBody = form.FeatureBody,
+            FeatureImageUrl = form.FeatureImageUrl,
+            FeatureImageUrlMobile = form.FeatureImageUrlMobile,
+            FeatureImageFocal = form.FeatureImageFocal,
+            // Tệp video vừa chọn không giữ lại được qua một vòng request — trình duyệt không cho
+            // điền sẵn ô chọn tệp. Đường dẫn video đang lưu thì lấy lại từ CSDL để ô không trống.
+            VideoFileUrl = form.Id == 0 ? null : await Db.Products.Where(p => p.Id == form.Id)
+                .Select(p => p.VideoFileUrl).FirstOrDefaultAsync(),
+            VideoEmbedUrl = form.VideoEmbedUrl,
+            VideoPosterUrl = form.VideoPosterUrl,
+            ImageUrls = form.ImageUrls ?? [],
+            Variants = bienThe,
+            RelatedProducts = (form.RelatedProductIds ?? [])
+                .Select(id => new ProductEditViewModel.RelatedProductRow
+                {
+                    Id = id,
+                    Name = tenLienQuan.FirstOrDefault(x => x.Id == id)?.Name ?? "",
+                })
+                .ToList(),
+            Categories = await Db.Categories.OrderBy(c => c.Type).ThenBy(c => c.SortOrder).ToListAsync(),
+            Collections = await Db.Collections.OrderBy(c => c.SortOrder).ToListAsync(),
+        });
+    }
+
     [HttpPost("/admin/san-pham/luu")]
+    [GioiHanTep(MediaService.MaxVideoBytes, MediaService.MaxVideoLabel)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(ProductForm form)
     {
         if (string.IsNullOrWhiteSpace(form.Name))
         {
-            Fail("Tên sản phẩm không được để trống.");
-            return RedirectToAction(form.Id == 0 ? nameof(Create) : nameof(Edit), form.Id == 0 ? null : new { id = form.Id });
+            return await QuayLaiForm(form, "Tên sản phẩm không được để trống.");
         }
 
         var slug = string.IsNullOrWhiteSpace(form.Slug) ? Slug.From(form.Name) : Slug.From(form.Slug);
         if (await Db.Products.AnyAsync(p => p.Slug == slug && p.Id != form.Id))
         {
-            Fail($"Slug \"{slug}\" đã tồn tại.");
-            return RedirectToAction(form.Id == 0 ? nameof(Create) : nameof(Edit), form.Id == 0 ? null : new { id = form.Id });
+            return await QuayLaiForm(form, $"Slug \"{slug}\" đã tồn tại.");
         }
 
         var product = form.Id == 0
@@ -194,9 +295,46 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         product.StoryTitle = Clean(form.StoryTitle);
         product.StoryBody = Clean(form.StoryBody);
         product.StoryImageUrl = Clean(form.StoryImageUrl);
+        product.StoryImageUrlMobile = Clean(form.StoryImageUrlMobile);
+        product.StoryImageFocal = Focal(form.StoryImageFocal);
         product.FeatureTitle = Clean(form.FeatureTitle);
         product.FeatureBody = Clean(form.FeatureBody);
         product.FeatureImageUrl = Clean(form.FeatureImageUrl);
+        product.FeatureImageUrlMobile = Clean(form.FeatureImageUrlMobile);
+        product.FeatureImageFocal = Focal(form.FeatureImageFocal);
+
+        // Video: tệp tải lên thắng link nhúng khi có cả hai — trang sản phẩm chỉ hiện được một.
+        // Đổi video là việc hiếm và nặng, nên chỉ động vào khi admin thực sự chọn tệp mới hoặc
+        // tick xoá; không bao giờ ghi rỗng đè lên video đang có chỉ vì ô tệp để trống.
+        if (form.RemoveVideoFile)
+        {
+            product.VideoFileUrl = null;
+        }
+        if (form.VideoFile is { Length: > 0 })
+        {
+            var upload = await media.UploadVideoAsync(form.VideoFile);
+            if (!upload.Ok)
+            {
+                return await QuayLaiForm(form, upload.Error ?? "Không tải được video.");
+            }
+            product.VideoFileUrl = upload.Url;
+        }
+        // Ô để trống nghĩa là bỏ video; gõ sai KHÔNG có nghĩa là bỏ. Gộp hai thứ này lại chính
+        // là thứ đã xoá mất video của sản phẩm mà vẫn báo "Đã lưu".
+        switch (VideoLink.Doc(form.VideoEmbedUrl, out var linkVideo))
+        {
+            case VideoLink.KetQua.BoTrong:
+                product.VideoEmbedUrl = null;
+                break;
+            case VideoLink.KetQua.HopLe:
+                product.VideoEmbedUrl = linkVideo;
+                break;
+            default:
+                return await QuayLaiForm(form,
+                    "Không nhận ra link video. Chỉ nhận link YouTube hoặc Vimeo — hãy dán nguyên đường dẫn " +
+                    "trên thanh địa chỉ. Link cũ vẫn được giữ nguyên.");
+        }
+        product.VideoPosterUrl = string.IsNullOrWhiteSpace(form.VideoPosterUrl) ? null : form.VideoPosterUrl.Trim();
 
         if (form.Id == 0)
         {
@@ -217,8 +355,6 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         Ok(form.Id == 0 ? "Đã thêm sản phẩm." : "Đã lưu sản phẩm.");
         return RedirectToAction(nameof(Edit), new { id = product.Id });
     }
-
-    private static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
 
     private static void SyncImages(Product product, List<string> urls)
     {
@@ -322,6 +458,47 @@ public class ProductsController(HoaiiDbContext db, AdminAuthService auth) : Base
         Ok(product.IsActive ? "Đã hiện sản phẩm." : "Đã ẩn sản phẩm.");
         return RedirectToAction(nameof(Index));
     }
+
+    /// <summary>Ẩn/hiện nhiều sản phẩm một lượt. Đặt hẳn trạng thái thay vì đảo từng cái: khi
+    /// chọn cả nhóm đang lẫn ẩn và hiện, "đảo" cho ra kết quả không ai đoán được.</summary>
+    [HttpPost("/admin/san-pham/an-hien-nhieu")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BulkToggleActive(int[] ids, bool active, string? returnUrl)
+    {
+        if (ids is null || ids.Length == 0)
+        {
+            Fail("Chưa chọn sản phẩm nào.");
+            return Redirect(SafeReturn(returnUrl));
+        }
+
+        var products = await Db.Products.Where(p => ids.Contains(p.Id)).ToListAsync();
+        var changed = 0;
+        foreach (var product in products)
+        {
+            if (product.IsActive == active) continue;
+            product.IsActive = active;
+            product.UpdatedAt = DateTime.UtcNow;
+            changed++;
+        }
+
+        if (changed > 0)
+        {
+            auth.Audit(active ? "Hiện sản phẩm hàng loạt" : "Ẩn sản phẩm hàng loạt", nameof(Product), null,
+                $"{changed} sản phẩm");
+            await Db.SaveChangesAsync();
+        }
+
+        Ok(changed == 0
+            ? "Các sản phẩm đã chọn vốn đã ở trạng thái đó."
+            : $"Đã {(active ? "hiện" : "ẩn")} {changed} sản phẩm.");
+        return Redirect(SafeReturn(returnUrl));
+    }
+
+    /// <summary>Chỉ nhận đường dẫn nội bộ, để tham số trên URL không đẩy admin ra site khác.</summary>
+    private static string SafeReturn(string? returnUrl) =>
+        !string.IsNullOrWhiteSpace(returnUrl) && returnUrl.StartsWith('/') && !returnUrl.StartsWith("//")
+            ? returnUrl
+            : "/admin/san-pham";
 
     [HttpPost("/admin/san-pham/{id:int}/xoa")]
     [Authorize(Policy = AdminAuth.PolicyOwner)]

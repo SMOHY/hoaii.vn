@@ -1,17 +1,70 @@
 @*
-    Reusable CMS image field. Pass a tuple (Label, Name, Id, Value).
+    Reusable CMS image field. Pass an ImageFieldModel.
     Requires _PickerModal to be rendered once on the page and admin-imagefield.js loaded.
-*@
-@model (string Label, string Name, string Id, string? Value)
 
-<div class="admin-field">
+    A slot with no mobile override and no focal point renders exactly the markup it always did:
+    one preview, one input, one "Chọn từ thư viện" button. The tab bar only appears where the
+    call site asked for a mobile override, so the number of visible fields never doubles.
+*@
+@using Hoaii.Web.Areas.Admin.Models
+@model ImageFieldModel
+
+<div class="admin-field admin-imgslot" data-imgslot>
     <label>@Model.Label</label>
-    <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div class="admin-image-item__thumb" data-preview-for="@Model.Id"
-             style="width:150px;height:100px;border:1px solid var(--color-grey-300);border-radius:6px;flex:none;"></div>
-        <div style="flex:1;">
-            <input type="text" id="@Model.Id" name="@Model.Name" value="@Model.Value" data-image-input placeholder="/images/..." style="margin-bottom:8px;" />
-            <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker data-target="@Model.Id">Chọn từ thư viện</button>
+
+    @if (Model.HasMobile)
+    {
+        <div class="admin-imgslot__tabs" role="tablist">
+            <button type="button" class="admin-imgslot__tab is-active" data-imgtab="desktop" role="tab" aria-selected="true">Desktop</button>
+            <button type="button" class="admin-imgslot__tab" data-imgtab="mobile" role="tab" aria-selected="false">
+                Mobile
+                <span class="admin-imgslot__dot" data-imgslot-badge style="@(string.IsNullOrWhiteSpace(Model.MobileValue) ? "display:none" : null)" title="Đang dùng ảnh riêng"></span>
+            </button>
+        </div>
+    }
+
+    <div class="admin-imgslot__pane is-active" data-imgpane="desktop">
+        <div class="admin-imgslot__row">
+            <div class="admin-image-item__thumb admin-imgslot__thumb @(Model.HasFocal ? "admin-imgslot__thumb--focal" : null)"
+                 data-preview-for="@Model.Id"
+                 @(Model.HasFocal ? "data-focal-target=" + Model.FocalId : null)>
+                @if (Model.HasFocal)
+                {
+                    <span class="admin-imgslot__focal" data-focal-dot></span>
+                }
+            </div>
+            <div class="admin-imgslot__controls">
+                <input type="text" id="@Model.Id" name="@Model.Name" value="@Model.Value" data-image-input placeholder="/images/..." />
+                <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker data-target="@Model.Id">Chọn từ thư viện</button>
+                @if (Model.HasFocal)
+                {
+                    <input type="hidden" id="@Model.FocalId" name="@Model.FocalName" value="@Model.FocalValue" data-focal-input />
+                    <p class="admin-field__hint">Bấm vào ảnh để chọn điểm quan trọng — phần đó luôn được giữ lại khi ảnh bị cắt.
+                        <button type="button" class="admin-imgslot__link" data-focal-reset>Về giữa ảnh</button>
+                    </p>
+                }
+            </div>
         </div>
     </div>
+
+    @if (Model.HasMobile)
+    {
+        <div class="admin-imgslot__pane" data-imgpane="mobile">
+            @* Two states: sharing the desktop image (the default), or an override that can be cleared. *@
+            <div class="admin-imgslot__shared" data-imgslot-shared style="@(string.IsNullOrWhiteSpace(Model.MobileValue) ? null : "display:none")">
+                <p class="admin-field__hint" style="margin:0 0 8px;">Đang dùng chung ảnh desktop.</p>
+                <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-imgslot-override>Đặt ảnh riêng cho mobile</button>
+            </div>
+            <div class="admin-imgslot__row" data-imgslot-override-box style="@(string.IsNullOrWhiteSpace(Model.MobileValue) ? "display:none" : null)">
+                <div class="admin-image-item__thumb admin-imgslot__thumb admin-imgslot__thumb--mobile" data-preview-for="@Model.MobileId"></div>
+                <div class="admin-imgslot__controls">
+                    <input type="text" id="@Model.MobileId" name="@Model.MobileName" value="@Model.MobileValue" data-image-input placeholder="/images/..." />
+                    <button type="button" class="admin-btn admin-btn--secondary admin-btn--sm" data-open-picker data-target="@Model.MobileId">Chọn từ thư viện</button>
+                    <p class="admin-field__hint">Chỉ hiện trên màn hình hẹp hơn 768px.
+                        <button type="button" class="admin-imgslot__link" data-imgslot-share>Dùng chung ảnh desktop</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
 </div>

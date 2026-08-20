@@ -75,4 +75,13 @@ public static class AdminDisplay
 
     /// <summary>"1.234.000đ"</summary>
     public static string Money(decimal amount) => amount.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + "đ";
+
+    /// <summary>Dung lượng tệp cho mắt người. 0 byte hiện thành "0 B" chứ không làm tròn đi —
+    /// đó chính là con số cần nhìn thấy khi một ảnh tải lên bị ghi hỏng.</summary>
+    public static string FileSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024d:0.#} KB";
+        return $"{bytes / (1024d * 1024d):0.#} MB";
+    }
 }

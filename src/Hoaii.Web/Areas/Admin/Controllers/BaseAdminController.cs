@@ -18,6 +18,14 @@ public abstract class BaseAdminController(HoaiiDbContext db) : Controller
 {
     protected readonly HoaiiDbContext Db = db;
 
+    /// <summary>An optional text field off a CMS form: blank and whitespace both mean "not set",
+    /// which the storefront reads as "fall back to the default" — never an empty string.</summary>
+    protected static string? Clean(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
+
+    /// <summary>Focal point straight off a CMS form, dropped unless it is a real percentage pair
+    /// — see FocalPoint for why this is validated rather than trusted.</summary>
+    protected static string? Focal(string? value) => Hoaii.Web.Services.FocalPoint.Sanitise(value);
+
     protected void Ok(string message) => TempData["AdminOk"] = message;
     protected void Fail(string message) => TempData["AdminError"] = message;
 

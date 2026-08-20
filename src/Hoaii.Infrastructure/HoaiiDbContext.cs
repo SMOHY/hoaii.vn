@@ -47,6 +47,8 @@ public class HoaiiDbContext(DbContextOptions<HoaiiDbContext> options) : DbContex
     public DbSet<Voucher> Vouchers => Set<Voucher>();
     public DbSet<PageContent> PageContents => Set<PageContent>();
     public DbSet<PartnerLogo> PartnerLogos => Set<PartnerLogo>();
+    public DbSet<PartnerDocument> PartnerDocuments => Set<PartnerDocument>();
+    public DbSet<HomeServiceImage> HomeServiceImages => Set<HomeServiceImage>();
     public DbSet<ContactSubmission> ContactSubmissions => Set<ContactSubmission>();
     public DbSet<WholesaleLead> WholesaleLeads => Set<WholesaleLead>();
     public DbSet<NewsletterSubscriber> NewsletterSubscribers => Set<NewsletterSubscriber>();

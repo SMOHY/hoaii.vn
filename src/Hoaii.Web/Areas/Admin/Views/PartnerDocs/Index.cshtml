@@ -1,0 +1,79 @@
+@using Hoaii.Web.Areas.Admin.Models
+@model List<Hoaii.Domain.Entities.PartnerDocument>
+@{
+    ViewData["Title"] = "Tài liệu đại lý";
+}
+
+<div class="admin-card">
+    <h2 class="admin-card__title">Thêm tài liệu</h2>
+    <p style="color:var(--color-grey-500);margin:0 0 16px;">
+        Tệp PDF hiện ở cuối trang Đối tác để đại lý và cộng tác viên tải về. Tối đa 20MB mỗi tệp.
+    </p>
+    <form method="post" action="/admin/tai-lieu-dai-ly/them" enctype="multipart/form-data" class="admin-form admin-form--wide">
+        @Html.AntiForgeryToken()
+        <div class="admin-form-row">
+            <div class="admin-field">
+                <label>Tên tài liệu</label>
+                <input type="text" name="title" required placeholder="Chính sách hoa hồng đại lý" />
+            </div>
+            <div class="admin-field">
+                <label>Mùa (tuỳ chọn)</label>
+                <input type="text" name="season" placeholder="Trung thu 2026" />
+            </div>
+            <div class="admin-field">
+                <label>Thứ tự</label>
+                <input type="number" name="sortOrder" value="0" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Tệp PDF</label>
+            <input type="file" name="file" accept="application/pdf" required
+                   data-max-bytes="@Hoaii.Web.Services.Admin.MediaService.MaxDocBytes"
+                   data-max-label="@Hoaii.Web.Services.Admin.MediaService.MaxDocLabel" />
+        </div>
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn--primary">Thêm tài liệu</button>
+        </div>
+    </form>
+</div>
+
+<div class="admin-card">
+    <h2 class="admin-card__title">Tài liệu đã có (@Model.Count)</h2>
+    @if (Model.Count == 0)
+    {
+        <p style="color:var(--color-grey-500);">Chưa có tài liệu nào. Trang Đối tác sẽ không hiện mục tải xuống.</p>
+    }
+    else
+    {
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead><tr><th>Tên</th><th>Mùa</th><th class="num">Dung lượng</th><th>Trạng thái</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            <td><a class="admin-row-link" href="@d.FileUrl" target="_blank" rel="noopener">@d.Title</a></td>
+                            <td>@(string.IsNullOrEmpty(d.Season) ? "—" : d.Season)</td>
+                            <td class="num">@AdminDisplay.FileSize(d.SizeBytes)</td>
+                            <td><span class="admin-badge admin-badge--@(d.IsPublished ? "green" : "grey")">@(d.IsPublished ? "Đang hiện" : "Đã ẩn")</span></td>
+                            <td class="num" style="white-space:nowrap;">
+                                <form method="post" action="/admin/tai-lieu-dai-ly/@d.Id/an-hien" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--secondary admin-btn--sm">@(d.IsPublished ? "Ẩn" : "Hiện")</button>
+                                </form>
+                                <form method="post" action="/admin/tai-lieu-dai-ly/@d.Id/xoa" style="display:inline;" data-confirm="Xóa tài liệu này? Tệp trên máy chủ cũng bị xóa.">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-file-limit.js" asp-append-version="true"></script>
+}

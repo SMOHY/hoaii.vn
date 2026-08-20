@@ -1,3 +1,4 @@
+@using Hoaii.Web.Services
 @model IReadOnlyList<Hoaii.Web.Models.Home.HeroSlideViewModel>
 @* Hero — see design-specs/home/01-hero-and-benefits.md.
    The arrows and dots only render when there is more than one slide; with a single image
@@ -15,7 +16,7 @@
                  data-subtitle="@Model[i].Subtitle"
                  data-mobile-title="@Model[i].MobileTitle"
                  data-mobile-subtitle="@Model[i].MobileSubtitle"
-                 style="background-image:url('@Model[i].ImageUrl')"
+                 style="@CssImage.Background(Model[i].ImageUrl, Model[i].MobileImageUrl, Model[i].ImageFocal)"
                  role="img"
                  aria-label="@Model[i].Title"></div>
         }

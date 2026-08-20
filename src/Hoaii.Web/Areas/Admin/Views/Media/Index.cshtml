@@ -1,6 +1,7 @@
 @model List<Hoaii.Domain.Entities.MediaAsset>
 @{
     ViewData["Title"] = "Thư viện ảnh";
+    var missing = ViewBag.Missing as HashSet<int> ?? new HashSet<int>();
 }
 
 <div class="admin-card">
@@ -17,6 +18,13 @@
 
 <div class="admin-card">
     <h2 class="admin-card__title">Ảnh đã tải (@Model.Count)</h2>
+    @if (missing.Count > 0)
+    {
+        <p style="color:var(--color-brand-red);margin:0 0 12px;">
+            @missing.Count ảnh không còn tệp trên máy chủ. Nếu ảnh vẫn trắng mà ở đây không báo thiếu tệp,
+            nghĩa là tệp có nhưng đường dẫn <code>/uploads</code> đang trỏ sai — báo kỹ thuật.
+        </p>
+    }
     @if (Model.Count == 0)
     {
         <p style="color:var(--color-grey-500);">Chưa có ảnh nào.</p>
@@ -27,11 +35,42 @@
             @foreach (var m in Model)
             {
                 <div style="border:1px solid var(--color-grey-200);border-radius:var(--radius-sm);overflow:hidden;background:#fff;">
-                    <div style="aspect-ratio:1;background:var(--color-grey-50) url('@m.Url') center/contain no-repeat;"></div>
+                    @* An ô trắng không nói lên điều gì: nếu tệp không còn trên đĩa thì nói thẳng,
+                       còn nếu tệp có mà ảnh vẫn trắng thì lỗi nằm ở đường dẫn /uploads. *@
+                    @if (missing.Contains(m.Id))
+                    {
+                        <div style="aspect-ratio:1;background:var(--color-grey-50);display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;">
+                            <span style="font-size:12px;color:var(--color-brand-red);">Không tìm thấy tệp trên máy chủ</span>
+                        </div>
+                    }
+                    else
+                    {
+                        @* Dùng <img> chứ không phải background-image: ảnh nền hỏng thì im lặng
+                           tuyệt đối, người dùng chỉ thấy ô trắng và không biết vì sao. Thẻ img
+                           có onerror nên nói được là tải hỏng. *@
+                        @* Lời báo lỗi được dựng sẵn ngay trong markup và ẩn đi; onerror chỉ đảo
+                           hai thuộc tính hidden. Bản trước dựng thẻ span bằng chuỗi HTML đặt trong
+                           thuộc tính onerror — ba lớp thoát ký tự lồng nhau (thuộc tính HTML →
+                           chuỗi JS → HTML), dấu nháy trong style='...' đóng chuỗi JS sớm, trình
+                           duyệt ném "missing ) after argument list" và lời báo lỗi không bao giờ
+                           hiện ra. Đúng cái ô trắng câm mà đoạn này sinh ra để chống. *@
+                        <div style="aspect-ratio:1;background:var(--color-grey-50);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                            <img src="@m.Url" alt="@m.FileName" loading="lazy"
+                                 style="max-width:100%;max-height:100%;object-fit:contain;"
+                                 onerror="this.hidden=true;this.nextElementSibling.hidden=false" />
+                            <span hidden style="font-size:12px;color:var(--color-brand-red);text-align:center;padding:12px;">
+                                Tải ảnh hỏng — báo kỹ thuật
+                            </span>
+                        </div>
+                    }
                     <div style="padding:8px;">
                         <div style="font-size:12px;color:var(--color-grey-600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="@m.FileName">@m.FileName</div>
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-                            <span style="font-size:11px;color:var(--color-grey-400);">@(m.Width>0 ? $"{m.Width}×{m.Height}" : "SVG")</span>
+                            @* Hiện cả dung lượng: một tệp 0 B là dấu hiệu ảnh ghi hỏng lúc tải lên,
+                               nhìn kích thước pixel không thấy được điều đó. *@
+                            <span style="font-size:11px;color:@(m.SizeBytes == 0 ? "var(--color-brand-red)" : "var(--color-grey-400)");">
+                                @(m.Width > 0 ? $"{m.Width}×{m.Height}" : "SVG") · @AdminDisplay.FileSize(m.SizeBytes)
+                            </span>
                             <form method="post" action="/admin/thu-vien-anh/@m.Id/xoa" data-confirm="Xóa ảnh này?">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" style="padding:3px 8px;">Xóa</button>

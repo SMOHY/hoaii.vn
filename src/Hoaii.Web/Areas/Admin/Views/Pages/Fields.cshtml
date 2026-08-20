@@ -1,4 +1,5 @@
 @using Hoaii.Web.Services
+@using Hoaii.Web.Areas.Admin.Models
 @using Hoaii.Domain.Entities
 @model IReadOnlyDictionary<string, string>
 @{
@@ -20,9 +21,30 @@
         @Html.AntiForgeryToken()
         @foreach (var f in fields)
         {
+            @* The mobile half of an image pair and its focal point are shown inside the desktop
+               image's own block, so they must not also appear as rows of their own — that is what
+               made the list twice as long as it needed to be. *@
+            if (f.Kind == FieldKind.Focal || (f.Kind == FieldKind.Image && PageContentKeys.IsMobileKey(f.Key)))
+            {
+                continue;
+            }
+
             if (f.Kind == FieldKind.Image)
             {
-                <partial name="_ImageField" model="@((f.Label, $"f[{f.Key}]", f.Key, (string?)Model[f.Key]))" />
+                var mobileKey = PageContentKeys.MobileKeyFor(f.Key);
+                var focalKey = PageContentKeys.FocalKeyFor(f.Key);
+                var hasMobile = Model.ContainsKey(mobileKey);
+                var hasFocal = Model.ContainsKey(focalKey);
+                var slot = new ImageFieldModel(f.Label, $"f[{f.Key}]", f.Key, Model[f.Key])
+                {
+                    MobileName = hasMobile ? $"f[{mobileKey}]" : null,
+                    MobileId = hasMobile ? mobileKey : null,
+                    MobileValue = hasMobile ? Model[mobileKey] : null,
+                    FocalName = hasFocal ? $"f[{focalKey}]" : null,
+                    FocalId = hasFocal ? focalKey : null,
+                    FocalValue = hasFocal ? Model[focalKey] : null
+                };
+                <partial name="_ImageField" model="slot" />
             }
             else
             {

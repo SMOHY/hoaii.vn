@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.HomeBenefit
 @{
     var isNew = Model.Id == 0;
@@ -11,7 +12,7 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 
-        <partial name="_ImageField" model="@(("Biểu tượng", "iconPath", "benefit-icon", Model.IconPath))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Biểu tượng", "iconPath", "benefit-icon", Model.IconPath))" />
 
         <div class="admin-field">
             <label>Tiêu đề</label>

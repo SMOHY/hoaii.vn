@@ -122,10 +122,10 @@ app.UseResponseCompression();
 // never sees files MediaService writes to wwwroot/uploads at runtime. Without this, every
 // admin-uploaded image (media library, product photos, blog images) 404s and shows as a broken/
 // blank image on the storefront and in the picker, even though the upload itself "succeeded".
-Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, "uploads"));
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "uploads")),
+    // Same resolver MediaService writes through — see SiteWebRoot for why the fallback matters.
+    FileProvider = new PhysicalFileProvider(Hoaii.Web.Services.SiteWebRoot.Uploads(app.Environment)),
     RequestPath = "/uploads",
 });
 

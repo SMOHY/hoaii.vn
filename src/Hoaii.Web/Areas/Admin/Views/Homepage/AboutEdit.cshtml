@@ -1,3 +1,4 @@
+@using Hoaii.Web.Areas.Admin.Models
 @model Hoaii.Domain.Entities.HomeAboutCard
 @{
     var isNew = Model.Id == 0;
@@ -16,7 +17,7 @@
             <input type="text" name="caption" value="@Model.Caption" required autofocus />
         </div>
 
-        <partial name="_ImageField" model="@(("Ảnh", "imageUrl", "about-img", Model.ImageUrl))" />
+        <partial name="_ImageField" model="@(new ImageFieldModel("Ảnh", "imageUrl", "about-img", Model.ImageUrl))" />
 
         <div class="admin-form-row">
             <div class="admin-field">

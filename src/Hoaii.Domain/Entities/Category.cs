@@ -39,6 +39,13 @@ public class Category
     public string? PromoCtaUrl { get; set; }
     public string? PromoImageUrl { get; set; }
 
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? PromoImageUrlMobile { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? PromoImageFocal { get; set; }
+
     /// <summary>Nền của dải campaign. Figma đổi màu theo từng danh mục — Quà tết #AA8656,
     /// Quà trung thu #AF2234, các trang còn lại #E5D9CB — nên đây là dữ liệu, không phải một
     /// màu cố định trong CSS. Để trống thì dùng mặc định trong stylesheet.</summary>
@@ -54,11 +61,25 @@ public class Category
     /// the design draws instead of a broken image.</summary>
     public string? CoverImageUrl { get; set; }
 
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? CoverImageUrlMobile { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? CoverImageFocal { get; set; }
+
     public CategoryHeroStyle HeroStyle { get; set; }
 
     /// <summary>Wide image behind the banner hero (node 1269:39703). Figma leaves every one of the
     /// eight banners empty, so null renders the flat block the design draws.</summary>
     public string? BannerImageUrl { get; set; }
+
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? BannerImageUrlMobile { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? BannerImageFocal { get; set; }
 
     /// <summary>Middle breadcrumb crumb — Figma shows three levels on the occasion listings
     /// (node 1269:39709). Null means the category hangs off the home page directly. Stored as a

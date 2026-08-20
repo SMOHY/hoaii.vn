@@ -37,7 +37,8 @@
     <div class="occ-section__cover @(Model.CoverImageUrl is null ? "occ-section__cover--empty" : "")">
         @if (Model.CoverImageUrl is not null)
         {
-            <img src="@Model.CoverImageUrl" alt="@Model.Title" loading="lazy" />
+            <partial name="_ResponsiveImg" model="@(new ResponsiveImage(Model.CoverImageUrl, Model.Title)
+                { MobileSrc = Model.CoverImageUrlMobile, Focal = Model.CoverImageFocal })" />
         }
     </div>
 </section>

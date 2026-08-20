@@ -7,6 +7,13 @@ public class HomeHeroSlide
 {
     public int Id { get; set; }
     public required string ImageUrl { get; set; }
+
+    /// <summary>Optional replacement shown below 768px. Empty means the desktop image is used on
+    /// every screen — how every row starts out, so nothing changes until an admin sets one.</summary>
+    public string? MobileImageUrl { get; set; }
+
+    /// <summary>Focal point as a CSS object-position pair ("50% 30%"). Empty means centre.</summary>
+    public string? ImageFocal { get; set; }
     public string Title { get; set; } = "";
     public string Subtitle { get; set; } = "";
     public string MobileTitle { get; set; } = "";
@@ -44,6 +51,10 @@ public class HomeFeaturedTile
 public class HomeServiceTab
 {
     public int Id { get; set; }
+
+    /// <summary>Ảnh phụ chạy luân phiên sau ảnh chính — xem HomeServiceImage.</summary>
+    public List<HomeServiceImage> Images { get; set; } = [];
+
     public required string Key { get; set; }
     public string Label { get; set; } = "";
     public string IconSvg { get; set; } = "";

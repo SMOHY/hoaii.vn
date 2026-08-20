@@ -1,3 +1,4 @@
+using Hoaii.Web.Services;
 using Hoaii.Infrastructure;
 using Hoaii.Web.Models.Category;
 using Hoaii.Web.Models.Product;
@@ -104,6 +105,9 @@ public class ProductController(HoaiiDbContext db) : Controller
                 : product.Description is { Length: > 0 } desc && desc.Length > 160 ? desc[..157] + "..."
                 : product.Description,
             GalleryImages = galleryImages,
+            VideoFileUrl = product.VideoFileUrl,
+            VideoEmbedUrl = VideoLink.Embed(product.VideoEmbedUrl),
+            VideoPosterUrl = product.VideoPosterUrl,
             BoxOptions = product.Variants
                 .Select(v => new BoxOptionViewModel { Id = v.Id, Label = v.Name, Price = product.Price + v.PriceModifier })
                 .ToList(),
@@ -116,6 +120,8 @@ public class ProductController(HoaiiDbContext db) : Controller
             StoryBody = product.StoryBody is { Length: > 0 } sb ? sb
                 : $"{product.Name} được HOÀI chế tác tỉ mỉ, gói ghém tinh thần văn hóa Việt trong từng chi tiết — từ nguyên liệu chọn lọc đến bao bì thủ công, mang đến một món quà trọn vẹn ý nghĩa.",
             StoryImageUrl = product.StoryImageUrl is { Length: > 0 } si ? si : "/images/pdp/story.jpg",
+            StoryImageUrlMobile = product.StoryImageUrlMobile,
+            StoryImageFocal = product.StoryImageFocal,
             FeatureTitle = product.FeatureTitle is { Length: > 0 } ft ? ft : "Đặc điểm",
             // No fallback here on purpose. This block holds the box dimensions, and the old
             // default printed one product's measurements on all 45 — a shopper reading
@@ -123,6 +129,8 @@ public class ProductController(HoaiiDbContext db) : Controller
             // something false. Empty hides the block until someone enters the real numbers.
             FeatureBody = product.FeatureBody ?? "",
             FeatureImageUrl = product.FeatureImageUrl is { Length: > 0 } fi ? fi : "/images/pdp/feature.jpg",
+            FeatureImageUrlMobile = product.FeatureImageUrlMobile,
+            FeatureImageFocal = product.FeatureImageFocal,
             Collection = collection,
             RelatedProducts = related.Select(p => ProductCardMapper.Map(p, "related")).ToList(),
         };

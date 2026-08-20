@@ -1,5 +1,6 @@
 using Hoaii.Domain.Entities;
 using Hoaii.Infrastructure;
+using Hoaii.Web.Services;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
@@ -16,22 +17,9 @@ public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvi
     public const long MaxBytes = 5 * 1024 * 1024;
     public const string MaxSizeLabel = "5MB";
 
-    /// <summary>WebRootPath is null when the host can't find a wwwroot next to the entry assembly
-    /// (e.g. the exe launched straight out of bin/), which used to make every upload throw a
-    /// NullReferenceException deep in Path.Combine. Fall back to the content root.</summary>
-    private string WebRoot
-    {
-        get
-        {
-            var root = env.WebRootPath;
-            if (string.IsNullOrEmpty(root))
-            {
-                root = Path.Combine(env.ContentRootPath, "wwwroot");
-            }
-            Directory.CreateDirectory(root);
-            return root;
-        }
-    }
+    /// <summary>Resolved in one shared place so uploads are always written to the same folder
+    /// the /uploads route serves from — see SiteWebRoot.</summary>
+    private string WebRoot => SiteWebRoot.For(env);
 
     public sealed record UploadResult(bool Ok, MediaAsset? Asset, string? Error);
 
@@ -171,5 +159,95 @@ public class MediaService(HoaiiDbContext db, AdminAuthService auth, IWebHostEnvi
         auth.Audit("Xóa ảnh", nameof(MediaAsset), id, asset.FileName);
         await db.SaveChangesAsync();
         return true;
+    }
+
+    // ---------- Tệp không phải ảnh: video giới thiệu và tài liệu PDF ----------
+    //
+    // Không đưa vào MediaAssets: thư viện ảnh là nơi chọn ảnh để chèn, trộn video và PDF vào đó
+    // chỉ làm bộ chọn ảnh rối thêm. Hai hàm dưới chỉ ghi tệp và trả về đường dẫn; ai gọi thì tự
+    // quyết lưu đường dẫn đó ở đâu.
+
+    public const long MaxVideoBytes = 60 * 1024 * 1024;
+    public const string MaxVideoLabel = "60MB";
+    public const long MaxDocBytes = 20 * 1024 * 1024;
+    public const string MaxDocLabel = "20MB";
+
+    public sealed record FileResult(bool Ok, string? Url, string? FileName, long SizeBytes, string? Error);
+
+    /// <summary>Video MP4/WebM. Kiểm bằng byte đầu tệp chứ không tin phần mở rộng.</summary>
+    public async Task<FileResult> UploadVideoAsync(IFormFile file) =>
+        await SaveRawAsync(file, "video", MaxVideoBytes, MaxVideoLabel, bytes =>
+        {
+            // MP4/MOV: "ftyp" ở byte thứ 4. WebM: chữ ký EBML.
+            if (bytes.Length >= 12 && bytes[4] == 0x66 && bytes[5] == 0x74 && bytes[6] == 0x79 && bytes[7] == 0x70) return ".mp4";
+            if (bytes.Length >= 4 && bytes[0] == 0x1A && bytes[1] == 0x45 && bytes[2] == 0xDF && bytes[3] == 0xA3) return ".webm";
+            return null;
+        }, "Chỉ nhận video MP4 hoặc WebM.");
+
+    /// <summary>Tài liệu PDF.</summary>
+    public async Task<FileResult> UploadDocumentAsync(IFormFile file) =>
+        await SaveRawAsync(file, "tai-lieu", MaxDocBytes, MaxDocLabel, bytes =>
+            bytes.Length >= 5 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46
+                ? ".pdf"
+                : null,
+            "Chỉ nhận tệp PDF.");
+
+    private async Task<FileResult> SaveRawAsync(
+        IFormFile file, string folder, long maxBytes, string maxLabel,
+        Func<byte[], string?> sniff, string wrongTypeMessage)
+    {
+        if (file is null || file.Length == 0)
+        {
+            return new FileResult(false, null, null, 0, "Chưa chọn tệp.");
+        }
+        if (file.Length > maxBytes)
+        {
+            return new FileResult(false, null, null, 0, $"Tệp vượt quá {maxLabel}.");
+        }
+
+        // Chỉ cần vài byte đầu để nhận dạng; phần còn lại chép thẳng ra đĩa nên video 60MB
+        // không phải nằm hết trong bộ nhớ.
+        var head = new byte[16];
+        await using (var peek = file.OpenReadStream())
+        {
+            _ = await peek.ReadAsync(head);
+        }
+
+        var ext = sniff(head);
+        if (ext is null)
+        {
+            return new FileResult(false, null, null, 0, wrongTypeMessage);
+        }
+
+        var now = DateTime.UtcNow;
+        var relDir = $"/uploads/{folder}/{now:yyyy}";
+        var absDir = Path.Combine(SiteWebRoot.For(env), "uploads", folder, now.ToString("yyyy"));
+        Directory.CreateDirectory(absDir);
+
+        var name = $"{Guid.NewGuid():N}{ext}";
+        var abs = Path.Combine(absDir, name);
+        await using (var input = file.OpenReadStream())
+        await using (var output = File.Create(abs))
+        {
+            await input.CopyToAsync(output);
+        }
+
+        var size = new FileInfo(abs).Length;
+        return new FileResult(true, $"{relDir}/{name}", Path.GetFileName(file.FileName), size, null);
+    }
+
+    /// <summary>Xoá một tệp đã tải lên theo đường dẫn công khai của nó. Không có tệp thì thôi,
+    /// không báo lỗi — bản ghi trong DB mới là thứ người dùng nhìn thấy.</summary>
+    public void DeleteFile(string? publicUrl)
+    {
+        if (string.IsNullOrWhiteSpace(publicUrl) || !publicUrl.StartsWith("/uploads/", StringComparison.Ordinal))
+        {
+            return;
+        }
+        var abs = Path.Combine(SiteWebRoot.For(env), publicUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+        if (File.Exists(abs))
+        {
+            File.Delete(abs);
+        }
     }
 }

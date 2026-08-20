@@ -263,10 +263,22 @@ namespace Hoaii.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BannerImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BannerImageUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BannerImageUrlMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CoverImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverImageUrlMobile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -307,7 +319,13 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<string>("PromoEyebrow")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PromoImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PromoImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PromoImageUrlMobile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PromoTitle")
@@ -499,6 +517,9 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -508,6 +529,9 @@ namespace Hoaii.Infrastructure.Migrations
 
                     b.Property<string>("LinkUrl")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -558,7 +582,13 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<string>("PromoEyebrow")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PromoImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PromoImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PromoImageUrlMobile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PromoTitle")
@@ -593,6 +623,9 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<int>("CollectionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -602,6 +635,9 @@ namespace Hoaii.Infrastructure.Migrations
 
                     b.Property<string>("LinkUrl")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -879,12 +915,18 @@ namespace Hoaii.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<string>("MobileImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MobileSubtitle")
                         .IsRequired()
@@ -908,6 +950,34 @@ namespace Hoaii.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HomeHeroSlides");
+                });
+
+            modelBuilder.Entity("Hoaii.Domain.Entities.HomeServiceImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Focal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HomeServiceTabId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HomeServiceTabId");
+
+                    b.ToTable("HomeServiceImages");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.HomeServiceTab", b =>
@@ -1368,6 +1438,46 @@ namespace Hoaii.Infrastructure.Migrations
                     b.ToTable("PageContents");
                 });
 
+            modelBuilder.Entity("Hoaii.Domain.Entities.PartnerDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Season")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PartnerDocuments");
+                });
+
             modelBuilder.Entity("Hoaii.Domain.Entities.PartnerLogo", b =>
                 {
                     b.Property<int>("Id")
@@ -1488,7 +1598,13 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<string>("FeatureBody")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FeatureImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FeatureImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FeatureImageUrlMobile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FeatureTitle")
@@ -1525,7 +1641,13 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Property<string>("StoryBody")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StoryImageFocal")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("StoryImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StoryImageUrlMobile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StoryTitle")
@@ -1533,6 +1655,15 @@ namespace Hoaii.Infrastructure.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("VideoEmbedUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VideoFileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VideoPosterUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -2172,6 +2303,17 @@ namespace Hoaii.Infrastructure.Migrations
                     b.Navigation("Column");
                 });
 
+            modelBuilder.Entity("Hoaii.Domain.Entities.HomeServiceImage", b =>
+                {
+                    b.HasOne("Hoaii.Domain.Entities.HomeServiceTab", "HomeServiceTab")
+                        .WithMany("Images")
+                        .HasForeignKey("HomeServiceTabId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HomeServiceTab");
+                });
+
             modelBuilder.Entity("Hoaii.Domain.Entities.MediaAsset", b =>
                 {
                     b.HasOne("Hoaii.Domain.Entities.AdminUser", "UploadedByAdminUser")
@@ -2376,6 +2518,11 @@ namespace Hoaii.Infrastructure.Migrations
             modelBuilder.Entity("Hoaii.Domain.Entities.FooterMenuColumn", b =>
                 {
                     b.Navigation("Links");
+                });
+
+            modelBuilder.Entity("Hoaii.Domain.Entities.HomeServiceTab", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Hoaii.Domain.Entities.MegaMenuColumn", b =>
