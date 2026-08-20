@@ -146,6 +146,14 @@ Ngoài ra còn hai việc kỹ thuật nên làm **sau** bàn giao: nâng ImageS
   Nhãn nút đã được gate sẵn sau cờ `VnpayEnabled`: bật cờ lên là nút đổi chữ, nên phần giao diện
   đã sẵn sàng chờ tích hợp.
 - **Cách xử lý đề xuất:** quyết định tích hợp VNPay thật hay bỏ hẳn hai mục này khỏi thiết kế.
+- **Cập nhật 2026-08-18 (đã tích hợp code):** VnpayService ký/xác thực request theo đúng tài liệu
+  VNPAY (HMACSHA512, đối chiếu khớp ví dụ thật trên trang docs của VNPAY), CheckoutController tạo
+  đơn ở trạng thái `Pending/Unpaid` rồi chuyển hướng sang VNPAY, VnpayController xử lý cả Return URL
+  (khách quay lại) lẫn IPN (server-to-server, nguồn xác nhận chính thức) — không kênh nào được phép
+  đánh dấu đơn "đã thanh toán" nếu chữ ký hoặc số tiền sai. Đã test đầy đủ luồng thành công/thất
+  bại/giả mạo chữ ký/giả mạo số tiền trên local. **Còn thiếu:** vnp_TmnCode thật (chủ shop cung cấp
+  vnp_HashSecret sandbox, chưa có TmnCode) — cờ `pay_vnpay_enabled` vẫn tắt trên production nên
+  khách chưa thấy tùy chọn này cho tới khi điền đủ ở Admin > Thanh toán và tự bật.
 - **Cần người dùng xác nhận:** có — đây là câu hỏi còn treo từ kế hoạch admin.
 
 ### WF-021 — Figma không có trang listing cho Valentine

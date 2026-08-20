@@ -55,6 +55,7 @@ public static class AdminDisplay
     {
         PaymentMethod.BankTransfer => "Chuyển khoản ngân hàng",
         PaymentMethod.CashOnDelivery => "Thanh toán khi nhận hàng",
+        PaymentMethod.Vnpay => "VNPAY",
         _ => m.ToString(),
     };
 

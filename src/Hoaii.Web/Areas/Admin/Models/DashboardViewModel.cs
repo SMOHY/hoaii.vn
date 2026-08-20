@@ -22,6 +22,7 @@ public class DashboardViewModel
         public required string CustomerName { get; init; }
         public decimal Total { get; init; }
         public OrderStatus Status { get; init; }
+        public PaymentStatus PaymentStatus { get; init; }
         public DateTime CreatedAt { get; init; }
     }
 
